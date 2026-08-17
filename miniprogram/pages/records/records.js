@@ -12,7 +12,7 @@ function labelOf(dateStr) {
 // 结算：胜平负 3 分，比分再 +2（PM 9.4）
 function settle(pred, m) {
   if (!m || !m.sc) return null;
-  var sc = m.sc.split(':');
+  var sc = m.sc.split('-');
   var h = Number(sc[0]), a = Number(sc[1]);
   var fact = h > a ? 'h' : h < a ? 'a' : 'd';
   var hit = pred.pick === fact;

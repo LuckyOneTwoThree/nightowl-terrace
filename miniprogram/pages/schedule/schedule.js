@@ -65,7 +65,7 @@ Page({
       var a = data.getTeam(m.a);
       var meta = data.LEAGUE_META[m.l] || {};
       var ev = engine.evaluate(m, recMap, rivs, sls, []);
-      var sc = m.sc ? m.sc.split(':') : null;
+      var sc = m.sc ? m.sc.split('-') : null;
       byDay[day].matches.push({
         id: m.id,
         lg: m.l,
@@ -75,7 +75,7 @@ Page({
         local: decorate.localTime(m),
         tbd: m.tbd,
         st: m.st,
-        finished: m.st === 'ft',
+        finished: m.st === 'done',
         scH: sc ? sc[0] : '-',
         scA: sc ? sc[1] : '-',
         star: ev.star,
@@ -94,19 +94,33 @@ Page({
     var selDay = todayStr;
     if (!byDay[selDay]) selDay = (groups.filter(function (g) { return g.day > todayStr; })[0] || groups[0] || {}).day || '';
 
+    // 全量分组留在内存（约 280 日 / 1752 场），仅按需 setData 渲染窗口（前 1 天 + 后 5 天）
+    this._groups = groups;
     this.setData({
       days: days,
       selDay: selDay,
       leagues: [{ id: 'ALL', zh: '全部' }].concat(data.LEAGUES),
-      groups: groups,
+      viewGroups: this.windowOf(selDay),
       viewId: 'd-' + selDay
     });
   },
 
+  // 渲染窗口：选中日前 1 天起共 7 天（真机性能：单次 setData ≤ ~60 场）
+  windowOf: function (day) {
+    var gs = this._groups || [];
+    var idx = -1;
+    for (var i = 0; i < gs.length; i++) {
+      if (gs[i].day === day) { idx = i; break; }
+    }
+    if (idx < 0) return gs.slice(0, 7);
+    var from = Math.max(0, idx - 1);
+    var to = Math.min(gs.length, from + 7);
+    return gs.slice(from, to);
+  },
+
   onPickDay: function (e) {
     var d = e.currentTarget.dataset.day;
-    this.setData({ selDay: d });
-    wx.pageScrollTo({ selector: '#d-' + d, offsetTop: -120, duration: 300 });
+    this.setData({ selDay: d, viewGroups: this.windowOf(d) });
   },
   onPickLg: function (e) {
     this.setData({ selLg: e.currentTarget.dataset.lg });

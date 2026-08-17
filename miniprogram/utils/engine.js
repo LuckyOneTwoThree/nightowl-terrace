@@ -209,7 +209,8 @@ function planWeek(matches, recMap, rivalries, storylines, followed, budget) {
 
 function minefield(matches, recMap, rivalries, storylines, followed) {
   return matches
-    .filter(function (m) { return m.st === 'sched'; })
+    // tbd 场次开球时间未定，S 档不可信，不进雷区
+    .filter(function (m) { return m.st === 'sched' && !m.tbd; })
     .map(function (m) { return { m: m, ev: evaluate(m, recMap, rivalries, storylines, followed) }; })
     .filter(function (e) {
       return tierOf(e.m).cost >= 3.5 && e.ev.star <= 1 && e.ev.storyIds.length === 0;

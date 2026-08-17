@@ -21,7 +21,7 @@
 
   <!-- 分组列表 -->
   <view class="list">
-    <view class="group" wx:for="{{groups}}" wx:key="day" id="d-{{item.day}}">
+    <view class="group" wx:for="{{viewGroups}}" wx:key="day" id="d-{{item.day}}">
       <view class="g-head" wx:if="{{(selLg === 'ALL' || item.matches.length)}}">
         <text class="g-date">{{item.label.md}}</text>
         <text class="mono muted">{{item.label.week}}</text>
@@ -64,6 +64,6 @@
         <text class="mono muted">当日无{{selLg === 'ALL' ? '' : '该联赛'}}赛事</text>
       </view>
     </view>
-    <view class="foot mono muted">— 种子数据：揭幕周 · 全量赛程随 T3 接入 —</view>
+    <view class="foot mono muted">— 五联赛全季 1,752 场 · 数据源 ESPN / OpenLigaDB —</view>
   </view>
 </view>

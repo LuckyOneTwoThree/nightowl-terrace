@@ -5,7 +5,7 @@
  */
 
 var teams = require('../data/teams.json');
-var fixturesSeed = require('../data/fixtures.seed.json');
+var fixturesSeed = require('../data/fixtures.full.json'); // M1.1 全量 1752 场（ESPN 抓取生成，tools/fetch_espn.js + build_fixtures.js）
 var recsSeed = require('../data/recommendations.seed.json');
 var storylinesAll = require('../data/storylines.json');
 var rivalries = require('../data/rivalries.json');

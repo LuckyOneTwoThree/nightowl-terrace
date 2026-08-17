@@ -39,7 +39,7 @@ Page({
     Object.keys(preds).forEach(function (mid) {
       var m = data.getMatch(mid);
       if (m && m.sc) {
-        var sc = m.sc.split(':'), h = Number(sc[0]), a = Number(sc[1]);
+        var sc = m.sc.split('-'), h = Number(sc[0]), a = Number(sc[1]);
         total++;
         if (preds[mid].pick === (h > a ? 'h' : h < a ? 'a' : 'd')) hit++;
       }

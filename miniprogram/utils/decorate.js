@@ -42,7 +42,7 @@ function dec(m, ev, opts) {
   var meta = data.LEAGUE_META[m.l] || {};
   var f = dpart(m.t);
   var tier = engine.tierOf(m);
-  var sc = m.sc ? m.sc.split(':') : null;
+  var sc = m.sc ? m.sc.split('-') : null;
   var isTmr = engine.ts(m.t) - Date.now() > 86400000;
   return {
     id: m.id,
