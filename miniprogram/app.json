@@ -4,7 +4,17 @@
     "pages/week/week",
     "pages/schedule/schedule",
     "pages/play/play",
-    "pages/me/me"
+    "pages/me/me",
+    "pages/detail/detail",
+    "pages/predict/predict",
+    "pages/court/court",
+    "pages/board/board",
+    "pages/box/box",
+    "pages/story/story",
+    "pages/poster/poster",
+    "pages/records/records",
+    "pages/settings/settings",
+    "pages/onboarding/onboarding"
   ],
   "window": {
     "navigationBarBackgroundColor": "#101419",

@@ -1,0 +1,91 @@
+<view class="page" wx:if="{{m}}">
+  <!-- 赛前 Hero（_1 pre-match）/ 已赛降级为比分版 -->
+  <view class="hero {{m.finished ? 'card-low dim' : 'card-highest'}}">
+    <view class="accent-bar" style="background: {{m.finished ? '#514533' : ''}};"></view>
+    <view class="hero-head">
+      <view class="lg-chip" style="background: {{m.lgSolid}};">{{m.lgZh}}</view>
+      <text class="stars">{{m.stars}}</text>
+      <view class="chip chip-ghost" wx:if="{{m.finished}}">全场结束</view>
+    </view>
+
+    <view class="vs">
+      <view class="side">
+        <view class="circle-xl">{{m.home.id}}</view>
+        <text class="side-name">{{m.home.zh}}</text>
+      </view>
+      <view class="mid">
+        <block wx:if="{{m.finished}}">
+          <text class="score-m text-glow">{{m.scH}} - {{m.scA}}</text>
+          <text class="mono muted">全场结束</text>
+        </block>
+        <block wx:else>
+          <text class="hl hl-md">{{m.dayLabel}} {{m.hm}}</text>
+          <view class="cd-pill"><text class="mono text-glow">{{countdownText}}</text></view>
+        </block>
+      </view>
+      <view class="side">
+        <view class="circle-xl">{{m.away.id}}</view>
+        <text class="side-name">{{m.away.zh}}</text>
+      </view>
+    </view>
+
+    <view class="hero-chips">
+      <view class="chip chip-amber">夜猫指数 {{m.indexText}}</view>
+      <view class="chip chip-teal" wx:for="{{m.storyNames}}" wx:key="*this"
+            data-id="{{m.storyIds[index]}}" bindtap="goStory">{{item}}</view>
+      <view class="chip chip-ghost" wx:if="{{m.rivalry}}">{{m.rivalry}}</view>
+    </view>
+  </view>
+
+  <!-- 本场看点 -->
+  <block wx:if="{{m.points.length}}">
+    <view class="sect"><text class="sect-title">本场看点</text><view class="sect-line"></view></view>
+    <view class="card-low points">
+      <view class="point" wx:for="{{m.points}}" wx:key="*this">
+        <text class="p-arrow">▶</text>
+        <text class="p-text">{{item}}</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- 夜猫絮语 -->
+  <view class="quote card-highest">
+    <text class="paw">🐾</text>
+    <text class="q-text">"夜猫絮语: {{quip}}"</text>
+  </view>
+
+  <!-- 行按钮：参与预测 / 留句狂言 / 生成海报 -->
+  <view class="acts" wx:if="{{!m.finished}}">
+    <view class="act act-main" bindtap="goPredict"><text class="a-ic">🗳️</text><text class="mono">参与预测</text></view>
+    <view class="act" bindtap="goCourt"><text class="a-ic">💬</text><text class="mono">留句狂言</text></view>
+    <view class="act" bindtap="goPoster"><text class="a-ic">📤</text><text class="mono">生成海报</text></view>
+  </view>
+
+  <!-- 信息 bento：熬夜成本 / 当地时间 / 直播平台 -->
+  <view class="bento">
+    <view class="b-card card-low">
+      <view class="b-glow"></view>
+      <text class="b-ic">🌙</text>
+      <text class="b-label mono">熬夜成本</text>
+      <view class="b-val"><text class="hl hl-md">{{m.tierLabel}}</text><text class="b-sub"> {{m.cost}}h</text></view>
+    </view>
+    <view class="b-card card-low">
+      <text class="b-ic">🕐</text>
+      <text class="b-label mono">当地时间</text>
+      <text class="hl hl-md">{{m.local}}</text>
+    </view>
+    <view class="b-card card-low">
+      <text class="b-ic">📺</text>
+      <text class="b-label mono">直播平台</text>
+      <text class="hl hl-md b-tv">{{m.tv || '待定'}}</text>
+    </view>
+  </view>
+
+  <!-- 已赛：法庭结算条 -->
+  <view class="verdict card-low" wx:if="{{m.finished}}">
+    <view class="v-item"><text class="mono">⚖️ 法庭应验 <text class="v-ok">--</text> 人</text></view>
+    <view class="v-div"></view>
+    <view class="v-item"><text class="mono">💥 翻车 <text class="v-no">--</text> 人</text></view>
+    <text class="v-note mono">云版本上线后自动结算</text>
+  </view>
+</view>

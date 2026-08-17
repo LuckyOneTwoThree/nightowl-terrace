@@ -1,0 +1,48 @@
+.page { padding: 24rpx 32rpx 48rpx; display: flex; flex-direction: column; gap: 40rpx; }
+
+.g-title { color: var(--on-surface-variant); letter-spacing: 2rpx; margin-bottom: 20rpx; }
+.g-list { display: flex; flex-direction: column; gap: 24rpx; }
+
+/* 行 */
+.row { border-radius: var(--r-md); padding: 28rpx; display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
+.r-left { display: flex; flex-direction: column; gap: 8rpx; min-width: 0; }
+.r-top { display: flex; align-items: center; gap: 12rpx; }
+.r-ic { font-size: 32rpx; }
+.r-ic.teal { color: var(--secondary); }
+.r-ic.gray { color: var(--on-surface-variant); }
+.r-ic.violet { color: var(--tertiary-container); }
+.r-name { font-size: 30rpx; }
+.r-sub { color: var(--on-surface-variant); font-size: 24rpx; }
+.r-right { display: flex; align-items: center; gap: 12rpx; flex-shrink: 0; }
+.r-mark { font-size: 36rpx; font-weight: 700; }
+.r-mark.teal { color: var(--secondary); }
+.r-mark.error { color: var(--error); }
+.r-pts { font-family: var(--font-mono); font-size: 44rpx; font-weight: 700; }
+.r-pts.glow { color: var(--primary-container); text-shadow: 0 0 16rpx rgba(255,178,36,.4); }
+.r-pts.gray { color: var(--on-surface-variant); }
+.r-pending { color: var(--outline); font-size: 22rpx; }
+.r-time {
+  padding: 8rpx 20rpx; border-radius: var(--r-sm);
+  background: var(--sc-high); border: 1rpx solid var(--outline-variant);
+  color: var(--tertiary-container); font-size: 24rpx; flex-shrink: 0;
+}
+
+/* 狂言行（占满整行） */
+.row .boast {
+  flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
+  background: transparent; border: none; border-left: 6rpx solid var(--outline-muted);
+  border-radius: 0; padding: 0;
+}
+.row .boast.ok { border-left-color: var(--secondary); }
+.row .boast.bad { border-left-color: var(--error); }
+.b-quote { flex: 1; font-style: italic; color: var(--on-surface-variant); font-size: 26rpx; line-height: 40rpx; }
+
+/* 空态 */
+.empty { border-radius: var(--r-xl); padding: 64rpx 40rpx; display: flex; flex-direction: column; align-items: center; gap: 20rpx; text-align: center; }
+.e-mascot {
+  width: 200rpx; height: 200rpx; border-radius: var(--r-full);
+  background: var(--sc); display: flex; align-items: center; justify-content: center;
+  font-size: 100rpx; opacity: .85;
+}
+.e-desc { color: var(--on-surface-variant); font-size: 26rpx; line-height: 40rpx; padding: 0 24rpx; }
+.e-btn { margin-top: 16rpx; padding: 24rpx 64rpx; width: auto; }

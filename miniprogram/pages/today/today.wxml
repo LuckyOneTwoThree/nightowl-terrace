@@ -13,7 +13,7 @@
 
   <!-- 有球态（_5） -->
   <block wx:if="{{hero}}">
-    <view class="hero card-highest">
+    <view class="hero card-highest" data-id="{{hero.id}}" bindtap="goDetail">
       <view class="accent-bar"></view>
       <view class="hero-head">
         <view class="hh-left">
@@ -51,7 +51,8 @@
 
       <view class="hero-chips">
         <view class="chip chip-amber">夜猫指数 {{hero.indexText}}</view>
-        <view class="chip chip-teal" wx:for="{{hero.storyNames}}" wx:key="*this">{{item}}</view>
+        <view class="chip chip-teal" wx:for="{{hero.storyNames}}" wx:key="*this"
+              data-id="{{hero.storyIds[index]}}" bindtap="onStoryTap">{{item}}</view>
         <view class="chip chip-ghost">{{hero.tier}} · 睡眠成本 {{hero.cost}}h</view>
       </view>
     </view>
@@ -68,7 +69,7 @@
       <view class="sect-line"></view>
     </view>
     <view class="extra-grid">
-      <view class="extra card-low" wx:for="{{extras}}" wx:key="id">
+      <view class="extra card-low" wx:for="{{extras}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
         <view class="extra-head">
           <text class="mono muted">{{item.lgZh}}</text>
           <text class="mono">{{item.hm}}</text>
@@ -109,7 +110,7 @@
       <text class="sect-title">补番推荐</text>
       <view class="sect-line"></view>
     </view>
-    <view class="replay card-low" wx:for="{{replays}}" wx:key="id">
+    <view class="replay card-low" wx:for="{{replays}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
       <view class="rp-head">
         <text class="mono muted">{{item.lgZh}}</text>
         <view class="chip chip-teal rp-chip">剧透已屏蔽</view>
@@ -125,7 +126,7 @@
       <text class="sect-title">明日预告</text>
       <view class="sect-line"></view>
     </view>
-    <view class="tmr card-low" wx:for="{{tomorrow}}" wx:key="id">
+    <view class="tmr card-low" wx:for="{{tomorrow}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
       <view class="tmr-time">
         <text class="mono muted">{{item.week}}</text>
         <text class="tmr-hm">{{item.hm}}</text>
@@ -148,7 +149,7 @@
     <text class="sect-more">全部 ›</text>
   </view>
   <scroll-view scroll-x class="stories" enhanced show-scrollbar="{{false}}">
-    <view class="story glass-panel" wx:for="{{stories}}" wx:key="id" bindtap="onStoryTap">
+    <view class="story glass-panel" wx:for="{{stories}}" wx:key="id" data-id="{{item.id}}" bindtap="onStoryTap">
       <text class="mono st-ep">{{item.ep}}</text>
       <text class="st-name">{{item.typeZh}} · {{item.name}}</text>
       <text class="st-desc">{{item.desc}}</text>

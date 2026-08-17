@@ -49,7 +49,7 @@ Page({
     var daysLeft = Math.ceil((fri.getTime() - now.getTime()) / 86400000);
 
     var owlCount = evaluated.filter(function (e) { return engine.tierOf(e.m).cost >= 2.5; }).length;
-    var boasts = wx.getStorageSync('boasts') || [];
+    var boasts = wx.getStorageSync('boasts') || {};
 
     // 本周竞猜单：星级 Top3
     var preds = wx.getStorageSync('predictions') || {};
@@ -71,7 +71,7 @@ Page({
       cards: [
         { id: 'guess', name: '盲评猜球', icon: '❓', cls: 'c-amber', sub: '周五 24:00 截止 · 还剩 ' + Math.max(0, daysLeft) + ' 天' },
         { id: 'owl', name: '夜猫榜', icon: '🌙', cls: 'c-teal', sub: '本周修仙 ' + owlCount + ' 场' },
-        { id: 'court', name: '德比法庭', icon: '⚖️', cls: 'c-red', sub: '狂言存档 ' + boasts.length + ' 条' },
+        { id: 'court', name: '德比法庭', icon: '⚖️', cls: 'c-red', sub: '狂言存档 ' + Object.keys(boasts).length + ' 条' },
         { id: 'box', name: '盲盒开球', icon: '🎁', cls: 'c-violet', sub: '今晚随机开一场' }
       ],
       guesses: guesses,
@@ -81,11 +81,21 @@ Page({
 
   onCard: function (e) {
     var id = e.currentTarget.dataset.id;
-    if (id === 'guess') {
-      wx.pageScrollTo({ selector: '#guess-form', duration: 300 });
-    } else {
-      wx.showToast({ title: '云版本上线', icon: 'none' });
-    }
+    var urls = {
+      guess: '/pages/predict/predict',
+      owl: '/pages/board/board',
+      court: '/pages/court/court',
+      box: '/pages/box/box'
+    };
+    if (urls[id]) wx.navigateTo({ url: urls[id] });
+  },
+
+  goRecords: function () {
+    wx.navigateTo({ url: '/pages/records/records' });
+  },
+
+  goDetail: function (e) {
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
   },
 
   onPick: function (e) {

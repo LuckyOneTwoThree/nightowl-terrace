@@ -1,0 +1,57 @@
+<view class="page">
+  <!-- 日期分组 -->
+  <block wx:for="{{groups}}" wx:key="label" wx:for-item="g">
+    <view class="g-title mono">{{g.label}}</view>
+    <view class="g-list">
+      <!-- 预测行 -->
+      <view class="row glass-panel" wx:for="{{g.rows}}" wx:key="index" wx:for-item="r">
+        <block wx:if="{{r.type === 'pred'}}">
+          <view class="r-left">
+            <view class="r-top">
+              <text class="r-ic {{r.finished ? (r.hit ? 'teal' : 'gray') : 'gray'}}">⚽</text>
+              <text class="r-name">{{r.names}}</text>
+            </view>
+            <text class="r-sub">{{r.sub}}</text>
+          </view>
+          <view class="r-right">
+            <block wx:if="{{r.finished}}">
+              <text class="r-mark {{r.hit ? 'teal' : 'error'}}">{{r.hit ? '✓' : '✕'}}</text>
+              <text class="r-pts {{r.hit ? 'glow' : 'gray'}}">{{r.hit ? '+' + r.pts : '0'}}</text>
+            </block>
+            <text class="r-pending mono" wx:else>封存中</text>
+          </view>
+        </block>
+
+        <!-- 狂言行 -->
+        <block wx:elif="{{r.type === 'boast'}}">
+          <view class="boast card-low {{r.finished ? (r.hit ? 'ok' : 'bad') : ''}}">
+            <text class="b-quote">"{{r.sub}}"</text>
+            <view class="chip {{r.finished ? (r.hit ? 'chip-teal' : 'chip-error') : 'chip-amber'}}">
+              {{r.finished ? (r.hit ? '应验' : '翻车') : '待审判'}}
+            </view>
+          </view>
+        </block>
+
+        <!-- 打卡行 -->
+        <block wx:else>
+          <view class="r-left">
+            <view class="r-top">
+              <text class="r-ic violet">⏰</text>
+              <text class="r-name">{{r.names}}</text>
+            </view>
+            <text class="r-sub">{{r.sub}}</text>
+          </view>
+          <view class="r-time mono">+{{r.cost}}h</view>
+        </block>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty glass-panel" wx:if="{{empty}}">
+    <view class="e-mascot">🐱</view>
+    <text class="hl hl-md">还没有记录，今晚开始？</text>
+    <text class="e-desc">你的午夜传奇还是一张白纸，去看看今晚有什么焦点战吧。</text>
+    <view class="btn-amber e-btn" bindtap="goToday"><text>去看看今晚</text><text>→</text></view>
+  </view>
+</view>

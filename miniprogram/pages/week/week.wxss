@@ -27,6 +27,7 @@
 .pr-pair { font-size: 30rpx; font-weight: 600; }
 .pr-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4rpx; }
 .pr-idx { font-family: var(--font-mono); font-size: 32rpx; font-weight: 700; color: var(--primary); }
+.pr-stars { color: var(--primary-container); font-size: 24rpx; letter-spacing: 2rpx; }
 .pr-cost { color: var(--on-surface-variant); font-size: 20rpx; }
 .plan-alt { padding: 16rpx 24rpx 20rpx; font-size: 22rpx; }
 

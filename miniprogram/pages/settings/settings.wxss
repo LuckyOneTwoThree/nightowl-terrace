@@ -1,0 +1,27 @@
+.page { padding: 24rpx 32rpx 48rpx; display: flex; flex-direction: column; gap: 16rpx; }
+
+.g-label { color: var(--outline); letter-spacing: 2rpx; font-size: 22rpx; margin: 16rpx 0 4rpx 8rpx; text-transform: uppercase; }
+.group { border-radius: var(--r-xl); overflow: hidden; }
+
+.g-left { display: flex; flex-direction: column; gap: 4rpx; }
+.g-main { font-size: 30rpx; }
+.g-sub { color: var(--on-surface-variant); font-size: 22rpx; }
+.g-arrow { display: flex; align-items: center; gap: 12rpx; }
+.g-val { color: var(--on-surface-variant); font-size: 24rpx; }
+.g-id { color: var(--outline); font-size: 24rpx; }
+.chev { color: var(--on-surface-variant); font-size: 28rpx; }
+.st-star { color: var(--primary-container); font-size: 28rpx; }
+
+/* 步进器 */
+.stepper { display: flex; align-items: center; background: var(--sc-lowest); border: 1rpx solid var(--outline-muted); border-radius: var(--r-md); overflow: hidden; }
+.st-btn { width: 64rpx; height: 64rpx; display: flex; align-items: center; justify-content: center; color: var(--on-surface-variant); font-size: 32rpx; }
+.st-btn:active { color: var(--primary); }
+.st-val { width: 96rpx; text-align: center; color: var(--primary-container); font-size: 30rpx; font-weight: 700; }
+
+.copy-ic { color: var(--secondary); font-size: 30rpx; }
+
+.logout {
+  margin-top: 40rpx; padding: 28rpx 0; text-align: center;
+  border: 2rpx solid rgba(255,180,171,.3); border-radius: var(--r-xl);
+  color: var(--error); font-family: var(--font-headline); font-size: 32rpx; font-weight: 600;
+}

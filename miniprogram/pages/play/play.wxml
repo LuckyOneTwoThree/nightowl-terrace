@@ -20,7 +20,7 @@
     <text class="sect-title">本周竞猜单</text>
     <view class="sect-line"></view>
   </view>
-  <view class="guess card-low" id="guess-form" wx:for="{{guesses}}" wx:key="id">
+  <view class="guess card-low" id="guess-form" wx:for="{{guesses}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
     <text class="mono muted">{{item.label}}</text>
     <view class="g-vs">
       <view class="g-side">

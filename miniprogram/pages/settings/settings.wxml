@@ -1,0 +1,80 @@
+<view class="page" wx:if="{{s}}">
+  <!-- 偏好 -->
+  <text class="g-label mono">偏好</text>
+  <view class="group glass-panel">
+    <view class="menu-row">
+      <view class="g-left">
+        <text class="g-main">默认每周熬夜额度</text>
+        <text class="g-sub">推荐 2.0h – 6.0h</text>
+      </view>
+      <view class="stepper">
+        <view class="st-btn" bindtap="minus"><text>−</text></view>
+        <text class="st-val mono">{{s.budget.toFixed(1)}}</text>
+        <view class="st-btn" bindtap="plus"><text>＋</text></view>
+      </view>
+    </view>
+    <view class="menu-row" bindtap="cycleStar">
+      <text class="g-main">默认星级筛选</text>
+      <view class="g-arrow">
+        <text class="st-star">{{starText}}以上</text>
+        <text class="chev">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提醒 -->
+  <text class="g-label mono">提醒</text>
+  <view class="group glass-panel">
+    <view class="menu-row">
+      <view class="g-left">
+        <text class="g-main">开赛提醒</text>
+        <text class="g-sub">开球前 15 分钟</text>
+      </view>
+      <switch checked="{{s.remindKickoff}}" color="#FFB224" bindchange="onKickoff" />
+    </view>
+    <view class="menu-row">
+      <view class="g-left">
+        <text class="g-main">预测截止提醒</text>
+        <text class="g-sub">别错过封存窗口</text>
+      </view>
+      <switch checked="{{s.remindDeadline}}" color="#FFB224" bindchange="onDeadline" />
+    </view>
+  </view>
+
+  <!-- 账号 -->
+  <text class="g-label mono">账号</text>
+  <view class="group glass-panel">
+    <view class="menu-row" bindtap="editNick">
+      <text class="g-main">昵称</text>
+      <view class="g-arrow">
+        <text class="g-val">{{s.nick || '未设置'}}</text>
+        <text class="chev">›</text>
+      </view>
+    </view>
+    <view class="menu-row">
+      <text class="g-main">Midnight ID</text>
+      <view class="g-arrow" bindtap="copyId">
+        <text class="mono g-id">{{s.mid}}</text>
+        <text class="copy-ic">⧉</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <text class="g-label mono">关于</text>
+  <view class="group glass-panel">
+    <view class="menu-row">
+      <text class="g-main">版本</text>
+      <text class="mono g-val">{{version}}</text>
+    </view>
+    <view class="menu-row">
+      <text class="g-main">数据来源</text>
+      <view class="g-arrow">
+        <text class="g-sub">{{source}}</text>
+        <text class="chev">↗</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="logout" bindtap="logout">退出登录</view>
+</view>

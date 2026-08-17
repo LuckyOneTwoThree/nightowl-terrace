@@ -24,7 +24,7 @@
     <view class="sect-line"></view>
   </view>
   <view class="plan card-low">
-    <view class="plan-row" wx:for="{{best}}" wx:key="id" bindtap="onMatch">
+    <view class="plan-row" wx:for="{{best}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
       <view class="pr-bar" style="background: {{item.accent}};"></view>
       <view class="circle-sm">{{item.homeCode}}</view>
       <view class="pr-mid">
@@ -41,6 +41,28 @@
     </view>
   </view>
 
+  <!-- 本周焦点 Top 5–8（PM：跨联赛焦点，星级降序） -->
+  <block wx:if="{{focal.length}}">
+    <view class="sect sect-gap">
+      <text class="sect-title">本周焦点</text>
+      <view class="sect-line"></view>
+    </view>
+    <view class="plan card-low">
+      <view class="plan-row" wx:for="{{focal}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
+        <view class="pr-bar" style="background: {{item.accent}};"></view>
+        <view class="circle-sm">{{item.homeCode}}</view>
+        <view class="pr-mid">
+          <text class="pr-pair">{{item.pair}}</text>
+          <text class="mono muted">{{item.md}} {{item.wd}} {{item.hm}} · {{item.lgZh}}</text>
+        </view>
+        <view class="pr-right">
+          <text class="pr-stars">{{item.stars}}</text>
+          <text class="mono pr-cost">{{item.indexText}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
   <!-- 若只熬一场（_7 highlight） -->
   <block wx:if="{{highlight}}">
     <view class="hl-wrap">
@@ -49,7 +71,7 @@
           <text class="hl-fire">🔥</text>
           <text class="hl-label mono">若只熬一场，选这场</text>
         </view>
-        <view class="hl-body" bindtap="onMatch">
+        <view class="hl-body" data-id="{{highlight.id}}" bindtap="onMatch">
           <view class="hl-mid">
             <text class="hl-pair">{{highlight.pair}}</text>
             <text class="mono muted">{{highlight.lgZh}} · {{highlight.md}} {{highlight.wd}} {{highlight.hm}}</text>
@@ -76,7 +98,7 @@
     <text class="sect-title">雷区预警</text>
     <view class="sect-line"></view>
   </view>
-  <view class="mine card-low" wx:for="{{mines}}" wx:key="id" bindtap="onMatch">
+  <view class="mine card-low" wx:for="{{mines}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
     <view class="mine-head">
       <view class="chip chip-error">建议睡觉</view>
       <text class="mono muted">{{item.md}} {{item.hm}}</text>
@@ -93,7 +115,7 @@
     <text class="sect-title">修仙场</text>
     <view class="sect-line"></view>
   </view>
-  <view class="owl card-low" wx:for="{{nightOwls}}" wx:key="id" bindtap="onMatch">
+  <view class="owl card-low" wx:for="{{nightOwls}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
     <view class="chip chip-teal">{{item.tier}}</view>
     <text class="mine-pair">{{item.pair}}</text>
     <text class="mono owl-time">{{item.md}} {{item.hm}} · {{item.costText}}</text>

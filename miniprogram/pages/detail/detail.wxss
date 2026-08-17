@@ -1,0 +1,64 @@
+.page { padding: 24rpx 32rpx 48rpx; }
+
+/* Hero */
+.hero { position: relative; padding: 32rpx; overflow: hidden; margin-bottom: 8rpx; }
+.hero.dim { opacity: .92; }
+.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); }
+.hero-head { display: flex; align-items: center; gap: 16rpx; margin-bottom: 32rpx; padding-left: 16rpx; }
+.stars { color: var(--primary-container); font-size: 28rpx; letter-spacing: 4rpx; flex: 1; }
+.vs { display: flex; align-items: center; padding: 0 8rpx 40rpx; }
+.side { width: 30%; display: flex; flex-direction: column; align-items: center; gap: 16rpx; }
+.side-name { font-size: 26rpx; }
+.mid { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12rpx; }
+.cd-pill {
+  padding: 8rpx 24rpx; border-radius: var(--r-full);
+  background: rgba(255,178,36,.1); border: 1rpx solid rgba(255,178,36,.3);
+  color: var(--primary);
+}
+.hero-chips { display: flex; flex-wrap: wrap; gap: 12rpx; padding-left: 8rpx; }
+
+/* 看点 */
+.sect { margin: 40rpx 0 20rpx; }
+.points { padding: 28rpx; display: flex; flex-direction: column; gap: 20rpx; }
+.point { display: flex; gap: 16rpx; align-items: flex-start; }
+.p-arrow { color: var(--primary-container); font-size: 20rpx; line-height: 40rpx; }
+.p-text { color: var(--on-surface-variant); font-size: 28rpx; line-height: 40rpx; }
+
+/* 絮语 */
+.quote {
+  display: flex; align-items: center; gap: 20rpx;
+  margin-top: 24rpx; padding: 24rpx; border-left: 6rpx solid var(--primary-container);
+}
+.paw { font-size: 32rpx; }
+.q-text { font-size: 28rpx; font-style: italic; }
+
+/* 行按钮 */
+.acts { display: flex; gap: 16rpx; margin-top: 32rpx; }
+.act {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8rpx;
+  padding: 20rpx 0; border-radius: var(--r-md);
+  background: var(--sc-low); border: 1rpx solid var(--hairline); color: var(--on-surface-variant);
+}
+.act-main { border-color: rgba(255,178,36,.5); color: var(--primary-container); }
+.a-ic { font-size: 36rpx; }
+
+/* 信息 bento */
+.bento { display: flex; gap: 16rpx; margin-top: 32rpx; }
+.b-card {
+  flex: 1; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 8rpx;
+  padding: 24rpx 12rpx;
+}
+.b-glow { position: absolute; right: -30rpx; top: -30rpx; width: 120rpx; height: 120rpx; border-radius: var(--r-full); background: rgba(255,180,171,.1); filter: blur(20rpx); }
+.b-ic { font-size: 32rpx; }
+.b-label { color: var(--on-surface-variant); font-size: 20rpx; }
+.b-val { display: flex; align-items: baseline; gap: 4rpx; }
+.b-sub { color: var(--on-surface-variant); font-size: 24rpx; }
+.b-tv { font-size: 30rpx; }
+
+/* 已赛结算条 */
+.verdict { margin-top: 32rpx; padding: 24rpx; display: flex; align-items: center; gap: 24rpx; flex-wrap: wrap; }
+.v-ok { color: var(--secondary); font-weight: 700; }
+.v-no { color: var(--error); font-weight: 700; }
+.v-div { width: 2rpx; height: 32rpx; background: var(--sc-highest); }
+.v-note { width: 100%; color: var(--outline); font-size: 20rpx; text-align: center; }

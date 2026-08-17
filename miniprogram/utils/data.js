@@ -53,10 +53,15 @@ function storylines() {
   return storylinesAll.filter(function (s) { return s.status !== 'draft'; });
 }
 
+function getMatch(id) {
+  return matchesAll().filter(function (m) { return m.id === id; })[0] || null;
+}
+
 module.exports = {
   LEAGUES: LEAGUES,
   LEAGUE_META: LEAGUE_META,
   tint: tint,
+  getMatch: getMatch,
   getTeams: function () { return teams; },
   getTeam: function (id) { return teamMap[id] || { id: id, zh: id, color: '#666' }; },
   getRivalries: function () { return rivalries; },

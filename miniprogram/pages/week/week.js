@@ -17,6 +17,7 @@ Page({
     ringDeg: 0,
     best: [],
     alt: [],
+    focal: [],
     highlight: null,
     mines: [],
     nightOwls: []
@@ -34,6 +35,9 @@ Page({
 
     var app = getApp();
     var followed = app.getFollowed();
+    var settings = wx.getStorageSync('settings') || {};
+    var budget = settings.budget || 4.0;
+    var minStar = settings.minStar || 1;
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
@@ -43,7 +47,7 @@ Page({
       return d >= start && d <= end;
     });
 
-    var plan = engine.planWeek(week, recMap, rivs, sls, followed, 4.0);
+    var plan = engine.planWeek(week, recMap, rivs, sls, followed, budget);
     var mines = engine.minefield(week, recMap, rivs, sls, followed);
 
     var evs = week.filter(function (m) { return m.st === 'sched'; })
@@ -52,6 +56,11 @@ Page({
         return { m: m, ev: ev, index: engine.owlIndex(ev, m) };
       })
       .sort(function (a, b) { return b.index - a.index; });
+
+    // 跨联赛焦点 Top 5–8（PM 第四节：星级降序 + 指数排序，星级下限可筛）
+    var focal = evs.filter(function (e) { return e.ev.star >= Math.max(2, minStar); })
+      .sort(function (a, b) { return b.ev.star - a.ev.star || b.index - a.index; })
+      .slice(0, 8);
 
     function dec(e, withReason) {
       var f = e.m.t.split('T');
@@ -75,15 +84,20 @@ Page({
     }
 
     var used = plan.used;
-    var pct = Math.min(1, used / 4.0);
+    var pct = Math.min(1, used / budget);
 
     this.setData({
       usedText: used.toFixed(1),
-      budgetText: '4.0',
+      budgetText: budget.toFixed(1),
       ringStyle: 'background: conic-gradient(#FFB224 0% ' + (pct * 100) + '%, #31353B ' + (pct * 100) + '% 100%);',
       ringDeg: Math.round(pct * 360),
       best: plan.best.map(function (e) { return dec(e, false); }),
       alt: plan.alt.map(function (e) { return dec(e, false); }),
+      focal: focal.map(function (e) {
+        var d = dec(e, false);
+        d.stars = '★★★'.slice(0, e.ev.star);
+        return d;
+      }),
       highlight: evs.length ? dec(evs[0], false) : null,
       mines: mines.map(function (e) { return dec(e, true); }),
       nightOwls: evs.filter(function (e) { return engine.tierOf(e.m).cost >= 2.5; }).slice(0, 6)
@@ -92,12 +106,16 @@ Page({
   },
 
   onBudget: function () {
-    wx.showToast({ title: '额度调整 v1 上线', icon: 'none' });
+    wx.navigateTo({ url: '/pages/settings/settings' });
   },
   onRemind: function () {
-    wx.showToast({ title: '订阅提醒 v1 上线', icon: 'none' });
+    wx.showToast({ title: '订阅消息待模板审核 · ICS 兜底 v1 上线', icon: 'none' });
   },
-  onMatch: function () {
-    wx.switchTab({ url: '/pages/schedule/schedule' });
+  onMatch: function (e) {
+    if (e.currentTarget.dataset.id) {
+      wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
+    } else {
+      wx.switchTab({ url: '/pages/schedule/schedule' });
+    }
   }
 });

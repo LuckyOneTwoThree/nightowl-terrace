@@ -1,0 +1,97 @@
+<view class="page">
+  <!-- Hero：夜猫榜 + 本周我的修仙 -->
+  <view class="hero-head">
+    <text class="hero-title">夜猫榜</text>
+    <text class="hero-moon">🌙</text>
+  </view>
+  <view class="stat glass-panel">
+    <text class="muted">本周我的修仙</text>
+    <view class="stat-row">
+      <text class="hl hl-md">{{stats.n}}</text><text class="stat-u">场</text>
+      <view class="stat-dot"></view>
+      <text class="hl hl-md">{{stats.hours}}</text><text class="stat-u">h</text>
+      <view class="stat-dot"></view>
+      <text class="hl hl-md teal">连续 {{stats.streak}} 周</text>
+    </view>
+  </view>
+
+  <!-- 打卡卡：开球后 30 分钟内 -->
+  <view class="live card-highest" wx:if="{{live}}" data-id="{{live.id}}" bindtap="goDetail">
+    <view class="accent-bar"></view>
+    <view class="live-status">
+      <view class="pulse-dot"></view>
+      <text class="mono amber">正在进行 · 开球后30分钟内可打卡</text>
+    </view>
+    <view class="live-vs">
+      <view class="lv-side">
+        <view class="circle-md" style="background: {{live.home.bg}}; border-color: {{live.home.bd}};">{{live.home.id}}</view>
+        <text class="lv-name">{{live.home.zh}}</text>
+      </view>
+      <view class="lv-mid">
+        <text class="score-m sm">{{live.hm}}</text>
+        <view class="chip chip-ghost">{{live.lgZh}}</view>
+      </view>
+      <view class="lv-side">
+        <view class="circle-md" style="background: {{live.away.bg}}; border-color: {{live.away.bd}};">{{live.away.id}}</view>
+        <text class="lv-name">{{live.away.zh}}</text>
+      </view>
+    </view>
+    <view class="btn-amber {{checked ? 'done' : ''}}" catchtap="checkin">
+      <text>{{checked ? '已打卡 ✓' : '我在修仙 · +' + live.cost + 'h'}}</text>
+    </view>
+    <text class="live-note">S2 及以上凌晨场开球后 30 分钟内有效</text>
+  </view>
+
+  <!-- 无可打卡：今晚凌晨档预告 -->
+  <view class="live card-low" wx:elif="{{preview}}" data-id="{{preview.id}}" bindtap="goDetail">
+    <view class="accent-bar gray"></view>
+    <view class="live-status">
+      <text class="mono muted">今晚修仙场预告</text>
+    </view>
+    <view class="live-vs">
+      <view class="lv-side">
+        <view class="circle-md" style="background: {{preview.home.bg}}; border-color: {{preview.home.bd}};">{{preview.home.id}}</view>
+        <text class="lv-name">{{preview.home.zh}}</text>
+      </view>
+      <view class="lv-mid">
+        <text class="hl hl-md">{{preview.dayLabel}} {{preview.hm}}</text>
+        <view class="chip chip-ghost">{{preview.lgZh}}</view>
+      </view>
+      <view class="lv-side">
+        <view class="circle-md" style="background: {{preview.away.bg}}; border-color: {{preview.away.bd}};">{{preview.away.id}}</view>
+        <text class="lv-name">{{preview.away.zh}}</text>
+      </view>
+    </view>
+    <text class="live-note">开球后 30 分钟内回来打卡</text>
+  </view>
+
+  <!-- 本周排名 -->
+  <view class="sect"><text class="sect-title">本周排名</text><view class="sect-line"></view><text class="sect-more">Top 100</text></view>
+  <view class="rank card-low" wx:for="{{ranks}}" wx:key="rank">
+    <text class="rk-no">{{item.rank}}</text>
+    <view class="rk-ava circle-xl">{{item.name[0]}}</view>
+    <text class="rk-name">{{item.name}}</text>
+    <view class="rk-right">
+      <text class="rk-h">{{item.hours}}h</text>
+      <text class="rk-s muted">连续 {{item.streak}} 周</text>
+    </view>
+  </view>
+  <view class="rank card-highest me">
+    <text class="rk-no teal">--</text>
+    <view class="rk-ava rk-ava-me circle-xl">我</view>
+    <text class="rk-name">我</text>
+    <view class="rk-right">
+      <text class="rk-h teal">{{myHours}}h</text>
+      <text class="rk-s muted">连续 {{myStreak}} 周</text>
+    </view>
+  </view>
+  <text class="rank-note mono">云版本上线后按群（openGid）生成真实排行</text>
+
+  <!-- 周报 -->
+  <view class="report card-low">
+    <text class="rp-ic">📄</text>
+    <text class="hl hl-md">生成本周修仙报告</text>
+    <text class="rp-sub muted">你的肝度击败了 {{stats.pct}}% 的球迷</text>
+    <view class="rp-btn" bindtap="share"><text>📤</text><text>分享到群</text></view>
+  </view>
+</view>

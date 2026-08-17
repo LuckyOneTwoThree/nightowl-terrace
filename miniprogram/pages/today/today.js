@@ -46,7 +46,8 @@ function decorate(entry) {
     tier: engine.tierOf(m).label,
     cost: engine.tierOf(m).cost,
     focal: entry.ev.star >= 3,
-    storyNames: entry.ev.stories.map(function (s) { return s.name; })
+    storyNames: entry.ev.stories.map(function (s) { return s.name; }),
+    storyIds: entry.ev.storyIds
   };
 }
 
@@ -69,6 +70,11 @@ Page({
   },
 
   onShow: function () {
+    // 首次进入引导选主队（_15）
+    if (!wx.getStorageSync('onboarded')) {
+      wx.navigateTo({ url: '/pages/onboarding/onboarding' });
+      return;
+    }
     // 关注球队变化后回到本页时刷新提级
     if (this._loaded) this.refresh();
   },
@@ -161,10 +167,13 @@ Page({
   },
 
   onPoster: function () {
-    wx.showToast({ title: '海报导出 v1 上线', icon: 'none' });
+    if (this.data.hero) wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.hero.id });
   },
-  onStoryTap: function () {
-    wx.showToast({ title: '故事线时间轴 v1 上线', icon: 'none' });
+  onStoryTap: function (e) {
+    wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
+  },
+  goDetail: function (e) {
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
   },
   onCal: function () {
     wx.switchTab({ url: '/pages/schedule/schedule' });

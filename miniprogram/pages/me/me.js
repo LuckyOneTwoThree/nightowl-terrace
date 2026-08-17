@@ -20,7 +20,8 @@ Page({
   },
 
   onShow: function () {
-    var nickname = wx.getStorageSync('nickname');
+    var settings = wx.getStorageSync('settings') || {};
+    var nickname = settings.nick || wx.getStorageSync('nickname');
     if (!nickname) {
       nickname = '夜猫_' + Math.floor(1000 + Math.random() * 9000);
       wx.setStorageSync('nickname', nickname);
@@ -28,6 +29,21 @@ Page({
 
     var followed = getApp().getFollowed();
     var preds = wx.getStorageSync('predictions') || {};
+
+    // 打卡时长与预测命中率
+    var checkins = wx.getStorageSync('checkins') || {};
+    var mins = 0;
+    Object.keys(checkins).forEach(function (k) { mins += (checkins[k].cost || 0) * 60; });
+    var hours = (Math.round(mins / 6) / 10) + 'h';
+    var hit = 0, total = 0;
+    Object.keys(preds).forEach(function (mid) {
+      var m = data.getMatch(mid);
+      if (m && m.sc) {
+        var sc = m.sc.split(':'), h = Number(sc[0]), a = Number(sc[1]);
+        total++;
+        if (preds[mid].pick === (h > a ? 'h' : h < a ? 'a' : 'd')) hit++;
+      }
+    });
 
     var groups = ['PL', 'PD', 'SA', 'BL', 'FL'].map(function (lg) {
       return {
@@ -49,7 +65,7 @@ Page({
     this.setData({
       nickname: nickname,
       groups: groups,
-      stats: { hours: '0h', preds: Object.keys(preds).length, hit: '—' }
+      stats: { hours: hours, preds: Object.keys(preds).length, hit: total ? Math.round(hit * 100 / total) + '%' : '—' }
     });
   },
 
@@ -71,7 +87,15 @@ Page({
     this.setData({ groups: groups });
   },
 
-  onMenu: function () {
-    wx.showToast({ title: '云版本上线', icon: 'none' });
+  onMenu: function (e) {
+    var id = e.currentTarget.dataset.id;
+    var urls = {
+      preds: '/pages/records/records',
+      boasts: '/pages/court/court',
+      checkins: '/pages/board/board',
+      subs: '/pages/settings/settings',
+      settings: '/pages/settings/settings'
+    };
+    if (urls[id]) wx.navigateTo({ url: urls[id] });
   }
 });

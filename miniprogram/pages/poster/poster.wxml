@@ -1,0 +1,53 @@
+<view class="page" wx:if="{{m}}">
+  <!-- 海报预览（9:16） -->
+  <view class="poster">
+    <view class="p-dots"></view>
+    <view class="p-bar" style="background: linear-gradient(90deg, {{m.lgAccent}}, #00FF85, #E90052);"></view>
+
+    <view class="p-head">
+      <view class="p-lg chip chip-ghost">⚽ {{m.lgEn}}</view>
+      <view class="p-slogan-row">
+        <view class="p-mascot">🐱</view>
+        <view class="p-slogan-col">
+          <text class="p-title">{{slogan}}</text>
+          <text class="p-sub mono">{{sub}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="p-vs">
+      <view class="p-side">
+        <view class="circle-xl" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+        <text class="p-name">{{m.home.zh}}</text>
+      </view>
+      <text class="p-x">VS</text>
+      <view class="p-side">
+        <view class="circle-xl" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+        <text class="p-name">{{m.away.zh}}</text>
+      </view>
+    </view>
+
+    <view class="p-time">
+      <text class="p-day muted">{{m.dayLabel}}</text>
+      <text class="p-hm score-m">{{m.hm}}</text>
+      <view class="p-line"></view>
+      <text class="p-stars">{{m.stars}}</text>
+      <view class="chip chip-amber p-idx">👁 夜猫指数 {{m.indexText}}</view>
+    </view>
+
+    <view class="p-points">
+      <view class="p-pt" wx:for="{{m.points.length ? m.points : ['焦点战', '熬夜成本 ' + m.cost + 'h']}}" wx:key="*this">
+        <view class="p-dot2"></view><text>{{item}}</text>
+      </view>
+    </view>
+
+    <view class="p-foot mono">夜猫看台 · NIGHT OWL TERRACE</view>
+  </view>
+
+  <!-- 离屏画布（保存用） -->
+  <canvas type="2d" id="poster" class="p-canvas"></canvas>
+
+  <!-- 操作 -->
+  <view class="btn-amber" bindtap="save"><text>📥</text><text>保存到相册</text></view>
+  <view class="btn-teal-ghost p-share" bindtap="share"><text>📤</text><text>分享到群</text></view>
+</view>

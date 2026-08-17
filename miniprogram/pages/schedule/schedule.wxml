@@ -10,12 +10,13 @@
     </view>
   </scroll-view>
 
-  <!-- 联赛筛选（_4 药丸） -->
+  <!-- 联赛 + 星级筛选（_4 药丸） -->
   <scroll-view scroll-x class="pills" enhanced show-scrollbar="{{false}}">
     <view
       wx:for="{{leagues}}" wx:key="id"
       class="fpill on-{{selLg === item.id ? item.id : 'none'}}"
       data-lg="{{item.id}}" bindtap="onPickLg">{{item.zh}}</view>
+    <view class="fpill on-{{selStar ? 'ALL' : 'none'}}" bindtap="onStarFilter">{{starLabel}}</view>
   </scroll-view>
 
   <!-- 分组列表 -->
@@ -29,11 +30,14 @@
       <view
         class="match card-low"
         wx:for="{{item.matches}}" wx:for-item="mt" wx:key="id"
-        wx:if="{{selLg === 'ALL' || mt.lg === selLg}}">
+        wx:if="{{(selLg === 'ALL' || mt.lg === selLg) && (!selStar || mt.star >= selStar)}}"
+        data-id="{{mt.id}}" bindtap="goDetail">
         <view class="m-accent" style="background: {{mt.accent}};"></view>
         <view class="m-body">
           <view class="m-top">
             <text class="mono muted">{{mt.lgZh}}</text>
+            <view class="chip chip-ghost tbd-chip" wx:if="{{mt.tbd}}">时间待定</view>
+            <text class="mono muted local-txt" wx:if="{{!mt.tbd}}">当地 {{mt.local}}</text>
             <text class="mono">{{mt.hm}}</text>
           </view>
           <view class="t-row">

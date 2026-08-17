@@ -1,0 +1,74 @@
+<view class="page">
+  <!-- 筛选药丸 -->
+  <scroll-view class="pills" scroll-x enable-flex>
+    <view class="bpill {{item.on ? 'on' : ''}}" wx:for="{{pills}}" wx:key="key"
+          data-i="{{index}}" bindtap="toggle">{{item.label}}</view>
+  </scroll-view>
+
+  <!-- 神秘卡片（点击翻转） -->
+  <view class="mystery" bindtap="flip" wx:if="{{front}}">
+    <view class="flip-inner {{revealed ? 'flipped' : ''}}">
+      <!-- 正面：对阵隐藏 -->
+      <view class="face face-front glass-panel">
+        <view class="cost-chip"><text>😴</text><text class="mono">-{{front.cost}}h 睡眠</text></view>
+        <view class="qq-row">
+          <view class="q-circle">?</view>
+          <text class="q-vs">VS</text>
+          <view class="q-circle">?</view>
+        </view>
+        <view class="tags">
+          <view class="chip chip-ghost" wx:for="{{front.tags}}" wx:key="*this">{{item}}</view>
+        </view>
+        <view class="stars-row">
+          <text class="s-on">{{front.stars >= 1 ? '★' : ''}}{{front.stars >= 2 ? '★' : ''}}{{front.stars >= 3 ? '★' : ''}}</text>
+          <text class="s-off">{{front.stars <= 2 ? '★' : ''}}{{front.stars <= 1 ? '★' : ''}}</text>
+          <text class="muted s-txt">起</text>
+        </view>
+        <text class="tap-hint mono">点击揭晓</text>
+      </view>
+      <!-- 反面：揭晓对阵 -->
+      <view class="face face-back" wx:if="{{back}}">
+        <view class="bb-strip">
+          <text class="mono">{{back.lgEn}}</text>
+          <text class="s-on">{{back.stars}}</text>
+        </view>
+        <view class="bb-date">
+          <text class="hl hl-md">周{{back.wd}} {{back.hm}}</text>
+          <text class="muted bb-md">{{back.md}}</text>
+        </view>
+        <view class="bb-vs">
+          <view class="bb-side">
+            <view class="circle-xl" style="background: {{back.home.bg}}; border-color: {{back.home.bd}};">{{back.home.id}}</view>
+            <text class="bb-name">{{back.home.zh}}</text>
+          </view>
+          <text class="bb-x score-m">-</text>
+          <view class="bb-side">
+            <view class="circle-xl" style="background: {{back.away.bg}}; border-color: {{back.away.bd}};">{{back.away.id}}</view>
+            <text class="bb-name">{{back.away.zh}}</text>
+          </view>
+        </view>
+        <view class="bb-foot">
+          <text class="muted">🏟️ {{back.indexText}} 夜猫指数 · {{back.tierLabel}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="mystery emptybox" wx:else>
+    <text class="muted">今晚没有符合条件的比赛</text>
+    <view class="bpill on" bindtap="redraw">换组条件再抽</view>
+  </view>
+
+  <!-- 操作区 -->
+  <view class="acts">
+    <block wx:if="{{!revealed}}">
+      <view class="btn-amber" bindtap="redraw"><text>🃏</text><text>抽一场</text></view>
+    </block>
+    <block wx:else>
+      <view class="btn-amber" bindtap="watchIt"><text>👀</text><text>就看它了</text></view>
+      <view class="duo-btn">
+        <view class="ghost-btn" bindtap="redraw"><text>再抽一次</text></view>
+        <view class="teal-btn" bindtap="callFriends"><text>📤</text><text>喊群友同抽</text></view>
+      </view>
+    </block>
+  </view>
+</view>

@@ -1,5 +1,6 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
+var decorate = require('../../utils/decorate.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
@@ -37,6 +38,8 @@ Page({
     selDay: '',        // 选中日期（scroll-into-view）
     leagues: [],
     selLg: 'ALL',
+    selStar: 0,        // 星级下限筛选（0 = 不限）
+    starLabel: '星级不限',
     groups: [],        // { day, label, matches[] }
     viewId: ''
   },
@@ -69,11 +72,13 @@ Page({
         lgZh: lgZh(m.l),
         accent: meta.accent || '#514533',
         hm: m.t.split('T')[1],
+        local: decorate.localTime(m),
         tbd: m.tbd,
         st: m.st,
         finished: m.st === 'ft',
         scH: sc ? sc[0] : '-',
         scA: sc ? sc[1] : '-',
+        star: ev.star,
         stars: '★★★'.slice(0, ev.star),
         home: { zh: h.zh, id: h.id, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
         away: { zh: a.zh, id: a.id, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) }
@@ -105,6 +110,16 @@ Page({
   },
   onPickLg: function (e) {
     this.setData({ selLg: e.currentTarget.dataset.lg });
+  },
+  onStarFilter: function () {
+    var next = (this.data.selStar + 1) % 4; // 不限 → ★+ → ★★+ → ★★★
+    this.setData({
+      selStar: next,
+      starLabel: next === 0 ? '星级不限' : next === 1 ? '★ 以上' : next === 2 ? '★★ 以上' : '仅 ★★★'
+    });
+  },
+  goDetail: function (e) {
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
   },
   onStar: function () {
     wx.showToast({ title: '收藏 v1 上线', icon: 'none' });

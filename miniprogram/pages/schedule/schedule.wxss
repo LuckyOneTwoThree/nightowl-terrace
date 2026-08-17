@@ -30,7 +30,10 @@
 }
 .m-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; }
 .m-body { flex: 1; padding: 20rpx 24rpx 20rpx 32rpx; }
-.m-top { display: flex; justify-content: space-between; margin-bottom: 12rpx; }
+.m-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; gap: 8rpx; }
+.m-top .mono:first-child { flex-shrink: 0; }
+.tbd-chip { padding: 4rpx 12rpx; font-size: 18rpx; flex-shrink: 0; }
+.local-txt { font-size: 20rpx; margin-left: auto; flex-shrink: 0; }
 .t-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
 .t-row:last-child { margin-bottom: 0; }
 .t-name { font-size: 28rpx; font-weight: 500; }

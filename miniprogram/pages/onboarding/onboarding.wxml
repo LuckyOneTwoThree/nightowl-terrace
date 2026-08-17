@@ -1,0 +1,45 @@
+<view class="page">
+  <!-- 光晕氛围 -->
+  <view class="glow glow-amber"></view>
+  <view class="glow glow-teal"></view>
+
+  <!-- 头部 -->
+  <view class="head">
+    <view class="skip-btn mono" bindtap="skip">跳过</view>
+    <text class="hl hl-lg">先选几支主队？</text>
+    <text class="head-sub">随时可改，不选也能用</text>
+  </view>
+
+  <!-- 联赛分组 -->
+  <view class="groups">
+    <view class="group" wx:for="{{groups}}" wx:key="id" wx:for-item="g" wx:for-index="gi">
+      <view class="g-head">
+        <text class="g-ic">⚽</text>
+        <text class="hl hl-md">{{g.zh}}</text>
+      </view>
+      <view class="chips">
+        <view class="tchip {{t.on ? 'on' : ''}}"
+              wx:for="{{g.teams}}" wx:key="id" wx:for-item="t" wx:for-index="ti"
+              data-g="{{gi}}" data-t="{{ti}}" bindtap="toggle">
+          <view class="t-ava {{t.on ? '' : 'gray'}}" style="{{t.on ? 'background: ' + t.color + '33; border-color: ' + t.color + '99;' : ''}}">{{t.id}}</view>
+          <text class="t-name">{{t.zh}}</text>
+          <text class="t-check" wx:if="{{t.on}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bar">
+    <view class="bar-fade"></view>
+    <view class="bar-main">
+      <view class="bar-count">
+        <text class="bar-label">已选球队</text>
+        <text class="bar-num"><text class="n">{{picked}}</text> 支</text>
+      </view>
+      <view class="done-btn" bindtap="finish">
+        <text>完成</text><text class="d-arrow">→</text>
+      </view>
+    </view>
+  </view>
+</view>
