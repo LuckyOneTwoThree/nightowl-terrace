@@ -1,0 +1,28 @@
+.page { padding-bottom: 48rpx; }
+
+.budget-row { display: flex; align-items: baseline; gap: 12rpx; }
+.budget-big { font-size: 64rpx; font-weight: 800; color: var(--primary); }
+.budget-bar {
+  height: 12rpx;
+  background: var(--card-2);
+  border-radius: var(--r-full);
+  margin: 24rpx 0 32rpx;
+  overflow: hidden;
+}
+.budget-fill { height: 100%; background: var(--primary); border-radius: var(--r-full); }
+
+.plan-title { color: var(--muted); font-size: 22rpx; margin-bottom: 12rpx; }
+.plan-title.alt { margin-top: 24rpx; }
+.plan-item { border-top: 1rpx solid var(--line); padding: 16rpx 0; }
+.plan-item .idx { color: var(--primary); font-weight: 700; width: 40rpx; }
+.dim-item { opacity: 0.7; }
+
+.mini { margin: 0 32rpx 16rpx; }
+.row { display: flex; align-items: center; gap: 12rpx; }
+.row.sub { margin-top: 8rpx; justify-content: space-between; }
+.pair { flex: 1; font-weight: 600; font-size: 26rpx; }
+.time-s { color: var(--muted); font-size: 22rpx; }
+.owl-badge.sm { font-size: 20rpx; padding: 2rpx 14rpx; }
+
+.mine { border-color: rgba(248, 113, 113, 0.3); }
+.reason { color: var(--danger); font-size: 22rpx; margin-top: 8rpx; }

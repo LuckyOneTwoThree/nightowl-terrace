@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>我的预测 - Midnight Match</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=Be+Vietnam+Pro:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#36393f",
+                        "on-secondary-container": "#004d44",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e0e2ea",
+                        "on-secondary-fixed-variant": "#005047",
+                        "on-secondary-fixed": "#00201c",
+                        "surface": "#101419",
+                        "on-tertiary-container": "#630fd4",
+                        "surface-container-high": "#262a30",
+                        "on-primary-fixed": "#291800",
+                        "tertiary-container": "#ceb5ff",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "on-surface-variant": "#d6c4ad",
+                        "primary-container": "#ffb224",
+                        "secondary": "#44e2cd",
+                        "surface-container-lowest": "#0a0f13",
+                        "outline-variant": "#514533",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary-fixed": "#62fae3",
+                        "inverse-surface": "#e0e2ea",
+                        "on-secondary": "#003731",
+                        "on-primary-fixed-variant": "#614000",
+                        "outline-muted": "rgba(159, 142, 121, 0.1)",
+                        "on-primary": "#442b00",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#03c6b2",
+                        "outline": "#9f8e79",
+                        "on-tertiary-fixed": "#25005a",
+                        "error-container": "#93000a",
+                        "surface-variant": "#31353b",
+                        "surface-tint": "#ffba47",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "primary-fixed-dim": "#ffba47",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "inverse-primary": "#805600",
+                        "on-tertiary": "#3f008e",
+                        "background": "#101419",
+                        "on-background": "#e0e2ea",
+                        "inverse-on-surface": "#2d3136",
+                        "on-primary-container": "#6c4800",
+                        "surface-dim": "#101419",
+                        "surface-container-low": "#181c21",
+                        "on-error": "#690005",
+                        "primary": "#ffd79e",
+                        "tertiary": "#e6d6ff",
+                        "surface-container-highest": "#31353B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "section-margin": "24px",
+                        "base": "8px",
+                        "container-padding": "16px",
+                        "card-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "score-mobile": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "data-label": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .text-glow { text-shadow: 0 0 10px rgba(255, 215, 158, 0.5); }
+        .floodlight-glow { box-shadow: 0 0 20px rgba(255, 215, 158, 0.15); }
+        .glass-panel { background: linear-gradient(135deg, rgba(49, 53, 59, 0.4), rgba(24, 28, 33, 0.4)); backdrop-filter: blur(10px); border: 1px solid theme('colors.outline-muted'); }
+        .chip { background-color: rgba(255, 215, 158, 0.1); border: 1px solid rgba(255, 215, 158, 0.4); }
+        .chip-error { background-color: rgba(255, 180, 171, 0.1); border: 1px solid rgba(255, 180, 171, 0.4); }
+        .chip-secondary { background-color: rgba(68, 226, 205, 0.1); border: 1px solid rgba(68, 226, 205, 0.4); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col mx-auto w-full max-w-[512px] pb-[88px]">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface-container-highest/80 dark:bg-surface-container-highest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<button class="text-primary dark:text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface">我的预测</h1>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined text-[24px]">more_vert</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-padding py-section-margin flex flex-col gap-section-margin">
+<!-- Empty State (Hidden initially, toggled via JS for demo if needed, but showing populated list first per instructions usually, let's show populated for high-end UI, and maybe an empty state section at the bottom to satisfy requirements, or just the list) -->
+<!-- I will build the list as requested, and include the empty state visually hidden or at the end -->
+<!-- Date Group 1 -->
+<section class="flex flex-col gap-card-gap">
+<h2 class="font-data-label text-data-label text-on-surface-variant uppercase tracking-wider">10月24日 星期二</h2>
+<!-- Prediction Row (Win) -->
+<div class="glass-panel rounded-lg p-container-padding flex items-center justify-between">
+<div class="flex flex-col gap-stack-tight">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-secondary text-[20px]">sports_soccer</span>
+<span class="font-body-lg text-body-lg text-on-surface">曼联 vs 拜仁慕尼黑</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">预测: 拜仁 胜 (2-1)</span>
+</div>
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-secondary text-[24px]">check_circle</span>
+<span class="font-score-display text-[24px] text-primary text-glow">+3</span>
+</div>
+</div>
+<!-- Prediction Row (Loss) -->
+<div class="glass-panel rounded-lg p-container-padding flex items-center justify-between">
+<div class="flex flex-col gap-stack-tight">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">sports_soccer</span>
+<span class="font-body-lg text-body-lg text-on-surface">阿森纳 vs 塞维利亚</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">预测: 平局 (1-1)</span>
+</div>
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-error text-[24px]">cancel</span>
+<span class="font-score-display text-[24px] text-on-surface-variant">0</span>
+</div>
+</div>
+<!-- Boast Row (Success) -->
+<div class="bg-surface-container-low border border-surface-variant rounded-lg p-container-padding flex items-start gap-container-padding relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<div class="flex-1 flex flex-col gap-base">
+<p class="font-body-sm text-body-sm text-on-surface italic">"我就说哈兰德今晚必进两球，曼城稳稳拿下！"</p>
+</div>
+<div class="chip-secondary rounded-full px-3 py-1 flex items-center justify-center whitespace-nowrap">
+<span class="font-data-label text-data-label text-secondary">应验</span>
+</div>
+</div>
+</section>
+<!-- Date Group 2 -->
+<section class="flex flex-col gap-card-gap">
+<h2 class="font-data-label text-data-label text-on-surface-variant uppercase tracking-wider">10月20日 星期五</h2>
+<!-- Boast Row (Fail) -->
+<div class="bg-surface-container-low border border-surface-variant rounded-lg p-container-padding flex items-start gap-container-padding relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex-1 flex flex-col gap-base">
+<p class="font-body-sm text-body-sm text-on-surface italic">"切尔西这状态，打个保级队还不是手到擒来？"</p>
+</div>
+<div class="chip-error rounded-full px-3 py-1 flex items-center justify-center whitespace-nowrap">
+<span class="font-data-label text-data-label text-error">翻车</span>
+</div>
+</div>
+<!-- Check-in Row -->
+<div class="glass-panel rounded-lg p-container-padding flex items-center justify-between">
+<div class="flex flex-col gap-stack-tight">
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">schedule</span>
+<span class="font-body-lg text-body-lg text-on-surface">皇马 vs 巴萨</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">夜猫打卡</span>
+</div>
+<div class="bg-surface-container-high rounded px-2 py-1 border border-outline-variant">
+<span class="font-data-label text-data-label text-tertiary-container">120 min</span>
+</div>
+</div>
+</section>
+<!-- Empty State (Demonstration) -->
+<section class="mt-section-margin flex flex-col items-center justify-center text-center py-section-margin glass-panel rounded-xl">
+<div class="w-32 h-32 mb-card-gap rounded-full overflow-hidden bg-surface-container flex items-center justify-center">
+<!-- Using an image placeholder for the night-cat mascot as requested to follow rules, though it's an illustrative element usually. -->
+<img class="object-cover w-full h-full opacity-80" data-alt="A stylized, flat-vector illustration of a cool 'night cat' mascot wearing a tiny soccer jersey, bathed in dramatic neon amber and teal floodlights against a deep charcoal background, matching the Midnight Match brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzxoX_bzJUYkYmJjeRj-7rvA2ewm8MZL5ynr1KuJopl69URh4k4Jam1191vFVZTqUuK0C94QVBzuvAUFTFF3mrsMThhx1jWHbtuBVwu3Fvo7UsCkq6bC6Aqi3aXU_GRlYKMzNsBVfKVU71AOQ77A_HnmN3gxLPPgsSSDe__7O2DDo3pEPH3JQjvknlw-fPr8k1rELyxhlwCRtjLC7ULpI31t-Y2Bc-zJmOxdsmods5AuKiJ1HrhZYwcA"/>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-tight">还没有记录，今晚开始？</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-section-margin px-container-padding">你的午夜传奇还是一张白纸，去看看今晚有什么焦点战吧。</p>
+<button class="bg-primary text-on-primary font-headline-md text-headline-md rounded-xl py-3 px-8 floodlight-glow hover:bg-primary-fixed transition-colors active:scale-95 shadow-lg flex items-center gap-base">
+                去看看今晚
+                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-container-padding py-4 bg-surface-container-lowest/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl shadow-lg shadow-black/50 md:hidden border-t-0">
+<!-- Assuming this is 'Profile/Records' related, so active is person -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">sports_soccer</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">leaderboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[24px]">stars</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary scale-110 transition-transform duration-200">
+<span class="material-symbols-outlined text-[24px] pointer-events-none" style="font-variation-settings: 'FILL' 1;">person</span>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary mt-1"></div>
+</button>
+</nav>
+</body></html>

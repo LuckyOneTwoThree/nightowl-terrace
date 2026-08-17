@@ -1,0 +1,71 @@
+<view class="page">
+  <view class="section-title">熬夜额度<view class="section-sub" bindtap="onBudget">默认 4.0h · 点击调整</view></view>
+
+  <view class="card">
+    <view class="budget-row">
+      <view class="budget-big mono">{{used}}h</view>
+      <view class="muted">/ {{budget}}h 已分配</view>
+    </view>
+    <view class="budget-bar">
+      <view class="budget-fill" style="width: {{used / budget * 100}}%"></view>
+    </view>
+
+    <view class="plan-title">本周最优组合（0-1 背包求解）</view>
+    <view class="plan-item" wx:for="{{best}}" wx:key="id">
+      <view class="row">
+        <text class="idx mono">{{index + 1}}</text>
+        <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
+        <text class="pair">{{item.pair}}</text>
+        <view class="stars">{{item.stars}}</view>
+      </view>
+      <view class="row sub">
+        <text class="mono time-s">{{item.timeText}}</text>
+        <view class="owl-badge sm">{{item.indexText}} · {{item.cost}}h</view>
+      </view>
+    </view>
+
+    <view class="plan-title alt" wx:if="{{alt.length}}">备选</view>
+    <view class="plan-item dim-item" wx:for="{{alt}}" wx:key="id">
+      <view class="row">
+        <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
+        <text class="pair">{{item.pair}}</text>
+        <view class="owl-badge sm">{{item.indexText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">本周焦点<text class="section-sub">夜猫指数 Top</text></view>
+  <view class="card-2 mini" wx:for="{{top}}" wx:key="id">
+    <view class="row">
+      <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
+      <text class="pair">{{item.pair}}</text>
+      <view class="stars">{{item.stars}}</view>
+    </view>
+    <view class="row sub">
+      <text class="mono time-s">{{item.timeText}}</text>
+      <view class="owl-badge sm">指数 {{item.indexText}}</view>
+    </view>
+  </view>
+
+  <view class="section-title">雷区预警<text class="section-sub">建议睡觉的场次</text></view>
+  <view class="card-2 mini mine" wx:for="{{mines}}" wx:key="id">
+    <view class="row">
+      <view class="chip chip-danger">建议睡觉</view>
+      <text class="pair">{{item.pair}}</text>
+    </view>
+    <view class="reason">{{item.reason}}</view>
+  </view>
+  <view class="card-2 mini" wx:if="{{!mines.length}}">
+    <view class="reason">本周暂无雷区——好日子。</view>
+  </view>
+
+  <view class="section-title">修仙场<text class="section-sub">凌晨档 · 打卡圣地</text></view>
+  <view class="card-2 mini" wx:for="{{nightOwls}}" wx:key="id">
+    <view class="row">
+      <view class="chip chip-teal">{{item.tier}}</view>
+      <text class="pair">{{item.pair}}</text>
+      <view class="stars">{{item.stars}}</view>
+    </view>
+    <view class="row sub"><text class="mono time-s">{{item.timeText}}</text></view>
+  </view>
+</view>

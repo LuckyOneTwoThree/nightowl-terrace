@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>今晚哪场值得熬 - 本周</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#101419",
+                        "on-primary-container": "#6c4800",
+                        "outline": "#9f8e79",
+                        "surface-container-low": "#181c21",
+                        "surface-container-highest": "#31353b",
+                        "inverse-on-surface": "#2d3136",
+                        "secondary-fixed": "#62fae3",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#3e4754",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#004d44",
+                        "tertiary-fixed-dim": "#bec7d6",
+                        "on-primary": "#442b00",
+                        "secondary": "#44e2cd",
+                        "primary": "#ffd79e",
+                        "on-tertiary": "#28313c",
+                        "on-surface-variant": "#d6c4ad",
+                        "on-surface": "#e0e2ea",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-background": "#e0e2ea",
+                        "primary-container": "#ffb224",
+                        "surface-dim": "#101419",
+                        "on-primary-fixed": "#291800",
+                        "on-tertiary-container": "#47505c",
+                        "surface-container-high": "#262a30",
+                        "surface": "#101419",
+                        "surface-container-lowest": "#0a0e13",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#d4deed",
+                        "on-secondary": "#003731",
+                        "tertiary-container": "#b9c2d0",
+                        "outline-variant": "#514533",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#ffba47",
+                        "on-tertiary-fixed": "#131c27",
+                        "surface-variant": "#31353b",
+                        "tertiary-fixed": "#dae3f2",
+                        "on-secondary-fixed-variant": "#005047",
+                        "surface-tint": "#ffba47",
+                        "on-secondary-fixed": "#00201c",
+                        "inverse-primary": "#805600",
+                        "inverse-surface": "#e0e2ea",
+                        "surface-bright": "#36393f",
+                        "on-primary-fixed-variant": "#614000",
+                        "secondary-container": "#03c6b2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "card-gap": "12px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "data-label": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "score-mobile": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .floodlight-glow {
+            box-shadow: 0 0 4px rgba(255, 178, 36, 0.1) inset, 0 0 8px rgba(255, 178, 36, 0.05);
+        }
+        .neon-border-teal {
+            border: 1px solid rgba(68, 226, 205, 0.4);
+        }
+        .inner-border {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-sm pb-24 md:pb-0">
+<!-- TopAppBar (Web & Mobile Hybrid) -->
+<header class="flex justify-between items-center w-full px-container-padding py-base h-16 bg-background dark:bg-background docked full-width top-0 z-40 sticky">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary">pets</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg font-bold text-primary dark:text-primary tracking-tight">今晚哪场值得熬</h1>
+</div>
+<div class="flex items-center gap-4">
+<!-- Web Navigation Cluster -->
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:opacity-80 transition-opacity font-body-lg text-body-lg" href="#">今日</a>
+<a class="text-primary font-bold hover:opacity-80 transition-opacity font-body-lg text-body-lg border-b-2 border-primary pb-1" href="#">本周</a>
+<a class="text-on-surface-variant hover:opacity-80 transition-opacity font-body-lg text-body-lg" href="#">赛程</a>
+<a class="text-on-surface-variant hover:opacity-80 transition-opacity font-body-lg text-body-lg" href="#">玩法</a>
+<a class="text-on-surface-variant hover:opacity-80 transition-opacity font-body-lg text-body-lg" href="#">我的</a>
+</nav>
+<span class="material-symbols-outlined text-on-surface-variant dark:text-on-surface-variant md:hidden">calendar_today</span>
+</div>
+</header>
+<main class="max-w-7xl mx-auto md:px-container-padding">
+<!-- Main Content Area -->
+<div class="px-container-padding py-6 md:py-8 space-y-section-margin">
+<!-- Bento Grid Container for Top Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-card-gap">
+<!-- Night Cat Index / Budget Card (Bento Item) -->
+<section class="md:col-span-4 bg-surface-container-low rounded-xl p-5 inner-border relative overflow-hidden">
+<!-- Subtle background glow -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<div>
+<h2 class="font-headline-md text-headline-md-mobile md:text-headline-md text-on-surface mb-1">夜猫指数·本周预算</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">合理规划熬夜额度</p>
+</div>
+<span class="material-symbols-outlined text-primary">monitoring</span>
+</div>
+<div class="flex items-center gap-6 mt-6 relative z-10">
+<!-- Progress Ring -->
+<div class="relative w-24 h-24 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary drop-shadow-[0_0_4px_rgba(255,215,158,0.3)] transition-all duration-1000 ease-out" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="100.48" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-data-label text-data-label text-on-surface-variant">已用</span>
+<span class="font-data-label text-body-lg font-bold text-primary">60%</span>
+</div>
+</div>
+<div class="flex-1 space-y-4">
+<div>
+<p class="font-data-label text-data-label text-on-surface-variant mb-1">已计划 / 额度</p>
+<p class="font-data-label text-[18px] text-on-surface font-bold">2.5h <span class="text-on-surface-variant font-normal">/ 4.0h</span></p>
+</div>
+<button class="w-full py-2 px-4 rounded-lg bg-transparent neon-border-teal text-secondary font-body-sm text-body-sm hover:bg-secondary/10 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">tune</span>
+                                调整额度
+                            </button>
+</div>
+</div>
+</section>
+<!-- Optimal Combinations (Bento Item) -->
+<section class="md:col-span-8 bg-surface-container-low rounded-xl p-5 inner-border">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-headline-md text-headline-md-mobile md:text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">auto_awesome</span>
+                            最优组合
+                        </h2>
+<span class="font-data-label text-data-label text-secondary bg-secondary/10 px-2 py-1 rounded-full">高性价比方案</span>
+</div>
+<div class="space-y-stack-tight">
+<!-- Match Row 1 -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg hover:bg-surface-container transition-colors group border-l-4 border-l-[#38003c]">
+<div class="flex items-center gap-3 w-1/2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="font-data-label text-data-label text-on-surface">MCI</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-data-label text-data-label text-on-surface truncate group-hover:text-primary transition-colors">曼城 vs 利物浦</p>
+<p class="font-data-label text-[10px] text-on-surface-variant">周六 20:30</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-right">
+<div>
+<p class="font-data-label text-data-label text-primary flex items-center justify-end gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>9.8</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">夜猫指数</p>
+</div>
+<div>
+<p class="font-data-label text-data-label text-on-surface">-1.5h</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">睡眠成本</p>
+</div>
+</div>
+</div>
+<!-- Match Row 2 -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg hover:bg-surface-container transition-colors group border-l-4 border-l-[#1E1E1E]">
+<div class="flex items-center gap-3 w-1/2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="font-data-label text-data-label text-on-surface">RMA</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-data-label text-data-label text-on-surface truncate group-hover:text-primary transition-colors">皇家马德里 vs 巴塞罗那</p>
+<p class="font-data-label text-[10px] text-on-surface-variant">周日 03:00</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-right">
+<div>
+<p class="font-data-label text-data-label text-primary flex items-center justify-end gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>9.5</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">夜猫指数</p>
+</div>
+<div>
+<p class="font-data-label text-data-label text-on-surface">-2.0h</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">睡眠成本</p>
+</div>
+</div>
+</div>
+<!-- Match Row 3 -->
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg hover:bg-surface-container transition-colors group border-l-4 border-l-[#0033A0]">
+<div class="flex items-center gap-3 w-1/2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center flex-shrink-0">
+<span class="font-data-label text-data-label text-on-surface">INT</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-data-label text-data-label text-on-surface truncate group-hover:text-primary transition-colors">国际米兰 vs 尤文图斯</p>
+<p class="font-data-label text-[10px] text-on-surface-variant">周一 02:45</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-right">
+<div>
+<p class="font-data-label text-data-label text-primary flex items-center justify-end gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>8.9</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">夜猫指数</p>
+</div>
+<div>
+<p class="font-data-label text-data-label text-on-surface">-1.5h</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">睡眠成本</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Highlight Row -->
+<section class="bg-gradient-to-r from-primary-container/20 to-surface-container-low rounded-xl p-[1px] relative floodlight-glow group cursor-pointer overflow-hidden">
+<!-- Highlight Background Effect -->
+<div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50"></div>
+<div class="absolute top-0 right-0 p-4 opacity-10 transform rotate-12 group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined text-[100px]">sports_soccer</span>
+</div>
+<div class="bg-surface-container-low rounded-[11px] p-5 relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">local_fire_department</span>
+<span class="font-data-label text-data-label text-primary font-bold tracking-wider">若只熬一场，选这场</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-1">阿森纳 vs 考文垂</h3>
+<p class="font-data-label text-data-label text-on-surface-variant flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-[#38003c]"></span> 英超联赛 · 周日 00:30
+                        </p>
+</div>
+<div class="flex items-center gap-6 bg-surface p-3 rounded-lg border border-primary/20 w-full md:w-auto justify-between md:justify-start">
+<div class="text-center">
+<p class="font-data-label text-body-lg text-primary font-bold">10.0</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">爆表指数</p>
+</div>
+<div class="w-[1px] h-8 bg-outline-variant/30"></div>
+<div class="text-center">
+<p class="font-data-label text-body-lg text-on-surface font-bold">-2.0h</p>
+<p class="font-body-sm text-[10px] text-on-surface-variant">需耗时长</p>
+</div>
+<button class="bg-primary text-on-primary font-data-label text-data-label px-4 py-2 rounded-lg font-bold hover:bg-primary-fixed transition-colors">
+                            设提醒
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base pb-safe h-20 bg-surface/80 backdrop-blur-xl border-t-0 inner-border shadow-[0_-4px_24px_rgba(0,0,0,0.4)]">
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 p-2 rounded-lg transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">today</span>
+<span class="font-body-sm text-[11px] font-medium">今日</span>
+</a>
+<!-- Active Tab -->
+<a class="flex flex-col items-center justify-center text-primary-container dark:text-primary-container font-bold hover:bg-surface-container-high/50 p-2 rounded-lg scale-110 transition-all duration-300 w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">calendar_view_week</span>
+<span class="font-body-sm text-[11px]">本周</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 p-2 rounded-lg transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">event_note</span>
+<span class="font-body-sm text-[11px] font-medium">赛程</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 p-2 rounded-lg transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">sports_esports</span>
+<span class="font-body-sm text-[11px] font-medium">玩法</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 p-2 rounded-lg transition-colors w-16" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-body-sm text-[11px] font-medium">我的</span>
+</a>
+</nav>
+<!-- Spacer for Mobile Nav -->
+<div class="h-20 md:hidden w-full"></div>
+</body></html>

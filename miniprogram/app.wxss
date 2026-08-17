@@ -1,0 +1,187 @@
+/**
+ * Midnight Match 设计系统 → 小程序 token 转译
+ * 来源：stitch_night_owl_terrace_ui/DESIGN.md（18 稿视觉基准）
+ * 说明：Google Fonts / Material Symbols 在小程序内不可用，
+ *       等宽数据字体降级为系统 monospace，图标用文字符号替代。
+ */
+
+page {
+  /* 底色与表面 */
+  --bg: #101419;
+  --card: #171C23;
+  --card-2: #1E242D;
+  --line: rgba(244, 239, 230, 0.08);
+  --line-strong: rgba(244, 239, 230, 0.16);
+
+  /* 文字 */
+  --ink: #F4EFE6;
+  --muted: #8E8A81;
+  --dim: #5C5A54;
+
+  /* 品牌色 */
+  --primary: #FFB224;      /* 琥珀 */
+  --primary-ink: #1A1206;
+  --primary-dim: rgba(255, 178, 36, 0.12);
+  --teal: #2DD4BF;         /* 青碧 · 修仙/健康 */
+  --violet: #8B7CF6;       /* 紫罗兰 · 玩法 */
+  --danger: #F87171;       /* 雷区 */
+
+  /* 联赛色 */
+  --c-pl: #A855F7;
+  --c-pd: #F97316;
+  --c-sa: #38BDF8;
+  --c-bl: #EF4444;
+  --c-fl: #10B981;
+  --c-scg: #FACC15;
+
+  /* 字体 */
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  /* 圆角 */
+  --r-sm: 8rpx;
+  --r-md: 16rpx;
+  --r-lg: 24rpx;
+  --r-full: 999rpx;
+
+  /* 间距 */
+  --sp-1: 8rpx;
+  --sp-2: 16rpx;
+  --sp-3: 24rpx;
+  --sp-4: 32rpx;
+  --sp-5: 48rpx;
+
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* ---------- 通用原子 ---------- */
+
+.card {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  margin: var(--sp-3) var(--sp-4);
+}
+
+.card-2 {
+  background: var(--card-2);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--sp-3);
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--ink);
+  padding: var(--sp-4) var(--sp-4) var(--sp-2);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.section-sub {
+  font-size: 22rpx;
+  color: var(--dim);
+  font-weight: 400;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted { color: var(--muted); font-size: 24rpx; }
+.dim { color: var(--dim); font-size: 22rpx; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: var(--r-full);
+  font-size: 20rpx;
+  border: 1rpx solid var(--line-strong);
+  color: var(--muted);
+}
+
+.chip-primary {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--primary-ink);
+  font-weight: 600;
+}
+
+.chip-teal {
+  border-color: transparent;
+  background: rgba(45, 212, 191, 0.15);
+  color: var(--teal);
+}
+
+.chip-danger {
+  border-color: transparent;
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--danger);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-ink);
+  font-weight: 700;
+  border-radius: var(--r-full);
+  padding: 20rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+}
+
+.btn-ghost {
+  border: 1rpx solid var(--line-strong);
+  color: var(--muted);
+  border-radius: var(--r-full);
+  padding: 16rpx 0;
+  text-align: center;
+  font-size: 24rpx;
+}
+
+/* 联赛色 class */
+.lg-PL { color: var(--c-pl); }
+.lg-PD { color: var(--c-pd); }
+.lg-SA { color: var(--c-sa); }
+.lg-BL { color: var(--c-bl); }
+.lg-FL { color: var(--c-fl); }
+.lg-SCG { color: var(--c-scg); }
+
+/* 星级 */
+.stars { color: var(--primary); font-size: 24rpx; letter-spacing: 2rpx; }
+
+/* 队徽圆 */
+.team-dot {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #101419;
+}
+
+/* 夜猫指数标 */
+.owl-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4rpx;
+  background: var(--primary-dim);
+  border: 1rpx solid rgba(255, 178, 36, 0.35);
+  border-radius: var(--r-full);
+  padding: 4rpx 20rpx;
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-size: 24rpx;
+}

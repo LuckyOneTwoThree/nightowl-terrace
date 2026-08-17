@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Midnight Match - 盲评猜球</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=Be+Vietnam+Pro:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+                    "surface-bright": "#36393f",
+                    "on-secondary-container": "#004d44",
+                    "surface-container": "#1c2025",
+                    "primary-fixed": "#ffddb0",
+                    "on-error-container": "#ffdad6",
+                    "on-surface": "#e0e2ea",
+                    "on-secondary-fixed-variant": "#005047",
+                    "on-secondary-fixed": "#00201c",
+                    "surface": "#101419",
+                    "on-tertiary-container": "#630fd4",
+                    "surface-container-high": "#262a30",
+                    "on-primary-fixed": "#291800",
+                    "tertiary-container": "#ceb5ff",
+                    "tertiary-fixed-dim": "#d2bbff",
+                    "on-surface-variant": "#d6c4ad",
+                    "primary-container": "#ffb224",
+                    "secondary": "#44e2cd",
+                    "surface-container-lowest": "#0a0f13",
+                    "outline-variant": "#514533",
+                    "tertiary-fixed": "#eaddff",
+                    "secondary-fixed": "#62fae3",
+                    "inverse-surface": "#e0e2ea",
+                    "on-secondary": "#003731",
+                    "on-primary-fixed-variant": "#614000",
+                    "outline-muted": "rgba(159, 142, 121, 0.1)",
+                    "on-primary": "#442b00",
+                    "error": "#ffb4ab",
+                    "secondary-container": "#03c6b2",
+                    "outline": "#9f8e79",
+                    "on-tertiary-fixed": "#25005a",
+                    "error-container": "#93000a",
+                    "surface-variant": "#31353b",
+                    "surface-tint": "#ffba47",
+                    "on-tertiary-fixed-variant": "#5a00c6",
+                    "primary-fixed-dim": "#ffba47",
+                    "secondary-fixed-dim": "#3cddc7",
+                    "inverse-primary": "#805600",
+                    "on-tertiary": "#3f008e",
+                    "background": "#101419",
+                    "on-background": "#e0e2ea",
+                    "inverse-on-surface": "#2d3136",
+                    "on-primary-container": "#6c4800",
+                    "surface-dim": "#101419",
+                    "surface-container-low": "#181c21",
+                    "on-error": "#690005",
+                    "primary": "#ffd79e",
+                    "tertiary": "#e6d6ff",
+                    "surface-container-highest": "#31353B"
+            },
+            borderRadius: {
+                    DEFAULT: "0.25rem",
+                    lg: "0.5rem",
+                    xl: "0.75rem",
+                    full: "9999px"
+            },
+            spacing: {
+                    "stack-tight": "4px",
+                    "section-margin": "24px",
+                    "base": "8px",
+                    "container-padding": "16px",
+                    "card-gap": "12px"
+            },
+            fontFamily: {
+                    "score-mobile": ["JetBrains Mono"],
+                    "score-display": ["JetBrains Mono"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-sm": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "data-label": ["JetBrains Mono"]
+            },
+            fontSize: {
+                    "score-mobile": ["32px", { lineHeight: "32px", fontWeight: "700" }],
+                    "score-display": ["48px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                    "headline-lg": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+                    "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                    "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                    "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                    "data-label": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "500" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            background-color: #101419;
+            color: #e0e2ea;
+            -webkit-font-smoothing: antialiased;
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 215, 158, 0.5);
+        }
+        .floodlight-glow {
+            box-shadow: 0 0 20px rgba(255, 215, 158, 0.15);
+        }
+        .glass-panel {
+            background: linear-gradient(145deg, rgba(49, 53, 59, 0.4) 0%, rgba(24, 28, 33, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 142, 121, 0.1);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen flex justify-center pb-24">
+<!-- Mobile Container -->
+<div class="w-full max-w-[512px] min-h-screen flex flex-col relative">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface-container-highest/80 dark:bg-surface-container-highest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">盲评猜球</h1>
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col w-full">
+<!-- Context Banner & Rules -->
+<section class="px-container-padding py-base flex flex-col gap-base">
+<div class="bg-primary/10 border border-primary/30 rounded-lg p-3 flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-data-label text-data-label">截止 8月21日 周五 20:00</span>
+</div>
+<span class="font-data-label text-data-label text-primary font-bold">还剩 2 天</span>
+</div>
+<div class="flex gap-2 flex-wrap">
+<div class="bg-surface-container-low border border-outline-muted rounded-full px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+<span class="font-data-label text-data-label text-on-surface-variant">胜平负 3 分</span>
+</div>
+<div class="bg-surface-container-low border border-outline-muted rounded-full px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">add_circle</span>
+<span class="font-data-label text-data-label text-on-surface-variant">比分 +2</span>
+</div>
+<div class="bg-error/10 border border-error/30 rounded-full px-3 py-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-error">local_fire_department</span>
+<span class="font-data-label text-data-label text-error">冷门翻倍</span>
+</div>
+</div>
+</section>
+<!-- Matches List -->
+<section class="px-container-padding flex flex-col gap-card-gap mt-2">
+<!-- Match Card 1 (Selected State) -->
+<article class="bg-surface-container-low rounded-xl border border-outline-muted p-4 relative overflow-hidden flex flex-col gap-3 shadow-md">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div class="flex justify-between items-center w-full">
+<span class="font-data-label text-data-label text-on-surface-variant">22:00 / 英超</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="flex justify-between items-center my-2">
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center p-1 border border-outline-muted">
+<img class="w-full h-full object-contain" data-alt="A detailed digital illustration of a dark, stylized eagle crest logo in crimson and gold, centered on a charcoal background, reflecting a high-tech modern sports aesthetic, intense contrast, moody lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWiZFZGFDk1fgTDxw0gWPHrlpFYJ0yqGqkRInUNhRGoA9eBQknJvpr2CelLTe5dzbDu1v7VlKUkfs1ILeBCUvAfwxbUOLDq16X74rldmfMPRagLoeZi_9MKZsUWcNwsZOaTFNwm0GP_YKnOMEKkKtz7FwW4caw3KiUGBCvsApeRps3WeFFuuha4sfaGCoFx83he1kg5K0W24F3w-S6_108I15E3ILKbViXJbo0G-PVFJCv9V0Uw51L0A"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-bold text-center">水晶宫</span>
+</div>
+<div class="flex flex-col items-center justify-center px-4">
+<span class="font-headline-md text-headline-md text-on-surface-variant">VS</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center p-1 border border-outline-muted">
+<img class="w-full h-full object-contain" data-alt="A detailed digital illustration of a metallic cannon crest logo in red and white, centered on a dark charcoal background, reflecting a premium sports dashboard style, dramatic shadows, crisp vectors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCH8WXVYZzjz2Uwv2jHHhi8bQqRJwhK4oMzTOPaSG4NRMnEC1_fm5CbCj-vE1ERPh2dY1VwxMK9CznIOhoYslFtncEdfomiyyW6xX_zJ-1T9-ikybv4Pe6kjgxMYwAyQCIPu2wfXLVPdYgfy1G2e3PgAWgpu7Y97_a7CMA_P5-AnKjI7xiD5sfW6ko5AzTP_BXHso7HsPMNeFylxhyLteG38hMdkCB-wxvgK4bhf7kcl815VbT-XB61EA"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-bold text-center">阿森纳</span>
+</div>
+</div>
+<!-- Prediction Selectors -->
+<div class="grid grid-cols-3 gap-2 w-full mt-1">
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">胜 3.80</button>
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">平 3.40</button>
+<button class="bg-primary text-on-primary border border-primary rounded-lg py-2 font-body-sm text-body-sm font-bold shadow-[0_0_10px_rgba(255,215,158,0.3)] transition-colors">负 1.85</button>
+</div>
+<!-- Expandable Score Input (Simplified for visual) -->
+<div class="mt-2 border-t border-outline-muted pt-3 flex items-center justify-between">
+<span class="font-data-label text-data-label text-on-surface-variant">预测比分 (可选)</span>
+<div class="flex items-center gap-2">
+<input class="w-12 h-8 bg-surface-container-high border border-outline-muted rounded text-center font-score-mobile text-body-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="-" type="number"/>
+<span class="text-on-surface-variant">:</span>
+<input class="w-12 h-8 bg-surface-container-high border border-outline-muted rounded text-center font-score-mobile text-body-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="-" type="number"/>
+</div>
+</div>
+</article>
+<!-- Match Card 2 (Unselected State) -->
+<article class="bg-surface-container-low rounded-xl border border-outline-muted p-4 relative overflow-hidden flex flex-col gap-3 shadow-md opacity-90">
+<div class="flex justify-between items-center w-full">
+<span class="font-data-label text-data-label text-on-surface-variant">00:30 / 德甲</span>
+</div>
+<div class="flex justify-between items-center my-2">
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center p-1 border border-outline-muted">
+<img class="w-full h-full object-contain" data-alt="A minimalist digital illustration of a dark stylized goat crest logo in black and white, centered on a deep charcoal background, reflecting a moody modern sports aesthetic, subtle neon accents, crisp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh2ivpaWnIlR_iuUZibmKUa-ZY__p2ECxL6vCZKizM58uUmvfpoYOcgAH-_Rv3FUSG6Q0h67Y6lnGyOYBDISQ5SwavImjraTy7jvuo0eTy4FLCaJ-wrLpLHwHnBOusDPJF_UBYK1avRCSAcAPRC43LCsh86wTtyiYhsXvzNuLGVqVMx2ioht980f8rudwM7_VJw8PegAvqsptuHSJl1TeDBi9dhMISAZ81O3WsQzrDjzH29vs6LxzYxw"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-bold text-center">科隆</span>
+</div>
+<div class="flex flex-col items-center justify-center px-4">
+<span class="font-headline-md text-headline-md text-on-surface-variant">VS</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center p-1 border border-outline-muted">
+<img class="w-full h-full object-contain" data-alt="A detailed digital illustration of a sleek stylized lion crest logo in dark yellow and black, centered on a charcoal background, high-end sports dashboard style, moody lighting, sharp vectors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9SJlCJy7e5Yj80nrrjj79qpGQTEOVDPAGY4HU1gjTkmKKAqcQ-eoZOX-SfPqzxTiHd54duihzlX9v16bjU3xytI8P-aV39O0mdCaJlxbjlQT9haEUylO0VVl4N6T7Vv3aNxChkSWuwy-dkCnkbuea-fExqdqwbpWJX5xfqQpuUFGnOQWi4tJqybHStZ1-xiZmLRS6x5FGGJNtOI5OLamq56Z6_y7jlM9S4QMWTSzy3oOetB7KJURlbw"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-bold text-center">多特蒙德</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 w-full mt-1">
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">胜 4.20</button>
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">平 3.80</button>
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">负 1.65</button>
+</div>
+</article>
+<!-- Match Card 3 (Unselected State) -->
+<article class="bg-surface-container-low rounded-xl border border-outline-muted p-4 relative overflow-hidden flex flex-col gap-3 shadow-md opacity-90">
+<div class="flex justify-between items-center w-full">
+<span class="font-data-label text-data-label text-on-surface-variant">02:45 / 意甲</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="flex justify-between items-center my-2">
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center p-1 border border-outline-muted">
+<img class="w-full h-full object-contain" data-alt="A sleek digital illustration of a dark stylized wolf crest logo in maroon and gold, centered on a deep charcoal background, reflecting a premium midnight sports aesthetic, intense contrast, glowing edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDetRNhAcXRdFGk30J2RDGuM7WaIkjCqcXE2B3BoTEOuhiLTTrTbpK_YMcUsAjAUGoqzEwH-OWcFzJ8RUFxuydEr44QMuetS9n3QZ0v2wrm_AhnqZz0aaWb8IvX1rpOBQVusW0DQQGZkb6eL2681eeEo7eL_m-DxcFlklmzC3nHmVIBmqFTlwTkcovwmsDZqilEV05JG1jaHRqp1SD6mc3OFYO4KUivP7o-MYdLJeaesNK64n-qd_nzg"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-bold text-center">罗马</span>
+</div>
+<div class="flex flex-col items-center justify-center px-4">
+<span class="font-headline-md text-headline-md text-on-surface-variant">VS</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center p-1 border border-outline-muted">
+<img class="w-full h-full object-contain" data-alt="A modern digital illustration of a sharp stylized striped crest logo in black and blue, centered on a charcoal background, high-tech sports dashboard style, moody neon highlights, vector art." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLnkgR8DeMO20FtOWnidGy30bxpqIfHPLzrA-TVbf_Lm0tgbnDIR8L0YLNsgmuYvHMTmLHRFoNoAOruW2QSzMh0WfdUCncTvD7zt-r71JAmwYQMKe9BMtrSiMTBGcBTgaYEkVMWniTgsxoze9NWDY1dfeQt0bgRzXpfMOSVBweB0mN9wxFpyvuD5YiphornV6KEEQH73PnH_-vWo9mUxzug-yjuQrwK6fSwnDVRBBs2SZOAqez2LVjIg"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-bold text-center">国际米兰</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-2 w-full mt-1">
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">胜 2.80</button>
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">平 3.10</button>
+<button class="bg-surface-container-highest border border-outline-muted rounded-lg py-2 font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-variant transition-colors">负 2.45</button>
+</div>
+</article>
+</section>
+<!-- Bottom spacing for fixed button -->
+<div class="h-24"></div>
+</main>
+<!-- Fixed Bottom Action Bar -->
+<div class="fixed bottom-0 w-full max-w-[512px] bg-surface-container-lowest/90 backdrop-blur-xl border-t border-outline-muted/50 p-4 z-50 flex flex-col gap-2">
+<div class="flex justify-between items-center px-2 mb-1">
+<span class="font-data-label text-data-label text-on-surface-variant">已选: 1/5 场</span>
+<span class="font-data-label text-data-label text-primary">潜在积分: 3+</span>
+</div>
+<button class="w-full bg-primary text-on-primary font-headline-md text-headline-md py-3 rounded-xl shadow-[0_0_20px_rgba(255,215,158,0.2)] active:scale-[0.98] transition-transform">
+                封存我的预测
+            </button>
+</div>
+</div>
+</body></html>

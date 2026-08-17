@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Midnight Match - Derby Court</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100..900&family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-bright": "#36393f",
+                      "on-secondary-container": "#004d44",
+                      "surface-container": "#1c2025",
+                      "primary-fixed": "#ffddb0",
+                      "on-error-container": "#ffdad6",
+                      "on-surface": "#e0e2ea",
+                      "on-secondary-fixed-variant": "#005047",
+                      "on-secondary-fixed": "#00201c",
+                      "surface": "#101419",
+                      "on-tertiary-container": "#630fd4",
+                      "surface-container-high": "#262a30",
+                      "on-primary-fixed": "#291800",
+                      "tertiary-container": "#ceb5ff",
+                      "tertiary-fixed-dim": "#d2bbff",
+                      "on-surface-variant": "#d6c4ad",
+                      "primary-container": "#ffb224",
+                      "secondary": "#44e2cd",
+                      "surface-container-lowest": "#0a0f13",
+                      "outline-variant": "#514533",
+                      "tertiary-fixed": "#eaddff",
+                      "secondary-fixed": "#62fae3",
+                      "inverse-surface": "#e0e2ea",
+                      "on-secondary": "#003731",
+                      "on-primary-fixed-variant": "#614000",
+                      "outline-muted": "rgba(159, 142, 121, 0.1)",
+                      "on-primary": "#442b00",
+                      "error": "#ffb4ab",
+                      "secondary-container": "#03c6b2",
+                      "outline": "#9f8e79",
+                      "on-tertiary-fixed": "#25005a",
+                      "error-container": "#93000a",
+                      "surface-variant": "#31353b",
+                      "surface-tint": "#ffba47",
+                      "on-tertiary-fixed-variant": "#5a00c6",
+                      "primary-fixed-dim": "#ffba47",
+                      "secondary-fixed-dim": "#3cddc7",
+                      "inverse-primary": "#805600",
+                      "on-tertiary": "#3f008e",
+                      "background": "#101419",
+                      "on-background": "#e0e2ea",
+                      "inverse-on-surface": "#2d3136",
+                      "on-primary-container": "#6c4800",
+                      "surface-dim": "#101419",
+                      "surface-container-low": "#181c21",
+                      "on-error": "#690005",
+                      "primary": "#ffd79e",
+                      "tertiary": "#e6d6ff",
+                      "surface-container-highest": "#31353B"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-tight": "4px",
+                      "section-margin": "24px",
+                      "base": "8px",
+                      "container-padding": "16px",
+                      "card-gap": "12px"
+              },
+              "fontFamily": {
+                      "score-mobile": ["JetBrains Mono"],
+                      "score-display": ["JetBrains Mono"],
+                      "headline-lg": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-sm": ["Be Vietnam Pro"],
+                      "body-lg": ["Be Vietnam Pro"],
+                      "data-label": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                      "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for clean UI but keep functionality */
+        ::-webkit-scrollbar { display: none; }
+        .glass-panel {
+            background: linear-gradient(145deg, rgba(38, 42, 48, 0.7) 0%, rgba(28, 32, 37, 0.4) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(159, 142, 121, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-sm antialiased flex justify-center min-h-screen">
+<!-- Ambient Background Glow -->
+<div class="fixed top-1/4 left-1/2 -translate-x-1/2 w-full max-w-[512px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+<!-- Mobile Container -->
+<main class="w-full max-w-[512px] relative pb-24 bg-surface min-h-screen z-10 shadow-2xl shadow-black/50 overflow-x-hidden">
+<!-- TopAppBar (From JSON, adapted title) -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface-container-highest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">德比法庭</h1>
+<button class="text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</header>
+<!-- Explainer Strip -->
+<div class="px-container-padding mt-6 mb-section-margin">
+<div class="glass-panel rounded-xl p-5 relative overflow-hidden flex items-center justify-between shadow-lg shadow-black/30">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-primary/20 rounded-full blur-2xl"></div>
+<div class="flex items-start gap-4 relative z-10">
+<div class="bg-surface-container-highest p-2 rounded-lg border border-outline-muted shadow-inner">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">gavel</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-wide">德比法庭规则</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">赛前一句狂言，赛后自动审判</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: 开庭中 (Focus Matches) -->
+<section class="px-container-padding mb-section-margin">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-1.5 h-5 bg-primary rounded-full shadow-[0_0_8px_rgba(255,215,158,0.5)]"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface">开庭中</h3>
+</div>
+<div class="bg-surface-container-low rounded-xl border border-surface-container-highest p-5 relative shadow-lg shadow-black/40">
+<!-- Match Meta -->
+<div class="flex justify-between items-center mb-5 pb-3 border-b border-outline-muted">
+<span class="font-data-label text-data-label bg-surface-container-highest text-primary px-2.5 py-1 rounded shadow-inner">今晚 03:00</span>
+<span class="font-data-label text-data-label text-on-surface-variant tracking-wider">英超 第12轮</span>
+</div>
+<!-- Match Teams -->
+<div class="flex justify-between items-center mb-6 px-2">
+<div class="flex flex-col items-center gap-2 w-[35%]">
+<div class="w-14 h-14 bg-cover bg-center rounded-full bg-surface-container-highest border border-outline-muted shadow-md" data-alt="High quality close up of a modern red football club crest on a dark textured background, cinematic rim lighting, 8k resolution." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXWf7LOCjghFV0aAF8BhgXZ12jPI1LZwuzW4v3dxn365-uYYvE7Xr_7g9_jD0I_koxN0qsyz0kLwNn5ygTl8k26FhvPM-GSoTfaAm2XqWStNx2TxqiRiStEYfNtfW-LQBDON4BFrk5PAfWUSzlSZVEkNlJ-4QdhUwlNPN5hRDfPkhfuZdfTOcmXRVAJslvmjbpt6Cye7BaDGpOLsPjELSqiq3Zc3ucm6kHkZB8GpoUx_tuor2-uF7zZg')"></div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">阿森纳</span>
+</div>
+<div class="flex flex-col items-center justify-center">
+<span class="font-score-display text-score-display text-on-surface-variant/30 italic">VS</span>
+</div>
+<div class="flex flex-col items-center gap-2 w-[35%]">
+<div class="w-14 h-14 bg-cover bg-center rounded-full bg-surface-container-highest border border-outline-muted shadow-md" data-alt="High quality close up of a modern blue lion football club crest on a dark textured background, cinematic rim lighting, 8k resolution." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDIa7HJ2xbKHrGFnIJEwO0bqx6xlHJJGI1Ma-6p0KX4TydpcS08KuNhC5sforTlSNxyIp9I2cKysHltTVK6u9KaxdUAICywhWxouDMpP3ISrAJsPwESdyxLpi_GM53skGNnZ3f6hljvjxZ991NQy2Fj1mLv0YK9QAZMEupvM-7icDZCliJZI2xINTZMlmng91cze6AWMIDMzjKzfm5WvM6fXYHnErqjSlkAYHpx-fpWPC7XF9UEz7QKFw')"></div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">切尔西</span>
+</div>
+</div>
+<!-- Input Area -->
+<div class="relative">
+<input class="w-full bg-surface-container-high border border-outline-muted rounded-lg py-3.5 px-4 pr-14 text-on-surface font-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 placeholder:text-on-surface-variant/40 transition-all shadow-inner" maxlength="40" placeholder="留下你的狂言 (限40字)..." type="text"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 font-data-label text-data-label text-on-surface-variant/60">0/40</span>
+</div>
+<button class="w-full mt-4 bg-primary text-on-primary font-headline-md text-headline-md py-3.5 rounded-lg shadow-[0_0_20px_rgba(255,215,158,0.15)] hover:shadow-[0_0_30px_rgba(255,215,158,0.25)] hover:bg-primary-fixed transition-all flex justify-center items-center gap-2">
+<span>提交狂言</span>
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+</button>
+</div>
+</section>
+<!-- Section: Season Stats -->
+<section class="px-container-padding mb-section-margin">
+<div class="grid grid-cols-2 gap-card-gap">
+<!-- Most Accurate -->
+<div class="bg-surface-container-low border border-secondary/20 rounded-xl p-4 flex flex-col items-center text-center relative overflow-hidden shadow-lg shadow-black/20">
+<div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-secondary/10 to-transparent pointer-events-none"></div>
+<div class="bg-secondary/10 p-2 rounded-full mb-3">
+<span class="material-symbols-outlined text-secondary text-[24px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-3">最准之口</h4>
+<div class="w-12 h-12 rounded-full bg-surface-container-highest mb-2 border-2 border-secondary overflow-hidden shadow-[0_0_10px_rgba(68,226,205,0.3)]">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young modern sports analyst in a dark studio, illuminated by sleek neon teal lights, confident expression, highly detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlSDg-FFE9rKE-QovLIJrduYZGrDxkPKgXAbB7Yc2aPheARLG-LA9-wC51XBX36maEkwnyE8kKf16ce2w4za-UMnhfZY8QdWI0yq1k0QIVb0pqugYNOeLMmwrZnnXKORwnA5CKn2HN97NRYLaMC0LiZTu5D2AnfQ2cH_stNXFbPsbydHH8DnwPRtvOGdNtjRJigBA2iNPP0-lTdk7bG46enVhBFfsHmndCuc35o5wMmwHsW3Q8YKrOFw"/>
+</div>
+<p class="font-body-sm text-body-sm text-secondary truncate w-full">@夜猫子老王</p>
+<div class="mt-2 bg-surface-container-high px-2 py-1 rounded font-data-label text-data-label text-on-surface-variant">
+                        命中率 85%
+                    </div>
+</div>
+<!-- Most Stubborn -->
+<div class="bg-surface-container-low border border-outline-muted rounded-xl p-4 flex flex-col items-center text-center relative overflow-hidden shadow-lg shadow-black/20">
+<div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-outline-muted to-transparent pointer-events-none"></div>
+<div class="bg-surface-container-high p-2 rounded-full mb-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[24px]">sentiment_dissatisfied</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-3">最铁嘴皮</h4>
+<div class="w-12 h-12 rounded-full bg-surface-container-highest mb-2 border-2 border-outline-muted overflow-hidden filter grayscale opacity-70">
+<img class="w-full h-full object-cover" data-alt="Portrait of a disappointed sports fan in a dark room illuminated only by the faint glow of a screen, dramatic shadows, moody cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV0R33GTDkq1JQdy08lQOkTlYgSxF6fG_7r2Aclf9ySXC3Rm2kvVbWuvNrNtCwNBqTpvKS_OSniilno0jKvoCJUuchcsiHRPzkl0VSIuZx6DtWa5dGIwePj_eN6uRS-EdiKhf3-dHgWAXV_qXHWHDF-l-bkMYe0PBm63OdueGXf0hn9rScLxMXMahcdVUjIJo_Q8Cr0WM4UOzCmNsB0NYlQAiI4cKM3-SRvysMW0e2ANtlsqwBff4EjA"/>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate w-full">@永远相信</p>
+<div class="mt-2 bg-surface-container-high px-2 py-1 rounded font-data-label text-data-label text-outline">
+                        翻车 12次
+                    </div>
+</div>
+</div>
+</section>
+<!-- Section: 狂言存档 (Archive) -->
+<section class="px-container-padding pb-8">
+<div class="flex items-center justify-between mb-5">
+<div class="flex items-center gap-3">
+<div class="w-1.5 h-5 bg-secondary rounded-full shadow-[0_0_8px_rgba(68,226,205,0.5)]"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface">狂言存档</h3>
+</div>
+<button class="font-data-label text-data-label text-on-surface-variant flex items-center gap-1 hover:text-on-surface transition-colors">
+                    筛选 <span class="material-symbols-outlined text-[16px]">filter_list</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Archive Item 1: Success -->
+<div class="bg-surface-container rounded-xl p-5 border border-outline-muted relative shadow-md">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-data-label text-data-label text-on-surface-variant">11月24日</span>
+<span class="w-1 h-1 bg-outline-muted rounded-full"></span>
+<span class="font-data-label text-data-label text-on-surface">曼城 vs 利物浦</span>
+</div>
+<!-- Status Chip (Fulfilled) -->
+<div class="bg-secondary/10 border border-secondary/30 text-secondary px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span class="font-data-label text-data-label">应验</span>
+</div>
+</div>
+<!-- Quote Box -->
+<div class="relative pl-4 border-l-2 border-secondary mb-4 py-1">
+<p class="font-body-lg text-body-lg text-on-surface italic tracking-wide">“哈兰德今晚必带帽，不带帽我倒立洗头！”</p>
+</div>
+<!-- User Info -->
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden border border-outline-muted">
+<img class="w-full h-full object-cover" data-alt="Close up avatar of a happy smiling person in moody blue and teal cinematic lighting, high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiuBkOAlIo4fG1FCBWPlffFjs_qGGRbRLCGZO6nf_WFCAdaEZc-duD4iSBkiSBWW4y-tbgb4KS6IL_V96cDh-e5IJD9yk4iZHfLhXqM4vTwzM-l0epn7FNmrSlGVM9wS6XR7S2gvKxxpaDOwpm4FMG3UTUaJVYpRgmmqjcFX5J-9c7XxVR4C2xP_KGQAsoocdribtlyOUq8wUteLP8aX9c27B-i86gvJ828R6tQhcoNIkbkKqgSyVGdg"/>
+</div>
+<span class="font-data-label text-data-label text-on-surface-variant">@蓝月亮铁粉</span>
+</div>
+</div>
+<!-- Archive Item 2: Failed -->
+<div class="bg-surface-container rounded-xl p-5 border border-outline-muted relative shadow-md opacity-90">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-data-label text-data-label text-on-surface-variant">11月22日</span>
+<span class="w-1 h-1 bg-outline-muted rounded-full"></span>
+<span class="font-data-label text-data-label text-on-surface">皇马 vs 巴萨</span>
+</div>
+<!-- Status Chip (Failed) -->
+<div class="bg-surface-container-high border border-outline-muted text-on-surface-variant px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">cancel</span>
+<span class="font-data-label text-data-label">翻车</span>
+</div>
+</div>
+<!-- Quote Box -->
+<div class="relative pl-4 border-l-2 border-outline-muted mb-4 py-1">
+<p class="font-body-lg text-body-lg text-on-surface-variant line-through decoration-outline decoration-2 italic tracking-wide">“巴萨这后防线，今晚不被进三个算我输。”</p>
+</div>
+<!-- User Info -->
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden border border-outline-muted grayscale">
+<img class="w-full h-full object-cover" data-alt="Close up avatar of a serious looking person in warm amber and dim lighting, cinematic mood, high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7snEFqKD5OTm9hmiC7VUl0A9AYnGu7W25hPGlRGE-I9fK04yPg5dSPdBci8LHd6YuTpwKC0JJl4GbBvluAHRUiWvn1_C8MJB6kypJFVgcmFKX9UgUM8hZfhkhvkM8DCyEBr8gVt6xgtpkGNFgcP0Q4KNsbMHc0o0dk-woTWsiBZSIlWSk5w1Mo0VFQd73yYeMzGEHw_0px1iUi71GKKtg5TRkN8oHrUqlPvIh6F-dM-D3i-Dyir_BRw"/>
+</div>
+<span class="font-data-label text-data-label text-on-surface-variant">@懂球帝小明</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (From JSON) -->
+<nav class="fixed bottom-0 w-full max-w-[512px] z-50 flex justify-around items-center px-container-padding py-4 bg-surface-container-lowest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<!-- Inactive -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">sports_soccer</span>
+</button>
+<!-- Inactive -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">leaderboard</span>
+</button>
+<!-- Active (Stars representing community/special feature) -->
+<button class="flex flex-col items-center justify-center text-secondary scale-110 transition-transform duration-200 shadow-[0_0_15px_rgba(68,226,205,0.2)] rounded-full">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+</button>
+<!-- Inactive -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">person</span>
+</button>
+</nav>
+</body></html>

@@ -1,0 +1,25 @@
+<view class="page">
+  <scroll-view scroll-x class="filters" enhanced show-scrollbar="{{false}}">
+    <view
+      wx:for="{{leagues}}" wx:key="id"
+      class="f-chip {{filter === item.id ? 'on' : ''}}"
+      data-lg="{{item.id}}" bindtap="onFilter"
+    >{{item.zh}}</view>
+  </scroll-view>
+
+  <view class="day" wx:for="{{groups}}" wx:key="date" wx:for-item="g">
+    <view class="day-title">{{g.label}}<text class="day-count">{{g.matches.length}} 场</text></view>
+    <view class="m-row" wx:for="{{g.matches}}" wx:key="id">
+      <view class="team-dot sm" style="background:{{item.home.color}}">{{item.home.id}}</view>
+      <view class="pair">{{item.pair}}</view>
+      <view class="stars">{{item.stars}}</view>
+      <view class="right">
+        <view class="chip" wx:if="{{item.tbd}}">时间待定</view>
+        <view class="mono time" wx:if="{{item.st === 'sched'}}">{{item.hm}}</view>
+        <view class="mono score" wx:elif="{{item.st === 'done'}}">{{item.sc || '补录中'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="end dim">— 种子数据：揭幕周 · 全量 1,752 场随 T3 抓取接入 —</view>
+</view>

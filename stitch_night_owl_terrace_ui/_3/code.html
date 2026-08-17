@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Midnight Match - 今日</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Be+Vietnam+Pro:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#62fae3",
+                      "surface-container": "#1c2025",
+                      "tertiary-fixed-dim": "#d2bbff",
+                      "surface-dim": "#101419",
+                      "on-secondary-fixed": "#00201c",
+                      "inverse-on-surface": "#2d3136",
+                      "surface-container-low": "#181c21",
+                      "tertiary-container": "#ceb5ff",
+                      "on-primary": "#442b00",
+                      "surface-variant": "#31353b",
+                      "outline-muted": "rgba(159, 142, 121, 0.1)",
+                      "secondary-fixed-dim": "#3cddc7",
+                      "on-secondary-container": "#004d44",
+                      "on-surface": "#e0e2ea",
+                      "on-primary-fixed": "#291800",
+                      "primary-container": "#ffb224",
+                      "tertiary-fixed": "#eaddff",
+                      "secondary-container": "#03c6b2",
+                      "on-tertiary-container": "#630fd4",
+                      "outline-variant": "#514533",
+                      "on-secondary": "#003731",
+                      "on-error-container": "#ffdad6",
+                      "surface-tint": "#ffba47",
+                      "on-tertiary-fixed-variant": "#5a00c6",
+                      "outline": "#9f8e79",
+                      "error-container": "#93000a",
+                      "inverse-primary": "#805600",
+                      "on-primary-container": "#6c4800",
+                      "surface-bright": "#36393f",
+                      "on-tertiary": "#3f008e",
+                      "primary-fixed-dim": "#ffba47",
+                      "on-surface-variant": "#D6C4AD",
+                      "tertiary": "#e6d6ff",
+                      "surface": "#101419",
+                      "on-error": "#690005",
+                      "inverse-surface": "#e0e2ea",
+                      "on-primary-fixed-variant": "#614000",
+                      "secondary": "#44e2cd",
+                      "surface-container-lowest": "#0a0f13",
+                      "primary-fixed": "#ffddb0",
+                      "on-tertiary-fixed": "#25005a",
+                      "surface-container-highest": "#31353B",
+                      "primary": "#ffd79e",
+                      "error": "#ffb4ab",
+                      "surface-container-high": "#262a30",
+                      "background": "#101419",
+                      "on-background": "#e0e2ea",
+                      "on-secondary-fixed-variant": "#005047"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-tight": "4px",
+                      "card-gap": "12px",
+                      "base": "8px",
+                      "section-margin": "24px",
+                      "container-padding": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "score-display": ["JetBrains Mono"],
+                      "score-mobile": ["JetBrains Mono"],
+                      "body-sm": ["Be Vietnam Pro"],
+                      "data-label": ["JetBrains Mono"],
+                      "body-lg": ["Be Vietnam Pro"],
+                      "headline-md": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                      "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                      "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .floodlight-glow {
+            text-shadow: 0 0 15px rgba(255, 178, 36, 0.5);
+        }
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(255, 215, 158, 0.15);
+        }
+        body {
+            background-color: #101419;
+            color: #e0e2ea;
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Mobile max width constraint */
+        .app-container {
+            max-width: 512px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 80px; /* Space for BottomNav */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background">
+<div class="app-container border-x border-surface-container-low/30 md:border-x-0">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-container-padding py-base h-16 bg-background dark:bg-background flat no shadows docked full-width top-0 sticky z-40">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:opacity-80 transition-transform active:scale-95 text-primary dark:text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">pets</span>
+</button>
+<div class="text-center flex-1">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary dark:text-primary tracking-tight">今晚哪场值得熬</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:opacity-80 transition-transform active:scale-95 text-on-surface-variant dark:text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+</button>
+</header>
+<main class="px-container-padding py-base space-y-section-margin">
+<!-- Hero: No Match State -->
+<section class="bg-surface-container-highest rounded-xl p-6 shadow-lg shadow-black/50 border border-surface-variant/50 relative overflow-hidden flex flex-col items-center justify-center min-h-[240px] text-center">
+<!-- Subtle background effect -->
+<div class="absolute inset-0 bg-gradient-to-br from-surface-tint/5 to-transparent pointer-events-none"></div>
+<div class="mb-stack-tight z-10">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase tracking-widest">长草期 · 养肝周</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-card-gap z-10">今夜无球</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 z-10">夜猫也需要补觉，养精蓄锐。</p>
+<div class="bg-surface-container/80 rounded-lg p-card-gap border border-outline-variant/30 w-full z-10">
+<p class="font-data-label text-data-label text-primary mb-stack-tight">距下一场焦点战</p>
+<div class="font-score-display text-score-mobile text-primary-container floodlight-glow flex items-baseline justify-center gap-1">
+<span>2</span><span class="font-data-label text-data-label opacity-70">天</span>
+<span>14</span><span class="font-data-label text-data-label opacity-70">小时</span>
+</div>
+<div class="mt-card-gap pt-stack-tight border-t border-outline-variant/20 flex justify-between items-center px-2">
+<span class="font-body-sm text-body-sm text-on-surface">纽卡斯尔 vs 利物浦</span>
+<span class="font-data-label text-data-label text-on-surface-variant">周日 00:30</span>
+</div>
+</div>
+</section>
+<!-- Finished Matches Replay Recommendations -->
+<section>
+<div class="flex items-center justify-between mb-card-gap">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">smart_display</span>
+                    补番推荐
+                </h3>
+</div>
+<div class="space-y-card-gap">
+<!-- Replay Card 1 -->
+<div class="bg-surface-container-low rounded-lg p-card-gap border border-surface-variant/40 flex flex-col hover:bg-surface-container/60 transition-colors">
+<div class="flex justify-between items-start mb-stack-tight">
+<span class="font-data-label text-data-label text-on-surface-variant">欧冠 1/8决赛回合二</span>
+<div class="px-2 py-0.5 rounded-full border border-secondary/40 bg-secondary/10 flex items-center">
+<span class="font-data-label text-data-label text-secondary" style="font-size: 10px;">剧透已屏蔽</span>
+</div>
+</div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold mb-stack-tight">阿森纳 vs 波尔图</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">跌宕起伏的120分钟，点球大战决胜负。</p>
+</div>
+<!-- Replay Card 2 -->
+<div class="bg-surface-container-low rounded-lg p-card-gap border border-surface-variant/40 flex flex-col hover:bg-surface-container/60 transition-colors">
+<div class="flex justify-between items-start mb-stack-tight">
+<span class="font-data-label text-data-label text-on-surface-variant">英超 第28轮</span>
+<div class="px-2 py-0.5 rounded-full border border-secondary/40 bg-secondary/10 flex items-center">
+<span class="font-data-label text-data-label text-secondary" style="font-size: 10px;">剧透已屏蔽</span>
+</div>
+</div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold mb-stack-tight">利物浦 vs 曼城</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">天王山之战，高强度对攻，战术博弈的巅峰。</p>
+</div>
+<!-- Replay Card 3 -->
+<div class="bg-surface-container-low rounded-lg p-card-gap border border-surface-variant/40 flex flex-col hover:bg-surface-container/60 transition-colors">
+<div class="flex justify-between items-start mb-stack-tight">
+<span class="font-data-label text-data-label text-on-surface-variant">西甲 第27轮</span>
+<div class="px-2 py-0.5 rounded-full border border-secondary/40 bg-secondary/10 flex items-center">
+<span class="font-data-label text-data-label text-secondary" style="font-size: 10px;">剧透已屏蔽</span>
+</div>
+</div>
+<h4 class="font-body-lg text-body-lg text-on-surface font-semibold mb-stack-tight">瓦伦西亚 vs 皇家马德里</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">补时阶段绝杀争议，全场火药味十足。</p>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base pb-safe h-20 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 flat no shadows md:hidden" style="max-width: 512px; left: 50%; transform: translateX(-50%);">
+<!-- 今日 (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-container dark:text-primary-container font-bold scale-110 transition-all duration-300 w-16 h-full" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">today</span>
+<span class="font-body-sm text-body-sm" style="font-size: 10px;">今日</span>
+</a>
+<!-- 本周 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">calendar_view_week</span>
+<span class="font-body-sm text-body-sm" style="font-size: 10px;">本周</span>
+</a>
+<!-- 赛程 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">event_note</span>
+<span class="font-body-sm text-body-sm" style="font-size: 10px;">赛程</span>
+</a>
+<!-- 玩法 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">sports_esports</span>
+<span class="font-body-sm text-body-sm" style="font-size: 10px;">玩法</span>
+</a>
+<!-- 我的 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-body-sm text-body-sm" style="font-size: 10px;">我的</span>
+</a>
+</nav>
+</div>
+</body></html>

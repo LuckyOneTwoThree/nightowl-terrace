@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Midnight Match - 今日</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#101419",
+                        "on-primary-container": "#6c4800",
+                        "outline": "#9f8e79",
+                        "surface-container-low": "#181c21",
+                        "surface-container-highest": "#31353b",
+                        "inverse-on-surface": "#2d3136",
+                        "secondary-fixed": "#62fae3",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#3e4754",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#004d44",
+                        "tertiary-fixed-dim": "#bec7d6",
+                        "on-primary": "#442b00",
+                        "secondary": "#44e2cd",
+                        "primary": "#ffd79e",
+                        "on-tertiary": "#28313c",
+                        "on-surface-variant": "#d6c4ad",
+                        "on-surface": "#e0e2ea",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-background": "#e0e2ea",
+                        "primary-container": "#ffb224",
+                        "surface-dim": "#101419",
+                        "on-primary-fixed": "#291800",
+                        "on-tertiary-container": "#47505c",
+                        "surface-container-high": "#262a30",
+                        "surface": "#101419",
+                        "surface-container-lowest": "#0a0e13",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#d4deed",
+                        "on-secondary": "#003731",
+                        "tertiary-container": "#b9c2d0",
+                        "outline-variant": "#514533",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#ffba47",
+                        "on-tertiary-fixed": "#131c27",
+                        "surface-variant": "#31353b",
+                        "tertiary-fixed": "#dae3f2",
+                        "on-secondary-fixed-variant": "#005047",
+                        "surface-tint": "#ffba47",
+                        "on-secondary-fixed": "#00201c",
+                        "inverse-primary": "#805600",
+                        "inverse-surface": "#e0e2ea",
+                        "surface-bright": "#36393f",
+                        "on-primary-fixed-variant": "#614000",
+                        "secondary-container": "#03c6b2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "card-gap": "12px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "data-label": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "score-mobile": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .floodlight-glow {
+            box-shadow: 0 0 12px 2px rgba(255, 178, 36, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 8px rgba(255, 178, 36, 0.4);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(38, 42, 48, 0.8) 0%, rgba(24, 28, 33, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 142, 121, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-sm min-h-screen pb-24 antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-background dark:bg-background docked full-width top-0 flat no shadows flex justify-between items-center w-full px-container-padding py-base h-16 fixed z-40 border-b border-surface-container-low/50">
+<div class="flex items-center gap-2 hover:opacity-80 cursor-pointer">
+<span class="material-symbols-outlined text-primary dark:text-primary font-headline-md text-headline-md" data-icon="pets" data-weight="fill" style="font-variation-settings: 'FILL' 1;">pets</span>
+<div class="flex flex-col">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase tracking-wider">8月22日 周六</span>
+<h1 class="font-headline-md text-headline-md text-on-surface">今晚哪场值得熬</h1>
+</div>
+</div>
+<button class="hover:opacity-80 p-2 rounded-full bg-surface-container-low flex items-center justify-center transition-colors hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-on-surface-variant" data-icon="calendar_today">calendar_today</span>
+</button>
+</header>
+<main class="pt-20 px-container-padding flex flex-col gap-section-margin max-w-lg mx-auto">
+<!-- Hero Card 「今晚之选」 -->
+<section class="flex flex-col gap-card-gap">
+<div class="relative bg-surface-container-highest rounded-xl p-4 overflow-hidden border border-surface-variant shadow-lg shadow-black/50">
+<!-- Accent Bar -->
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<!-- Card Header -->
+<div class="flex justify-between items-center mb-4 pl-2">
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 rounded text-white font-data-label text-data-label leading-none" style="background-color: #7C3AED;">英超</span>
+<div class="flex text-primary-container text-[14px]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<span class="font-data-label text-data-label text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                        焦点战
+                    </span>
+</div>
+<!-- Match Info -->
+<div class="flex justify-between items-center mb-5 px-4">
+<!-- Home Team -->
+<div class="flex flex-col items-center gap-2 w-1/3">
+<div class="w-14 h-14 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center relative shadow-inner">
+<span class="font-headline-md text-headline-md text-on-surface">ARS</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface text-center">阿森纳</span>
+</div>
+<!-- Time/Score -->
+<div class="flex flex-col items-center justify-center w-1/3">
+<span class="font-score-mobile text-score-mobile text-on-surface tracking-tighter">03:00</span>
+<span class="font-data-label text-data-label text-primary-container mt-1 text-glow">距开球 5小时23分</span>
+<span class="font-data-label text-data-label text-on-surface-variant mt-0.5">明天</span>
+</div>
+<!-- Away Team -->
+<div class="flex flex-col items-center gap-2 w-1/3">
+<div class="w-14 h-14 rounded-full bg-surface-container-low border border-surface-variant flex items-center justify-center relative shadow-inner">
+<span class="font-headline-md text-headline-md text-on-surface">COV</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface text-center">考文垂</span>
+</div>
+</div>
+<!-- Bullets -->
+<div class="bg-surface-container-low rounded-lg p-3 mb-4">
+<ul class="flex flex-col gap-1.5">
+<li class="flex items-center gap-2 font-data-label text-data-label text-on-surface-variant">
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                            卫冕冠军赛季首战
+                        </li>
+<li class="flex items-center gap-2 font-data-label text-data-label text-on-surface-variant">
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                            考文垂重返顶级联赛
+                        </li>
+<li class="flex items-center gap-2 font-data-label text-data-label text-on-surface-variant">
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                            阿尔特塔执教百场
+                        </li>
+</ul>
+</div>
+<!-- Chips -->
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 rounded-full border border-primary-container/40 text-primary-container font-data-label text-data-label flex items-center gap-1 bg-primary-container/10">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+                        夜猫指数 6.4
+                    </span>
+<span class="px-3 py-1.5 rounded-full border border-secondary/40 text-secondary font-data-label text-data-label flex items-center gap-1 bg-secondary/5">
+<span class="material-symbols-outlined text-[14px]">timeline</span>
+                        阿森纳卫冕之路
+                    </span>
+</div>
+</div>
+<!-- Quote Strip -->
+<div class="bg-surface-container-low p-3 rounded-xl flex items-center gap-3 border-l-2 border-primary-container">
+<span class="material-symbols-outlined text-primary-container opacity-80" style="font-variation-settings: 'FILL' 1;">pets</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">
+<span class="font-bold text-on-surface not-italic mr-1">夜猫絮语:</span>"卫冕冠军的第一夜，别迟到。"
+                </p>
+</div>
+<!-- CTA Button -->
+<button class="w-full bg-primary-container text-on-primary-container font-headline-md text-[18px] leading-[28px] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 floodlight-glow transition-transform active:scale-95">
+<span class="material-symbols-outlined">ios_share</span>
+                生成观赛海报
+            </button>
+</section>
+<!-- Section: 今日加餐 -->
+<section class="flex flex-col gap-card-gap">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+                今日加餐
+                <span class="h-[1px] flex-grow bg-surface-container-high ml-2"></span>
+</h2>
+<div class="grid grid-cols-2 gap-3">
+<!-- Sub Match Card 1 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-variant hover:border-outline-variant/50 transition-colors">
+<div class="flex justify-between items-center mb-2">
+<span class="font-data-label text-data-label text-on-surface-variant">意甲</span>
+<span class="font-data-label text-data-label text-on-surface">00:30</span>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm font-medium text-on-surface">尤文图斯</span>
+<div class="w-5 h-5 rounded-full bg-surface-container-highest border border-surface-variant flex items-center justify-center"><span class="text-[8px]">JUV</span></div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm font-medium text-on-surface-variant">科莫</span>
+<div class="w-5 h-5 rounded-full bg-surface-container-highest border border-surface-variant flex items-center justify-center"><span class="text-[8px]">COM</span></div>
+</div>
+</div>
+</div>
+<!-- Sub Match Card 2 -->
+<div class="bg-surface-container-low rounded-xl p-3 border border-surface-variant hover:border-outline-variant/50 transition-colors relative overflow-hidden">
+<div class="absolute right-0 top-0 w-8 h-8 bg-secondary/10 rounded-bl-xl flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping absolute"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-data-label text-data-label text-on-surface-variant">西甲</span>
+<span class="font-data-label text-data-label text-secondary">LIVE 45'</span>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm font-medium text-on-surface">塞维利亚</span>
+<span class="font-data-label text-data-label text-on-surface font-bold">1</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm font-medium text-on-surface-variant">比利亚雷亚尔</span>
+<span class="font-data-label text-data-label text-on-surface font-bold">0</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: 明日预告 -->
+<section class="flex flex-col gap-card-gap">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+                明日预告
+                <span class="h-[1px] flex-grow bg-surface-container-high ml-2"></span>
+</h2>
+<div class="bg-surface-container-lowest rounded-xl p-3 border border-surface-variant flex items-center justify-between">
+<div class="flex items-center gap-4 w-full">
+<div class="flex flex-col items-center min-w-[50px]">
+<span class="font-data-label text-data-label text-on-surface-variant">周日</span>
+<span class="font-headline-md text-headline-md text-on-surface leading-none mt-1">23:30</span>
+</div>
+<div class="h-8 w-[1px] bg-surface-container-highest"></div>
+<div class="flex-grow flex items-center justify-between">
+<div class="flex items-center gap-2 w-[40%] justify-end">
+<span class="font-body-sm text-body-sm text-on-surface">切尔西</span>
+<div class="w-6 h-6 rounded-full bg-surface-container-high"></div>
+</div>
+<span class="font-data-label text-data-label text-outline-variant px-2">vs</span>
+<div class="flex items-center gap-2 w-[40%] justify-start">
+<div class="w-6 h-6 rounded-full bg-surface-container-high"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">曼城</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: 正在追的剧 -->
+<section class="flex flex-col gap-card-gap">
+<div class="flex justify-between items-end">
+<h2 class="font-headline-md text-headline-md text-on-surface">正在追的剧</h2>
+<span class="font-data-label text-data-label text-on-surface-variant flex items-center hover:text-primary transition-colors cursor-pointer">
+                    全部 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</span>
+</div>
+<div class="flex overflow-x-auto gap-3 pb-2 hide-scrollbar -mx-container-padding px-container-padding">
+<!-- Story Card 1 -->
+<div class="min-w-[200px] h-32 glass-panel rounded-xl relative overflow-hidden flex flex-col justify-end p-3 group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-500" data-alt="A highly detailed, cinematic abstract background representing a high-stakes football narrative. Dark midnight blue tones fading into pitch black, illuminated by a sharp, neon teal light flare streaking across the frame, simulating a stadium floodlight cutting through fog. The aesthetic is modern, technical, and slightly gritty, perfect for a sports dashboard UI. 8k resolution, photorealistic textures." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC0NpRq8fPrhrf8Fh2HYlFsP6KLqH3x91yGkNdzavrPzby9O7FIVBsMpWSwX80jsWjDcRxW1wDS9qVrZ58U2XhV8R-WJAvUhVY5g3xwXx0YaeEmKZENKcm3z63IMKIVIOj6vkUAo987dK9OuPfEGz-ohKQnbSqi8k8Vf-gcILAcQDli4oUdWlktOzJJ1ZahQouzCkK55LDah21ZVxQqDVt9puExlEcr_8xnTobcRB7Xw70fVWd8OIGPNw')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="relative z-10">
+<span class="font-data-label text-data-label text-secondary mb-1 block">第3集 / 共38集</span>
+<h3 class="font-body-sm text-[15px] font-bold text-on-surface leading-tight">曼联重建之路：滕哈格的救赎</h3>
+</div>
+</div>
+<!-- Story Card 2 -->
+<div class="min-w-[200px] h-32 glass-panel rounded-xl relative overflow-hidden flex flex-col justify-end p-3 group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-500" data-alt="A striking digital abstract texture for a sports app UI. Deep space black background intersected by a jagged, energetic burst of amber and golden sparks, resembling a heated collision or high-intensity friction. The lighting is dramatic, high-contrast, and glowing, conveying tension and excitement. Designed in a sophisticated corporate modern style, sleek and immersive." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5mqcjmFm68atw3VyWBLLhyBvNlOyDSyFge8YVBYEJvlMulBUURvEq1mLz_u_vIwvMcuXw83x11Ng9Id1pr1nr33_mysu2N9WyEZc_SK5MO5fp3jP7CSjHXI2Iojv2vV4cYtJgN9Vx4Ns5VjArENANguJh35lE0I907tAuHve4LBZSqr6sLFudDQDmtqj918wvDaAjuT2y3D-TqpdOzxTd_XfWAXFZNYrKJhgTaPCvYYRGJlXDUFi2_A')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="relative z-10">
+<span class="font-data-label text-data-label text-primary-container mb-1 block">更新至第2章</span>
+<h3 class="font-body-sm text-[15px] font-bold text-on-surface leading-tight">蓝军锋线谜题：谁是破局者？</h3>
+</div>
+</div>
+<!-- Story Card 3 -->
+<div class="min-w-[200px] h-32 glass-panel rounded-xl relative overflow-hidden flex flex-col justify-end p-3 group cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-500" data-alt="A premium, dark mode UI background image featuring abstract geometric shapes. Subtle gradients of midnight navy and charcoal black, layered with a faint grid pattern and subtle metallic reflections. A soft, icy white light emanates from the bottom corner, providing depth. The mood is analytical, quiet, and data-driven, fitting a professional statistics dashboard." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBzxjx-5mMcR3bVkhERwCYVzwg5Kw-EyULPF6D2Me_dZ6wI6sC8YD6pbPHR3RjsT1Z4-kmpgdio7x5zAB4kMTP7vhKDFSLRP_GD5WdYzsGTZAmAAimuuJQ1mVbJIfaNkfj1G5daLcCQoyWOZb9I8ua1ywxKZkQZBY8FUleckcN9HON4Zd9Dj9yZD9w9T-0HUyIH9ys7m3SA7Q3tWIU2xWNiW-ezcb1YVmVbMjLRUYC5t1LAUKGNKVqzDw')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+<div class="relative z-10">
+<span class="font-data-label text-data-label text-on-surface-variant mb-1 block">完结篇预热</span>
+<h3 class="font-body-sm text-[15px] font-bold text-on-surface leading-tight">瓜帅战术板：无锋阵的终极进化</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Spacing for Nav -->
+<div class="h-8"></div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 flat no shadows fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base pb-safe h-20">
+<!-- Tab: 今日 (Active) -->
+<a class="flex flex-col items-center justify-center text-primary-container dark:text-primary-container font-bold scale-110 transition-all duration-300 w-16 group" href="#">
+<div class="relative">
+<span class="material-symbols-outlined mb-1" data-icon="today" style="font-variation-settings: 'FILL' 1;">today</span>
+<span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary-container"></span>
+</div>
+<span class="font-body-sm text-[10px] leading-none mt-1">今日</span>
+</a>
+<!-- Tab: 本周 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 py-2 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="calendar_view_week">calendar_view_week</span>
+<span class="font-body-sm text-[10px] leading-none mt-1">本周</span>
+</a>
+<!-- Tab: 赛程 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 py-2 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="event_note">event_note</span>
+<span class="font-body-sm text-[10px] leading-none mt-1">赛程</span>
+</a>
+<!-- Tab: 玩法 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 py-2 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="sports_esports">sports_esports</span>
+<span class="font-body-sm text-[10px] leading-none mt-1">玩法</span>
+</a>
+<!-- Tab: 我的 -->
+<a class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 py-2 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-body-sm text-[10px] leading-none mt-1">我的</span>
+</a>
+</nav>
+</body></html>

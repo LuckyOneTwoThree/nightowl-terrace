@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Midnight Match - 盲盒开球</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#36393f",
+                        "on-secondary-container": "#004d44",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e0e2ea",
+                        "on-secondary-fixed-variant": "#005047",
+                        "on-secondary-fixed": "#00201c",
+                        "surface": "#101419",
+                        "on-tertiary-container": "#630fd4",
+                        "surface-container-high": "#262a30",
+                        "on-primary-fixed": "#291800",
+                        "tertiary-container": "#ceb5ff",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "on-surface-variant": "#d6c4ad",
+                        "primary-container": "#ffb224",
+                        "secondary": "#44e2cd",
+                        "surface-container-lowest": "#0a0f13",
+                        "outline-variant": "#514533",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary-fixed": "#62fae3",
+                        "inverse-surface": "#e0e2ea",
+                        "on-secondary": "#003731",
+                        "on-primary-fixed-variant": "#614000",
+                        "outline-muted": "rgba(159, 142, 121, 0.1)",
+                        "on-primary": "#442b00",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#03c6b2",
+                        "outline": "#9f8e79",
+                        "on-tertiary-fixed": "#25005a",
+                        "error-container": "#93000a",
+                        "surface-variant": "#31353b",
+                        "surface-tint": "#ffba47",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "primary-fixed-dim": "#ffba47",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "inverse-primary": "#805600",
+                        "on-tertiary": "#3f008e",
+                        "background": "#101419",
+                        "on-background": "#e0e2ea",
+                        "inverse-on-surface": "#2d3136",
+                        "on-primary-container": "#6c4800",
+                        "surface-dim": "#101419",
+                        "surface-container-low": "#181c21",
+                        "on-error": "#690005",
+                        "primary": "#ffd79e",
+                        "tertiary": "#e6d6ff",
+                        "surface-container-highest": "#31353B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "section-margin": "24px",
+                        "base": "8px",
+                        "container-padding": "16px",
+                        "card-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "score-mobile": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "data-label": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .floodlight-glow {
+            box-shadow: 0 0 20px rgba(255, 215, 158, 0.15);
+        }
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 215, 158, 0.3);
+        }
+        .glass-panel {
+            background: linear-gradient(180deg, rgba(49, 53, 59, 0.4) 0%, rgba(24, 28, 33, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 142, 121, 0.1);
+        }
+        
+        /* Flip Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        .transition-transform {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex justify-center selection:bg-primary-container selection:text-on-primary-container">
+<!-- Mobile Container (Max 512px) -->
+<div class="w-full max-w-[512px] min-h-screen relative flex flex-col overflow-x-hidden border-x border-surface-container-high">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface-container-highest/80 dark:bg-surface-container-highest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<button aria-label="Go back" class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface">盲盒开球</h1>
+<button aria-label="More options" class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-container-padding py-section-margin flex flex-col gap-section-margin pb-24 relative">
+<!-- Filter Pills -->
+<div class="flex gap-card-gap overflow-x-auto no-scrollbar py-base">
+<button class="flex items-center justify-center px-4 py-2 rounded-full border border-primary/40 bg-primary/10 text-primary font-body-sm text-body-sm whitespace-nowrap">
+                    仅黄金档
+                </button>
+<button class="flex items-center justify-center px-4 py-2 rounded-full border border-outline-muted bg-surface-container-low text-on-surface-variant font-body-sm text-body-sm whitespace-nowrap">
+                    ★★以上
+                </button>
+<button class="flex items-center justify-center px-4 py-2 rounded-full border border-outline-muted bg-surface-container-low text-on-surface-variant font-body-sm text-body-sm whitespace-nowrap">
+                    豪门出战
+                </button>
+</div>
+<!-- Mystery Card Container -->
+<div class="relative w-full h-[360px] perspective-1000 mt-4 group cursor-pointer" onclick="this.querySelector('.preserve-3d').classList.toggle('rotate-y-180')">
+<!-- Night Cat Mascot (Pre-draw) -->
+<div class="absolute -top-8 -right-4 z-10 w-24 h-24 pointer-events-none transition-opacity duration-300 group-[.rotated]:opacity-0">
+<img alt="Night cat mascot" class="w-full h-full object-contain drop-shadow-xl" data-alt="A stylized 2D illustration of a mischievous black cat with glowing neon amber eyes peeking over a ledge. The art style is sleek, modern vector graphic with neon cyberpunk accents, fitting a dark mode sports app. High contrast, sharp edges, dark premium background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUrc44idhHY_t1HYD-U_eskMoF9ATZ7T3ax5bIEwBxaGv6B_Xf2t51y7ILFt_kvLGaLkdKzSjBjKe2JZ6WMJmbTpPy1rxaBQwhti75Rlnk8MQGPZl34a4yCuWirvxqHziHuh06soXPpUbTCUsJk6nrQ2qoU4hzv0PwYbp3hGtcXG3lbnyP7gCCv7EuEgvch7qkQpg_dBtWVRas-EP_heLmCNlgLkfIPzvzInjC74UqSGVTfV36Nt1lzw"/>
+</div>
+<!-- Flip Inner -->
+<div class="relative w-full h-full preserve-3d transition-transform duration-700">
+<!-- Pre-draw State (Front) -->
+<div class="absolute inset-0 backface-hidden w-full h-full rounded-[24px] glass-panel shadow-lg shadow-black/50 flex flex-col items-center justify-center p-6 border border-surface-container-highest overflow-hidden">
+<!-- Ambient Glow Background -->
+<div class="absolute inset-0 bg-radial-gradient from-primary/10 to-transparent opacity-50"></div>
+<!-- ? Crests -->
+<div class="flex items-center justify-center gap-8 z-10 mb-8">
+<div class="w-20 h-20 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center bg-surface-container">
+<span class="font-score-display text-score-display text-on-surface-variant font-bold opacity-50">?</span>
+</div>
+<span class="font-headline-md text-headline-md text-outline-variant font-bold">VS</span>
+<div class="w-20 h-20 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center bg-surface-container">
+<span class="font-score-display text-score-display text-on-surface-variant font-bold opacity-50">?</span>
+</div>
+</div>
+<!-- Hints -->
+<div class="flex flex-col items-center gap-stack-tight z-10">
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container border border-surface-container-highest font-data-label text-data-label text-secondary">德比</span>
+<span class="px-3 py-1 rounded-full bg-surface-container border border-surface-container-highest font-data-label text-data-label text-error">旧将反戈</span>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-data-label text-data-label text-on-surface-variant ml-1">起</span>
+</div>
+</div>
+<!-- Sleep Cost Chip -->
+<div class="absolute top-4 left-4 z-10">
+<div class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container-lowest/80 border border-surface-container-high">
+<span class="material-symbols-outlined text-tertiary-container text-xs" style="font-variation-settings: 'FILL' 1;">bedtime</span>
+<span class="font-data-label text-data-label text-tertiary-container">-2h 睡眠</span>
+</div>
+</div>
+</div>
+<!-- Reveal State (Back) -->
+<div class="absolute inset-0 backface-hidden w-full h-full rounded-[24px] bg-surface-container-highest shadow-2xl shadow-black/80 rotate-y-180 overflow-hidden flex flex-col border border-primary/20">
+<!-- Strip Header -->
+<div class="h-12 bg-surface-bright flex items-center justify-between px-4 border-b border-surface-container-high">
+<span class="font-data-label text-data-label text-on-surface tracking-widest uppercase">Premier League</span>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Match Details -->
+<div class="flex-1 flex flex-col p-6 relative">
+<!-- Background Texture -->
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/20 via-surface-container-highest to-surface-container-highest"></div>
+<!-- Date/Time -->
+<div class="text-center mb-6 z-10">
+<p class="font-headline-md text-headline-md text-on-surface font-bold">周六 22:00</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">8月13日</p>
+</div>
+<!-- Teams -->
+<div class="flex items-center justify-between z-10 flex-1">
+<!-- Brentford -->
+<div class="flex flex-col items-center gap-2 w-1/3">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
+<img alt="Brentford" class="w-10 h-10 object-contain" data-alt="A minimalist flat 2D icon of a red and white bee, representing a football club crest. High contrast, dark background, premium minimal sports UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1HnzyLffbTvyNC4WJ5bqiRHpHGt9useH9sZF2DLm96JOe8r_QpR60EZrftLL-H3zlLzwfdZp5F4PeJrc9VcEuyZNf8RVHRu74k1tDDPm-L6iV3188DR9buxNjjZ1QXZNbw-9XWAMUsbG4PzN7Lle4WkL21AcKdNjo_hjHqtCLpE2K8OazjmyltWpG7js3CnyxvMzwb8Y2v4OfD7Lghoz4F6aZbhyqEIN-y-aTWwRwPx87awck6qkcRg"/>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold whitespace-nowrap">布伦特福德</span>
+</div>
+<!-- VS -->
+<div class="w-1/3 flex flex-col items-center justify-center">
+<span class="font-score-display text-score-display text-primary text-glow italic opacity-90">-</span>
+</div>
+<!-- Spurs -->
+<div class="flex flex-col items-center gap-2 w-1/3">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
+<img alt="Spurs" class="w-10 h-10 object-contain" data-alt="A minimalist flat 2D icon of a navy blue cockerel standing on a football, representing a football club crest. High contrast, dark background, premium minimal sports UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzJefncKHFSGGBzrXo1vs4G85Akmw7gOrikIZEFECKoevyZwh4fUyUvilcUBUbk6Vqrt22_cA4BwlN0WuFJKksPc2nNZBkhaZ8GMh4E9NJQwfz9yWXD_zozul14Lz_2LrT4AwES9L97Vd-tB9fsE3MLF2avbPbF39xz8q0BqsfIfz5IZy5RDbBgR_jNwWHofkZDGlnYUZn4RwbI5DLDzszhrLkjISGuEacm_tJgT_at8h9p5MOj-XE_g"/>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface font-bold whitespace-nowrap">托特纳姆热刺</span>
+</div>
+</div>
+<!-- Venue -->
+<div class="mt-auto text-center z-10 pt-4 border-t border-surface-container-high/50">
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm">stadium</span>
+                                    Gtech 社区体育场
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="flex flex-col gap-card-gap mt-auto pt-8">
+<!-- Pre-draw Button (Visible initially) -->
+<button class="w-full h-14 bg-primary text-on-primary rounded-[12px] font-headline-md text-headline-md font-bold floodlight-glow hover:bg-primary-fixed transition-colors flex items-center justify-center gap-2">
+                    抽一场
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">playing_cards</span>
+</button>
+<!-- Reveal Buttons (Normally hidden, shown here for design completeness, logic would toggle via JS) -->
+<!-- 
+                <button class="w-full h-14 bg-primary text-on-primary rounded-[12px] font-headline-md text-headline-md font-bold floodlight-glow hover:bg-primary-fixed transition-colors">
+                    就看它了
+                </button>
+                <div class="flex gap-card-gap">
+                    <button class="flex-1 h-12 border border-outline-variant text-on-surface rounded-[12px] font-body-lg text-body-lg hover:bg-surface-container transition-colors">
+                        再抽一次
+                    </button>
+                    <button class="flex-1 h-12 border border-secondary text-secondary rounded-[12px] font-body-lg text-body-lg hover:bg-secondary/10 transition-colors flex items-center justify-center gap-2">
+                        喊群友同抽
+                        <span class="material-symbols-outlined text-sm">share</span>
+                    </button>
+                </div>
+                -->
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full max-w-[512px] z-50 flex justify-around items-center px-container-padding py-4 bg-surface-container-lowest/80 dark:bg-surface-container-lowest/80 backdrop-blur-xl shadow-lg shadow-black/50 border-t-0">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">sports_soccer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary scale-110 hover:text-primary transition-colors relative" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="absolute -bottom-2 w-1 h-1 rounded-full bg-secondary"></span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">leaderboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+</a>
+</nav>
+</div>
+</body></html>

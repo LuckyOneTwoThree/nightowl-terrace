@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Nickname Setting Modal - Midnight Match</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config defined by the Design System -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#62fae3",
+                        "surface-container": "#1c2025",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "surface-dim": "#101419",
+                        "on-secondary-fixed": "#00201c",
+                        "inverse-on-surface": "#2d3136",
+                        "surface-container-low": "#181c21",
+                        "tertiary-container": "#ceb5ff",
+                        "on-primary": "#442b00",
+                        "surface-variant": "#31353b",
+                        "outline-muted": "rgba(159, 142, 121, 0.1)",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "on-secondary-container": "#004d44",
+                        "on-surface": "#e0e2ea",
+                        "on-primary-fixed": "#291800",
+                        "primary-container": "#ffb224",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary-container": "#03c6b2",
+                        "on-tertiary-container": "#630fd4",
+                        "outline-variant": "#514533",
+                        "on-secondary": "#003731",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#ffba47",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "outline": "#9f8e79",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#805600",
+                        "on-primary-container": "#6c4800",
+                        "surface-bright": "#36393f",
+                        "on-tertiary": "#3f008e",
+                        "primary-fixed-dim": "#ffba47",
+                        "on-surface-variant": "#D6C4AD",
+                        "tertiary": "#e6d6ff",
+                        "surface": "#101419",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e0e2ea",
+                        "on-primary-fixed-variant": "#614000",
+                        "secondary": "#44e2cd",
+                        "surface-container-lowest": "#0a0f13",
+                        "primary-fixed": "#ffddb0",
+                        "on-tertiary-fixed": "#25005a",
+                        "surface-container-highest": "#31353B",
+                        "primary": "#ffd79e",
+                        "error": "#ffb4ab",
+                        "surface-container-high": "#262a30",
+                        "background": "#101419",
+                        "on-background": "#e0e2ea",
+                        "on-secondary-fixed-variant": "#005047"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "card-gap": "12px",
+                        "base": "8px",
+                        "section-margin": "24px",
+                        "container-padding": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "score-display": ["JetBrains Mono"],
+                        "score-mobile": ["JetBrains Mono"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "data-label": ["JetBrains Mono"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md-mobile": ["18px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    },
+                    "boxShadow": {
+                        "floodlight": "0 0 20px rgba(255, 178, 36, 0.15)",
+                        "glass": "inset 0 1px 1px rgba(255, 255, 255, 0.05)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(49, 53, 59, 0.7) 0%, rgba(24, 28, 33, 0.9) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(159, 142, 121, 0.1);
+        }
+
+        .input-glow:focus-within {
+            box-shadow: 0 0 0 2px rgba(255, 178, 36, 0.3);
+            border-color: rgba(255, 178, 36, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex items-center justify-center font-body-lg antialiased">
+<!-- Dimmed Backdrop -->
+<div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 transition-opacity duration-300"></div>
+<!-- Mobile Container (Max 512px) -->
+<main class="relative z-50 w-full max-w-[512px] px-container-padding mx-auto">
+<!-- Modal Card -->
+<div class="glass-panel rounded-xl shadow-2xl shadow-black/80 p-section-margin overflow-hidden relative">
+<!-- Subtle accent top border -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-secondary via-primary to-tertiary opacity-50"></div>
+<!-- Header -->
+<header class="text-center mb-section-margin">
+<div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20 text-primary mb-4">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">
+                        badge
+                    </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-stack-tight">起个圈内绰号</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">排行榜和狂言都对群友显示它</p>
+</header>
+<!-- Input Form -->
+<form class="space-y-section-margin" onsubmit="event.preventDefault();">
+<!-- Input Group -->
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">
+                            person
+                        </span>
+</div>
+<input class="w-full bg-surface-container-high border border-outline-variant/30 rounded-lg py-4 pl-12 pr-16 text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-0 transition-all duration-200 input-glow font-body-lg text-body-lg" maxlength="12" placeholder="例如：凌晨四点的猫" required="" type="text"/>
+<button aria-label="Randomize nickname" class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary-container hover:text-primary transition-colors focus:outline-none group-focus-within:text-primary active:scale-95" type="button">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                            casino
+                        </span>
+</button>
+</div>
+<!-- Action Area -->
+<div class="space-y-card-gap text-center">
+<button class="w-full bg-primary-container text-on-primary-container rounded-lg py-4 font-headline-md-mobile text-headline-md-mobile shadow-floodlight hover:bg-primary transition-all duration-200 active:scale-95 flex justify-center items-center gap-2" type="submit">
+                        确定
+                        <span class="material-symbols-outlined text-sm">
+                            arrow_forward
+                        </span>
+</button>
+<p class="font-data-label text-data-label text-outline uppercase tracking-wider">
+                        之后可在设置中修改
+                    </p>
+</div>
+</form>
+<!-- Close Button (Absolute Top Right) -->
+<button class="absolute top-4 right-4 text-outline hover:text-on-surface transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high/50">
+<span class="material-symbols-outlined text-xl">
+                    close
+                </span>
+</button>
+</div>
+</main>
+</body></html>

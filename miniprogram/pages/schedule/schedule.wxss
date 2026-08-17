@@ -1,0 +1,51 @@
+.page { padding-bottom: 48rpx; }
+
+.filters {
+  white-space: nowrap;
+  padding: 16rpx 32rpx;
+  box-sizing: border-box;
+}
+.f-chip {
+  display: inline-block;
+  padding: 8rpx 28rpx;
+  margin-right: 12rpx;
+  border-radius: var(--r-full);
+  border: 1rpx solid var(--line-strong);
+  color: var(--muted);
+  font-size: 24rpx;
+}
+.f-chip.on {
+  background: var(--primary);
+  color: var(--primary-ink);
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.day { margin: 16rpx 32rpx; }
+.day-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 16rpx 0 8rpx;
+  display: flex;
+  gap: 12rpx;
+}
+.day-count { font-size: 20rpx; color: var(--dim); font-weight: 400; }
+
+.m-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 16rpx 20rpx;
+  margin-bottom: 12rpx;
+}
+.team-dot.sm { width: 56rpx; height: 56rpx; font-size: 18rpx; flex-shrink: 0; }
+.pair { flex: 1; font-size: 26rpx; font-weight: 600; }
+.right { display: flex; align-items: center; gap: 12rpx; }
+.time { color: var(--muted); font-size: 24rpx; }
+.score { color: var(--teal); font-size: 24rpx; }
+
+.end { text-align: center; padding: 32rpx 0; }

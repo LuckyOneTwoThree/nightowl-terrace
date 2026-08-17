@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="grid">
+    <view class="play-card" wx:for="{{plays}}" wx:key="id" data-id="{{item.id}}" bindtap="onPlay">
+      <view class="icon">{{item.icon}}</view>
+      <view class="name">{{item.name}}</view>
+      <view class="desc">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <view class="section-title">德比法庭 · 本周开庭<text class="section-sub">★★★ 场次开放留言</text></view>
+  <view class="card-2 court" wx:for="{{courts}}" wx:key="id">
+    <view class="row">
+      <view class="chip chip-primary">{{item.tag}}</view>
+      <text class="pair">{{item.pair}}</text>
+    </view>
+    <view class="sub-row">
+      <text class="mono time">{{item.timeText}}</text>
+      <view class="btn-ghost sm">留一句狂言</view>
+    </view>
+  </view>
+  <view class="card-2 court" wx:if="{{!courts.length}}">
+    <view class="desc-row">本周暂无 ★★★ 场次开庭。</view>
+  </view>
+</view>

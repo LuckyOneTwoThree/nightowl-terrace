@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Midnight Match - 关注球队引导</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100..900&family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS Setup -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#36393f",
+                        "on-secondary-container": "#004d44",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e0e2ea",
+                        "on-secondary-fixed-variant": "#005047",
+                        "on-secondary-fixed": "#00201c",
+                        "surface": "#101419",
+                        "on-tertiary-container": "#630fd4",
+                        "surface-container-high": "#262a30",
+                        "on-primary-fixed": "#291800",
+                        "tertiary-container": "#ceb5ff",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "on-surface-variant": "#d6c4ad",
+                        "primary-container": "#ffb224",
+                        "secondary": "#44e2cd",
+                        "surface-container-lowest": "#0a0f13",
+                        "outline-variant": "#514533",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary-fixed": "#62fae3",
+                        "inverse-surface": "#e0e2ea",
+                        "on-secondary": "#003731",
+                        "on-primary-fixed-variant": "#614000",
+                        "outline-muted": "rgba(159, 142, 121, 0.1)",
+                        "on-primary": "#442b00",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#03c6b2",
+                        "outline": "#9f8e79",
+                        "on-tertiary-fixed": "#25005a",
+                        "error-container": "#93000a",
+                        "surface-variant": "#31353b",
+                        "surface-tint": "#ffba47",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "primary-fixed-dim": "#ffba47",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "inverse-primary": "#805600",
+                        "on-tertiary": "#3f008e",
+                        "background": "#101419",
+                        "on-background": "#e0e2ea",
+                        "inverse-on-surface": "#2d3136",
+                        "on-primary-container": "#6c4800",
+                        "surface-dim": "#101419",
+                        "surface-container-low": "#181c21",
+                        "on-error": "#690005",
+                        "primary": "#ffd79e",
+                        "tertiary": "#e6d6ff",
+                        "surface-container-highest": "#31353B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "section-margin": "24px",
+                        "base": "8px",
+                        "container-padding": "16px",
+                        "card-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "score-mobile": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "data-label": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #31353B;
+            border-radius: 4px;
+        }
+        
+        /* Subtle pulse for selected items */
+        @keyframes subtle-pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,178,36,0.1); }
+            50% { box-shadow: 0 0 20px rgba(255,178,36,0.25); }
+        }
+        .selected-glow {
+            animation: subtle-pulse 3s infinite ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-lg antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col relative max-w-md mx-auto shadow-2xl overflow-x-hidden">
+<!-- Background Atmospheric Effect -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] rounded-full bg-primary-container opacity-5 blur-[100px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] rounded-full bg-secondary opacity-5 blur-[100px]"></div>
+</div>
+<!-- Onboarding Specific Header (Overrides Global Nav rule) -->
+<header class="px-container-padding py-section-margin flex flex-col gap-base relative z-10 pt-8">
+<div class="flex justify-end w-full">
+<button class="font-data-label text-data-label text-on-surface-variant hover:text-primary transition-colors uppercase tracking-widest border border-outline-variant/30 rounded-full px-3 py-1 bg-surface-container-low/50 backdrop-blur-sm">
+                跳过
+            </button>
+</div>
+<div class="mt-4">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">先选几支主队？</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-stack-tight">随时可改，不选也能用</p>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-container-padding flex flex-col gap-section-margin pb-[120px] relative z-10">
+<!-- League: 英超 (Premier League) -->
+<section class="flex flex-col gap-card-gap">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">英超</h2>
+</div>
+<div class="flex flex-wrap gap-base">
+<!-- Selected Team Chip -->
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary bg-primary-container/10 text-primary transition-all duration-300 selected-glow">
+<div class="w-7 h-7 rounded-full bg-surface-bright flex items-center justify-center overflow-hidden border border-primary/30" data-alt="A minimalist digital crest featuring a stylized red cannon on a dark background, representing an English football team, designed with glowing neon accents suited for a high-end dark mode sports dashboard." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAiN5vAhEgEjn8VUFsYbOlYEgKwr4qmyxwrWtakDXrAsxipaYzUhY_FMGiydkSqNAfTJKx-PcJcDGs-CXueQFXAMtfO-QQcw2pW4jaXpMN2uCiXmWyHWways7wC3zAa1lopFFlk0tWRefD3zrykr046pvRMY22QQG7g4sK63D9no_C8Ra92itc8SDnB6Bwg-ewXfaSgKj-Vi_wF3cmX2EmM6WPHWSDCf7i0sVjpejdWFFvNNtcTFqbMeQ')"></div>
+<span class="font-body-sm text-body-sm font-bold tracking-wide">阿森纳</span>
+<span class="material-symbols-outlined text-[16px] ml-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<!-- Unselected Team Chip -->
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A simple vector logo of a blue lion rampant on a dark gray circular background, minimalist and modern, designed as a UI asset for a premium midnight-themed sports application." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBn6i6s7igzsywD731xUgvLRCDv6xhRGDhYQ1_pZJ0Ky0Qls8BzvNHHbp05xU4poPU1ViemlW0mXp8J7SZNuGjpP2mu9GiQL-y_nEntfbsk4UcstoyBZVZGsYyLZ41oNnFGgbOiV3TbkdXLN1Lt7mO1fhI0Xz7dFwsG06Z_TQr4V9Mxvc2s9knwsy0oUHODAFehOktbBYnX1DnLG7lhLVwGw6IRNAT4y1vE1YNFUGfcSyTYJ5Ze5Fibkg')"></div>
+<span class="font-body-sm text-body-sm">切尔西</span>
+</button>
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A stylized geometric red devil holding a pitchfork on a dark circular badge, sleek and modern graphic design intended for a high-stakes sports analytics app in dark mode." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAkMy2uDOCOikMntKhFfgHecK4RByf9egUrBGnHXQP_rwhhTcm1wdjurov79RI5W-Gk1fraUH4TlMH622onwz-azKqJI33EfwIPrMtcTljSN9-KGieOoON0xlVXs0lTmoOZGT-bezXyLNmio0t1CQ3sUH1GdcctmQaBMOVuPsRsXEHqi_VGmF60qKU5OsGKvxPwt0qLXGa8nWCX_wZBpBbPN4JKd_yXuT9togHSTCucn17AUm9gSGsJiQ')"></div>
+<span class="font-body-sm text-body-sm">曼联</span>
+</button>
+<!-- Selected Team Chip -->
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary bg-primary-container/10 text-primary transition-all duration-300 selected-glow">
+<div class="w-7 h-7 rounded-full bg-surface-bright flex items-center justify-center overflow-hidden border border-primary/30" data-alt="A minimalist sky blue ship sailing on a dark circular background, crisp vector graphic style with subtle glowing edges, designed for a modern sports dashboard UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAjWETVZcGI7PFdNyFvpgatcdyptUlXmyHZ6uP6CEF15fuKSYh0C2JtdYSz_la431FaJZJhl5uwfaKM8LqW71k6VPaBLfk2M7xUNPxRk2rox1qrJzlB-wddwTw5QBuPlgEZCIL9ZdhyHf-SonZnsSxiqJlA-3CB1oTmdPYrkdULny500VysJalxbCLcLJJ9D7PJ2vXSrfMC1x3r-BpOpsiDvoQwJm9ouCCYXnvcmhzoBga_Z0N2au9QJw')"></div>
+<span class="font-body-sm text-body-sm font-bold tracking-wide">曼城</span>
+<span class="material-symbols-outlined text-[16px] ml-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+</div>
+</section>
+<!-- League: 西甲 (La Liga) -->
+<section class="flex flex-col gap-card-gap">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">西甲</h2>
+</div>
+<div class="flex flex-wrap gap-base">
+<!-- Selected Team Chip -->
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-primary bg-primary-container/10 text-primary transition-all duration-300 selected-glow">
+<div class="w-7 h-7 rounded-full bg-surface-bright flex items-center justify-center overflow-hidden border border-primary/30" data-alt="A regal digital crest featuring a crown over a circular emblem in white and subtle gold, set against a deep black background, highly stylized for a premium night-mode sports interface." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAwWmJPL81LivdI4jHHqtz6qfVKAebksK_M2BE1_w7YZiKGVKIbD9KUOAb63jiKzb6W3QdVwQ6qdGIGs98wW0eaouyU19-yTKoJHRhYwSBA54mShuMDhDas_4EF7ch-7Bx1pGRLdwX8N_KTTED2kYBY13LOmCtzL2vGPMBmhqmUY7vJdQ_xP1ZpGInJ_06uPFXGqGZbCgP3egTEhIQK_RJ_UyiMW2dJSXvO3PdQEBpH7yHhnrFRo6a8Zg')"></div>
+<span class="font-body-sm text-body-sm font-bold tracking-wide">皇家马德里</span>
+<span class="material-symbols-outlined text-[16px] ml-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<!-- Unselected Team Chips -->
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A modern geometric shield crest in deep red and blue stripes, minimalist digital art style, suitable as an unselected team icon in a high-end dark themed sports dashboard." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDFfaVbJGpvBEgN5F57YO_Xv9YMZP1DsTO4MgfL2fpaggTDsqLF7S6EGWDcDr-V6r2WlSQe0DIjunXdjYr7RjUPY7iXkMLHSIp0cqH8lLqJIYhG-u-ysu-Cjzj3gcQYZzp5hbqTwqxk0SXkxUAcrsR_jhU_1HBSJ2t5tkcvSXMqhjMpVrzHXkjb563itgtoy28E57W3WwhHzKKM4M7iRVROXH23OYnDz6d3XBwefDaZieQet48rpgsLOQ')"></div>
+<span class="font-body-sm text-body-sm">巴塞罗那</span>
+</button>
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A sleek vector graphic of a bear and a tree within a circular dark badge, red and white subtle accents, designed for a high-tech sports analytics application UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAfkWtrJ0MDjO_Xun5zOxMkT1AEq2drr0TvFi-wXy_jvMME86jeyXLoxq3tNiR0iN6HWpZwp69Od6nqpIsW8Wiuf3sNNpyrA_Mu9EUBf8xu1s85OVnandWwoaHLAwvwPyDmsc1rmSrPnvVbT901EBjABybqEaNy-jgknz3USUvkKK5i8sxz91_pqC-9xEn8xBV3UrtdOccx5RSQpougbrsEjMc-WEXrsc6nDjOEWxSNUhqw6jwiRK_8tQ')"></div>
+<span class="font-body-sm text-body-sm">马德里竞技</span>
+</button>
+</div>
+</section>
+<!-- League: 意甲 (Serie A) -->
+<section class="flex flex-col gap-card-gap">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">意甲</h2>
+</div>
+<div class="flex flex-wrap gap-base">
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A minimalist black and white striped oval crest featuring a stylized letter J, sleek and highly modern, designed specifically for a premium midnight sports UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCauNIGC7v7OuWFqVrTE6COt0aFA_1VIe1EufWQJbHwOju0-f9aHAVVisCWy-lTp7nx7LiiJ8rAxlos_qF7dIXkt4pvKvmBuxvswwUytCN0kcHSyafIecnYXSPHGsxQtN-O-zEfv4NjaKSsYg3tFA2fXyzrjYO9h1NTeqkbZNwCIanUgcPkfUyfKLVp7itxkQg3ieoG96m9u-Ig8ssNG3SacK-rOnX8nf0GuvjyksL6ykG-65budcesSA')"></div>
+<span class="font-body-sm text-body-sm">尤文图斯</span>
+</button>
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A clean circular badge with alternating black and red stripes, subtle metallic sheen, designed as a UI element for a dark mode high-stakes sports dashboard." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbLqu2HGKiv2cmwU9-S_meA3VfnBolryndn-lfm5W-Waf8Eq_xf3j52d4t94JE7vXHF0dukVi_2okpdPrU0dKp6KPcCi4Y7eoPENo-g96rSuy-xEiEfj6mA1XCPrHcho0l_M0Iqny6yd8I2DH1NQDCXjTMJZ8iKTEy3dJFyS_oOBdg1iGr5D0EWTr_XKGevB5ZwJBgs44fumOnZ1QAqj85QdrGDjLoyz0iO1VX4ivhEzLNTvLCJYv8ZA')"></div>
+<span class="font-body-sm text-body-sm">AC米兰</span>
+</button>
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A modern crest design featuring a minimalist snake graphic in blue on a black background, highly stylized and aggressive, perfect for a high-intensity sports app." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZ-knPEOZuHJbUs12XFRgDSo6CS2_dR89i32yiaJ1IioZw2f7hONzkuU4ds2jEvVcMFIIBmMv6e731hrsUGX5b1fdtwJEYLajKRYdHG6E9Xi98V_VGNHIXeSXSoZAFh2ferEz9fkoD3QlHJQDdBb3mvYDPuQ827_Xkpjv1Sj99FSHQ_ppLllynly1ZqAcFr-t0PCITN76DMvBh-w7s_h2rVQrtoiGTF7X2xe7HfCw29QzWcx4a6GoyCw')"></div>
+<span class="font-body-sm text-body-sm">国际米兰</span>
+</button>
+</div>
+</section>
+<!-- League: 德甲 (Bundesliga) -->
+<section class="flex flex-col gap-card-gap opacity-70">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">德甲</h2>
+</div>
+<div class="flex flex-wrap gap-base">
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A simple red circular badge with subtle white geometric patterns, minimalist and clean, designed for a dark mode sports team selection interface." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDGzRfSesPCdWA3ZPKz-BHxEo3jj_aO9MO8mosD4xbV2qHxe6nHgSDbjv_6mevqGvPGqiCUBQEXag9J8mvFMMgpeX1JG2X5MAQ3iaUvtMgWbNYKi6U1VpBh6o9k0JEAMDBRGXORku7crrzuszL3-fGX-m4ucCXqNaCAKfHf0Wnbcqpi8a6U0dufCHlPh2kx2QDW2cgKmd382DCbPPfVmI9TzVGs_VbJh9TCcEzGNbR6UVoWChYlwH7JhA')"></div>
+<span class="font-body-sm text-body-sm">拜仁慕尼黑</span>
+</button>
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A vibrant yellow and black circular emblem, stylized BVB text, sleek vector art suitable for a premium dark mode UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5USNmGAJpxlvNflg18gEo8GDpE8827OZqFTI96Fbuce7J5x7OByWeKpFHFg1H1wWqVlajxHg5gC4uUfWnhWw3nnG1JH6CEESAOpGodacMPLIiP5kOxHsXUXx6bqw0NlZ3DScfwxKCjsYoScBiYvjcTiGwKsunt8OIFHtLPfw4d-RyQfrwK6ozW3906xRQLV1NSAisPTfFjBmvXDQm0Pynjp20U3yFQkDaqETSpKOVMogXT3db3CaoZA')"></div>
+<span class="font-body-sm text-body-sm">多特蒙德</span>
+</button>
+</div>
+</section>
+<!-- League: 法甲 (Ligue 1) -->
+<section class="flex flex-col gap-card-gap opacity-70">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">法甲</h2>
+</div>
+<div class="flex flex-wrap gap-base">
+<button class="group flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface-container-low/50 text-on-surface-variant hover:border-primary/40 hover:text-on-surface transition-all duration-200">
+<div class="w-7 h-7 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-300" data-alt="A modern stylized Eiffel Tower crest in red and blue on a dark background, crisp and minimal, designed for a luxury sports dashboard context." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAeozomYBgxMiyqzIq-JKkkUDwStNWweMBWTME6QtVkxsfLvZ36Hx2t3SFTBL930hf8IxVehJGLhDlM22rK2YYwULPYixVRZrpQHOnOHpI-fpUGil4fm9Z-y10aAP5OU_HT1rpZFmFsNnqrV3HcH5PXw6aoOz4XMubGSu9VRZvInv69vI-rLS-HMWBbrjQnPc7k7rLkVOCDXwIi_obXovSaJAtq10LSrHMTBBBKKcliecgME0od3ue5Qw')"></div>
+<span class="font-body-sm text-body-sm">巴黎圣日耳曼</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Bar (Onboarding Action Bar) -->
+<div class="fixed bottom-0 left-0 w-full max-w-md mx-auto z-50">
+<!-- Gradient fade to hide scroll cutoff -->
+<div class="h-12 w-full bg-gradient-to-t from-surface-container-lowest to-transparent pointer-events-none"></div>
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl border-t border-outline-variant/20 px-container-padding py-4 flex items-center justify-between shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface-variant">已选球队</span>
+<span class="font-headline-md text-headline-md text-on-surface tracking-tight">
+<span class="text-primary font-bold">3</span> 支
+                </span>
+</div>
+<button class="bg-primary text-on-primary font-headline-md text-headline-md px-10 py-3 rounded-xl shadow-[0_0_20px_rgba(255,215,158,0.25)] hover:shadow-[0_0_30px_rgba(255,215,158,0.4)] hover:bg-primary-fixed hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center gap-2 group">
+                完成
+                <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

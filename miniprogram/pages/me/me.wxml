@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="guide" wx:if="{{firstTime}}">
+    <view class="g-title">选你的主队</view>
+    <view class="g-sub">按联赛多选，存本地，朋友之间互不影响。主队比赛自动提级。</view>
+  </view>
+
+  <view class="section-title">关注球队<text class="section-sub">已选 {{followed.length}} 支</text></view>
+  <view class="lg-block" wx:for="{{groups}}" wx:key="id" wx:for-item="g">
+    <view class="lg-name">{{g.zh}}</view>
+    <view class="t-grid">
+      <view
+        wx:for="{{g.teams}}" wx:key="id"
+        class="t-chip {{item.on ? 'on' : ''}}"
+        data-id="{{item.id}}" bindtap="onToggle"
+      >
+        <view class="dot" style="background:{{item.color}}"></view>
+        <text>{{item.zh}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">我的记录</view>
+  <view class="card-2 rec" wx:if="{{firstTime}}">
+    <view class="rec-row">关注球队后，主队赛程与提级推荐会出现在「今日」与「本周」。</view>
+  </view>
+  <view class="card-2 rec" wx:else>
+    <view class="rec-row">我的预测 · 狂言存档 · 打卡记录（v1 云版本上线后在此汇总）</view>
+  </view>
+
+  <view class="btn-primary go" bindtap="onGoToday">回今晚看球</view>
+</view>

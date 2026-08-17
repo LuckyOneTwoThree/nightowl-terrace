@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Budget Adjustment Bottom Sheet</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100..900&family=Hanken+Grotesk:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#62fae3",
+                        "surface-container": "#1c2025",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "surface-dim": "#101419",
+                        "on-secondary-fixed": "#00201c",
+                        "inverse-on-surface": "#2d3136",
+                        "surface-container-low": "#181c21",
+                        "tertiary-container": "#ceb5ff",
+                        "on-primary": "#442b00",
+                        "surface-variant": "#31353b",
+                        "outline-muted": "rgba(159, 142, 121, 0.1)",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "on-secondary-container": "#004d44",
+                        "on-surface": "#e0e2ea",
+                        "on-primary-fixed": "#291800",
+                        "primary-container": "#ffb224",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary-container": "#03c6b2",
+                        "on-tertiary-container": "#630fd4",
+                        "outline-variant": "#514533",
+                        "on-secondary": "#003731",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#ffba47",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "outline": "#9f8e79",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#805600",
+                        "on-primary-container": "#6c4800",
+                        "surface-bright": "#36393f",
+                        "on-tertiary": "#3f008e",
+                        "primary-fixed-dim": "#ffba47",
+                        "on-surface-variant": "#D6C4AD",
+                        "tertiary": "#e6d6ff",
+                        "surface": "#101419",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e0e2ea",
+                        "on-primary-fixed-variant": "#614000",
+                        "secondary": "#44e2cd",
+                        "surface-container-lowest": "#0a0f13",
+                        "primary-fixed": "#ffddb0",
+                        "on-tertiary-fixed": "#25005a",
+                        "surface-container-highest": "#31353B",
+                        "primary": "#ffd79e",
+                        "error": "#ffb4ab",
+                        "surface-container-high": "#262a30",
+                        "background": "#101419",
+                        "on-background": "#e0e2ea",
+                        "on-secondary-fixed-variant": "#005047"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "card-gap": "12px",
+                        "base": "8px",
+                        "section-margin": "24px",
+                        "container-padding": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "score-display": ["JetBrains Mono"],
+                        "score-mobile": ["JetBrains Mono"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "data-label": ["JetBrains Mono"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black flex items-center justify-center min-h-screen font-body-lg text-on-background m-0 p-0">
+<!-- Mobile Device Simulator Wrapper -->
+<div class="relative w-full max-w-[512px] h-[812px] bg-background overflow-hidden shadow-2xl shadow-black/80 sm:rounded-[40px] sm:border-8 border-surface-container-highest">
+<!-- App Content Background (Placeholder for app underneath) -->
+<div class="absolute inset-0 bg-surface-dim p-4 flex flex-col opacity-50">
+<div class="h-16 w-full bg-surface-container-low rounded-xl mb-4"></div>
+<div class="h-32 w-full bg-surface-container-low rounded-xl mb-4"></div>
+<div class="h-64 w-full bg-surface-container-low rounded-xl"></div>
+</div>
+<!-- Dimmed Backdrop -->
+<div class="absolute inset-0 bg-black/60 backdrop-blur-md z-40 transition-opacity"></div>
+<!-- Bottom Sheet -->
+<div class="absolute bottom-0 left-0 w-full bg-surface-container rounded-t-[24px] z-50 flex flex-col shadow-[0_-8px_32px_rgba(0,0,0,0.5)] border-t border-outline-muted/20 pb-8 transition-transform duration-300 transform translate-y-0">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center pt-4 pb-2">
+<div class="w-12 h-1 bg-outline-muted rounded-full"></div>
+</div>
+<!-- Header -->
+<div class="px-container-padding flex items-center justify-between mb-section-margin mt-2">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface">调整本周额度</h2>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors p-1 flex items-center justify-center rounded-full bg-surface-container-high/50">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Main Value Display -->
+<div class="flex justify-center items-end gap-1 mb-8">
+<span class="font-score-mobile text-score-mobile text-primary-container drop-shadow-[0_0_12px_rgba(255,178,36,0.3)]">4.0</span>
+<span class="font-headline-md text-headline-md-mobile text-primary-container/70 pb-0.5">h</span>
+</div>
+<!-- Slider Control -->
+<div class="px-container-padding mb-8">
+<div class="relative w-full h-10 flex items-center group">
+<!-- Invisible native input for functionality & accessibility -->
+<input class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" max="8" min="0" step="0.5" type="range" value="4"/>
+<!-- Custom Visual Track -->
+<div class="absolute left-0 w-full h-2 bg-surface-container-highest rounded-full overflow-hidden shadow-inner border border-outline-muted/10">
+<!-- Filled portion -->
+<div class="h-full bg-primary-container w-1/2 rounded-full shadow-[0_0_8px_rgba(255,178,36,0.6)]"></div>
+</div>
+<!-- Custom Visual Thumb -->
+<div class="absolute left-1/2 -translate-x-1/2 w-6 h-6 bg-surface border-[3px] border-primary-container rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.8)] pointer-events-none group-active:scale-110 transition-transform duration-100 flex items-center justify-center">
+<div class="w-1.5 h-1.5 bg-primary-container rounded-full"></div>
+</div>
+</div>
+<!-- Range Labels -->
+<div class="flex justify-between mt-2 font-data-label text-data-label text-on-surface-variant/60">
+<span>0h</span>
+<span>8h</span>
+</div>
+</div>
+<!-- Teal Hint Text Panel -->
+<div class="px-container-padding mb-6">
+<div class="bg-secondary-fixed/5 border border-secondary-fixed/20 rounded-xl p-3 flex items-start gap-3 shadow-[inset_0_0_20px_rgba(98,250,227,0.02)]">
+<span class="material-symbols-outlined text-secondary-fixed mt-0.5" data-icon="info" style="font-variation-settings: 'FILL' 0, 'wght' 300;">info</span>
+<p class="font-body-sm text-body-sm text-secondary-fixed/90 leading-relaxed pt-0.5">
+                        上周已透支 <span class="font-data-label text-[13px] font-bold">1.5h</span>，建议本周收紧
+                    </p>
+</div>
+</div>
+<!-- Preview Text -->
+<div class="px-container-padding text-center mb-section-margin">
+<p class="font-data-label text-data-label text-on-surface-variant flex items-center justify-center gap-1.5 opacity-80">
+<span class="material-symbols-outlined text-[16px]" data-icon="visibility" style="font-variation-settings: 'wght' 300;">visibility</span>
+                    预计可覆盖 2 场 <span class="text-primary-container tracking-widest text-[10px]">★★★</span>
+</p>
+</div>
+<!-- Action Buttons -->
+<div class="px-container-padding flex gap-4 mt-auto">
+<button class="flex-1 py-3.5 rounded-xl border border-outline-variant/50 font-body-lg text-body-lg text-on-surface hover:bg-surface-variant transition-colors active:scale-[0.98]">
+                    取消
+                </button>
+<button class="flex-[2] py-3.5 rounded-xl bg-primary-container text-on-primary-container font-headline-md text-[16px] font-bold shadow-[0_4px_16px_rgba(255,178,36,0.15)] hover:opacity-90 transition-all active:scale-[0.98] flex items-center justify-center gap-2 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+                    保存
+                </button>
+</div>
+</div>
+</div>
+</body></html>

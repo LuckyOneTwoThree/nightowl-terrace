@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>我的 - 夜猫球迷</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#101419",
+                        "on-primary-container": "#6c4800",
+                        "outline": "#9f8e79",
+                        "surface-container-low": "#181c21",
+                        "surface-container-highest": "#31353b",
+                        "inverse-on-surface": "#2d3136",
+                        "secondary-fixed": "#62fae3",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#3e4754",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#004d44",
+                        "tertiary-fixed-dim": "#bec7d6",
+                        "on-primary": "#442b00",
+                        "secondary": "#44e2cd",
+                        "primary": "#ffd79e",
+                        "on-tertiary": "#28313c",
+                        "on-surface-variant": "#d6c4ad",
+                        "on-surface": "#e0e2ea",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-background": "#e0e2ea",
+                        "primary-container": "#ffb224",
+                        "surface-dim": "#101419",
+                        "on-primary-fixed": "#291800",
+                        "on-tertiary-container": "#47505c",
+                        "surface-container-high": "#262a30",
+                        "surface": "#101419",
+                        "surface-container-lowest": "#0a0e13",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#d4deed",
+                        "on-secondary": "#003731",
+                        "tertiary-container": "#b9c2d0",
+                        "outline-variant": "#514533",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#ffba47",
+                        "on-tertiary-fixed": "#131c27",
+                        "surface-variant": "#31353b",
+                        "tertiary-fixed": "#dae3f2",
+                        "on-secondary-fixed-variant": "#005047",
+                        "surface-tint": "#ffba47",
+                        "on-secondary-fixed": "#00201c",
+                        "inverse-primary": "#805600",
+                        "inverse-surface": "#e0e2ea",
+                        "surface-bright": "#36393f",
+                        "on-primary-fixed-variant": "#614000",
+                        "secondary-container": "#03c6b2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "container-padding": "16px",
+                        "section-margin": "24px",
+                        "card-gap": "12px",
+                        "base": "8px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "data-label": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "score-mobile": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-sm min-h-screen pb-32">
+<!-- Header Section -->
+<header class="px-container-padding py-section-margin flex items-center gap-4">
+<div class="relative w-20 h-20 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-4xl icon-fill">pets</span>
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-surface-container-low border border-outline-variant rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[14px]">edit</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<h1 class="font-headline-lg text-headline-lg-mobile text-on-surface">圈内绰号</h1>
+<span class="font-data-label text-data-label text-secondary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                在线 (第428夜)
+            </span>
+</div>
+</header>
+<!-- Stats Row -->
+<section class="px-container-padding grid grid-cols-3 gap-card-gap mb-section-margin">
+<!-- Stat 1 -->
+<div class="bg-surface-container-low border border-surface-variant rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden">
+<div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+<div class="font-score-mobile text-score-mobile text-primary">12.5<span class="text-sm text-primary/70">h</span></div>
+<div class="font-data-label text-data-label text-on-surface-variant mt-2">修仙时长</div>
+</div>
+<!-- Stat 2 -->
+<div class="bg-surface-container-low border border-surface-variant rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden">
+<div class="font-score-mobile text-score-mobile text-on-surface">28</div>
+<div class="font-data-label text-data-label text-on-surface-variant mt-2">预测</div>
+</div>
+<!-- Stat 3 -->
+<div class="bg-surface-container-low border border-surface-variant rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden">
+<div class="font-score-mobile text-score-mobile text-secondary">43<span class="text-sm text-secondary/70">%</span></div>
+<div class="font-data-label text-data-label text-on-surface-variant mt-2">应验率</div>
+</div>
+</section>
+<!-- 关注球队 (Followed Teams) -->
+<section class="px-container-padding mb-section-margin">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] icon-fill">star</span>
+            关注球队
+        </h2>
+<div class="space-y-4 bg-surface-container-lowest border border-surface-variant rounded-xl p-4">
+<!-- League Group 1 -->
+<div>
+<h3 class="font-data-label text-data-label text-on-surface-variant mb-3 flex items-center gap-2 before:content-[''] before:w-1 before:h-3 before:bg-outline-variant before:rounded-full">英超</h3>
+<div class="flex flex-wrap gap-3">
+<button class="bg-primary text-on-primary border border-primary px-3 py-1.5 rounded-DEFAULT font-data-label text-data-label shadow-[0_0_8px_rgba(255,215,158,0.2)] transition-transform active:scale-95">曼城</button>
+<button class="bg-primary text-on-primary border border-primary px-3 py-1.5 rounded-DEFAULT font-data-label text-data-label shadow-[0_0_8px_rgba(255,215,158,0.2)] transition-transform active:scale-95">阿森纳</button>
+<button class="bg-surface-container-low text-on-surface-variant border border-outline-variant px-3 py-1.5 rounded-DEFAULT font-data-label text-data-label hover:bg-surface-container-high transition-colors">切尔西</button>
+</div>
+</div>
+<!-- League Group 2 -->
+<div class="pt-2">
+<h3 class="font-data-label text-data-label text-on-surface-variant mb-3 flex items-center gap-2 before:content-[''] before:w-1 before:h-3 before:bg-outline-variant before:rounded-full">西甲</h3>
+<div class="flex flex-wrap gap-3">
+<button class="bg-primary text-on-primary border border-primary px-3 py-1.5 rounded-DEFAULT font-data-label text-data-label shadow-[0_0_8px_rgba(255,215,158,0.2)] transition-transform active:scale-95">皇马</button>
+<button class="bg-surface-container-low text-on-surface-variant border border-outline-variant px-3 py-1.5 rounded-DEFAULT font-data-label text-data-label hover:bg-surface-container-high transition-colors">巴萨</button>
+<button class="bg-surface-container-low text-on-surface-variant border border-outline-variant px-3 py-1.5 rounded-DEFAULT font-data-label text-data-label hover:bg-surface-container-high transition-colors">马竞</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Menu List -->
+<section class="px-container-padding mb-section-margin">
+<div class="bg-surface-container-low border border-surface-variant rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 border-b border-surface-variant/50 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-secondary-container transition-colors">assessment</span>
+<span class="font-body-lg text-body-lg text-on-surface">我的预测</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 border-b border-surface-variant/50 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary group-hover:text-primary-container transition-colors">history_edu</span>
+<span class="font-body-lg text-body-lg text-on-surface">狂言存档</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 border-b border-surface-variant/50 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:text-secondary-container transition-colors">task_alt</span>
+<span class="font-body-lg text-body-lg text-on-surface">打卡记录</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 border-b border-surface-variant/50 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary group-hover:text-primary-container transition-colors">notifications</span>
+<span class="font-body-lg text-body-lg text-on-surface">订阅提醒</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors">settings</span>
+<span class="font-body-lg text-body-lg text-on-surface">设置</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-base pb-safe h-20 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 md:hidden">
+<!-- 今日 -->
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-lg transition-colors">
+<span class="material-symbols-outlined mb-1">today</span>
+<span class="font-body-sm text-body-sm text-[10px]">今日</span>
+</button>
+<!-- 本周 -->
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-lg transition-colors">
+<span class="material-symbols-outlined mb-1">calendar_view_week</span>
+<span class="font-body-sm text-body-sm text-[10px]">本周</span>
+</button>
+<!-- 赛程 -->
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-lg transition-colors">
+<span class="material-symbols-outlined mb-1">event_note</span>
+<span class="font-body-sm text-body-sm text-[10px]">赛程</span>
+</button>
+<!-- 玩法 -->
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline hover:bg-surface-container-high/50 w-16 h-full rounded-lg transition-colors">
+<span class="material-symbols-outlined mb-1">sports_esports</span>
+<span class="font-body-sm text-body-sm text-[10px]">玩法</span>
+</button>
+<!-- 我的 (Active) -->
+<button class="flex flex-col items-center justify-center text-primary-container dark:text-primary-container font-bold hover:bg-surface-container-high/50 scale-110 transition-all duration-300 w-16 h-full rounded-lg relative">
+<div class="absolute -top-1 w-8 h-1 bg-primary-container rounded-full shadow-[0_0_8px_rgba(255,178,36,0.5)]"></div>
+<span class="material-symbols-outlined mb-1 icon-fill">person</span>
+<span class="font-body-sm text-body-sm text-[10px]">我的</span>
+</button>
+</nav>
+</body></html>

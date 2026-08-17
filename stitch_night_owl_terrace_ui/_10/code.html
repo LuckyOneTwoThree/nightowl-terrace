@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>生成观赛海报</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#36393f",
+                        "on-secondary-container": "#004d44",
+                        "surface-container": "#1c2025",
+                        "primary-fixed": "#ffddb0",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e0e2ea",
+                        "on-secondary-fixed-variant": "#005047",
+                        "on-secondary-fixed": "#00201c",
+                        "surface": "#101419",
+                        "on-tertiary-container": "#630fd4",
+                        "surface-container-high": "#262a30",
+                        "on-primary-fixed": "#291800",
+                        "tertiary-container": "#ceb5ff",
+                        "tertiary-fixed-dim": "#d2bbff",
+                        "on-surface-variant": "#d6c4ad",
+                        "primary-container": "#ffb224",
+                        "secondary": "#44e2cd",
+                        "surface-container-lowest": "#0a0f13",
+                        "outline-variant": "#514533",
+                        "tertiary-fixed": "#eaddff",
+                        "secondary-fixed": "#62fae3",
+                        "inverse-surface": "#e0e2ea",
+                        "on-secondary": "#003731",
+                        "on-primary-fixed-variant": "#614000",
+                        "outline-muted": "rgba(159, 142, 121, 0.1)",
+                        "on-primary": "#442b00",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#03c6b2",
+                        "outline": "#9f8e79",
+                        "on-tertiary-fixed": "#25005a",
+                        "error-container": "#93000a",
+                        "surface-variant": "#31353b",
+                        "surface-tint": "#ffba47",
+                        "on-tertiary-fixed-variant": "#5a00c6",
+                        "primary-fixed-dim": "#ffba47",
+                        "secondary-fixed-dim": "#3cddc7",
+                        "inverse-primary": "#805600",
+                        "on-tertiary": "#3f008e",
+                        "background": "#101419",
+                        "on-background": "#e0e2ea",
+                        "inverse-on-surface": "#2d3136",
+                        "on-primary-container": "#6c4800",
+                        "surface-dim": "#101419",
+                        "surface-container-low": "#181c21",
+                        "on-error": "#690005",
+                        "primary": "#ffd79e",
+                        "tertiary": "#e6d6ff",
+                        "surface-container-highest": "#31353B"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "poster": "1.5rem"
+                    },
+                    "spacing": {
+                        "stack-tight": "4px",
+                        "section-margin": "24px",
+                        "base": "8px",
+                        "container-padding": "16px",
+                        "card-gap": "12px"
+                    },
+                    "fontFamily": {
+                        "score-mobile": ["JetBrains Mono"],
+                        "score-display": ["JetBrains Mono"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "data-label": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    },
+                    "boxShadow": {
+                        "floodlight": "0 4px 30px rgba(255, 215, 158, 0.15)",
+                        "floodlight-teal": "0 4px 30px rgba(68, 226, 205, 0.15)"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            font-family: 'Be Vietnam Pro', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid theme('colors.outline-muted');
+        }
+
+        .poster-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, theme('colors.primary/0.15') 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(40px);
+        }
+
+        /* Material Symbols Setup */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col items-center justify-start overflow-x-hidden relative max-w-[512px] mx-auto bg-surface">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface-container-highest/80 dark:bg-surface-container-highest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-surface-bright/50 transition-colors text-primary dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface">生成观赛海报</h1>
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-surface-bright/50 transition-colors text-primary dark:text-primary">
+<span class="material-symbols-outlined text-[24px]">more_vert</span>
+</button>
+</header>
+<!-- Main Canvas Area -->
+<main class="flex-1 w-full flex flex-col items-center justify-center py-section-margin px-container-padding relative z-10">
+<!-- Ambient Glow behind poster -->
+<div class="poster-glow"></div>
+<!-- Poster Container (9:16 Aspect Ratio approximation via padding-bottom) -->
+<div class="relative w-[85%] max-w-[340px] aspect-[9/16] bg-[#0B0F14] rounded-poster overflow-hidden shadow-2xl shadow-black/80 border border-surface-bright flex flex-col group" id="poster-canvas">
+<!-- Dynamic Background Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(theme('colors.on-surface-variant') 1px, transparent 1px); background-size: 16px 16px;"></div>
+<!-- Top Color Strip (Premier League Vibe) -->
+<div class="h-1.5 w-full bg-gradient-to-r from-[#38003C] via-[#00FF85] to-[#E90052]"></div>
+<!-- Top Section: Header & Slogan -->
+<div class="pt-6 px-6 pb-2 text-center relative z-10">
+<div class="inline-flex items-center justify-center space-x-2 bg-surface-container-low/80 backdrop-blur-md rounded-full px-4 py-1.5 border border-outline-muted mb-4">
+<span class="material-symbols-outlined text-primary text-[16px] icon-fill">sports_soccer</span>
+<span class="font-data-label text-data-label text-on-surface uppercase tracking-wider">Premier League</span>
+</div>
+<!-- Mascot & Slogan Area -->
+<div class="flex items-center justify-center mt-2 mb-2">
+<div class="w-10 h-10 rounded-full overflow-hidden mr-3 border border-outline-muted relative bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A stylized, neon-lit digital illustration of a sleek 'night cat' mascot wearing modern athletic gear. The background is dark charcoal with electric blue and amber highlights, designed in a highly polished, vector-like aesthetic perfect for a premium sports app UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC1q74zDSwbYqR4dp2E519VmmkjlqCYj1_iFCwPgIfXg7BBvrpqjSIS9LqdzSTNTKVgaL3OodNgoxJ8O1_x4bKSrafaQ9dvzNVCAmqAdL9O2Uh_5WMTXxkexBo3P5ckOqr-Xb5iBJZTmZMX8999cuk4vUkG-eS6KqVkyUlmU8_FGkh1ofO6vFxFcs9ipZ7Dw8Ak2jGGqjPFMyiNk_leHscQR4QPiiCMeqAk1pUVnjfiL-GPX0F95MQ8A"/>
+</div>
+<div class="flex flex-col text-left">
+<span class="font-headline-lg text-headline-lg text-primary tracking-tight">今晚哪场值得熬</span>
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">Midnight Match Premium</span>
+</div>
+</div>
+</div>
+<!-- Middle Section: Match Details -->
+<div class="flex-1 flex flex-col justify-center items-center px-6 relative z-10 space-y-6">
+<!-- Teams & Crests -->
+<div class="flex justify-between items-center w-full">
+<!-- Home Team -->
+<div class="flex flex-col items-center w-[40%]">
+<div class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center p-2 border border-outline-muted shadow-lg relative">
+<div class="absolute inset-0 rounded-full border-2 border-primary/20 scale-105"></div>
+<img class="w-full h-full object-contain drop-shadow-md" data-alt="A highly detailed, metallic 3D render of a fictional football crest resembling Arsenal's style (ARS). The crest features a stylized cannon on a deep red and gold shield, rendered against a pure dark background with cinematic studio lighting and subtle rim highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBqw-EtCrmtviu3xY01KUNvcjgNk1paed4497SxDHbsRtw7LQSmH8eDfNpq9da5lAxbMQcqKl8DISIlC-duWH44U-BiWn0fFvCuSemxKy7IfLabM40VGqrVi_46zh8bZkjaaKfrnL3I6WwfuBnbX7ijdVphxepfmonpI0a2dDoiiueX6DfX7-M00uqgkgFL1HolqHMzwIvb7nbMz-ZEevWzCLirvZOE__9KGz8Dj5A5xZwKeGkP35WZQ"/>
+</div>
+<span class="mt-3 font-headline-md text-headline-md text-on-surface">ARS</span>
+</div>
+<!-- VS Divider -->
+<div class="flex flex-col items-center justify-center w-[20%]">
+<span class="font-score-mobile text-score-mobile text-surface-variant opacity-80 italic">VS</span>
+</div>
+<!-- Away Team -->
+<div class="flex flex-col items-center w-[40%]">
+<div class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center p-2 border border-outline-muted shadow-lg relative">
+<div class="absolute inset-0 rounded-full border-2 border-secondary/20 scale-105"></div>
+<img class="w-full h-full object-contain drop-shadow-md" data-alt="A highly detailed, metallic 3D render of a fictional football crest resembling Coventry's style (COV). The crest features a sky blue and navy emblem with a stylized modern animal motif, rendered against a dark background with dramatic studio lighting and crisp highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAoPoHWDB3atDLAebatLspq0RnFGcDuQpKEGby5tVU3TdO5P25ZkLyKuVFOL1dfWi54sNO1ubhPgwCqdnycTyxgS4EUXyH2DHfQ5UXpNO4I34Or5GoWe94EU2qloDnaW9p3YWp4abbtEUfatvTxUDAKePWJVFAg46Bt5fSnNFduOUlMArfnGE-XEC8cNfQ9R7V4PlcWHid7pg0ZveHLijiIUERJPD1WUaeQfL8J5dvMQoSveevm6AJgA"/>
+</div>
+<span class="mt-3 font-headline-md text-headline-md text-on-surface">COV</span>
+</div>
+</div>
+<!-- Time & Match Info -->
+<div class="flex flex-col items-center bg-surface/40 w-full rounded-xl py-4 border border-outline-muted/50 backdrop-blur-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-1">明天</span>
+<span class="font-score-display text-score-display text-on-surface tracking-tighter">03:00</span>
+<div class="w-12 h-px bg-outline-muted my-3"></div>
+<!-- Stars Rating -->
+<div class="flex space-x-1 text-primary mb-3">
+<span class="material-symbols-outlined text-[20px] icon-fill">star</span>
+<span class="material-symbols-outlined text-[20px] icon-fill">star</span>
+<span class="material-symbols-outlined text-[20px] icon-fill">star</span>
+<span class="material-symbols-outlined text-[20px] text-surface-variant">star</span>
+<span class="material-symbols-outlined text-[20px] text-surface-variant">star</span>
+</div>
+<!-- Night Owl Index Chip -->
+<div class="bg-primary/10 border border-primary/40 rounded-full px-3 py-1 flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-primary text-[14px]">visibility</span>
+<span class="font-data-label text-data-label text-primary">夜猫指数 6.4</span>
+</div>
+</div>
+</div>
+<!-- Bottom Highlights Area (Simulated) -->
+<div class="mt-auto pb-6 px-6 relative z-10 w-full">
+<div class="space-y-2">
+<div class="flex items-center space-x-3 text-on-surface-variant font-body-sm text-body-sm">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span>关键球员伤停更新</span>
+</div>
+<div class="flex items-center space-x-3 text-on-surface-variant font-body-sm text-body-sm">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span>历史交锋胜率 62%</span>
+</div>
+</div>
+</div>
+<!-- Glass reflection effect over poster -->
+<div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent pointer-events-none"></div>
+</div>
+<!-- Action Buttons Layout -->
+<div class="w-full max-w-[340px] mt-section-margin flex flex-col space-y-card-gap">
+<!-- Save Button (Amber / Primary) -->
+<button class="w-full h-14 bg-primary text-on-primary font-headline-md text-headline-md rounded-xl flex items-center justify-center space-x-2 shadow-floodlight hover:brightness-110 active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined">download</span>
+<span>保存到相册</span>
+</button>
+<!-- Share Button (Teal Outline / Secondary) -->
+<button class="w-full h-14 bg-transparent border-2 border-secondary text-secondary font-headline-md text-headline-md rounded-xl flex items-center justify-center space-x-2 hover:bg-secondary/10 active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined">share</span>
+<span>分享到群</span>
+</button>
+</div>
+</main>
+<!-- Navigation suppressed as this is a specific functional page with a clear action (generating/sharing a poster), implies a modal or focused flow rather than a top-level destination. -->
+</body></html>

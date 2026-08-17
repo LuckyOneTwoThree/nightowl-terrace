@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/today/today",
+    "pages/week/week",
+    "pages/schedule/schedule",
+    "pages/play/play",
+    "pages/me/me"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#101419",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "夜猫看台",
+    "backgroundColor": "#101419",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#8E8A81",
+    "selectedColor": "#FFB224",
+    "backgroundColor": "#101419",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/today/today", "text": "今日" },
+      { "pagePath": "pages/week/week", "text": "本周" },
+      { "pagePath": "pages/schedule/schedule", "text": "赛程" },
+      { "pagePath": "pages/play/play", "text": "玩法" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

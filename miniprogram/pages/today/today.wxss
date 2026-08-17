@@ -1,0 +1,84 @@
+.page { padding-bottom: 48rpx; }
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 32rpx 8rpx;
+}
+.top-bar .title { font-size: 40rpx; font-weight: 800; }
+.top-bar .date { color: var(--muted); font-size: 24rpx; margin-top: 4rpx; }
+.logo {
+  font-size: 20rpx;
+  color: var(--primary);
+  border: 1rpx solid rgba(255, 178, 36, 0.35);
+  padding: 6rpx 16rpx;
+  border-radius: var(--r-full);
+}
+
+.hero { padding: 40rpx 32rpx; }
+.hero-top { display: flex; justify-content: space-between; align-items: center; }
+
+.vs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 48rpx 24rpx 40rpx;
+}
+.side { display: flex; flex-direction: column; align-items: center; gap: 16rpx; width: 200rpx; }
+.side .name { font-size: 28rpx; font-weight: 600; }
+.mid { display: flex; flex-direction: column; align-items: center; gap: 12rpx; flex: 1; }
+.mid .cd { font-size: 40rpx; font-weight: 700; color: var(--primary); }
+.mid .time { font-size: 26rpx; color: var(--ink); }
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  align-items: center;
+  padding-bottom: 24rpx;
+}
+
+.points { border-top: 1rpx solid var(--line); padding-top: 24rpx; }
+.point { color: var(--ink); font-size: 26rpx; line-height: 2; }
+
+.quip {
+  color: var(--muted);
+  font-size: 24rpx;
+  padding: 24rpx 0;
+  font-style: italic;
+}
+
+.owl-badge.sm { font-size: 20rpx; padding: 2rpx 14rpx; }
+.chip.sm { font-size: 18rpx; }
+
+.mini { margin: 0 32rpx 16rpx; }
+.row { display: flex; align-items: center; gap: 12rpx; }
+.row.sub { margin-top: 8rpx; justify-content: space-between; }
+.pair { flex: 1; font-weight: 600; font-size: 26rpx; }
+.time-s { color: var(--muted); font-size: 22rpx; }
+
+.empty { text-align: center; padding: 80rpx 32rpx; }
+.empty-title { font-size: 44rpx; font-weight: 800; margin-bottom: 12rpx; }
+.empty-sub { color: var(--muted); }
+
+.stories {
+  white-space: nowrap;
+  padding: 8rpx 32rpx 16rpx;
+  box-sizing: border-box;
+}
+.story-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 12rpx;
+  width: 340rpx;
+  white-space: normal;
+  vertical-align: top;
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-md);
+  padding: 24rpx;
+  margin-right: 16rpx;
+}
+.story-name { font-size: 30rpx; font-weight: 700; }
+.story-desc { color: var(--muted); font-size: 22rpx; line-height: 1.6; }

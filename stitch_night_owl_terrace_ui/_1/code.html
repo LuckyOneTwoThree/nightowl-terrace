@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Midnight Match - 比赛详情</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Hanken+Grotesk:wght@600;700&amp;family=Be+Vietnam+Pro:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-bright": "#36393f",
+                      "on-secondary-container": "#004d44",
+                      "surface-container": "#1c2025",
+                      "primary-fixed": "#ffddb0",
+                      "on-error-container": "#ffdad6",
+                      "on-surface": "#e0e2ea",
+                      "on-secondary-fixed-variant": "#005047",
+                      "on-secondary-fixed": "#00201c",
+                      "surface": "#101419",
+                      "on-tertiary-container": "#630fd4",
+                      "surface-container-high": "#262a30",
+                      "on-primary-fixed": "#291800",
+                      "tertiary-container": "#ceb5ff",
+                      "tertiary-fixed-dim": "#d2bbff",
+                      "on-surface-variant": "#d6c4ad",
+                      "primary-container": "#ffb224",
+                      "secondary": "#44e2cd",
+                      "surface-container-lowest": "#0a0f13",
+                      "outline-variant": "#514533",
+                      "tertiary-fixed": "#eaddff",
+                      "secondary-fixed": "#62fae3",
+                      "inverse-surface": "#e0e2ea",
+                      "on-secondary": "#003731",
+                      "on-primary-fixed-variant": "#614000",
+                      "outline-muted": "rgba(159, 142, 121, 0.1)",
+                      "on-primary": "#442b00",
+                      "error": "#ffb4ab",
+                      "secondary-container": "#03c6b2",
+                      "outline": "#9f8e79",
+                      "on-tertiary-fixed": "#25005a",
+                      "error-container": "#93000a",
+                      "surface-variant": "#31353b",
+                      "surface-tint": "#ffba47",
+                      "on-tertiary-fixed-variant": "#5a00c6",
+                      "primary-fixed-dim": "#ffba47",
+                      "secondary-fixed-dim": "#3cddc7",
+                      "inverse-primary": "#805600",
+                      "on-tertiary": "#3f008e",
+                      "background": "#101419",
+                      "on-background": "#e0e2ea",
+                      "inverse-on-surface": "#2d3136",
+                      "on-primary-container": "#6c4800",
+                      "surface-dim": "#101419",
+                      "surface-container-low": "#181c21",
+                      "on-error": "#690005",
+                      "primary": "#ffd79e",
+                      "tertiary": "#e6d6ff",
+                      "surface-container-highest": "#31353B"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-tight": "4px",
+                      "section-margin": "24px",
+                      "base": "8px",
+                      "container-padding": "16px",
+                      "card-gap": "12px"
+              },
+              "fontFamily": {
+                      "score-mobile": ["JetBrains Mono"],
+                      "score-display": ["JetBrains Mono"],
+                      "headline-lg": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-sm": ["Be Vietnam Pro"],
+                      "body-lg": ["Be Vietnam Pro"],
+                      "data-label": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "score-mobile": ["32px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "score-display": ["48px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                      "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                      "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .text-glow {
+            text-shadow: 0 0 12px rgba(255, 215, 158, 0.6);
+        }
+        .floodlight-glow {
+            box-shadow: 0 4px 24px rgba(255, 215, 158, 0.15);
+        }
+        /* Hide scrollbar for clean horizontal scrolls */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-lg text-body-lg min-h-screen flex flex-col justify-start items-center">
+<!-- Mobile Container Wrapper -->
+<div class="w-full max-w-[512px] bg-background min-h-screen relative flex flex-col shadow-2xl shadow-black">
+<!-- TopAppBar (From JSON) -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-container-padding h-16 bg-surface-container-highest/80 dark:bg-surface-container-highest/80 backdrop-blur-xl shadow-lg shadow-black/50">
+<button class="text-primary dark:text-primary hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center p-2 -ml-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface">比赛详情</h1>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:opacity-80 transition-opacity active:scale-95 duration-150 flex items-center justify-center p-2 -mr-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-section-margin">
+<div class="px-container-padding py-section-margin flex flex-col gap-section-margin">
+<!-- PRE-MATCH HEADER CARD -->
+<section class="relative bg-surface-container-low rounded-xl border border-outline-variant overflow-hidden shadow-lg shadow-black/40">
+<!-- Vertical Accent Bar -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-secondary"></div>
+<!-- Top Row: League & Stars -->
+<div class="flex justify-between items-center px-4 pt-4 pb-2">
+<div class="bg-surface-container-highest rounded-full px-3 py-1 font-data-label text-data-label text-on-surface-variant border border-outline-muted flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                            Premier League
+                        </div>
+<div class="flex gap-1 text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<!-- Teams & Time Area -->
+<div class="flex justify-between items-center px-4 py-6 relative">
+<!-- Home Team -->
+<div class="flex flex-col items-center gap-stack-tight w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-outline-muted flex items-center justify-center overflow-hidden shadow-inner">
+<img class="w-10 h-10 object-contain drop-shadow-md" data-alt="A stylized, high-tech rendering of the Arsenal football club crest, illuminated with a subtle golden glow against a dark charcoal background. The design features sharp, metallic edges and a minimalist glassmorphic aesthetic suitable for a premium dark-mode sports app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZn5XuC4gsYIAMnvMGf1Y6-3USv8xWbiiwOYxbRdXXNzY_e2e5jPSSHwEUY4QAUhGqnhXFWpI8iYxWRn9S0lyBLImmP6OLCZELMgYLYF0L6LFlf_p8MvkxZd25_dE8_ogPZJ9P-LhfVwUSO-ymOdlAT9o4QNmX9KddjweEKA1YIkMwMCmQUXq40G_89fxO477y_tUO3pueWzaB62aJHICxxW-bS1HBmZL60wRujRv7b9aFZ89jiSFlnw"/>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">ARS</span>
+</div>
+<!-- Match Time / Countdown -->
+<div class="flex flex-col items-center justify-center flex-1 z-10">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">明天 03:00</h2>
+<div class="bg-primary/10 border border-primary/30 rounded-full px-4 py-1.5 backdrop-blur-md">
+<span class="font-data-label text-data-label text-primary text-glow uppercase tracking-widest">
+                                    距开球 5小时23分
+                                </span>
+</div>
+</div>
+<!-- Away Team -->
+<div class="flex flex-col items-center gap-stack-tight w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-outline-muted flex items-center justify-center overflow-hidden shadow-inner">
+<img class="w-10 h-10 object-contain drop-shadow-md" data-alt="A stylized, high-tech rendering of the Coventry football club crest, illuminated with a subtle cyan glow against a dark charcoal background. The design features sharp, metallic edges and a minimalist glassmorphic aesthetic suitable for a premium dark-mode sports app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5NHUQlP9i0OMXYA6JsGhGwJTlI_RIyfRHPe_jZm5tzrTMcbVLblesOQNpiu7NdahKNZu_7nCdkOCJmtXuZWEYpRO3y_ZDCkCqzkCNjbdcpYSZzDkATLhWmO1BN-vHaYoLgjE3RDiZ9LMepr6xD4hH8shi8OzhZ2MqLAIUcYHk7sRlNXD3YDnskODZiGuQVWSV2XRjwJPpZumEni9IlQa_ahgWKgrUvopjSJw3HhJ4uOjB0IjPt3E7eg"/>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">COV</span>
+</div>
+</div>
+<!-- Chips Row -->
+<div class="flex flex-wrap gap-2 px-4 pb-4">
+<div class="bg-primary/10 border border-primary/40 rounded-full px-3 py-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span class="font-data-label text-data-label text-primary">夜猫指数 6.4</span>
+</div>
+<div class="bg-secondary/10 border border-secondary/40 rounded-full px-3 py-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+<span class="font-data-label text-data-label text-secondary">阿森纳卫冕之路</span>
+</div>
+</div>
+</section>
+<!-- HIGHLIGHTS SECTION -->
+<section>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-card-gap flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                        本场看点
+                    </h3>
+<div class="bg-surface-container-low rounded-xl p-5 border border-outline-variant shadow-md">
+<ul class="flex flex-col gap-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                    卫冕冠军新赛季主场首秀，阵容深度面临升班马的冲击考验。
+                                </span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                    中场核心回归，战术体系是否能迅速进入高速运转状态？
+                                </span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                    历史交锋记录一边倒，但暗藏被爆冷的高风险赔率波动。
+                                </span>
+</li>
+</ul>
+</div>
+</section>
+<!-- QUOTE STRIP -->
+<section class="bg-surface-container-highest rounded-lg p-4 flex gap-4 items-center border-l-4 border-l-primary shadow-inner">
+<div class="bg-surface rounded-full p-2 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface italic tracking-wide">
+                        "夜猫絮语: 卫冕冠军的第一夜，别迟到。"
+                    </p>
+</section>
+<!-- ACTION ROW -->
+<section class="flex gap-3">
+<button class="flex-1 bg-surface-container-low border border-primary/50 text-primary rounded-xl py-3 flex flex-col items-center justify-center gap-1 hover:bg-primary/10 transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[20px]">how_to_vote</span>
+<span class="font-data-label text-data-label">参与预测</span>
+</button>
+<button class="flex-1 bg-surface-container-low border border-outline-variant text-on-surface-variant rounded-xl py-3 flex flex-col items-center justify-center gap-1 hover:bg-surface-container-highest transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+<span class="font-data-label text-data-label">留句狂言</span>
+</button>
+<button class="flex-1 bg-surface-container-low border border-outline-variant text-on-surface-variant rounded-xl py-3 flex flex-col items-center justify-center gap-1 hover:bg-surface-container-highest transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[20px]">share</span>
+<span class="font-data-label text-data-label">生成海报</span>
+</button>
+</section>
+<!-- INFO SECTION (Bento Grid Style) -->
+<section class="grid grid-cols-3 gap-3">
+<!-- Sleep Cost -->
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center border border-outline-variant relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-16 h-16 bg-error/10 rounded-full blur-xl"></div>
+<span class="material-symbols-outlined text-error mb-2" style="font-variation-settings: 'FILL' 1;">bedtime</span>
+<span class="text-on-surface-variant font-data-label text-data-label text-[10px] uppercase tracking-wider mb-1">熬夜成本</span>
+<div class="flex items-end gap-1">
+<span class="text-on-surface font-headline-md text-headline-md font-bold">S3</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm mb-0.5">3.5h</span>
+</div>
+</div>
+<!-- Local Time -->
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center border border-outline-variant">
+<span class="material-symbols-outlined text-secondary mb-2" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<span class="text-on-surface-variant font-data-label text-data-label text-[10px] uppercase tracking-wider mb-1">当地时间</span>
+<span class="text-on-surface font-headline-md text-headline-md font-bold">20:00</span>
+</div>
+<!-- Broadcast -->
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col items-center justify-center text-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary mb-2" style="font-variation-settings: 'FILL' 1;">tv</span>
+<span class="text-on-surface-variant font-data-label text-data-label text-[10px] uppercase tracking-wider mb-1">直播平台</span>
+<span class="text-on-surface font-headline-md text-headline-md font-bold text-[14px]">咪咕视频</span>
+</div>
+</section>
+<!-- DIVIDER FOR FINISHED STATE DEMO -->
+<div class="w-full h-px bg-outline-variant my-6 relative flex items-center justify-center">
+<span class="bg-background px-4 font-data-label text-data-label text-on-surface-variant uppercase tracking-widest text-[10px]">
+                        Finished State Variant Below
+                    </span>
+</div>
+<!-- FINISHED MATCH CARD -->
+<section class="relative bg-surface-container-high rounded-xl border border-surface-tint/20 overflow-hidden shadow-lg shadow-black/40 opacity-90">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-outline-variant"></div>
+<div class="flex justify-between items-center px-4 pt-4 pb-2">
+<div class="bg-surface-container-highest rounded-full px-3 py-1 font-data-label text-data-label text-on-surface-variant border border-outline-muted">
+                            Premier League
+                        </div>
+<span class="font-data-label text-data-label text-on-surface-variant px-2 py-1 bg-surface rounded-md">全场结束</span>
+</div>
+<div class="flex justify-between items-center px-4 py-6">
+<!-- Home Team -->
+<div class="flex flex-col items-center gap-stack-tight w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-outline-muted flex items-center justify-center overflow-hidden opacity-70 grayscale-[30%]">
+<img class="w-10 h-10 object-contain" data-alt="A stylized, high-tech rendering of the Arsenal football club crest, illuminated with a subtle golden glow against a dark charcoal background. The design features sharp, metallic edges and a minimalist glassmorphic aesthetic suitable for a premium dark-mode sports app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPdP5y37XT4it6nsSjYWTIzuUWBxI4MIO6_7Ub8RskYfwzlNIVhC1r6ktyFvfJmPe3CgM8Ci1Tm1odT_CTPiSf1up01tHuJ-KvLZUVvHtp3jy0Rc2OTRypI_ZZoAnAyokAVsLrJ2AzgjObZUVk1XbYpN49ZQ9Jble6rdjLjnJ0Eno407TBa5DHGgpUCZSfq2LeXcmICEmzwrtANNhgyp7_cG8rHDm-CktjwR3rmZQq8Rz6y0nwtL2o6g"/>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface-variant">ARS</span>
+</div>
+<!-- Final Score -->
+<div class="flex flex-col items-center justify-center flex-1">
+<h2 class="font-score-display text-score-display text-primary text-glow tracking-widest">
+                                2 - 1
+                            </h2>
+</div>
+<!-- Away Team -->
+<div class="flex flex-col items-center gap-stack-tight w-[80px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest border border-outline-muted flex items-center justify-center overflow-hidden opacity-70 grayscale-[30%]">
+<img class="w-10 h-10 object-contain" data-alt="A stylized, high-tech rendering of the Coventry football club crest, illuminated with a subtle cyan glow against a dark charcoal background. The design features sharp, metallic edges and a minimalist glassmorphic aesthetic suitable for a premium dark-mode sports app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ5h56BHMHzBa_BQcLt5ELcSJPkSGBXRWKkZt6HkiI2DASVhRlbZoimkIWnsA3cdshkpnRtkTiS4Oa0XRubmClHP-27mdTiCHJ01G3iLUDKso0jhpY1E4fOMHq4pbM4Ptb3CZwNfdpHdhXix0Co2UB_UbGSTN-nyNWJQGyLts7xqSt_jnKM8iMEkDOlMjUEHWyD_arfTe6CZUR1omT-ZO9VF9SOPVc7G6MCSXo7ZkHeFxjixV9Vk7NbQ"/>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface-variant">COV</span>
+</div>
+</div>
+<!-- Result Strip -->
+<div class="bg-surface-container-lowest/50 border-t border-outline-muted p-3 flex justify-center items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span class="font-data-label text-data-label text-on-surface">法庭应验 <span class="text-secondary font-bold">2</span> 人</span>
+</div>
+<div class="w-px h-4 bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[16px]" style="font-variation-settings: 'FILL' 1;">car_crash</span>
+<span class="font-data-label text-data-label text-on-surface">翻车 <span class="text-error font-bold">5</span> 人</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- No BottomNavBar based on suppression rules for task-focused/sub-pages -->
+</div>
+</body></html>

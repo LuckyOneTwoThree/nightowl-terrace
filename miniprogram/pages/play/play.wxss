@@ -1,0 +1,45 @@
+.page { padding-bottom: 48rpx; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  padding: 16rpx 32rpx;
+}
+.play-card {
+  background: var(--card);
+  border: 1rpx solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 32rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--r-md);
+  background: rgba(139, 124, 246, 0.15);
+  color: var(--violet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 800;
+  margin-bottom: 8rpx;
+}
+.name { font-size: 30rpx; font-weight: 700; }
+.desc { color: var(--muted); font-size: 22rpx; }
+
+.court { margin: 0 32rpx 16rpx; }
+.row { display: flex; align-items: center; gap: 12rpx; }
+.pair { flex: 1; font-weight: 600; font-size: 26rpx; }
+.sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12rpx;
+}
+.time { color: var(--muted); font-size: 22rpx; }
+.btn-ghost.sm { padding: 8rpx 24rpx; font-size: 22rpx; }
+.desc-row { color: var(--muted); font-size: 24rpx; }
