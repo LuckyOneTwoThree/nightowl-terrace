@@ -14,7 +14,7 @@ Page({
     this.setData({ m: decorate.dec(raw, null, { followed: getApp().getFollowed() }) });
   },
 
-  // ---------- Canvas 绘制（_10：9/16 海报） ----------
+  // ---------- Canvas 绘制（PM 7.6：1080×1920 竖版导出） ----------
 
   initCanvas: function (cb) {
     var that = this;
@@ -22,15 +22,11 @@ Page({
       .exec(function (res) {
         if (!res || !res[0]) return;
         var canvas = res[0].node;
-        var dpr = wx.getSystemInfoSync().pixelRatio || 2;
-        canvas.width = res[0].width * dpr;
-        canvas.height = res[0].height * dpr;
-        var ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
+        // 固定导出分辨率（与设备无关）；CSS 负责视觉缩放预览
+        canvas.width = 1080;
+        canvas.height = 1920;
         that._canvas = canvas;
-        that._ctx = ctx;
-        that._w = res[0].width;
-        that._h = res[0].height;
+        that._ctx = canvas.getContext('2d');
         cb();
       });
   },
@@ -38,7 +34,7 @@ Page({
   draw: function (cb) {
     var m = this.data.m;
     if (!m || !this._ctx) return;
-    var ctx = this._ctx, W = this._w, H = this._h;
+    var ctx = this._ctx, W = 1080, H = 1920;
     var mono = function (s, x, y, size, color, align, weight) {
       ctx.font = (weight || '500') + ' ' + size + 'px "SF Mono", Menlo, monospace';
       ctx.fillStyle = color; ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle';
@@ -53,63 +49,62 @@ Page({
     // 底
     ctx.fillStyle = '#0B0F14';
     ctx.fillRect(0, 0, W, H);
-    // 顶部联赛彩条
+    // 顶部联赛彩条（联赛主题色 PM 7.6）
     var grad = ctx.createLinearGradient(0, 0, W, 0);
     grad.addColorStop(0, m.lgAccent || '#38003C');
     grad.addColorStop(.5, '#00FF85');
     grad.addColorStop(1, '#E90052');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, 12);
+    ctx.fillRect(0, 0, W, 36);
 
-    // 联赛章
-    mono(m.lgEn.toUpperCase(), W / 2, 72, 22, '#E0E2EA');
-
-    // 标语
-    body(this.data.slogan, W / 2, 128, 40, '#FFD79E', 'center', '700');
-    mono(this.data.sub, W / 2, 166, 18, '#9F8E79');
+    // 联赛章 + 标语
+    mono(m.lgEn.toUpperCase(), W / 2, 216, 66, '#E0E2EA');
+    body(this.data.slogan, W / 2, 384, 120, '#FFD79E', 'center', '700');
+    mono(this.data.sub, W / 2, 498, 54, '#9F8E79');
 
     // 球队圆标 + VS
     var cy = H * .40;
     [m.home, m.away].forEach(function (t, i) {
       var cx = i === 0 ? W * .26 : W * .74;
-      ctx.beginPath(); ctx.arc(cx, cy, 58, 0, Math.PI * 2);
-      ctx.fillStyle = '#181C21'; ctx.fill();
-      ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(159,142,121,.15)'; ctx.stroke();
-      mono(t.id, cx, cy + 2, 30, '#E0E2EA', 'center', '700');
-      body(t.zh, cx, cy + 92, 24, '#E0E2EA', 'center', '600');
+      ctx.beginPath(); ctx.arc(cx, cy, 174, 0, Math.PI * 2);
+      ctx.fillStyle = t.bg || '#181C21'; ctx.fill();
+      ctx.lineWidth = 6; ctx.strokeStyle = t.bd || 'rgba(159,142,121,.15)'; ctx.stroke();
+      mono(t.id, cx, cy + 6, 90, '#E0E2EA', 'center', '700');
+      body(t.zh, cx, cy + 276, 72, '#E0E2EA', 'center', '600');
     });
-    body('VS', W / 2, cy - 8, 36, 'rgba(49,53,59,.9)', 'center', '700');
+    body('VS', W / 2, cy - 24, 108, 'rgba(49,53,59,.9)', 'center', '700');
 
-    // 时间面板
+    // 时间面板（北京时间大字 + 当地时间小字，PM 7.1）
     var py = H * .60;
     ctx.fillStyle = 'rgba(16,20,25,.7)';
-    var pw = W - 96, px = 48, ph = 210, pr = 16;
+    var pw = W - 288, px = 144, ph = 630, pr = 48;
     ctx.beginPath();
     ctx.moveTo(px + pr, py); ctx.arcTo(px + pw, py, px + pw, py + ph, pr);
     ctx.arcTo(px + pw, py + ph, px, py + ph, pr);
-    ctx.arcTo(px, py + ph, px, py, pr); ctx.arcTo(px, py, px + pw, py, pr);
+    ctx.arcTo(px, py + ph, py, py, pr); ctx.arcTo(px, py, px + pw, py, pr);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(159,142,121,.12)'; ctx.stroke();
-    body(m.dayLabel, W / 2, py + 40, 24, '#D6C4AD');
-    mono(m.hm, W / 2, py + 100, 64, '#E0E2EA', 'center', '700');
+    ctx.strokeStyle = 'rgba(159,142,121,.12)'; ctx.lineWidth = 3; ctx.stroke();
+    body(m.dayLabel + ' · ' + m.md, W / 2, py + 96, 72, '#D6C4AD');
+    mono(m.hm, W / 2, py + 240, 192, '#E0E2EA', 'center', '700');
+    mono('北京时间', W / 2, py + 360, 42, '#9F8E79');
+    if (m.local && !m.tbd) mono('当地 ' + m.local, W / 2, py + 420, 42, '#9F8E79');
     // 分隔线
-    ctx.beginPath(); ctx.moveTo(W / 2 - 30, py + 142); ctx.lineTo(W / 2 + 30, py + 142);
-    ctx.strokeStyle = 'rgba(159,142,121,.2)'; ctx.stroke();
-    // 星级 + 指数
-    body('★★★☆☆'.slice(0, m.star), W / 2, py + 168, 24, '#FFB224');
-    var chipY = py + ph + 40;
-    mono('夜猫指数 ' + m.indexText, W / 2, chipY, 22, '#FFD79E');
+    ctx.beginPath(); ctx.moveTo(W / 2 - 90, py + 480); ctx.lineTo(W / 2 + 90, py + 480);
+    ctx.strokeStyle = 'rgba(159,142,121,.2)'; ctx.lineWidth = 3; ctx.stroke();
+    // 星级
+    body('★★★☆☆'.slice(0, m.star), W / 2, py + 546, 72, '#FFB224');
+    mono('夜猫指数 ' + m.indexText, W / 2, py + ph + 120, 66, '#FFD79E');
 
-    // 底部亮点
-    var ly = H - 150;
-    (m.points.length ? m.points.slice(0, 2) : [m.lgZh + ' 焦点战', '熬夜成本 ' + m.cost + 'h']).forEach(function (p, i) {
-      ctx.beginPath(); ctx.arc(px + 20, ly + i * 44, 5, 0, Math.PI * 2);
+    // 三条看点（PM 7.6）
+    var ly = H - 560;
+    (m.points.length ? m.points.slice(0, 3) : [m.lgZh + ' 焦点战', '熬夜成本 ' + m.cost + 'h', m.stars + ' 级之夜']).forEach(function (p, i) {
+      ctx.beginPath(); ctx.arc(px + 30, ly + i * 78, 15, 0, Math.PI * 2);
       ctx.fillStyle = '#44E2CD'; ctx.fill();
-      body(p, px + 40, ly + i * 44, 22, '#D6C4AD', 'left');
+      body(p, px + 84, ly + i * 78, 60, '#D6C4AD', 'left');
     });
 
-    // 品牌脚注
-    mono('夜猫看台 · NIGHT OWL TERRACE', W / 2, H - 40, 18, '#514533');
+    // 品牌位（PM 7.6）
+    mono('夜猫看台 · NIGHT OWL TERRACE', W / 2, H - 120, 54, '#514533');
 
     if (cb) cb();
   },
@@ -129,6 +124,10 @@ Page({
     var that = this;
     wx.canvasToTempFilePath({
       canvas: this._canvas,
+      width: 1080,
+      height: 1920,
+      destWidth: 1080,
+      destHeight: 1920,
       success: function (res) {
         wx.saveImageToPhotosAlbum({
           filePath: res.tempFilePath,

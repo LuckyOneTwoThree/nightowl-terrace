@@ -18,6 +18,25 @@
 .b-num-on { font-family: var(--font-mono); font-size: 44rpx; font-weight: 700; color: var(--on-surface); }
 .b-btn { margin-top: 8rpx; }
 
+/* 页内调额步进器（PM 9.1 即时重算） */
+.b-step { display: flex; align-items: center; gap: 20rpx; margin-top: 8rpx; }
+.b-step-btn {
+  width: 56rpx; height: 56rpx; border-radius: var(--r-full);
+  background: var(--sc-high); color: var(--on-surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx; font-weight: 600; line-height: 1;
+}
+.b-step-btn:active { background: var(--sc-highest); }
+.b-step-num { font-size: 30rpx; font-weight: 700; color: var(--primary-container); min-width: 110rpx; text-align: center; }
+
+/* 周一透支结算提示 */
+.over-note {
+  margin-top: 20rpx; padding: 24rpx 28rpx;
+  display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
+  border: 1rpx solid var(--outline-variant);
+}
+.over-text { font-size: 24rpx; color: var(--on-surface-variant); flex: 1; }
+
 /* 最优组合 */
 .sect-gap { margin: 48rpx 0 24rpx; }
 .plan { padding: 8rpx 0; }

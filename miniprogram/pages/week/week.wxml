@@ -1,5 +1,5 @@
 <view class="page">
-  <!-- 预算卡（_7：conic 进度环） -->
+  <!-- 预算卡（_7：conic 进度环 + PM 9.1 即时调额） -->
   <view class="budget card-low">
     <view class="b-left">
       <view class="ring" style="{{ringStyle}}">
@@ -14,8 +14,18 @@
         <text class="b-num-on">{{usedText}}h</text>
         <text class="mono muted">已计划 / {{budgetText}}h 额度</text>
       </view>
-      <view class="b-btn btn-teal-ghost" bindtap="onBudget">调整额度</view>
+      <view class="b-step">
+        <view class="b-step-btn" data-d="-1" bindtap="onBudgetStep">−</view>
+        <text class="mono b-step-num">{{budgetText}}h</text>
+        <view class="b-step-btn" data-d="1" bindtap="onBudgetStep">＋</view>
+      </view>
     </view>
+  </view>
+
+  <!-- 周一透支结算提示（PM 9.1） -->
+  <view class="over-note card-low" wx:if="{{overNote}}">
+    <text class="mono over-text">{{overNote}}</text>
+    <view class="b-btn btn-teal-ghost" bindtap="onAdoptSuggest">本周收紧至 {{suggest}}h</view>
   </view>
 
   <!-- 最优组合（_7） -->
@@ -86,7 +96,7 @@
               <text class="mono muted">需耗时</text>
               <text class="hl-cost">{{highlight.costText}}</text>
             </view>
-            <view class="hl-btn" bindtap="onRemind">设提醒</view>
+            <view class="hl-btn" bindtap="onRemind">一键提醒</view>
           </view>
         </view>
       </view>

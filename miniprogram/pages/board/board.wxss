@@ -47,6 +47,13 @@
 .report { margin-top: 24rpx; padding: 40rpx 32rpx; display: flex; flex-direction: column; align-items: center; gap: 12rpx; }
 .rp-ic { font-size: 56rpx; }
 .rp-sub { font-size: 26rpx; }
+.rp-worst {
+  display: flex; align-items: center; gap: 10rpx;
+  margin-top: 4rpx; padding: 8rpx 24rpx; border-radius: var(--r-full);
+  background: rgba(255,178,36,.08); border: 1rpx solid rgba(255,178,36,.3);
+}
+.rp-worst-ic { font-size: 24rpx; }
+.rp-worst-text { font-size: 22rpx; color: var(--primary); }
 .rp-btn {
   margin-top: 16rpx; display: flex; align-items: center; gap: 12rpx;
   padding: 20rpx 56rpx; border-radius: var(--r-full);

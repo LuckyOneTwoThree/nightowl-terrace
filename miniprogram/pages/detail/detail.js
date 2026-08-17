@@ -1,6 +1,7 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
+var ics = require('../../utils/ics.js');
 
 Page({
   data: {
@@ -16,6 +17,7 @@ Page({
       setTimeout(function () { wx.navigateBack(); }, 800);
       return;
     }
+    this._raw = raw;
     this._ts = engine.ts(raw.t);
     var m = decorate.dec(raw, null, { followed: getApp().getFollowed() });
     this.setData({
@@ -44,5 +46,22 @@ Page({
   goPoster: function () { wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.m.id }); },
   goStory: function (e) {
     wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
+  },
+
+  // 添加到日历（PM 十一：订阅消息兜底，导出 ICS 由系统日历提醒）
+  onCalendar: function () {
+    var m = this.data.m;
+    if (!m || m.tbd) {
+      wx.showToast({ title: '开球时间未定，暂不能添加', icon: 'none' });
+      return;
+    }
+    var desc = m.points.length ? m.points[0] : '夜猫指数 ' + m.indexText;
+    ics.share(
+      [{ t: this._raw.t, title: '⚽ ' + m.home.zh + ' vs ' + m.away.zh + ' · ' + m.lgZh, desc: desc, alarmMin: 30 }],
+      '夜猫看台-' + m.home.id + m.away.id,
+      function (ok, msg) {
+        wx.showToast({ title: ok ? '已导出，去日历看看' : (msg || '未导出'), icon: 'none' });
+      }
+    );
   }
 });

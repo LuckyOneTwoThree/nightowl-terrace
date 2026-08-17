@@ -21,6 +21,7 @@
         <block wx:else>
           <text class="hl hl-md">{{m.dayLabel}} {{m.hm}}</text>
           <view class="cd-pill"><text class="mono text-glow">{{countdownText}}</text></view>
+          <view class="cal-chip" wx:if="{{!m.tbd}}" bindtap="onCalendar">📅 添加到日历</view>
         </block>
       </view>
       <view class="side">

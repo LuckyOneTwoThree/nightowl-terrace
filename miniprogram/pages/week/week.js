@@ -1,5 +1,6 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
+var ics = require('../../utils/ics.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
@@ -20,7 +21,9 @@ Page({
     focal: [],
     highlight: null,
     mines: [],
-    nightOwls: []
+    nightOwls: [],
+    overNote: '',      // 周一透支结算提示（PM 9.1）
+    suggest: 0
   },
 
   onShow: function () {
@@ -86,6 +89,32 @@ Page({
     var used = plan.used;
     var pct = Math.min(1, used / budget);
 
+    // 周一透支结算（PM 9.1）：每周首个 onShow 结算一次，超支自动收紧建议额度
+    var settleKey = 'settled_' + start;
+    var overNote = '', suggest = 0;
+    if (!wx.getStorageSync(settleKey)) {
+      var lastWeekFrom = now.getTime() - 7 * 86400000;
+      var actual = 0;
+      var checkins = wx.getStorageSync('checkins') || {};
+      Object.keys(checkins).forEach(function (k) {
+        var c = checkins[k];
+        if (c.ts >= lastWeekFrom && c.ts < now.getTime()) actual += c.cost || 0;
+      });
+      wx.setStorageSync(settleKey, 1);
+      if (actual > budget + 0.01) {
+        suggest = Math.max(1, Math.round((budget - (actual - budget) / 2) * 2) / 2);
+        wx.setStorageSync('weekSuggest', { budget: budget, suggest: suggest, actual: actual });
+      }
+    }
+    var sug = wx.getStorageSync('weekSuggest');
+    if (sug && sug.suggest && sug.suggest < budget) {
+      overNote = '上周实际透支 ' + sug.actual.toFixed(1) + 'h，超支 ' + (sug.actual - sug.budget).toFixed(1) + 'h';
+      suggest = sug.suggest;
+    }
+
+    // 保留原始记录供 ICS 批量导出（dec 产物不含原始 t）
+    this._bestRaw = plan.best.map(function (e) { return e.m; });
+
     this.setData({
       usedText: used.toFixed(1),
       budgetText: budget.toFixed(1),
@@ -101,15 +130,49 @@ Page({
       highlight: evs.length ? dec(evs[0], false) : null,
       mines: mines.map(function (e) { return dec(e, true); }),
       nightOwls: evs.filter(function (e) { return engine.tierOf(e.m).cost >= 2.5; }).slice(0, 6)
-        .map(function (e) { return dec(e, false); })
+        .map(function (e) { return dec(e, false); }),
+      overNote: overNote,
+      suggest: suggest
     });
   },
 
-  onBudget: function () {
-    wx.navigateTo({ url: '/pages/settings/settings' });
+  // 页内调额（PM 9.1「调额即时重算」）
+  onBudgetStep: function (e) {
+    var dir = Number(e.currentTarget.dataset.d);
+    var settings = wx.getStorageSync('settings') || {};
+    var budget = Math.min(12, Math.max(1, Math.round(((settings.budget || 4.0) + dir * 0.5) * 2) / 2));
+    settings.budget = budget;
+    wx.setStorageSync('settings', settings);
+    this.refresh();
   },
+
+  // 采纳透支收紧建议
+  onAdoptSuggest: function () {
+    var settings = wx.getStorageSync('settings') || {};
+    settings.budget = this.data.suggest;
+    wx.setStorageSync('settings', settings);
+    wx.removeStorageSync('weekSuggest');
+    wx.showToast({ title: '本周额度已收紧', icon: 'none' });
+    this.refresh();
+  },
+  // 开球提醒：订阅消息未过审前的 ICS 兜底（PM 十一），一键导出最优组合
   onRemind: function () {
-    wx.showToast({ title: '订阅消息待模板审核 · ICS 兜底 v1 上线', icon: 'none' });
+    var raws = (this._bestRaw || []).filter(function (m) { return !m.tbd && m.st === 'sched'; });
+    if (!raws.length) {
+      wx.showToast({ title: '本周暂无可提醒的场次', icon: 'none' });
+      return;
+    }
+    var events = raws.map(function (m) {
+      return {
+        t: m.t,
+        title: '⚽ ' + data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh + ' · ' + lgZh(m.l),
+        desc: '熬夜 ' + engine.tierOf(m).cost + 'h · 夜猫看台',
+        alarmMin: 30
+      };
+    });
+    ics.share(events, '夜猫看台-本周看球计划', function (ok, msg) {
+      wx.showToast({ title: ok ? '已导出 ' + events.length + ' 场，去日历看看' : (msg || '未导出'), icon: 'none' });
+    });
   },
   onMatch: function (e) {
     if (e.currentTarget.dataset.id) {

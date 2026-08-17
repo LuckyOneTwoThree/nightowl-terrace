@@ -1,6 +1,7 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
+var crypt = require('../../utils/crypt.js');
 
 var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
 
@@ -99,7 +100,12 @@ Page({
     var any = false;
     var cards = this.data.cards.map(function (c) {
       if (c.pick && !preds[c.id]) {
-        preds[c.id] = { pick: c.pick, scoreH: c.scoreH, scoreA: c.scoreA, ts: Date.now() };
+        // commit-reveal 封存（PM 八节：截止前提交加盐哈希，截止后亮明文校验一致才计分）
+        var p = { pick: c.pick, scoreH: c.scoreH, scoreA: c.scoreA };
+        p.salt = crypt.genSalt();
+        p.hash = crypt.commitHash(p);
+        p.ts = Date.now();
+        preds[c.id] = p;
         c.sealed = true;
         any = true;
       }

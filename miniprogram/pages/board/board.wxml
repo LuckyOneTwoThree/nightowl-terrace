@@ -92,6 +92,10 @@
     <text class="rp-ic">📄</text>
     <text class="hl hl-md">生成本周修仙报告</text>
     <text class="rp-sub muted">你的肝度击败了 {{stats.pct}}% 的球迷</text>
+    <view class="rp-worst" wx:if="{{worst}}">
+      <text class="rp-worst-ic">🔥</text>
+      <text class="rp-worst-text">最狠一夜: {{worst.names}} · {{worst.cost}}h</text>
+    </view>
     <view class="rp-btn" bindtap="share"><text>📤</text><text>分享到群</text></view>
   </view>
 </view>

@@ -40,11 +40,14 @@ Page({
     var wk = weekKey(new Date());
 
     // 本周修仙统计（优先用打卡时记录的比赛归属周）
-    var n = 0, mins = 0;
+    var n = 0, mins = 0, worst = null; // worst = 最狠一夜（PM 9.5 战报要素）
     Object.keys(checkins).forEach(function (mid) {
       var c = checkins[mid];
       var w = c.wk || weekKey(new Date(c.ts));
-      if (w === wk) { n++; mins += c.cost * 60; }
+      if (w === wk) {
+        n++; mins += c.cost * 60;
+        if (!worst || c.cost > worst.cost) worst = c;
+      }
     });
     var hours = Math.round(mins / 6) / 10;
 
@@ -76,6 +79,7 @@ Page({
         n: n, hours: hours.toFixed(1), streak: streak,
         pct: Math.min(99, Math.round(hours * 10 + 30))
       },
+      worst: worst ? { names: worst.names, cost: worst.cost } : null,
       live: live ? decorate.dec(live, null, { followed: getApp().getFollowed() }) : null,
       _liveRawT: liveRaw ? liveRaw.t : '',
       preview: preview ? decorate.dec(preview, null, { followed: getApp().getFollowed() }) : null,
@@ -106,8 +110,9 @@ Page({
 
   share: function () {
     var s = this.data.stats;
+    var worst = this.data.worst ? '，最狠一夜 ' + this.data.worst.names + '（' + this.data.worst.cost + 'h）' : '';
     wx.setClipboardData({
-      data: '【夜猫看台】本周我修仙 ' + s.n + ' 场 / ' + s.hours + 'h，连续 ' + s.streak + ' 周，击败了 ' + s.pct + '% 的球迷。今晚哪场值得熬？',
+      data: '【夜猫看台】本周我修仙 ' + s.n + ' 场 / ' + s.hours + 'h，连续 ' + s.streak + ' 周，击败了 ' + s.pct + '% 的球迷' + worst + '。今晚哪场值得熬？',
       success: function () { wx.showToast({ title: '战报已复制，去粘贴进群', icon: 'none' }); }
     });
   }

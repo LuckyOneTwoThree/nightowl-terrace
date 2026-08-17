@@ -14,7 +14,11 @@
             <text class="r-sub">{{r.sub}}</text>
           </view>
           <view class="r-right">
-            <block wx:if="{{r.finished}}">
+            <block wx:if="{{r.tampered}}">
+              <text class="r-mark error">⚠</text>
+              <text class="r-pts gray">作废</text>
+            </block>
+            <block wx:elif="{{r.finished}}">
               <text class="r-mark {{r.hit ? 'teal' : 'error'}}">{{r.hit ? '✓' : '✕'}}</text>
               <text class="r-pts {{r.hit ? 'glow' : 'gray'}}">{{r.hit ? '+' + r.pts : '0'}}</text>
             </block>

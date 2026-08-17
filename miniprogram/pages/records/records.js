@@ -1,5 +1,6 @@
 var data = require('../../utils/data.js');
 var decorate = require('../../utils/decorate.js');
+var crypt = require('../../utils/crypt.js');
 
 var WEEK = decorate.WEEK;
 
@@ -35,15 +36,20 @@ Page({
     Object.keys(preds).forEach(function (mid) {
       var p = preds[mid], m = data.getMatch(mid);
       if (!m) return;
-      var r = settle(p, m);
+      // commit-reveal 校验（PM 八节）：reveal 与封存哈希不一致 → 不计分
+      var tampered = !crypt.verify(p);
+      var r = tampered ? null : settle(p, m);
       var pickZh = p.pick === 'h' ? '主胜' : p.pick === 'd' ? '平局' : '客胜';
       rows.push({
         key: 'pred-' + mid,
         label: labelOf(m.t.split('T')[0]),
         sort: p.ts || 0, type: 'pred',
         names: data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh,
-        sub: '预测: ' + pickZh + (p.scoreH !== '' ? ' (' + p.scoreH + '-' + p.scoreA + ')' : ''),
-        finished: !!r, hit: r ? r.hit : false, pts: r ? r.pts : 0
+        sub: tampered ? '封存校验失败 · 已作废' : '预测: ' + pickZh + (p.scoreH !== '' ? ' (' + p.scoreH + '-' + p.scoreA + ')' : ''),
+        finished: tampered ? true : !!r,
+        hit: r ? r.hit : false,
+        pts: r ? r.pts : 0,
+        tampered: tampered
       });
     });
     Object.keys(boasts).forEach(function (mid) {
