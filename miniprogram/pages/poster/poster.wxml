@@ -1,6 +1,7 @@
 <view class="page" wx:if="{{m}}">
   <!-- 海报预览（9:16） -->
   <view class="poster">
+    <view class="p-inner">
     <view class="p-dots"></view>
     <view class="p-bar" style="background: linear-gradient(90deg, {{m.lgAccent}}, #00FF85, #E90052);"></view>
 
@@ -42,6 +43,7 @@
     </view>
 
     <view class="p-foot mono">夜猫看台 · NIGHT OWL TERRACE</view>
+    </view>
   </view>
 
   <!-- 离屏画布（保存用） -->

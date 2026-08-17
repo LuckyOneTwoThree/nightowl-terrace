@@ -45,6 +45,7 @@ Page({
         id: mid,
         text: b.text,
         md: b.md,
+        ts: b.ts || 0,
         names: b.names,
         result: b.result,           // 'hit' | 'miss' | null
         finished: m ? (m.st === 'ft' || m.st === 'done') : false,
@@ -54,7 +55,7 @@ Page({
       if (b.result === 'miss') miss++;
       archive.push(row);
     });
-    archive.sort(function (a, b) { return b.md < a.md ? -1 : 1; });
+    archive.sort(function (a, b) { return b.ts - a.ts; }); // 按提交时间倒序（中文日期串不可比较）
 
     this.setData({
       open: pick ? decorate.dec(pick, null, { followed: getApp().getFollowed() }) : null,

@@ -38,6 +38,7 @@ Page({
       var r = settle(p, m);
       var pickZh = p.pick === 'h' ? '主胜' : p.pick === 'd' ? '平局' : '客胜';
       rows.push({
+        key: 'pred-' + mid,
         label: labelOf(m.t.split('T')[0]),
         sort: p.ts || 0, type: 'pred',
         names: data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh,
@@ -48,6 +49,7 @@ Page({
     Object.keys(boasts).forEach(function (mid) {
       var b = boasts[mid];
       rows.push({
+        key: 'boast-' + mid,
         label: b.md, sort: b.ts || 0, type: 'boast',
         names: b.names, sub: b.text,
         finished: b.result !== null, hit: b.result === 'hit', pts: 0
@@ -56,6 +58,7 @@ Page({
     Object.keys(checkins).forEach(function (mid) {
       var c = checkins[mid];
       rows.push({
+        key: 'ci-' + mid,
         label: c.md, sort: c.ts || 0, type: 'checkin',
         names: c.names, sub: '夜猫打卡', cost: c.cost,
         finished: true, hit: true, pts: 0

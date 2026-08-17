@@ -36,6 +36,11 @@ Page({
       if (!m) return null;
       var d = decorate.dec(m, null, { followed: getApp().getFollowed() });
       var ts = engine.ts(m.t);
+      d.ts = ts; // 按开球时间排序（id 含轮次，字典序不可靠）
+      // 日期圆拆分：n-mon='8月' / n-day='22'
+      var mp = d.md.split('月');
+      d.mon = mp[0] + '月';
+      d.day = (mp[1] || '').replace('日', '');
       d.isKey = !!keySet[mid];
       if (d.finished) d.state = 'done';
       else if (ts - now < 3 * 86400000) d.state = 'soon';
@@ -46,7 +51,7 @@ Page({
         d.cdText = c.d > 0 ? '距开球 ' + c.d + '天' + c.h + '小时' : '距开球 ' + c.h + '小时' + c.m + '分';
       }
       return d;
-    }).filter(Boolean).sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+    }).filter(Boolean).sort(function (a, b) { return a.ts - b.ts; });
 
     // 首个节点的联赛作为故事线联赛
     var lgZh = nodes.length ? nodes[0].lgZh : '';

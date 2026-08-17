@@ -39,7 +39,7 @@
         data-id="{{item.id}}" data-key="{{op.key}}" bindtap="onPick">{{op.zh}}</view>
     </view>
     <view class="g-sealed" wx:else>
-      <text class="mono">🔒 已封存 · 周五 24:00 开箱</text>
+      <text class="mono">🔒 已封存 · 开球后开箱</text>
     </view>
   </view>
 

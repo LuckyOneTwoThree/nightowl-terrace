@@ -54,7 +54,7 @@ function storylines() {
 }
 
 function getMatch(id) {
-  return matchesAll().filter(function (m) { return m.id === id; })[0] || null;
+  return fixturesSeed.filter(function (m) { return m.id === id; })[0] || null;
 }
 
 module.exports = {

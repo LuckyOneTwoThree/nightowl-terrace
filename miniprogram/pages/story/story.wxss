@@ -17,7 +17,8 @@
 
 /* 时间轴 */
 .timeline { position: relative; padding-left: 8rpx; }
-.tl-line { position: absolute; left: 88rpx; top: 24rpx; bottom: 24rpx; width: 3rpx; border-radius: var(--r-full); background: linear-gradient(var(--outline-variant), rgba(81,69,51,.2)); }
+/* 日期圆宽 128rpx，圆心在 64rpx；线宽 3rpx → left 62.5rpx 穿圆心 */
+.tl-line { position: absolute; left: 62rpx; top: 24rpx; bottom: 24rpx; width: 3rpx; border-radius: var(--r-full); background: linear-gradient(var(--outline-variant), rgba(81,69,51,.2)); }
 .node { position: relative; display: flex; gap: 24rpx; margin-bottom: 32rpx; }
 .n-date {
   position: relative; width: 128rpx; height: 128rpx; flex-shrink: 0;
@@ -53,9 +54,9 @@
 .n-foot .mono { font-size: 20rpx; }
 .tl-end { padding: 24rpx 0; text-align: center; font-size: 24rpx; }
 
-/* 相关故事线 */
-.rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24rpx; }
-.rel { padding: 24rpx; display: flex; flex-direction: column; gap: 8rpx; border-radius: var(--r-md); }
+/* 相关故事线（flex 两列，规避低版本 WebView grid 兼容） */
+.rel-grid { display: flex; flex-wrap: wrap; gap: 24rpx; }
+.rel { width: calc(50% - 12rpx); box-sizing: border-box; padding: 24rpx; display: flex; flex-direction: column; gap: 8rpx; border-radius: var(--r-md); }
 .rel-name { font-family: var(--font-headline); font-size: 28rpx; font-weight: 600; }
 .rel-desc { color: var(--on-surface-variant); font-size: 22rpx; line-height: 32rpx; }
 

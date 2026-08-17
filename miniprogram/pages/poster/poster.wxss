@@ -1,14 +1,14 @@
 .page { padding: 48rpx 32rpx; display: flex; flex-direction: column; align-items: center; }
 
-/* 海报预览 */
+/* 海报预览：padding-bottom 177.78%（相对自身宽）撑 9:16 高度，规避 aspect-ratio 兼容 */
 .poster {
-  position: relative; width: 85%; max-width: 640rpx; aspect-ratio: 9 / 16;
+  position: relative; width: 85%; max-width: 640rpx; height: 0; padding-bottom: 177.78%;
   background: #0B0F14; border-radius: 48rpx; overflow: hidden;
   border: 1rpx solid #36393F; box-shadow: 0 32rpx 96rpx rgba(0,0,0,.6);
-  display: flex; flex-direction: column;
 }
+.p-inner { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; }
 .p-dots {
-  position: absolute; inset: 0; opacity: .1; pointer-events: none;
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0; opacity: .1; pointer-events: none;
   background-image: radial-gradient(rgba(214,196,173,1) 1rpx, transparent 1rpx);
   background-size: 32rpx 32rpx;
 }

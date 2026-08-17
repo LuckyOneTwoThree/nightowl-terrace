@@ -17,7 +17,7 @@
     <view class="gcard card-low {{item.pick ? 'picked' : ''}}" wx:for="{{cards}}" wx:key="id">
       <view class="g-bar" style="background: {{item.lgAccent}};"></view>
       <view class="g-top">
-        <text class="mono muted">{{item.hm}} / {{item.lgZh}}</text>
+        <text class="mono muted">{{item.md}} {{item.hm}} / {{item.lgZh}}</text>
         <text class="g-fire" wx:if="{{item.upset}}">🔥</text>
       </view>
       <view class="g-vs">
@@ -32,7 +32,7 @@
         </view>
       </view>
 
-      <block wx:if="{{!item.pick}}">
+      <block wx:if="{{!item.sealed}}">
         <view class="g-opts">
           <view class="g-opt {{item.pick === 'h' ? 'on' : ''}}" data-id="{{item.id}}" data-key="h" bindtap="onPick">主胜</view>
           <view class="g-opt {{item.pick === 'd' ? 'on' : ''}}" data-id="{{item.id}}" data-key="d" bindtap="onPick">平局</view>

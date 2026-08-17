@@ -16,6 +16,12 @@ function weekKey(d) {
   return mon.getFullYear() + '-' + p2(mon.getMonth() + 1) + '-' + p2(mon.getDate());
 }
 
+// 按比赛日期（YYYY-MM-DD）算归属周：凌晨场按「今日」口径归前一晚的周
+function weekKeyOfDate(dateStr) {
+  var f = dateStr.split('-');
+  return weekKey(new Date(Number(f[0]), Number(f[1]) - 1, Number(f[2])));
+}
+
 Page({
   data: {
     stats: { n: 0, hours: '0.0', streak: 0, pct: 0 },
@@ -33,32 +39,31 @@ Page({
     var checkins = wx.getStorageSync('checkins') || {};
     var wk = weekKey(new Date());
 
-    // 本周修仙统计
+    // 本周修仙统计（优先用打卡时记录的比赛归属周）
     var n = 0, mins = 0;
     Object.keys(checkins).forEach(function (mid) {
       var c = checkins[mid];
-      if (weekKey(new Date(c.ts)) === wk) { n++; mins += c.cost * 60; }
+      var w = c.wk || weekKey(new Date(c.ts));
+      if (w === wk) { n++; mins += c.cost * 60; }
     });
     var hours = Math.round(mins / 6) / 10;
 
     // 连续周数
     var weeks = {};
     Object.keys(checkins).forEach(function (mid) {
-      weeks[weekKey(new Date(checkins[mid].ts))] = true;
+      var c = checkins[mid];
+      weeks[c.wk || weekKey(new Date(c.ts))] = true;
     });
     var streak = 0, cursor = new Date();
     while (weeks[weekKey(cursor)]) { streak++; cursor = new Date(cursor.getTime() - 7 * 86400000); }
 
     // 可打卡场：开球后 30 分钟内、S2+
     var now = Date.now();
-    var live = null, preview = null;
-    var today = data.matchesAll().filter(function (m) {
+    var live = null, liveRaw = null, preview = null;
+    data.matchesAll().forEach(function (m) {
+      if (m.s < 2 || m.st === 'pp') return;
       var ts = engine.ts(m.t);
-      return m.s >= 2 && m.st !== 'pp';
-    });
-    today.forEach(function (m) {
-      var ts = engine.ts(m.t);
-      if (!live && now >= ts && now <= ts + 30 * 60000 && !checkins[m.id]) live = m;
+      if (!live && now >= ts && now <= ts + 30 * 60000 && !checkins[m.id]) { live = m; liveRaw = m; }
     });
     if (!live) {
       preview = data.matchesAll().filter(function (m) {
@@ -72,10 +77,11 @@ Page({
         pct: Math.min(99, Math.round(hours * 10 + 30))
       },
       live: live ? decorate.dec(live, null, { followed: getApp().getFollowed() }) : null,
+      _liveRawT: liveRaw ? liveRaw.t : '',
       preview: preview ? decorate.dec(preview, null, { followed: getApp().getFollowed() }) : null,
       checked: live ? !!checkins[live.id] : false,
-      myHours: hours,
-      myStreak: streak
+      myStreak: streak,
+      myHours: hours.toFixed(1)
     });
   },
 
@@ -85,7 +91,8 @@ Page({
     var checkins = wx.getStorageSync('checkins') || {};
     if (checkins[live.id]) return;
     checkins[live.id] = {
-      ts: Date.now(), md: live.md, names: live.home.zh + ' vs ' + live.away.zh, cost: live.cost
+      ts: Date.now(), md: live.md, names: live.home.zh + ' vs ' + live.away.zh, cost: live.cost,
+      wk: this.data._liveRawT ? weekKeyOfDate(this.data._liveRawT.split('T')[0]) : null
     };
     wx.setStorageSync('checkins', checkins);
     wx.showToast({ title: '修仙 +1 · ' + live.cost + 'h', icon: 'none' });

@@ -25,8 +25,8 @@
     <view class="tl-line"></view>
     <view class="node {{item.state}}" wx:for="{{nodes}}" wx:key="id">
       <view class="n-date {{item.state === 'done' && item.isKey ? 'key' : ''}} {{item.state}}">
-        <text class="n-mon">{{item.md}}</text>
-        <text class="n-day">{{item.hm}}</text>
+        <text class="n-mon">{{item.mon}}</text>
+        <text class="n-day">{{item.day}}</text>
         <text class="n-flag">{{item.state === 'done' ? '✓' : item.state === 'soon' ? '⏰' : ''}}</text>
       </view>
       <view class="n-card {{item.state === 'soon' ? 'dashed' : ''}} {{item.isKey ? 'iskey' : ''}}"

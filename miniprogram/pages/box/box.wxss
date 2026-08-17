@@ -20,7 +20,7 @@
 }
 .flip-inner.flipped { transform: rotateY(180deg); }
 .face {
-  position: absolute; inset: 0; border-radius: 48rpx;
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0; border-radius: 48rpx;
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
   overflow: hidden;
 }

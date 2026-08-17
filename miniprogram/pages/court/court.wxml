@@ -43,7 +43,7 @@
       <text class="d-title">最准之口</text>
       <view class="d-ava circle-xl">{{stats.hit}}</view>
       <text class="d-name">我的狂言</text>
-      <view class="chip chip-teal">应验 {{stats.hit}} 句</view>
+      <view class="chip chip-teal">命中率 {{stats.rate}}</view>
     </view>
     <view class="duo-card card-low dim2">
       <view class="d-ic"><text>🙃</text></view>

@@ -4,7 +4,7 @@
     <view class="g-title mono">{{g.label}}</view>
     <view class="g-list">
       <!-- 预测行 -->
-      <view class="row glass-panel" wx:for="{{g.rows}}" wx:key="index" wx:for-item="r">
+      <view class="row glass-panel" wx:for="{{g.rows}}" wx:key="key" wx:for-item="r">
         <block wx:if="{{r.type === 'pred'}}">
           <view class="r-left">
             <view class="r-top">
