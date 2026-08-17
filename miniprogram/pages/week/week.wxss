@@ -1,28 +1,63 @@
-.page { padding-bottom: 48rpx; }
+.page { padding: 24rpx 32rpx 48rpx; }
 
-.budget-row { display: flex; align-items: baseline; gap: 12rpx; }
-.budget-big { font-size: 64rpx; font-weight: 800; color: var(--primary); }
-.budget-bar {
-  height: 12rpx;
-  background: var(--card-2);
-  border-radius: var(--r-full);
-  margin: 24rpx 0 32rpx;
-  overflow: hidden;
+/* 预算卡 */
+.budget { display: flex; align-items: center; gap: 40rpx; padding: 32rpx; }
+.ring {
+  width: 200rpx; height: 200rpx; border-radius: var(--r-full);
+  display: flex; align-items: center; justify-content: center;
 }
-.budget-fill { height: 100%; background: var(--primary); border-radius: var(--r-full); }
+.ring-inner {
+  width: 150rpx; height: 150rpx; border-radius: var(--r-full);
+  background: var(--sc-low);
+  display: flex; align-items: center; justify-content: center;
+}
+.ring-num { font-family: var(--font-mono); font-size: 32rpx; font-weight: 700; color: var(--primary-container); }
+.b-right { flex: 1; display: flex; flex-direction: column; gap: 12rpx; }
+.b-title { font-family: var(--font-headline); font-size: 32rpx; font-weight: 600; }
+.b-nums { display: flex; align-items: baseline; gap: 16rpx; }
+.b-num-on { font-family: var(--font-mono); font-size: 44rpx; font-weight: 700; color: var(--on-surface); }
+.b-btn { margin-top: 8rpx; }
 
-.plan-title { color: var(--muted); font-size: 22rpx; margin-bottom: 12rpx; }
-.plan-title.alt { margin-top: 24rpx; }
-.plan-item { border-top: 1rpx solid var(--line); padding: 16rpx 0; }
-.plan-item .idx { color: var(--primary); font-weight: 700; width: 40rpx; }
-.dim-item { opacity: 0.7; }
+/* 最优组合 */
+.sect-gap { margin: 48rpx 0 24rpx; }
+.plan { padding: 8rpx 0; }
+.plan-row { display: flex; align-items: center; gap: 20rpx; padding: 24rpx; position: relative; overflow: hidden; }
+.pr-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; }
+.pr-mid { flex: 1; display: flex; flex-direction: column; }
+.pr-pair { font-size: 30rpx; font-weight: 600; }
+.pr-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4rpx; }
+.pr-idx { font-family: var(--font-mono); font-size: 32rpx; font-weight: 700; color: var(--primary); }
+.pr-cost { color: var(--on-surface-variant); font-size: 20rpx; }
+.plan-alt { padding: 16rpx 24rpx 20rpx; font-size: 22rpx; }
 
-.mini { margin: 0 32rpx 16rpx; }
-.row { display: flex; align-items: center; gap: 12rpx; }
-.row.sub { margin-top: 8rpx; justify-content: space-between; }
-.pair { flex: 1; font-weight: 600; font-size: 26rpx; }
-.time-s { color: var(--muted); font-size: 22rpx; }
-.owl-badge.sm { font-size: 20rpx; padding: 2rpx 14rpx; }
+/* 若只熬一场（渐变描边 + 泛光） */
+.hl-wrap { padding: 2rpx; border-radius: var(--r-xl); background: linear-gradient(90deg, rgba(255,178,36,.6), rgba(159,142,121,.2)); }
+.hl-card { background: var(--sc); border-radius: var(--r-xl); overflow: hidden; }
+.hl-head { display: flex; align-items: center; gap: 12rpx; padding: 20rpx 24rpx; border-bottom: 1rpx solid var(--hairline); }
+.hl-fire { font-size: 28rpx; }
+.hl-label { color: var(--primary); }
+.hl-body { display: flex; align-items: center; padding: 24rpx; gap: 24rpx; }
+.hl-mid { flex: 1; display: flex; flex-direction: column; gap: 8rpx; }
+.hl-pair { font-family: var(--font-headline); font-size: 40rpx; font-weight: 600; line-height: 48rpx; }
+.hl-stats { display: flex; align-items: center; gap: 24rpx; }
+.hl-stat { display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
+.hl-idx { font-family: var(--font-mono); font-size: 40rpx; font-weight: 700; color: var(--primary-container); }
+.hl-cost { font-family: var(--font-mono); font-size: 32rpx; font-weight: 700; }
+.hl-div { width: 2rpx; height: 56rpx; background: var(--sc-highest); }
+.hl-btn {
+  padding: 16rpx 28rpx; border-radius: var(--r-md);
+  background: var(--primary-container); color: var(--on-primary-container);
+  font-size: 26rpx; font-weight: 700;
+}
 
-.mine { border-color: rgba(248, 113, 113, 0.3); }
-.reason { color: var(--danger); font-size: 22rpx; margin-top: 8rpx; }
+/* 雷区 */
+.mine { padding: 24rpx; margin-bottom: 16rpx; border-color: rgba(255,180,171,.3); }
+.mine-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.mine-pair { display: block; font-size: 30rpx; font-weight: 600; margin: 8rpx 0; }
+.mine-reason { color: var(--error); font-size: 24rpx; }
+.mine-ok { padding: 32rpx; text-align: center; }
+
+/* 修仙场 */
+.owl { display: flex; align-items: center; gap: 20rpx; padding: 20rpx 24rpx; margin-bottom: 16rpx; }
+.owl .mine-pair { flex: 1; margin: 0; }
+.owl-time { color: var(--secondary); font-size: 20rpx; }

@@ -1,51 +1,49 @@
 .page { padding-bottom: 48rpx; }
 
-.filters {
-  white-space: nowrap;
-  padding: 16rpx 32rpx;
-  box-sizing: border-box;
+/* 日期条 */
+.dstrip { white-space: nowrap; padding: 24rpx 32rpx 8rpx; width: 100%; box-sizing: border-box; }
+.dchip {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 8rpx;
+  width: 128rpx; padding: 16rpx 0; margin-right: 16rpx;
+  border-radius: var(--r-md); background: var(--sc-low); border: 1rpx solid var(--sc-variant);
 }
-.f-chip {
-  display: inline-block;
-  padding: 8rpx 28rpx;
-  margin-right: 12rpx;
-  border-radius: var(--r-full);
-  border: 1rpx solid var(--line-strong);
-  color: var(--muted);
-  font-size: 24rpx;
-}
-.f-chip.on {
-  background: var(--primary);
-  color: var(--primary-ink);
-  border-color: transparent;
-  font-weight: 700;
-}
+.dchip-wd { font-size: 22rpx; color: var(--on-surface-variant); }
+.dchip-md { font-family: var(--font-mono); font-size: 24rpx; }
+.dchip.on { background: var(--primary-container); border-color: transparent; box-shadow: 0 0 24rpx rgba(255,178,36,.2); }
+.dchip.on .dchip-wd, .dchip.on .dchip-md { color: var(--on-primary); font-weight: 700; }
 
-.day { margin: 16rpx 32rpx; }
-.day-title {
-  font-size: 26rpx;
-  font-weight: 700;
-  color: var(--muted);
-  padding: 16rpx 0 8rpx;
-  display: flex;
-  gap: 12rpx;
-}
-.day-count { font-size: 20rpx; color: var(--dim); font-weight: 400; }
+/* 联赛药丸 */
+.pills { display: flex; white-space: nowrap; padding: 16rpx 32rpx; width: 100%; box-sizing: border-box; }
+.pills .fpill { display: inline-flex; margin-right: 16rpx; }
 
-.m-row {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  background: var(--card);
-  border: 1rpx solid var(--line);
-  border-radius: var(--r-md);
-  padding: 16rpx 20rpx;
-  margin-bottom: 12rpx;
-}
-.team-dot.sm { width: 56rpx; height: 56rpx; font-size: 18rpx; flex-shrink: 0; }
-.pair { flex: 1; font-size: 26rpx; font-weight: 600; }
-.right { display: flex; align-items: center; gap: 12rpx; }
-.time { color: var(--muted); font-size: 24rpx; }
-.score { color: var(--teal); font-size: 24rpx; }
+/* 分组 */
+.list { padding: 8rpx 32rpx 0; }
+.group { scroll-margin-top: 20rpx; }
+.g-head { display: flex; align-items: baseline; gap: 16rpx; padding: 24rpx 0 16rpx; }
+.g-date { font-family: var(--font-headline); font-size: 34rpx; font-weight: 600; }
+.g-line { flex: 1; height: 2rpx; background: var(--sc-high); }
 
-.end { text-align: center; padding: 32rpx 0; }
+/* 赛卡（_4：左联赛色条 + 时间列 + 双队行 + 星标） */
+.match {
+  position: relative; display: flex; align-items: center;
+  margin-bottom: 16rpx; padding: 0; overflow: hidden;
+}
+.m-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; }
+.m-body { flex: 1; padding: 20rpx 24rpx 20rpx 32rpx; }
+.m-top { display: flex; justify-content: space-between; margin-bottom: 12rpx; }
+.t-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.t-row:last-child { margin-bottom: 0; }
+.t-name { font-size: 28rpx; font-weight: 500; }
+.dim2 { color: var(--on-surface-variant); }
+.m-right { display: flex; align-items: center; gap: 16rpx; }
+.score { font-family: var(--font-mono); font-size: 28rpx; color: var(--on-surface-variant); width: 32rpx; text-align: center; }
+.score.ft { color: var(--on-surface); font-weight: 700; }
+.m-side {
+  display: flex; flex-direction: column; align-items: center; gap: 12rpx;
+  padding-right: 24rpx;
+}
+.stars-sm { color: var(--primary-container); font-size: 20rpx; letter-spacing: 2rpx; }
+.st-btn { color: var(--outline); font-size: 32rpx; }
+
+.g-empty { padding: 32rpx; text-align: center; margin-bottom: 16rpx; }
+.foot { text-align: center; padding: 32rpx 0; font-size: 20rpx; }

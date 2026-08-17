@@ -1,71 +1,101 @@
 <view class="page">
-  <view class="section-title">熬夜额度<view class="section-sub" bindtap="onBudget">默认 4.0h · 点击调整</view></view>
-
-  <view class="card">
-    <view class="budget-row">
-      <view class="budget-big mono">{{used}}h</view>
-      <view class="muted">/ {{budget}}h 已分配</view>
-    </view>
-    <view class="budget-bar">
-      <view class="budget-fill" style="width: {{used / budget * 100}}%"></view>
-    </view>
-
-    <view class="plan-title">本周最优组合（0-1 背包求解）</view>
-    <view class="plan-item" wx:for="{{best}}" wx:key="id">
-      <view class="row">
-        <text class="idx mono">{{index + 1}}</text>
-        <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
-        <text class="pair">{{item.pair}}</text>
-        <view class="stars">{{item.stars}}</view>
-      </view>
-      <view class="row sub">
-        <text class="mono time-s">{{item.timeText}}</text>
-        <view class="owl-badge sm">{{item.indexText}} · {{item.cost}}h</view>
+  <!-- 预算卡（_7：conic 进度环） -->
+  <view class="budget card-low">
+    <view class="b-left">
+      <view class="ring" style="{{ringStyle}}">
+        <view class="ring-inner">
+          <text class="ring-num">{{usedText}}h</text>
+        </view>
       </view>
     </view>
+    <view class="b-right">
+      <text class="b-title">夜猫指数 · 本周预算</text>
+      <view class="b-nums">
+        <text class="b-num-on">{{usedText}}h</text>
+        <text class="mono muted">已计划 / {{budgetText}}h 额度</text>
+      </view>
+      <view class="b-btn btn-teal-ghost" bindtap="onBudget">调整额度</view>
+    </view>
+  </view>
 
-    <view class="plan-title alt" wx:if="{{alt.length}}">备选</view>
-    <view class="plan-item dim-item" wx:for="{{alt}}" wx:key="id">
-      <view class="row">
-        <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
-        <text class="pair">{{item.pair}}</text>
-        <view class="owl-badge sm">{{item.indexText}}</view>
+  <!-- 最优组合（_7） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">最优组合</text>
+    <view class="sect-line"></view>
+  </view>
+  <view class="plan card-low">
+    <view class="plan-row" wx:for="{{best}}" wx:key="id" bindtap="onMatch">
+      <view class="pr-bar" style="background: {{item.accent}};"></view>
+      <view class="circle-sm">{{item.homeCode}}</view>
+      <view class="pr-mid">
+        <text class="pr-pair">{{item.pair}}</text>
+        <text class="mono muted">{{item.md}} {{item.wd}} {{item.hm}}</text>
+      </view>
+      <view class="pr-right">
+        <text class="pr-idx">{{item.indexText}}</text>
+        <text class="mono pr-cost">{{item.costText}}</text>
       </view>
     </view>
-  </view>
-
-  <view class="section-title">本周焦点<text class="section-sub">夜猫指数 Top</text></view>
-  <view class="card-2 mini" wx:for="{{top}}" wx:key="id">
-    <view class="row">
-      <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
-      <text class="pair">{{item.pair}}</text>
-      <view class="stars">{{item.stars}}</view>
-    </view>
-    <view class="row sub">
-      <text class="mono time-s">{{item.timeText}}</text>
-      <view class="owl-badge sm">指数 {{item.indexText}}</view>
+    <view class="plan-alt mono muted" wx:if="{{alt.length}}">
+      备选：{{alt.length}} 场未入组合（超额度）
     </view>
   </view>
 
-  <view class="section-title">雷区预警<text class="section-sub">建议睡觉的场次</text></view>
-  <view class="card-2 mini mine" wx:for="{{mines}}" wx:key="id">
-    <view class="row">
-      <view class="chip chip-danger">建议睡觉</view>
-      <text class="pair">{{item.pair}}</text>
+  <!-- 若只熬一场（_7 highlight） -->
+  <block wx:if="{{highlight}}">
+    <view class="hl-wrap">
+      <view class="hl-card">
+        <view class="hl-head">
+          <text class="hl-fire">🔥</text>
+          <text class="hl-label mono">若只熬一场，选这场</text>
+        </view>
+        <view class="hl-body" bindtap="onMatch">
+          <view class="hl-mid">
+            <text class="hl-pair">{{highlight.pair}}</text>
+            <text class="mono muted">{{highlight.lgZh}} · {{highlight.md}} {{highlight.wd}} {{highlight.hm}}</text>
+          </view>
+          <view class="hl-stats">
+            <view class="hl-stat">
+              <text class="mono muted">爆表指数</text>
+              <text class="hl-idx text-glow">{{highlight.indexText}}</text>
+            </view>
+            <view class="hl-div"></view>
+            <view class="hl-stat">
+              <text class="mono muted">需耗时</text>
+              <text class="hl-cost">{{highlight.costText}}</text>
+            </view>
+            <view class="hl-btn" bindtap="onRemind">设提醒</view>
+          </view>
+        </view>
+      </view>
     </view>
-    <view class="reason">{{item.reason}}</view>
+  </block>
+
+  <!-- 雷区预警（PM：建议睡觉） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">雷区预警</text>
+    <view class="sect-line"></view>
   </view>
-  <view class="card-2 mini" wx:if="{{!mines.length}}">
-    <view class="reason">本周暂无雷区——好日子。</view>
+  <view class="mine card-low" wx:for="{{mines}}" wx:key="id" bindtap="onMatch">
+    <view class="mine-head">
+      <view class="chip chip-error">建议睡觉</view>
+      <text class="mono muted">{{item.md}} {{item.hm}}</text>
+    </view>
+    <text class="mine-pair">{{item.pair}}</text>
+    <text class="mine-reason">{{item.reason}}</text>
+  </view>
+  <view class="card-low mine-ok" wx:if="{{!mines.length}}">
+    <text class="mono muted">本周暂无雷区——好日子。</text>
   </view>
 
-  <view class="section-title">修仙场<text class="section-sub">凌晨档 · 打卡圣地</text></view>
-  <view class="card-2 mini" wx:for="{{nightOwls}}" wx:key="id">
-    <view class="row">
-      <view class="chip chip-teal">{{item.tier}}</view>
-      <text class="pair">{{item.pair}}</text>
-      <view class="stars">{{item.stars}}</view>
-    </view>
-    <view class="row sub"><text class="mono time-s">{{item.timeText}}</text></view>
+  <!-- 修仙场（PM：凌晨档） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">修仙场</text>
+    <view class="sect-line"></view>
+  </view>
+  <view class="owl card-low" wx:for="{{nightOwls}}" wx:key="id" bindtap="onMatch">
+    <view class="chip chip-teal">{{item.tier}}</view>
+    <text class="mine-pair">{{item.pair}}</text>
+    <text class="mono owl-time">{{item.md}} {{item.hm}} · {{item.costText}}</text>
   </view>
 </view>

@@ -1,25 +1,65 @@
 <view class="page">
-  <scroll-view scroll-x class="filters" enhanced show-scrollbar="{{false}}">
+  <!-- 日期条（_4：横滑日选） -->
+  <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}">
     <view
-      wx:for="{{leagues}}" wx:key="id"
-      class="f-chip {{filter === item.id ? 'on' : ''}}"
-      data-lg="{{item.id}}" bindtap="onFilter"
-    >{{item.zh}}</view>
+      wx:for="{{days}}" wx:key="day"
+      class="dchip {{selDay === item.day ? 'on' : ''}}"
+      data-day="{{item.day}}" bindtap="onPickDay">
+      <text class="dchip-wd">{{item.isToday ? '今天' : '周' + item.wd}}</text>
+      <text class="dchip-md">{{item.short}}</text>
+    </view>
   </scroll-view>
 
-  <view class="day" wx:for="{{groups}}" wx:key="date" wx:for-item="g">
-    <view class="day-title">{{g.label}}<text class="day-count">{{g.matches.length}} 场</text></view>
-    <view class="m-row" wx:for="{{g.matches}}" wx:key="id">
-      <view class="team-dot sm" style="background:{{item.home.color}}">{{item.home.id}}</view>
-      <view class="pair">{{item.pair}}</view>
-      <view class="stars">{{item.stars}}</view>
-      <view class="right">
-        <view class="chip" wx:if="{{item.tbd}}">时间待定</view>
-        <view class="mono time" wx:if="{{item.st === 'sched'}}">{{item.hm}}</view>
-        <view class="mono score" wx:elif="{{item.st === 'done'}}">{{item.sc || '补录中'}}</view>
+  <!-- 联赛筛选（_4 药丸） -->
+  <scroll-view scroll-x class="pills" enhanced show-scrollbar="{{false}}">
+    <view
+      wx:for="{{leagues}}" wx:key="id"
+      class="fpill on-{{selLg === item.id ? item.id : 'none'}}"
+      data-lg="{{item.id}}" bindtap="onPickLg">{{item.zh}}</view>
+  </scroll-view>
+
+  <!-- 分组列表 -->
+  <view class="list">
+    <view class="group" wx:for="{{groups}}" wx:key="day" id="d-{{item.day}}">
+      <view class="g-head" wx:if="{{(selLg === 'ALL' || item.matches.length)}}">
+        <text class="g-date">{{item.label.md}}</text>
+        <text class="mono muted">{{item.label.week}}</text>
+        <view class="g-line"></view>
+      </view>
+      <view
+        class="match card-low"
+        wx:for="{{item.matches}}" wx:for-item="mt" wx:key="id"
+        wx:if="{{selLg === 'ALL' || mt.lg === selLg}}">
+        <view class="m-accent" style="background: {{mt.accent}};"></view>
+        <view class="m-body">
+          <view class="m-top">
+            <text class="mono muted">{{mt.lgZh}}</text>
+            <text class="mono">{{mt.hm}}</text>
+          </view>
+          <view class="t-row">
+            <text class="t-name">{{mt.home.zh}}</text>
+            <view class="m-right">
+              <view class="circle-sm" style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
+              <text class="score {{mt.finished ? 'ft' : ''}}">{{mt.finished ? mt.scH : '-'}}</text>
+            </view>
+          </view>
+          <view class="t-row">
+            <text class="t-name dim2">{{mt.away.zh}}</text>
+            <view class="m-right">
+              <view class="circle-sm" style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
+              <text class="score {{mt.finished ? 'ft' : ''}}">{{mt.finished ? mt.scA : '-'}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="m-side">
+          <text class="stars-sm">{{mt.stars}}</text>
+          <text class="mono st-btn" data-id="{{mt.id}}" catchtap="onStar">☆</text>
+        </view>
+      </view>
+      <view class="g-empty card-low" wx:if="{{selLg !== 'ALL' && !item.matches.length}}">
+        <text class="mono muted">当日无{{selLg === 'ALL' ? '' : '该联赛'}}赛事</text>
       </view>
     </view>
+    <view class="foot mono muted">— 种子数据：揭幕周 · 全量赛程随 T3 接入 —</view>
   </view>
-
-  <view class="end dim">— 种子数据：揭幕周 · 全量 1,752 场随 T3 抓取接入 —</view>
 </view>

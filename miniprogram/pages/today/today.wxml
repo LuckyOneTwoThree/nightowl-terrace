@@ -1,101 +1,157 @@
 <view class="page">
-  <view class="top-bar">
-    <view>
-      <view class="title">今晚哪场值得熬</view>
-      <view class="date">{{dateText}}</view>
+  <!-- 顶栏（_5 TopAppBar：爪标 + 日期/标题 + 日历） -->
+  <view class="topbar">
+    <view class="tb-left">
+      <text class="paw">🐾</text>
+      <view class="tb-col">
+        <text class="mono muted upper">{{dateLabel}}</text>
+        <text class="tb-title">今晚哪场值得熬</text>
+      </view>
     </view>
-    <view class="logo">夜猫看台</view>
+    <view class="tb-btn" bindtap="onCal">📅</view>
   </view>
 
-  <!-- 有球态 -->
-  <block wx:if="{{hasMatch && hero}}">
-    <view class="hero card">
-      <view class="hero-top">
-        <view class="chip lg-{{hero.lg}}">{{hero.lgZh}}{{hero.rivalry ? ' · ' + hero.rivalry : ''}}</view>
-        <view class="stars">{{hero.stars}}</view>
+  <!-- 有球态（_5） -->
+  <block wx:if="{{hero}}">
+    <view class="hero card-highest">
+      <view class="accent-bar"></view>
+      <view class="hero-head">
+        <view class="hh-left">
+          <view class="lg-chip" style="background: {{hero.lgSolid}};">{{hero.lgZh}}</view>
+          <text class="stars">{{hero.stars}}</text>
+        </view>
+        <view class="focal mono" wx:if="{{hero.focal}}">
+          <view class="dot-teal animate-pulse"></view>
+          <text>焦点战</text>
+        </view>
       </view>
 
       <view class="vs">
         <view class="side">
-          <view class="team-dot" style="background:{{hero.home.color}}">{{hero.home.id}}</view>
-          <view class="name">{{hero.home.zh}}</view>
+          <view class="circle-xl">{{hero.home.id}}</view>
+          <text class="side-name">{{hero.home.zh}}</text>
         </view>
         <view class="mid">
-          <view class="cd mono" wx:if="{{hero.st === 'sched'}}">{{countdownText}}</view>
-          <view class="cd mono" wx:elif="{{hero.st === 'done'}}">已赛 · {{hero.sc || '比分补录中'}}</view>
-          <view class="time mono">{{hero.timeText}}</view>
-          <view class="chip" wx:if="{{hero.tbd}}">时间待定</view>
+          <text class="score-m">{{hero.hm}}</text>
+          <text class="cd mono text-glow">{{countdownText}}</text>
+          <text class="cd-sub mono muted">{{hero.dayLabel}} · {{hero.md}}</text>
         </view>
         <view class="side">
-          <view class="team-dot" style="background:{{hero.away.color}}">{{hero.away.id}}</view>
-          <view class="name">{{hero.away.zh}}</view>
+          <view class="circle-xl">{{hero.away.id}}</view>
+          <text class="side-name">{{hero.away.zh}}</text>
         </view>
       </view>
 
-      <view class="meta">
-        <view class="owl-badge">夜猫指数 {{hero.indexText}}</view>
-        <view class="chip">{{hero.tier}} {{hero.tierZh}} · {{hero.cost}}h</view>
-        <view class="chip" wx:for="{{hero.storyNames}}" wx:key="*this">追剧中：{{item}}</view>
+      <view class="bullets" wx:if="{{hero.points.length}}">
+        <view class="bullet" wx:for="{{hero.points}}" wx:key="*this">
+          <view class="b-dot"></view>
+          <text class="mono">{{item}}</text>
+        </view>
       </view>
 
-      <view class="points" wx:if="{{hero.points.length}}">
-        <view class="point" wx:for="{{hero.points}}" wx:key="*this">· {{item}}</view>
+      <view class="hero-chips">
+        <view class="chip chip-amber">夜猫指数 {{hero.indexText}}</view>
+        <view class="chip chip-teal" wx:for="{{hero.storyNames}}" wx:key="*this">{{item}}</view>
+        <view class="chip chip-ghost">{{hero.tier}} · 睡眠成本 {{hero.cost}}h</view>
       </view>
-
-      <view class="quip">“{{quip}}”</view>
-
-      <view class="btn-primary" bindtap="onPoster">生成观赛海报</view>
     </view>
 
-    <!-- 今日加餐 -->
-    <view class="section-title" wx:if="{{extras.length}}">今日加餐<text class="section-sub">★★ 以上</text></view>
-    <view class="card-2 mini" wx:for="{{extras}}" wx:key="id">
-      <view class="row">
-        <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
-        <text class="pair">{{item.home.zh}} v {{item.away.zh}}</text>
-        <view class="stars">{{item.stars}}</view>
-      </view>
-      <view class="row sub">
-        <text class="mono time-s">{{item.timeText}}</text>
-        <view class="owl-badge sm">指数 {{item.indexText}}</view>
+    <view class="quote card-low">
+      <text class="paw-s">🐾</text>
+      <text class="quote-text"><text class="quote-strong">夜猫絮语:</text>“{{quip}}”</text>
+    </view>
+
+    <button class="btn-amber floodlight-glow cta" bindtap="onPoster">生成观赛海报</button>
+
+    <view class="sect sect-gap">
+      <text class="sect-title">今日加餐</text>
+      <view class="sect-line"></view>
+    </view>
+    <view class="extra-grid">
+      <view class="extra card-low" wx:for="{{extras}}" wx:key="id">
+        <view class="extra-head">
+          <text class="mono muted">{{item.lgZh}}</text>
+          <text class="mono">{{item.hm}}</text>
+        </view>
+        <view class="t-row">
+          <text class="t-name">{{item.home.zh}}</text>
+          <view class="circle-sm" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        </view>
+        <view class="t-row">
+          <text class="t-name dim2">{{item.away.zh}}</text>
+          <view class="circle-sm" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        </view>
+        <view class="extra-foot mono">★{{item.star}} · 指数 {{item.indexText}}</view>
       </view>
     </view>
   </block>
 
-  <!-- 无球态 -->
+  <!-- 无球态（_3：长草期 + 下一场焦点倒计天数） -->
   <block wx:else>
-    <view class="hero card empty">
-      <view class="empty-title">今晚没有球</view>
-      <view class="empty-sub">夜猫也是要睡觉的。下一场焦点战：</view>
-      <view class="btn-ghost" style="margin-top: 32rpx;" bindtap="onPoster">查看本周安排</view>
+    <view class="empty card-highest">
+      <text class="mono muted upper wide">长草期 · 养肝周</text>
+      <text class="hl hl-lg empty-title">今夜无球</text>
+      <text class="empty-sub">夜猫也需要补觉，养精蓄锐。</text>
+      <view class="next-box" wx:if="{{nextFocal}}">
+        <text class="mono next-label">距下一场焦点战</text>
+        <view class="next-count score-m text-glow">
+          <text>{{nextFocal.cdD}}</text><text class="next-unit">天</text>
+          <text>{{nextFocal.cdH}}</text><text class="next-unit">小时</text>
+        </view>
+        <view class="next-match">
+          <text>{{nextFocal.home.zh}} vs {{nextFocal.away.zh}}</text>
+          <text class="mono muted">{{nextFocal.week}} {{nextFocal.hm}}</text>
+        </view>
+      </view>
     </view>
-    <view class="section-title">补番推荐<text class="section-sub">本季已赛高分场次</text></view>
-    <view class="card-2 mini" wx:for="{{replays}}" wx:key="id">
-      <view class="row">
-        <text class="pair">{{item.pair}}</text>
-        <view class="stars">{{item.star}}★</view>
+
+    <view class="sect sect-gap">
+      <text class="sect-title">补番推荐</text>
+      <view class="sect-line"></view>
+    </view>
+    <view class="replay card-low" wx:for="{{replays}}" wx:key="id">
+      <view class="rp-head">
+        <text class="mono muted">{{item.lgZh}}</text>
+        <view class="chip chip-teal rp-chip">剧透已屏蔽</view>
+      </view>
+      <text class="rp-pair">{{item.pair}}</text>
+      <text class="rp-teaser">{{item.teaser}}</text>
+    </view>
+  </block>
+
+  <!-- 明日预告（_5 strip） -->
+  <block wx:if="{{tomorrow.length}}">
+    <view class="sect sect-gap">
+      <text class="sect-title">明日预告</text>
+      <view class="sect-line"></view>
+    </view>
+    <view class="tmr card-low" wx:for="{{tomorrow}}" wx:key="id">
+      <view class="tmr-time">
+        <text class="mono muted">{{item.week}}</text>
+        <text class="tmr-hm">{{item.hm}}</text>
+      </view>
+      <view class="tmr-div"></view>
+      <view class="tmr-teams">
+        <text class="t-name">{{item.home.zh}}</text>
+        <view class="circle-sm" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        <text class="mono muted vs-txt">vs</text>
+        <view class="circle-sm" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        <text class="t-name">{{item.away.zh}}</text>
       </view>
     </view>
   </block>
 
-  <!-- 明日预告 -->
-  <view class="section-title" wx:if="{{tomorrow.length}}">明日预告<text class="section-sub">提前安排</text></view>
-  <view class="card-2 mini" wx:for="{{tomorrow}}" wx:key="id">
-    <view class="row">
-      <view class="chip lg-{{item.lg}}">{{item.lgZh}}</view>
-      <text class="pair">{{item.home.zh}} v {{item.away.zh}}</text>
-      <view class="stars">{{item.stars}}</view>
-    </view>
-    <view class="row sub"><text class="mono time-s">{{item.timeText}}</text></view>
+  <!-- 正在追的剧（_5 glass cards） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">正在追的剧</text>
+    <view class="sect-line"></view>
+    <text class="sect-more">全部 ›</text>
   </view>
-
-  <!-- 正在追的剧（真实故事线，PM 9.2） -->
-  <view class="section-title">正在追的剧<text class="section-sub">全季连续剧</text></view>
   <scroll-view scroll-x class="stories" enhanced show-scrollbar="{{false}}">
-    <view class="story-card" wx:for="{{stories}}" wx:key="id" data-id="{{item.id}}" bindtap="onStoryTap">
-      <view class="chip chip-primary sm">{{item.type}}</view>
-      <view class="story-name">{{item.name}}</view>
-      <view class="story-desc">{{item.desc}}</view>
+    <view class="story glass-panel" wx:for="{{stories}}" wx:key="id" bindtap="onStoryTap">
+      <text class="mono st-ep">{{item.ep}}</text>
+      <text class="st-name">{{item.typeZh}} · {{item.name}}</text>
+      <text class="st-desc">{{item.desc}}</text>
     </view>
   </scroll-view>
 </view>

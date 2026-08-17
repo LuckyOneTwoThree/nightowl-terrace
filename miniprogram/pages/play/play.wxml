@@ -1,24 +1,56 @@
 <view class="page">
+  <!-- 顶栏（_9：互动玩法 + 赛季积分） -->
+  <view class="topbar">
+    <text class="tb-title">互动玩法</text>
+    <view class="chip chip-solid">🏆 赛季积分 0</view>
+  </view>
+
+  <!-- 2x2 玩法卡（_9：暗底 + 内描边 + 角落光球） -->
   <view class="grid">
-    <view class="play-card" wx:for="{{plays}}" wx:key="id" data-id="{{item.id}}" bindtap="onPlay">
-      <view class="icon">{{item.icon}}</view>
-      <view class="name">{{item.name}}</view>
-      <view class="desc">{{item.desc}}</view>
+    <view class="pcard {{item.cls}}" wx:for="{{cards}}" wx:key="id" data-id="{{item.id}}" bindtap="onCard">
+      <view class="orb"></view>
+      <text class="p-icon">{{item.icon}}</text>
+      <text class="p-name">{{item.name}}</text>
+      <text class="p-sub">{{item.sub}}</text>
     </view>
   </view>
 
-  <view class="section-title">德比法庭 · 本周开庭<text class="section-sub">★★★ 场次开放留言</text></view>
-  <view class="card-2 court" wx:for="{{courts}}" wx:key="id">
-    <view class="row">
-      <view class="chip chip-primary">{{item.tag}}</view>
-      <text class="pair">{{item.pair}}</text>
+  <!-- 本周竞猜单（_9：盲评猜球 · commit-reveal） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">本周竞猜单</text>
+    <view class="sect-line"></view>
+  </view>
+  <view class="guess card-low" id="guess-form" wx:for="{{guesses}}" wx:key="id">
+    <text class="mono muted">{{item.label}}</text>
+    <view class="g-vs">
+      <view class="g-side">
+        <view class="circle-md" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        <text class="g-name">{{item.home.zh}}</text>
+      </view>
+      <text class="mono muted g-vs-txt">VS</text>
+      <view class="g-side">
+        <view class="circle-md" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        <text class="g-name">{{item.away.zh}}</text>
+      </view>
     </view>
-    <view class="sub-row">
-      <text class="mono time">{{item.timeText}}</text>
-      <view class="btn-ghost sm">留一句狂言</view>
+    <view class="g-opts" wx:if="{{!item.pick}}">
+      <view
+        class="g-opt" wx:for="{{options}}" wx:for-item="op" wx:key="key"
+        data-id="{{item.id}}" data-key="{{op.key}}" bindtap="onPick">{{op.zh}}</view>
+    </view>
+    <view class="g-sealed" wx:else>
+      <text class="mono">🔒 已封存 · 周五 24:00 开箱</text>
     </view>
   </view>
-  <view class="card-2 court" wx:if="{{!courts.length}}">
-    <view class="desc-row">本周暂无 ★★★ 场次开庭。</view>
+
+  <!-- 本周排行榜（云版本占位） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">本周排行榜</text>
+    <view class="sect-line"></view>
+  </view>
+  <view class="board card-low">
+    <text class="b-emoji">🦉</text>
+    <text class="b-title">夜猫榜虚位以待</text>
+    <text class="b-sub">云版本上线后，群友熬夜时长实时排名</text>
   </view>
 </view>

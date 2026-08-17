@@ -1,31 +1,67 @@
 <view class="page">
-  <view class="guide" wx:if="{{firstTime}}">
-    <view class="g-title">选你的主队</view>
-    <view class="g-sub">按联赛多选，存本地，朋友之间互不影响。主队比赛自动提级。</view>
+  <!-- 头部（_18：头像 + 昵称 + 设置） -->
+  <view class="head">
+    <view class="avatar">🦉</view>
+    <view class="h-col">
+      <text class="h-name">{{nickname}}</text>
+      <text class="mono muted">看台第 1 排 · 本季追剧中</text>
+    </view>
+    <text class="h-set">⚙️</text>
   </view>
 
-  <view class="section-title">关注球队<text class="section-sub">已选 {{followed.length}} 支</text></view>
-  <view class="lg-block" wx:for="{{groups}}" wx:key="id" wx:for-item="g">
-    <view class="lg-name">{{g.zh}}</view>
-    <view class="t-grid">
-      <view
-        wx:for="{{g.teams}}" wx:key="id"
-        class="t-chip {{item.on ? 'on' : ''}}"
-        data-id="{{item.id}}" bindtap="onToggle"
-      >
-        <view class="dot" style="background:{{item.color}}"></view>
-        <text>{{item.zh}}</text>
+  <!-- 统计（_18） -->
+  <view class="stats card-low">
+    <view class="stat">
+      <text class="s-num">{{stats.hours}}</text>
+      <text class="s-label mono">熬夜时长</text>
+    </view>
+    <view class="s-div"></view>
+    <view class="stat">
+      <text class="s-num">{{stats.preds}}</text>
+      <text class="s-label mono">预测</text>
+    </view>
+    <view class="s-div"></view>
+    <view class="stat">
+      <text class="s-num">{{stats.hit}}</text>
+      <text class="s-label mono">应验率</text>
+    </view>
+  </view>
+
+  <!-- 关注球队（_18：多选 chips） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">关注球队</text>
+    <view class="sect-line"></view>
+  </view>
+  <view class="follow card-low">
+    <view class="f-group" wx:for="{{groups}}" wx:key="id">
+      <text class="mono muted f-lg">{{item.zh}}</text>
+      <view class="f-chips">
+        <view
+          class="f-chip {{team.on ? 'on' : ''}}"
+          wx:for="{{item.teams}}" wx:for-item="team" wx:key="id"
+          data-id="{{team.id}}" bindtap="onToggle">
+          <view class="f-dot" style="background: {{team.dot}};"></view>
+          <text>{{team.zh}}</text>
+          <text class="f-new" wx:if="{{team.isNew}}">新</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <view class="section-title">我的记录</view>
-  <view class="card-2 rec" wx:if="{{firstTime}}">
-    <view class="rec-row">关注球队后，主队赛程与提级推荐会出现在「今日」与「本周」。</view>
+  <!-- 菜单（_18） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">我的记录</text>
+    <view class="sect-line"></view>
   </view>
-  <view class="card-2 rec" wx:else>
-    <view class="rec-row">我的预测 · 狂言存档 · 打卡记录（v1 云版本上线后在此汇总）</view>
+  <view class="menu card-low">
+    <view class="menu-row" wx:for="{{menu}}" wx:key="id" data-id="{{item.id}}" bindtap="onMenu">
+      <view class="m-left">
+        <text class="m-icon">{{item.icon}}</text>
+        <text>{{item.name}}</text>
+      </view>
+      <text class="m-arrow">›</text>
+    </view>
   </view>
 
-  <view class="btn-primary go" bindtap="onGoToday">回今晚看球</view>
+  <text class="ver mono">夜猫看台 · v0.1 体验版</text>
 </view>

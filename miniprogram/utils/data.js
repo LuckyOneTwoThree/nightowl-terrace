@@ -20,6 +20,25 @@ var LEAGUES = [
   { id: 'SCG', zh: '超级杯' }
 ];
 
+// 联赛视觉元数据（对齐 Stitch _4/_5：实心章 / 左色条 / 筛选药丸暗底）
+var LEAGUE_META = {
+  PL:  { solid: '#7C3AED', accent: '#38003C' },
+  PD:  { solid: '#EE8707', accent: '#EE8707' },
+  SA:  { solid: '#1E88C7', accent: '#155E9C' },
+  BL:  { solid: '#E5322D', accent: '#C8102E' },
+  FL:  { solid: '#10B981', accent: '#0B7A55' },
+  SCG: { solid: '#F5C518', accent: '#B8860B' }
+};
+
+// hex → rgba（球队圆标 20% 底 / 30% 描边用）
+function tint(hex, a) {
+  var h = hex.replace('#', '');
+  var r = parseInt(h.slice(0, 2), 16);
+  var g = parseInt(h.slice(2, 4), 16);
+  var b = parseInt(h.slice(4, 6), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
+
 var teamMap = {};
 teams.forEach(function (t) { teamMap[t.id] = t; });
 
@@ -36,6 +55,8 @@ function storylines() {
 
 module.exports = {
   LEAGUES: LEAGUES,
+  LEAGUE_META: LEAGUE_META,
+  tint: tint,
   getTeams: function () { return teams; },
   getTeam: function (id) { return teamMap[id] || { id: id, zh: id, color: '#666' }; },
   getRivalries: function () { return rivalries; },

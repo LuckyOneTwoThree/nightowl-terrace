@@ -140,6 +140,16 @@
     "upset": false
   },
   {
+    "m": "PD-1-VAL-BET",
+    "star": 2,
+    "story": [],
+    "points": ["西甲揭幕周收官战", "贝蒂斯技术流夜场", "瓦伦西亚主场首秀"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
     "m": "BL-1-FCA-S04",
     "star": 3,
     "story": ["PROMOTED_SURVIVAL"],

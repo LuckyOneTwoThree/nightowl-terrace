@@ -3,62 +3,64 @@ var data = require('../../utils/data.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
-function fmtDate(t) {
+function lgZh(l) {
+  var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
+  return hit ? hit.zh : l;
+}
+
+function fmt(t) {
   var parts = t.split('T');
   var d = new Date(parts[0].replace(/-/g, '/') + ' 00:00:00');
-  var hm = parts[1].split(':');
-  return (d.getMonth() + 1) + '月' + d.getDate() + '日 周' + WEEK[d.getDay()] + ' ' + hm[0] + ':' + hm[1];
+  return {
+    md: (d.getMonth() + 1) + '月' + d.getDate() + '日',
+    week: '周' + WEEK[d.getDay()],
+    hm: parts[1]
+  };
 }
 
-function localTime(t) {
-  // 当地时间展示（夏令时：英超-7，欧陆-6；冬令时：-8/-7）
-  var bj = new Date(t.replace('T', ' ') + ':00');
-  var isSummer = (bj.getMonth() >= 2 && bj.getMonth() <= 9); // 3月末–10月末 粗略口径
-  var offset = 7; // 英超夏令时默认
-  var ms = bj.getTime() - (isSummer ? 7 : 8) * 3600000;
-  var loc = new Date(ms);
-  return loc;
-}
-
+// 统一装饰器：输出 WXML 可直接绑定的字段（模板内不跑逻辑）
 function decorate(entry) {
   var m = entry.m;
   var h = data.getTeam(m.h);
   var a = data.getTeam(m.a);
+  var meta = data.LEAGUE_META[m.l] || {};
+  var f = fmt(m.t);
+  var isTmr = engine.ts(m.t) - Date.now() > 86400000;
   return {
     id: m.id,
-    lg: m.l,
-    lgZh: (data.LEAGUES.filter(function (x) { return x.id === m.l; })[0] || {}).zh || m.l,
-    home: { id: h.id, zh: h.zh, color: h.color },
-    away: { id: a.id, zh: a.zh, color: a.color },
-    timeText: fmtDate(m.t),
+    lgZh: lgZh(m.l),
+    lgSolid: meta.solid || '#514533',
+    lgAccent: meta.accent || '#514533',
+    home: { id: h.id, zh: h.zh, color: h.color, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
+    away: { id: a.id, zh: a.zh, color: a.color, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
+    hm: f.hm,
+    md: f.md,
+    week: f.week,
+    dayLabel: isTmr ? '明天' : '今天',
     tbd: m.tbd,
     st: m.st,
-    sc: m.sc,
     star: entry.ev.star,
-    stars: '★★★'.slice(0, entry.ev.star) + '☆☆☆'.slice(0, 3 - entry.ev.star),
-    points: entry.ev.rec ? entry.ev.rec.points : [],
-    indexText: entry.index.toFixed(1),
+    stars: '★★★'.slice(0, entry.ev.star),
+    points: entry.ev.rec ? entry.ev.rec.points.slice(0, 3) : [],
+    indexText: engine.owlIndex(entry.ev, m).toFixed(1),
     tier: engine.tierOf(m).label,
-    tierZh: engine.tierOf(m).zh,
     cost: engine.tierOf(m).cost,
-    storyNames: entry.ev.stories.map(function (s) { return s.name; }),
-    rivalry: entry.ev.rivalry,
-    bonuses: entry.ev.bonuses,
-    ts: engine.ts(m.t)
+    focal: entry.ev.star >= 3,
+    storyNames: entry.ev.stories.map(function (s) { return s.name; })
   };
 }
 
 Page({
   data: {
-    dateText: '',
-    hasMatch: false,
+    dateLabel: '',
+    quip: '',
     hero: null,
-    countdownText: '',
+    countdownText: '--:--:--',
     extras: [],
     tomorrow: [],
+    nextFocal: null,
     replays: [],
-    stories: [],
-    quip: ''
+    stories: []
   },
 
   onLoad: function () {
@@ -66,15 +68,22 @@ Page({
     this.refresh();
   },
 
+  onShow: function () {
+    // 关注球队变化后回到本页时刷新提级
+    if (this._loaded) this.refresh();
+  },
+
   onUnload: function () {
     if (this._timer) clearInterval(this._timer);
   },
 
   refresh: function () {
+    this._loaded = true;
     var now = new Date();
-    var todayStr = now.getFullYear() + '-' + (now.getMonth() + 1 < 10 ? '0' : '') + (now.getMonth() + 1) + '-' + (now.getDate() < 10 ? '0' : '') + now.getDate();
-    var tomorrow = new Date(now.getTime() + 86400000);
-    var tmrStr = tomorrow.getFullYear() + '-' + (tomorrow.getMonth() + 1 < 10 ? '0' : '') + (tomorrow.getMonth() + 1) + '-' + (tomorrow.getDate() < 10 ? '0' : '') + tomorrow.getDate();
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    var todayStr = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate());
+    var tmr = new Date(now.getTime() + 86400000);
+    var tmrStr = tmr.getFullYear() + '-' + p2(tmr.getMonth() + 1) + '-' + p2(tmr.getDate());
 
     var app = getApp();
     var followed = app.getFollowed();
@@ -82,37 +91,48 @@ Page({
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
 
-    var todayMatches = data.matchesOfDay(todayStr);
-    var tmrMatches = data.matchesOfDay(tmrStr);
+    var pick = engine.pickToday(data.matchesOfDay(todayStr), recMap, rivs, sls, followed);
+    var tmrPick = engine.pickToday(data.matchesOfDay(tmrStr), recMap, rivs, sls, followed);
+    var focal = engine.nextFocal(data.matchesAll(), recMap, rivs, sls, followed, Date.now());
 
-    var pick = engine.pickToday(todayMatches, recMap, rivs, sls, followed);
-    var tmrPick = engine.pickToday(tmrMatches, recMap, rivs, sls, followed);
+    // 补番：本季已赛 + 剧透屏蔽标（sc 未补录时模糊看点文案）
+    var rp = engine.replays(data.matchesAll(), recMap, 3).map(function (r) {
+      var h = data.getTeam(r.m.h);
+      var a = data.getTeam(r.m.a);
+      var lg = (data.LEAGUES.filter(function (x) { return x.id === r.m.l; })[0] || {});
+      return {
+        id: r.m.id,
+        lgZh: lgZh(r.m.l) + (r.m.r ? ' 第' + r.m.r + '轮' : ''),
+        pair: h.zh + ' vs ' + a.zh,
+        teaser: r.m.sc ? '比分 ' + r.m.sc : '看点封存中 · 点击无剧透回顾'
+      };
+    });
 
-    var rp = engine.replays(data.matchesAll(), recMap, 3);
-
-    var stories = data.getStorylines().filter(function (s) { return s.nodes.length > 0; }).map(function (s) {
-      return { id: s.id, name: s.name, desc: s.desc, type: s.type };
+    var stories = sls.filter(function (s) { return s.nodes.length > 0; }).map(function (s) {
+      return {
+        id: s.id,
+        name: s.name,
+        desc: s.desc,
+        typeZh: { title: '争冠', league: '格局', relegation: '保级', data: '数据', suspense: '悬念', background: '背景' }[s.type] || s.type,
+        ep: '第1集 · 全季连载'
+      };
     });
 
     this.setData({
-      dateText: (now.getMonth() + 1) + '月' + now.getDate() + '日 · 周' + WEEK[now.getDay()],
-      hasMatch: !!pick.hero,
+      dateLabel: (now.getMonth() + 1) + '月' + now.getDate() + '日 周' + WEEK[now.getDay()],
+      quip: data.getQuip(todayStr),
       hero: pick.hero ? decorate(pick.hero) : null,
       extras: pick.extras.map(decorate),
       tomorrow: (tmrPick.hero ? [tmrPick.hero].concat(tmrPick.extras) : []).slice(0, 3).map(decorate),
-      replays: rp.map(function (r) {
-        var h = data.getTeam(r.m.h);
-        var a = data.getTeam(r.m.a);
-        return {
-          id: r.m.id,
-          pair: h.zh + ' v ' + a.zh,
-          star: r.star,
-          sc: r.m.sc,
-          replay: r.replay
-        };
-      }),
-      stories: stories,
-      quip: data.getQuip(todayStr)
+      nextFocal: focal ? (function () {
+        var d = decorate(focal);
+        var c = engine.countdown(engine.ts(focal.m.t), Date.now());
+        d.cdD = c.d;
+        d.cdH = c.h;
+        return d;
+      })() : null,
+      replays: rp,
+      stories: stories
     });
 
     if (pick.hero) this.startCountdown(pick.hero.m.t);
@@ -124,9 +144,16 @@ Page({
     var target = engine.ts(t);
     var tick = function () {
       var c = engine.countdown(target, Date.now());
-      var text = c.over
-        ? '比赛时段'
-        : (c.d > 0 ? c.d + '天' : '') + String(c.h).padStart(2, '0') + ':' + String(c.m).padStart(2, '0') + ':' + String(c.s).padStart(2, '0') + ' 后开球';
+      var text;
+      if (c.over) {
+        text = '比赛中';
+      } else if (c.d > 0) {
+        text = '距开球 ' + c.d + '天' + c.h + '小时';
+      } else if (c.h > 0) {
+        text = '距开球 ' + c.h + '小时' + c.m + '分';
+      } else {
+        text = '距开球 ' + c.m + '分' + c.s + '秒';
+      }
       that.setData({ countdownText: text });
     };
     tick();
@@ -136,8 +163,10 @@ Page({
   onPoster: function () {
     wx.showToast({ title: '海报导出 v1 上线', icon: 'none' });
   },
-
   onStoryTap: function () {
     wx.showToast({ title: '故事线时间轴 v1 上线', icon: 'none' });
+  },
+  onCal: function () {
+    wx.switchTab({ url: '/pages/schedule/schedule' });
   }
 });

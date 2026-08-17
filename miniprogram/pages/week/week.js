@@ -1,36 +1,36 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 
-function shortTime(t) {
-  var parts = t.split('T');
-  var d = new Date(parts[0].replace(/-/g, '/') + ' 00:00:00');
-  return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + parts[1];
+var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+
+function lgZh(l) {
+  var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
+  return hit ? hit.zh : l;
 }
 
 Page({
   data: {
-    budget: 4.0,
-    used: 0,
+    usedText: '0',
+    budgetText: '4.0',
+    ringStyle: '',
+    ringDeg: 0,
     best: [],
     alt: [],
-    top: [],
+    highlight: null,
     mines: [],
     nightOwls: []
   },
 
   onShow: function () {
-    var now = new Date();
-    var weekEnd = new Date(now.getTime() + 7 * 86400000);
-    var fmt = function (d) {
-      return d.getFullYear() + '-' + (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1) + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
-    };
-    var nowStr = fmt(now);
-    var endStr = fmt(weekEnd);
+    this.refresh();
+  },
 
-    var all = data.matchesAll().filter(function (m) {
-      var day = m.t.split('T')[0];
-      return day >= nowStr && day <= endStr;
-    });
+  refresh: function () {
+    var now = new Date();
+    var start = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate());
+    var endD = new Date(now.getTime() + 7 * 86400000);
+    var end = endD.getFullYear() + '-' + p2(endD.getMonth() + 1) + '-' + p2(endD.getDate());
 
     var app = getApp();
     var followed = app.getFollowed();
@@ -38,50 +38,66 @@ Page({
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
 
-    var plan = engine.planWeek(all, recMap, rivs, sls, followed, 4.0);
-    var mines = engine.minefield(all, recMap, rivs, sls, followed);
+    var week = data.matchesAll().filter(function (m) {
+      var d = m.t.split('T')[0];
+      return d >= start && d <= end;
+    });
 
-    var evs = all.filter(function (m) { return m.st === 'sched'; })
+    var plan = engine.planWeek(week, recMap, rivs, sls, followed, 4.0);
+    var mines = engine.minefield(week, recMap, rivs, sls, followed);
+
+    var evs = week.filter(function (m) { return m.st === 'sched'; })
       .map(function (m) {
         var ev = engine.evaluate(m, recMap, rivs, sls, followed);
         return { m: m, ev: ev, index: engine.owlIndex(ev, m) };
       })
       .sort(function (a, b) { return b.index - a.index; });
 
-    var decorate = function (e) {
-      var h = data.getTeam(e.m.h);
-      var a = data.getTeam(e.m.a);
-      var d = new Date(e.m.t.split('T')[0].replace(/-/g, '/') + ' 00:00:00');
-      return {
+    function dec(e, withReason) {
+      var f = e.m.t.split('T');
+      var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
+      var meta = data.LEAGUE_META[e.m.l] || {};
+      var o = {
         id: e.m.id,
-        lg: e.m.l,
-        lgZh: (data.LEAGUES.filter(function (x) { return x.id === e.m.l; })[0] || {}).zh || e.m.l,
-        pair: h.zh + ' v ' + a.zh,
-        timeText: (d.getMonth() + 1) + '/' + d.getDate() + ' ' + e.m.t.split('T')[1],
-        stars: '★★★'.slice(0, e.ev.star) + '☆☆☆'.slice(0, 3 - e.ev.star),
-        star: e.ev.star,
+        lgZh: lgZh(e.m.l),
+        accent: meta.accent || '#514533',
+        pair: data.getTeam(e.m.h).zh + ' vs ' + data.getTeam(e.m.a).zh,
+        homeCode: data.getTeam(e.m.h).id,
+        md: (d.getMonth() + 1) + '/' + d.getDate(),
+        wd: '周' + WEEK[d.getDay()],
+        hm: f[1],
         indexText: e.index.toFixed(1),
-        cost: engine.tierOf(e.m).cost,
-        tier: engine.tierOf(e.m).label,
-        reason: e.reason || '',
-        storyNames: e.ev.stories.map(function (s) { return s.name; })
+        costText: '-' + engine.tierOf(e.m).cost + 'h',
+        tier: engine.tierOf(e.m).label
       };
-    };
+      if (withReason) o.reason = e.reason || '';
+      return o;
+    }
 
-    // 修仙场：S2 及以上
-    var nightOwls = evs.filter(function (e) { return engine.tierOf(e.m).cost >= 2.5; }).slice(0, 8);
+    var used = plan.used;
+    var pct = Math.min(1, used / 4.0);
 
     this.setData({
-      used: plan.used,
-      best: plan.best.map(decorate),
-      alt: plan.alt.map(decorate),
-      top: evs.slice(0, 6).map(decorate),
-      mines: mines.map(decorate),
-      nightOwls: nightOwls.map(decorate)
+      usedText: used.toFixed(1),
+      budgetText: '4.0',
+      ringStyle: 'background: conic-gradient(#FFB224 0% ' + (pct * 100) + '%, #31353B ' + (pct * 100) + '% 100%);',
+      ringDeg: Math.round(pct * 360),
+      best: plan.best.map(function (e) { return dec(e, false); }),
+      alt: plan.alt.map(function (e) { return dec(e, false); }),
+      highlight: evs.length ? dec(evs[0], false) : null,
+      mines: mines.map(function (e) { return dec(e, true); }),
+      nightOwls: evs.filter(function (e) { return engine.tierOf(e.m).cost >= 2.5; }).slice(0, 6)
+        .map(function (e) { return dec(e, false); })
     });
   },
 
   onBudget: function () {
-    wx.showToast({ title: '额度调节 v1.5 上线', icon: 'none' });
+    wx.showToast({ title: '额度调整 v1 上线', icon: 'none' });
+  },
+  onRemind: function () {
+    wx.showToast({ title: '订阅提醒 v1 上线', icon: 'none' });
+  },
+  onMatch: function () {
+    wx.switchTab({ url: '/pages/schedule/schedule' });
   }
 });

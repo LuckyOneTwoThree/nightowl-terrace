@@ -1,187 +1,188 @@
 /**
- * Midnight Match 设计系统 → 小程序 token 转译
- * 来源：stitch_night_owl_terrace_ui/DESIGN.md（18 稿视觉基准）
- * 说明：Google Fonts / Material Symbols 在小程序内不可用，
- *       等宽数据字体降级为系统 monospace，图标用文字符号替代。
+ * Midnight Match 设计系统 · 完整 token 转译
+ * 来源：stitch_night_owl_terrace_ui/night_owl_terrace/DESIGN.md（SSOT）
+ * 字体：小程序内 Google Fonts 不可用，Hanken Grotesk/Be Vietnam Pro 降级为系统栈，
+ *       JetBrains Mono 降级为系统等宽栈；视觉走查以浏览器预览（加载原字体）为准。
  */
 
 page {
-  /* 底色与表面 */
+  /* 表面层级（DESIGN.md tonal layering） */
   --bg: #101419;
-  --card: #171C23;
-  --card-2: #1E242D;
-  --line: rgba(244, 239, 230, 0.08);
-  --line-strong: rgba(244, 239, 230, 0.16);
+  --sc-lowest: #0A0E13;
+  --sc-low: #181C21;
+  --sc: #1C2025;
+  --sc-high: #262A30;
+  --sc-highest: #31353B;
+  --sc-variant: #31353B;
 
   /* 文字 */
-  --ink: #F4EFE6;
-  --muted: #8E8A81;
-  --dim: #5C5A54;
+  --on-surface: #E0E2EA;
+  --on-surface-variant: #D6C4AD;
+  --outline: #9F8E79;
+  --outline-variant: #514533;
 
-  /* 品牌色 */
-  --primary: #FFB224;      /* 琥珀 */
-  --primary-ink: #1A1206;
-  --primary-dim: rgba(255, 178, 36, 0.12);
-  --teal: #2DD4BF;         /* 青碧 · 修仙/健康 */
-  --violet: #8B7CF6;       /* 紫罗兰 · 玩法 */
-  --danger: #F87171;       /* 雷区 */
+  /* 品牌 */
+  --primary: #FFD79E;            /* 亮琥珀 · 文字 */
+  --primary-container: #FFB224;  /* 主琥珀 · 填充 */
+  --on-primary: #442B00;
+  --on-primary-container: #6C4800;
+  --surface-tint: #FFBA47;
+  --secondary: #44E2CD;          /* 青碧 · LIVE/健康 */
+  --secondary-container: #03C6B2;
+  --on-secondary: #003731;
+  --tertiary: #E6D6FF;
+  --tertiary-container: #CEB5FF;
+  --error: #FFB4AB;
+  --error-container: #93000A;
 
-  /* 联赛色 */
-  --c-pl: #A855F7;
-  --c-pd: #F97316;
-  --c-sa: #38BDF8;
-  --c-bl: #EF4444;
-  --c-fl: #10B981;
-  --c-scg: #FACC15;
+  /* 半透明描边（DESIGN.md outline-muted） */
+  --outline-muted: rgba(159, 142, 121, 0.1);
+  --hairline: rgba(159, 142, 121, 0.15);
 
   /* 字体 */
-  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --font-headline: "Hanken Grotesk", -apple-system, "PingFang SC", sans-serif;
+  --font-body: "Be Vietnam Pro", -apple-system, "PingFang SC", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
 
   /* 圆角 */
   --r-sm: 8rpx;
   --r-md: 16rpx;
   --r-lg: 24rpx;
+  --r-xl: 28rpx;
   --r-full: 999rpx;
 
-  /* 间距 */
-  --sp-1: 8rpx;
-  --sp-2: 16rpx;
-  --sp-3: 24rpx;
-  --sp-4: 32rpx;
-  --sp-5: 48rpx;
+  /* 间距（8px 基准 × 2rpx） */
+  --sp-tight: 8rpx;
+  --sp-base: 16rpx;
+  --sp-card-gap: 24rpx;
+  --sp-container: 32rpx;
+  --sp-section: 48rpx;
 
   background: var(--bg);
-  color: var(--ink);
+  color: var(--on-surface);
   font-family: var(--font-body);
   font-size: 28rpx;
-  line-height: 1.6;
+  line-height: 40rpx;
 }
 
-/* ---------- 通用原子 ---------- */
+/* ---------- 版式原子 ---------- */
 
-.card {
-  background: var(--card);
-  border: 1rpx solid var(--line);
-  border-radius: var(--r-lg);
-  padding: var(--sp-4);
-  margin: var(--sp-3) var(--sp-4);
-}
+.hl { font-family: var(--font-headline); font-weight: 700; }
+.hl-lg { font-size: 48rpx; line-height: 64rpx; }
+.hl-md { font-size: 40rpx; line-height: 56rpx; font-weight: 600; }
+.mono { font-family: var(--font-mono); font-size: 24rpx; line-height: 32rpx; letter-spacing: 1rpx; font-weight: 500; }
+.score-m { font-family: var(--font-mono); font-size: 64rpx; line-height: 64rpx; font-weight: 700; letter-spacing: -1rpx; }
+.muted { color: var(--on-surface-variant); }
 
-.card-2 {
-  background: var(--card-2);
-  border: 1rpx solid var(--line);
-  border-radius: var(--r-md);
-  padding: var(--sp-3);
-}
-
-.section-title {
-  font-size: 34rpx;
-  font-weight: 700;
-  color: var(--ink);
-  padding: var(--sp-4) var(--sp-4) var(--sp-2);
+/* 段落标题：文字 + 延伸发丝线（Stitch h2 pattern） */
+.sect {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+.sect-title { font-family: var(--font-headline); font-size: 40rpx; font-weight: 600; color: var(--on-surface); white-space: nowrap; }
+.sect-line { flex: 1; height: 2rpx; background: var(--sc-high); }
+.sect-more { font-family: var(--font-mono); font-size: 24rpx; color: var(--on-surface-variant); }
+
+/* ---------- 表面 ---------- */
+
+.card-low { background: var(--sc-low); border: 1rpx solid var(--sc-variant); border-radius: var(--r-xl); }
+.card-highest { background: var(--sc-highest); border: 1rpx solid var(--sc-variant); border-radius: var(--r-xl); box-shadow: 0 16rpx 48rpx rgba(0,0,0,.5); }
+.inner-border { box-shadow: inset 0 0 0 1rpx rgba(255,255,255,.05); }
+
+/* 玻璃面板（故事线卡专用） */
+.glass-panel {
+  background: linear-gradient(135deg, rgba(38,42,48,.8) 0%, rgba(24,28,33,.6) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1rpx solid var(--outline-muted);
 }
 
-.section-sub {
-  font-size: 22rpx;
-  color: var(--dim);
-  font-weight: 400;
+/* ---------- 光效 ---------- */
+
+.floodlight-glow { box-shadow: 0 0 24rpx 4rpx rgba(255,178,36,.15); }
+.text-glow { text-shadow: 0 0 16rpx rgba(255,178,36,.4); }
+.glow-amber { box-shadow: 0 0 8rpx rgba(255,178,36,.4); }
+
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.animate-pulse { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+/* ---------- 徽标 / 药丸 ---------- */
+
+/* 联赛实心小标（Hero 用，白字） */
+.lg-chip {
+  display: inline-flex; align-items: center;
+  padding: 6rpx 16rpx; border-radius: var(--r-sm);
+  font-family: var(--font-mono); font-size: 24rpx; line-height: 1;
+  color: #FFFFFF;
 }
 
-.mono {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.muted { color: var(--muted); font-size: 24rpx; }
-.dim { color: var(--dim); font-size: 22rpx; }
-
+/* Stitch 药丸：10% 底 + 40% 描边 */
 .chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 4rpx 16rpx;
-  border-radius: var(--r-full);
-  font-size: 20rpx;
-  border: 1rpx solid var(--line-strong);
-  color: var(--muted);
+  display: inline-flex; align-items: center; gap: 8rpx;
+  padding: 12rpx 24rpx; border-radius: var(--r-full);
+  font-family: var(--font-mono); font-size: 24rpx; line-height: 1;
+}
+.chip-amber { background: rgba(255,178,36,.1); border: 1rpx solid rgba(255,178,36,.4); color: var(--primary-container); }
+.chip-teal { background: rgba(68,226,205,.05); border: 1rpx solid rgba(68,226,205,.4); color: var(--secondary); }
+.chip-error { background: rgba(255,180,171,.08); border: 1rpx solid rgba(255,180,171,.4); color: var(--error); }
+.chip-solid { background: var(--sc-high); border: 1rpx solid transparent; color: var(--primary-container); }
+.chip-ghost { background: var(--sc-high); border: 1rpx solid var(--hairline); color: var(--on-surface-variant); }
+
+/* 联赛筛选药丸（_4 配色：暗底联赛同系色） */
+.fpill {
+  flex-shrink: 0; padding: 12rpx 40rpx; border-radius: var(--r-full);
+  font-family: var(--font-mono); font-size: 24rpx; line-height: 1;
+  background: var(--sc-high); color: var(--on-surface-variant); border: 1rpx solid var(--hairline);
+}
+.fpill.on-ALL { background: var(--primary-container); color: var(--on-primary); font-weight: 700; box-shadow: 0 0 24rpx rgba(255,178,36,.2); }
+.fpill.on-PL { background: #1E1025; color: #D8B4E2; border-color: rgba(216,180,226,.3); }
+.fpill.on-PD { background: #2A0E10; color: #FF8E8E; border-color: rgba(255,142,142,.3); }
+.fpill.on-SA { background: #0E1A26; color: #8AB4F8; border-color: rgba(138,180,248,.3); }
+.fpill.on-BL { background: #26100F; color: #FF8E8E; border-color: rgba(255,142,142,.3); }
+.fpill.on-FL { background: #0E241C; color: #6EE7B7; border-color: rgba(110,231,183,.3); }
+.fpill.on-SCG { background: #26200A; color: #FDE68A; border-color: rgba(253,230,138,.3); }
+
+/* ---------- 按钮 ---------- */
+
+.btn-amber {
+  display: flex; align-items: center; justify-content: center; gap: 12rpx;
+  width: 100%; padding: 28rpx 0; border-radius: var(--r-xl);
+  background: var(--primary-container); color: var(--on-primary-container);
+  font-family: var(--font-headline); font-size: 36rpx; font-weight: 700;
+}
+.btn-teal-ghost {
+  display: flex; align-items: center; justify-content: center; gap: 12rpx;
+  padding: 16rpx 0; border-radius: var(--r-md);
+  background: transparent; box-shadow: inset 0 0 0 1rpx var(--secondary);
+  color: var(--secondary); font-size: 28rpx;
 }
 
-.chip-primary {
-  border-color: transparent;
-  background: var(--primary);
-  color: var(--primary-ink);
-  font-weight: 600;
+/* ---------- 球队圆标（三字码） ---------- */
+
+.circle-xl {
+  width: 112rpx; height: 112rpx; border-radius: var(--r-full);
+  background: var(--sc-low); border: 1rpx solid var(--sc-variant);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-headline); font-size: 36rpx; font-weight: 600; color: var(--on-surface);
+}
+.circle-md {
+  width: 64rpx; height: 64rpx; border-radius: var(--r-full);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 20rpx; color: var(--on-surface);
+}
+.circle-sm {
+  width: 40rpx; height: 40rpx; border-radius: var(--r-full);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 16rpx; color: var(--on-surface);
+  background: var(--sc-highest); border: 1rpx solid var(--sc-variant);
 }
 
-.chip-teal {
-  border-color: transparent;
-  background: rgba(45, 212, 191, 0.15);
-  color: var(--teal);
+/* ---------- 列表行 ---------- */
+
+.menu-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32rpx; border-bottom: 1rpx solid rgba(49,53,59,.5);
 }
-
-.chip-danger {
-  border-color: transparent;
-  background: rgba(248, 113, 113, 0.15);
-  color: var(--danger);
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: var(--primary-ink);
-  font-weight: 700;
-  border-radius: var(--r-full);
-  padding: 20rpx 0;
-  text-align: center;
-  font-size: 28rpx;
-}
-
-.btn-ghost {
-  border: 1rpx solid var(--line-strong);
-  color: var(--muted);
-  border-radius: var(--r-full);
-  padding: 16rpx 0;
-  text-align: center;
-  font-size: 24rpx;
-}
-
-/* 联赛色 class */
-.lg-PL { color: var(--c-pl); }
-.lg-PD { color: var(--c-pd); }
-.lg-SA { color: var(--c-sa); }
-.lg-BL { color: var(--c-bl); }
-.lg-FL { color: var(--c-fl); }
-.lg-SCG { color: var(--c-scg); }
-
-/* 星级 */
-.stars { color: var(--primary); font-size: 24rpx; letter-spacing: 2rpx; }
-
-/* 队徽圆 */
-.team-dot {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: var(--r-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 26rpx;
-  font-weight: 700;
-  color: #101419;
-}
-
-/* 夜猫指数标 */
-.owl-badge {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4rpx;
-  background: var(--primary-dim);
-  border: 1rpx solid rgba(255, 178, 36, 0.35);
-  border-radius: var(--r-full);
-  padding: 4rpx 20rpx;
-  color: var(--primary);
-  font-family: var(--font-mono);
-  font-size: 24rpx;
-}
+.menu-row:last-child { border-bottom: none; }

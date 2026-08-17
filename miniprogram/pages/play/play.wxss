@@ -1,45 +1,49 @@
-.page { padding-bottom: 48rpx; }
+.page { padding: 24rpx 32rpx 48rpx; }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16rpx;
-  padding: 16rpx 32rpx;
-}
-.play-card {
-  background: var(--card);
-  border: 1rpx solid var(--line);
-  border-radius: var(--r-lg);
-  padding: 32rpx 24rpx;
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
-}
-.icon {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: var(--r-md);
-  background: rgba(139, 124, 246, 0.15);
-  color: var(--violet);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32rpx;
-  font-weight: 800;
-  margin-bottom: 8rpx;
-}
-.name { font-size: 30rpx; font-weight: 700; }
-.desc { color: var(--muted); font-size: 22rpx; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24rpx; }
+.tb-title { font-family: var(--font-headline); font-size: 40rpx; font-weight: 600; }
 
-.court { margin: 0 32rpx 16rpx; }
-.row { display: flex; align-items: center; gap: 12rpx; }
-.pair { flex: 1; font-weight: 600; font-size: 26rpx; }
-.sub-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12rpx;
+/* 2x2 玩法卡 */
+.grid { display: flex; flex-wrap: wrap; gap: 24rpx; }
+.pcard {
+  position: relative; overflow: hidden;
+  width: calc(50% - 12rpx); height: 220rpx; padding: 24rpx;
+  background: #161D27; border-radius: var(--r-xl);
+  box-shadow: inset 0 0 0 1rpx rgba(255,255,255,.05);
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 4rpx;
 }
-.time { color: var(--muted); font-size: 22rpx; }
-.btn-ghost.sm { padding: 8rpx 24rpx; font-size: 22rpx; }
-.desc-row { color: var(--muted); font-size: 24rpx; }
+.orb { position: absolute; top: -40rpx; right: -40rpx; width: 160rpx; height: 160rpx; border-radius: var(--r-full); filter: blur(40rpx); opacity: .25; }
+.c-amber .orb { background: var(--primary-container); }
+.c-teal .orb { background: var(--secondary); }
+.c-red .orb { background: #EF4444; }
+.c-violet .orb { background: #8B7CF6; }
+.p-icon { font-size: 44rpx; margin-bottom: 8rpx; }
+.p-name { font-family: var(--font-headline); font-size: 32rpx; font-weight: 700; }
+.p-sub { font-family: var(--font-mono); font-size: 20rpx; color: var(--on-surface-variant); }
+
+.sect-gap { margin: 48rpx 0 24rpx; }
+
+/* 竞猜单 */
+.guess { padding: 24rpx; margin-bottom: 16rpx; }
+.g-vs { display: flex; align-items: center; justify-content: space-between; padding: 24rpx 40rpx; }
+.g-side { display: flex; flex-direction: column; align-items: center; gap: 12rpx; }
+.g-name { font-size: 26rpx; font-weight: 500; }
+.g-vs-txt { font-size: 24rpx; }
+.g-opts { display: flex; gap: 16rpx; }
+.g-opt {
+  flex: 1; text-align: center; padding: 16rpx 0;
+  border: 1rpx solid var(--hairline); border-radius: var(--r-md);
+  color: var(--on-surface-variant); font-size: 26rpx;
+}
+.g-opt:active { background: rgba(255,178,36,.1); border-color: rgba(255,178,36,.4); color: var(--primary-container); }
+.g-sealed {
+  text-align: center; padding: 16rpx 0;
+  border-radius: var(--r-md); background: rgba(255,178,36,.08);
+  color: var(--primary);
+}
+
+/* 排行榜空态 */
+.board { padding: 48rpx 32rpx; display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
+.b-emoji { font-size: 56rpx; }
+.b-title { font-family: var(--font-headline); font-size: 32rpx; font-weight: 700; }
+.b-sub { color: var(--on-surface-variant); font-size: 24rpx; }
