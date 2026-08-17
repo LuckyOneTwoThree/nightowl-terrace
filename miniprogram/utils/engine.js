@@ -159,20 +159,28 @@ function knapsack(entries, budgetHours) {
   var n = entries.length;
   var val = entries.map(function (e) { return Math.round(e.index * 10); });
   var wt = entries.map(function (e) { return Math.round(tierOf(e.m).cost * 2); });
-  var dp = [], pick = [];
-  var w, i, k;
-  for (k = 0; k <= cap; k++) dp[k] = 0;
-  for (i = 0; i < n; i++) {
-    pick[i] = [];
-    for (w = cap; w >= wt[i]; w--) {
-      var cand = dp[w - wt[i]] + val[i];
-      if (cand > dp[w]) { dp[w] = cand; pick[i][w] = true; }
+  // 二维 DP，避免一维滚动数组下 pick 标记被覆盖的回溯错误
+  var i, w;
+  var dp = [];
+  for (i = 0; i <= n; i++) {
+    dp[i] = [];
+    for (w = 0; w <= cap; w++) dp[i][w] = 0;
+  }
+  for (i = 1; i <= n; i++) {
+    for (w = 0; w <= cap; w++) {
+      dp[i][w] = dp[i - 1][w];
+      if (wt[i - 1] <= w && dp[i - 1][w - wt[i - 1]] + val[i - 1] > dp[i][w]) {
+        dp[i][w] = dp[i - 1][w - wt[i - 1]] + val[i - 1];
+      }
     }
   }
-  // 回溯选择
-  var chosen = [], w2 = cap;
-  for (i = n - 1; i >= 0; i--) {
-    if (pick[i][w2]) { chosen.unshift(entries[i]); w2 -= wt[i]; }
+  var chosen = [];
+  w = cap;
+  for (i = n; i >= 1; i--) {
+    if (dp[i][w] !== dp[i - 1][w]) {
+      chosen.unshift(entries[i - 1]);
+      w -= wt[i - 1];
+    }
   }
   return chosen;
 }
