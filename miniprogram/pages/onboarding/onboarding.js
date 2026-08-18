@@ -1,6 +1,7 @@
 var data = require('../../utils/data.js');
 
 Page({
+  onShow: function () { getApp().applyTheme(this); },
   data: { groups: [], picked: 0 },
 
   onLoad: function () {
@@ -11,7 +12,7 @@ Page({
         id: l.id, zh: l.zh,
         teams: teams.filter(function (t) { return t.league === l.id; }).map(function (t) {
           return {
-            id: t.id, zh: t.zh, color: t.color,
+            id: t.id, zh: t.zh, color: t.color, logo: t.logo,
             on: followed.indexOf(t.id) >= 0
           };
         })

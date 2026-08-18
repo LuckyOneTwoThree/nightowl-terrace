@@ -3,9 +3,10 @@ var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 
 // 豪门集合：英超六强 + 各国传统豪门（PM 9.6 星级下限/豪门出战筛选）
-var GIANTS = ['ARS', 'MCI', 'LIV', 'CHE', 'MUN', 'TOT', 'RMA', 'BAR', 'ATM', 'MIL', 'INT', 'JUV', 'BAY', 'DOR', 'PSG'];
+var GIANTS = ['ARS', 'MCI', 'LIV', 'CHE', 'MUN', 'TOT', 'RMA', 'BAR', 'ATM', 'MIL', 'INT', 'JUV', 'FCB', 'BVB', 'PSG'];
 
 Page({
+  onShow: function () { getApp().applyTheme(this); },
   data: {
     pills: [
       { key: 'prime', label: '仅黄金档', on: false },

@@ -5,6 +5,7 @@
  */
 
 var teams = require('../data/teams.js');
+var crest = require('./crest.js');
 var fixturesSeed = require('../data/fixtures.full.js'); // M1.1 全量 1752 场（ESPN 抓取生成，tools/fetch_espn.js + build_fixtures.js）
 var recsSeed = require('../data/recommendations.seed.js');
 var storylinesAll = require('../data/storylines.js');
@@ -40,7 +41,10 @@ function tint(hex, a) {
 }
 
 var teamMap = {};
-teams.forEach(function (t) { teamMap[t.id] = t; });
+teams.forEach(function (t) {
+  t.logo = crest.getUrl(t.id, t.league);
+  teamMap[t.id] = t;
+});
 
 function recMap() {
   var map = {};
@@ -63,7 +67,7 @@ module.exports = {
   tint: tint,
   getMatch: getMatch,
   getTeams: function () { return teams; },
-  getTeam: function (id) { return teamMap[id] || { id: id, zh: id, color: '#666' }; },
+  getTeam: function (id) { return teamMap[id] || { id: id, zh: id, color: '#666', logo: null }; },
   getRivalries: function () { return rivalries; },
   getStorylines: function () { return storylines(); },
   getAllStorylines: function () { return storylinesAll; },

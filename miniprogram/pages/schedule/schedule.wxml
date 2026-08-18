@@ -1,48 +1,51 @@
-<view class="page">
-  <!-- 视图切换（PM T7：日历视图 / 轮次视图） -->
-  <view class="vtoggle">
-    <view class="vt-btn {{viewMode === 'day' ? 'on' : ''}}" data-mode="day" bindtap="onSwitchView">
-      <text>日历视图</text>
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
+  <!-- 顶部吸顶控制区（Sticky Header：视图切换 + 日期条 + 联赛/星级筛选） -->
+  <view class="sticky-bar">
+    <!-- 视图切换（PM T7：日历视图 / 轮次视图） -->
+    <view class="vtoggle">
+      <view class="vt-btn {{viewMode === 'day' ? 'on' : ''}}" data-mode="day" bindtap="onSwitchView">
+        <text>日历视图</text>
+      </view>
+      <view class="vt-btn {{viewMode === 'round' ? 'on' : ''}}" data-mode="round" bindtap="onSwitchView">
+        <text>轮次视图</text>
+      </view>
     </view>
-    <view class="vt-btn {{viewMode === 'round' ? 'on' : ''}}" data-mode="round" bindtap="onSwitchView">
-      <text>轮次视图</text>
-    </view>
+
+    <!-- 日期条（_4：横滑日选） -->
+    <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'day'}}">
+      <view
+        wx:for="{{days}}" wx:key="day"
+        class="dchip {{selDay === item.day ? 'on floodlight-glow' : ''}}"
+        data-day="{{item.day}}" bindtap="onPickDay">
+        <view class="dchip-dot dot-amber" wx:if="{{selDay === item.day}}"></view>
+        <text class="dchip-wd">{{item.isToday ? '今天' : '周' + item.wd}}</text>
+        <text class="dchip-md mono">{{item.short}}</text>
+        <text class="dchip-count mono muted">{{item.count}}场</text>
+      </view>
+    </scroll-view>
+
+    <!-- 轮次条（轮次视图） -->
+    <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'round'}}">
+      <view
+        wx:for="{{rounds}}" wx:key="*this"
+        class="dchip {{selRound === item ? 'on floodlight-glow' : ''}}"
+        data-r="{{item}}" bindtap="onPickRound">
+        <text class="dchip-wd">第{{item}}轮</text>
+      </view>
+    </scroll-view>
+
+    <!-- 联赛 + 星级筛选（_4 药丸；轮次视图下「全部」回落英超） -->
+    <scroll-view scroll-x class="pills" enhanced show-scrollbar="{{false}}">
+      <view
+        wx:for="{{leagues}}" wx:key="id"
+        wx:if="{{viewMode === 'day' || item.id !== 'ALL'}}"
+        class="fpill on-{{selLg === item.id ? item.id : 'none'}}"
+        data-lg="{{item.id}}" bindtap="onPickLg">{{item.zh}}</view>
+      <view class="fpill star-pill on-{{selStar ? 'ALL' : 'none'}}" bindtap="onStarFilter">
+        <text>★ {{starLabel}}</text>
+      </view>
+    </scroll-view>
   </view>
-
-  <!-- 日期条（_4：横滑日选） -->
-  <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'day'}}">
-    <view
-      wx:for="{{days}}" wx:key="day"
-      class="dchip {{selDay === item.day ? 'on floodlight-glow' : ''}}"
-      data-day="{{item.day}}" bindtap="onPickDay">
-      <view class="dchip-dot dot-amber" wx:if="{{selDay === item.day}}"></view>
-      <text class="dchip-wd">{{item.isToday ? '今天' : '周' + item.wd}}</text>
-      <text class="dchip-md mono">{{item.short}}</text>
-      <text class="dchip-count mono muted">{{item.count}}场</text>
-    </view>
-  </scroll-view>
-
-  <!-- 轮次条（轮次视图） -->
-  <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'round'}}">
-    <view
-      wx:for="{{rounds}}" wx:key="*this"
-      class="dchip {{selRound === item ? 'on floodlight-glow' : ''}}"
-      data-r="{{item}}" bindtap="onPickRound">
-      <text class="dchip-wd">第{{item}}轮</text>
-    </view>
-  </scroll-view>
-
-  <!-- 联赛 + 星级筛选（_4 药丸；轮次视图下「全部」回落英超） -->
-  <scroll-view scroll-x class="pills" enhanced show-scrollbar="{{false}}">
-    <view
-      wx:for="{{leagues}}" wx:key="id"
-      wx:if="{{viewMode === 'day' || item.id !== 'ALL'}}"
-      class="fpill on-{{selLg === item.id ? item.id : 'none'}}"
-      data-lg="{{item.id}}" bindtap="onPickLg">{{item.zh}}</view>
-    <view class="fpill star-pill on-{{selStar ? 'ALL' : 'none'}}" bindtap="onStarFilter">
-      <text>★ {{starLabel}}</text>
-    </view>
-  </scroll-view>
 
   <!-- 分组列表 -->
   <view class="list">
@@ -75,14 +78,14 @@
           <view class="t-row">
             <text class="t-name">{{mt.home.zh}}</text>
             <view class="m-team-info">
-              <view class="circle-sm" style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
+              <image class="crest-sm" src="{{mt.home.logo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!mt.home.logo}}" style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
               <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scH : '-'}}</text>
             </view>
           </view>
           <view class="t-row">
             <text class="t-name dim2">{{mt.away.zh}}</text>
             <view class="m-team-info">
-              <view class="circle-sm" style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
+              <image class="crest-sm" src="{{mt.away.logo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!mt.away.logo}}" style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
               <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scA : '-'}}</text>
             </view>
           </view>

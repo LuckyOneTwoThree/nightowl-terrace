@@ -24,31 +24,33 @@
 .wide { letter-spacing: 6rpx; }
 
 /* Hero（_5） */
-.hero { position: relative; margin: 24rpx 32rpx; padding: 32rpx; overflow: hidden; border-radius: var(--r-xl); }
-.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(68,226,205,.5); }
+.hero { position: relative; margin: 24rpx 32rpx; padding: 32rpx; overflow: hidden; border-radius: var(--r-xl); border: 1rpx solid var(--sc-variant); }
+.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); }
 .hero-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28rpx; padding-left: 12rpx; }
 .hh-left { display: flex; align-items: center; gap: 16rpx; }
 .stars-row { display: flex; align-items: center; gap: 4rpx; }
 .star-on { color: var(--primary-container); font-size: 28rpx; }
 .focal { display: flex; align-items: center; gap: 10rpx; color: var(--secondary); font-size: 22rpx; font-weight: 600; }
 
-.vs { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 12rpx 36rpx; }
-.side { width: 30%; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
-.side-name { font-size: 28rpx; font-weight: 600; text-align: center; color: var(--on-surface); }
-.mid { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10rpx; }
-.score-m { color: var(--on-surface); font-size: 60rpx; line-height: 60rpx; letter-spacing: -1rpx; }
+.vs { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 0 36rpx; }
+.side { width: 160rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
+.side-name { font-size: 28rpx; font-weight: 600; text-align: center; color: var(--on-surface); max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 10rpx; padding: 0 8rpx; }
+.score-m { color: var(--on-surface); font-size: 56rpx; line-height: 56rpx; letter-spacing: -1rpx; white-space: nowrap; }
 .cd-pill {
   background: rgba(255,178,36,.12);
   border: 1rpx solid rgba(255,178,36,.4);
-  padding: 6rpx 20rpx;
+  padding: 8rpx 20rpx;
   border-radius: var(--r-full);
+  white-space: nowrap; max-width: 100%; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
 }
-.cd { color: var(--primary-container); font-size: 22rpx; font-weight: 700; }
-.cd-sub { font-size: 22rpx; margin-top: 2rpx; }
+.cd { color: var(--primary-container); font-size: 22rpx; font-weight: 700; white-space: nowrap; }
+.cd-sub { font-size: 22rpx; margin-top: 2rpx; white-space: nowrap; }
 
 .bullets { background: var(--sc-low); border: 1rpx solid var(--outline-muted); border-radius: var(--r-md); padding: 22rpx 26rpx; margin-bottom: 24rpx; display: flex; flex-direction: column; gap: 14rpx; }
 .bullet { display: flex; align-items: flex-start; gap: 14rpx; }
-.b-dot { width: 8rpx; height: 8rpx; border-radius: var(--r-full); background: var(--primary-container); margin-top: 14rpx; flex-shrink: 0; box-shadow: 0 0 6rpx rgba(255,178,36,.6); }
+.b-dot { width: 8rpx; height: 8rpx; border-radius: var(--r-full); background: var(--outline-variant); margin-top: 14rpx; flex-shrink: 0; }
 .b-text { font-family: var(--font-body); font-size: 24rpx; line-height: 36rpx; color: var(--on-surface-variant); }
 
 .hero-chips { display: flex; flex-wrap: wrap; gap: 14rpx; }
@@ -94,6 +96,10 @@
 .rp-chip { padding: 4rpx 16rpx; font-size: 20rpx; }
 .rp-pair { display: block; font-size: 30rpx; font-weight: 700; margin: 8rpx 0 6rpx; }
 .rp-teaser { color: var(--on-surface-variant); font-size: 24rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-teams { display: flex; align-items: center; justify-content: space-between; margin-top: 8rpx; }
+.rp-name { font-size: 30rpx; font-weight: 700; }
+.rp-crests { display: flex; align-items: center; gap: 12rpx; flex-shrink: 0; }
+.rp-crests .vs-txt { margin: 0 4rpx; }
 
 /* 明日预告条 */
 .tmr { display: flex; align-items: center; margin: 0 32rpx 16rpx; padding: 22rpx 26rpx; background: var(--sc-lowest); border: 1rpx solid var(--outline-muted); }

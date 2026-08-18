@@ -33,6 +33,7 @@ function dayLabel(day) {
 }
 
 Page({
+  onShow: function () { getApp().applyTheme(this); },
   data: {
     days: [],          // 日期条
     selDay: '',        // 选中日期（scroll-into-view）
@@ -89,8 +90,8 @@ Page({
         star: ev.star,
         stars: '★★★'.slice(0, ev.star),
         followed: followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0, // 主队角标（PM 7.4）
-        home: { zh: h.zh, id: h.id, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
-        away: { zh: a.zh, id: a.id, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) }
+        home: { zh: h.zh, id: h.id, logo: h.logo, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
+        away: { zh: a.zh, id: a.id, logo: a.logo, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) }
       };
       byDay[day].matches.push(card);
       byRound[m.l] = byRound[m.l] || {};

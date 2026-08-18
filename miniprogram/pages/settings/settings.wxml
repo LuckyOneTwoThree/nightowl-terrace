@@ -1,4 +1,4 @@
-<view class="page" wx:if="{{s}}">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{s}}">
   <!-- 偏好（_12） -->
   <text class="g-label mono muted">熬夜偏好设置</text>
   <view class="group card-low">
@@ -9,7 +9,7 @@
       </view>
       <view class="stepper card-high">
         <view class="st-btn" bindtap="minus"><text class="mono hl">−</text></view>
-        <text class="st-val mono hl text-amber">{{s.budget.toFixed(1)}}h</text>
+        <text class="st-val mono hl text-amber">{{budgetText}}h</text>
         <view class="st-btn" bindtap="plus"><text class="mono hl">＋</text></view>
       </view>
     </view>
@@ -60,6 +60,52 @@
     </view>
   </view>
 
+  <!-- 外观与主题 -->
+  <text class="g-label mono muted">外观与主题模式</text>
+  <view class="group card-low theme-section">
+    <view class="theme-head">
+      <view class="g-left">
+        <text class="g-main hl">主题外观模式</text>
+        <text class="mono muted g-sub">随心切换暗夜、晨曦或跟随系统</text>
+      </view>
+    </view>
+    
+    <view class="theme-grid">
+      <view class="theme-card {{s.theme === 'dark' ? 'on floodlight-glow' : ''}}" data-mode="dark" bindtap="selectTheme">
+        <view class="tc-icon-wrap tc-dark">
+          <text class="tc-icon">🌙</text>
+        </view>
+        <text class="tc-name hl">经典暗夜</text>
+        <text class="tc-desc mono muted">深邃夜猫</text>
+        <view class="tc-badge" wx:if="{{s.theme === 'dark'}}">
+          <view class="v-icon v-check text-amber"></view>
+        </view>
+      </view>
+
+      <view class="theme-card {{s.theme === 'light' ? 'on floodlight-glow' : ''}}" data-mode="light" bindtap="selectTheme">
+        <view class="tc-icon-wrap tc-light">
+          <text class="tc-icon">☀️</text>
+        </view>
+        <text class="tc-name hl">清爽晨曦</text>
+        <text class="tc-desc mono muted">白昼明朗</text>
+        <view class="tc-badge" wx:if="{{s.theme === 'light'}}">
+          <view class="v-icon v-check text-amber"></view>
+        </view>
+      </view>
+
+      <view class="theme-card {{s.theme === 'auto' ? 'on floodlight-glow' : ''}}" data-mode="auto" bindtap="selectTheme">
+        <view class="tc-icon-wrap tc-auto">
+          <text class="tc-icon">⚙️</text>
+        </view>
+        <text class="tc-name hl">跟随系统</text>
+        <text class="tc-desc mono muted">自动切换</text>
+        <view class="tc-badge" wx:if="{{s.theme === 'auto'}}">
+          <view class="v-icon v-check text-amber"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 关于 -->
   <text class="g-label mono muted">关于与版本</text>
   <view class="group card-low">
@@ -83,7 +129,7 @@
 
   <!-- _13 圈内绰号居中弹窗 Modal -->
   <view class="modal-mask" wx:if="{{showNickModal}}" bindtap="cancelNick">
-    <view class="center-modal card-highest floodlight-glow" catchtap="true">
+    <view class="nick-modal card-highest floodlight-glow" catchtap="preventD">
       <view class="modal-head">
         <view class="v-icon v-paw text-amber modal-icon"></view>
         <text class="hl hl-md modal-title">修改圈内绰号</text>
@@ -93,14 +139,14 @@
       <view class="modal-input-row card-high">
         <input class="nick-modal-in hl" value="{{inputNick}}" maxlength="12"
                placeholder="输入圈内绰号..." bindinput="onNickInput" />
-        <view class="chip chip-amber rand-chip" bindtap="randomNick">
-          <text class="mono">随机</text>
+        <view class="chip chip-amber rand-chip" catchtap="randomNick">
+          <text class="mono">🎲 随机</text>
         </view>
       </view>
 
       <view class="modal-btns">
-        <button class="btn-outline m-btn" bindtap="cancelNick">取消</button>
-        <button class="btn-amber m-btn floodlight-glow" bindtap="confirmNick">保存绰号</button>
+        <button class="btn-outline m-btn" catchtap="cancelNick">取消</button>
+        <button class="btn-amber m-btn floodlight-glow" catchtap="confirmNick">保存绰号</button>
       </view>
     </view>
   </view>

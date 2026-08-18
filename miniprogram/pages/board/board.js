@@ -34,7 +34,8 @@ Page({
     myStreak: 0
   },
 
-  onShow: function () { this.refresh(); },
+  onShow: function () {
+    getApp().applyTheme(this); this.refresh(); },
 
   // 云端夜猫榜（readBoard 聚合）；不可用则保留演示榜单
   fetchRanks: function () {
@@ -103,7 +104,8 @@ Page({
       preview: preview ? decorate.dec(preview, null, { followed: getApp().getFollowed() }) : null,
       checked: live ? !!checkins[live.id] : false,
       myStreak: streak,
-      myHours: hours.toFixed(1)
+      myHours: hours.toFixed(1),
+      myNick: (wx.getStorageSync('settings') || {}).nick || wx.getStorageSync('nickname') || '夜猫子'
     });
   },
 

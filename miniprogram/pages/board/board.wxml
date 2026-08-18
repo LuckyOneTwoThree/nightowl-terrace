@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
   <!-- Hero：夜猫榜 + 本周我的修仙（_2） -->
   <view class="hero-head">
     <text class="hero-title hl">夜猫封神榜</text>
@@ -35,7 +35,7 @@
     
     <view class="live-vs">
       <view class="lv-side">
-        <view class="circle-md" style="background: {{live.home.bg}}; border-color: {{live.home.bd}};">{{live.home.id}}</view>
+        <image class="crest-md" src="{{live.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!live.home.logo}}" style="background: {{live.home.bg}}; border-color: {{live.home.bd}};">{{live.home.id}}</view>
         <text class="lv-name hl">{{live.home.zh}}</text>
       </view>
       <view class="lv-mid">
@@ -43,7 +43,7 @@
         <view class="chip chip-solid">{{live.lgZh}}</view>
       </view>
       <view class="lv-side">
-        <view class="circle-md" style="background: {{live.away.bg}}; border-color: {{live.away.bd}};">{{live.away.id}}</view>
+        <image class="crest-md" src="{{live.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!live.away.logo}}" style="background: {{live.away.bg}}; border-color: {{live.away.bd}};">{{live.away.id}}</view>
         <text class="lv-name hl">{{live.away.zh}}</text>
       </view>
     </view>
@@ -65,7 +65,7 @@
     </view>
     <view class="live-vs">
       <view class="lv-side">
-        <view class="circle-md" style="background: {{preview.home.bg}}; border-color: {{preview.home.bd}};">{{preview.home.id}}</view>
+        <image class="crest-md" src="{{preview.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!preview.home.logo}}" style="background: {{preview.home.bg}}; border-color: {{preview.home.bd}};">{{preview.home.id}}</view>
         <text class="lv-name hl">{{preview.home.zh}}</text>
       </view>
       <view class="lv-mid">
@@ -73,7 +73,7 @@
         <view class="chip chip-ghost">{{preview.lgZh}}</view>
       </view>
       <view class="lv-side">
-        <view class="circle-md" style="background: {{preview.away.bg}}; border-color: {{preview.away.bd}};">{{preview.away.id}}</view>
+        <image class="crest-md" src="{{preview.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!preview.away.logo}}" style="background: {{preview.away.bg}}; border-color: {{preview.away.bd}};">{{preview.away.id}}</view>
         <text class="lv-name hl">{{preview.away.zh}}</text>
       </view>
     </view>
@@ -101,9 +101,11 @@
     <!-- 我的排位 -->
     <view class="rank-row user-row card-high">
       <text class="rk-no user-rank hl">18</text>
-      <view class="circle-sm user-avatar">我</view>
+      <view class="circle-sm user-avatar">
+        <view class="v-icon v-paw text-amber" style="width: 26rpx; height: 26rpx;"></view>
+      </view>
       <view class="rk-info">
-        <text class="rk-name hl text-amber">我 (熬夜小猫)</text>
+        <text class="rk-name hl text-amber">我 ({{myNick}})</text>
         <text class="mono muted rk-s">连续 {{myStreak}} 周</text>
       </view>
       <text class="rk-h hl text-amber mono">{{myHours}}h</text>

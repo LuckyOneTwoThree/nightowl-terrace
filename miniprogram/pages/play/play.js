@@ -26,6 +26,7 @@ Page({
   },
 
   onShow: function () {
+    getApp().applyTheme(this);
     this.refresh();
     this.fetchRanks();
   },
@@ -91,8 +92,8 @@ Page({
       return {
         id: e.m.id,
         label: lgZh(e.m.l) + ' · ' + (d.getMonth() + 1) + '/' + d.getDate() + ' 周' + WEEK[d.getDay()] + ' ' + f[1],
-        home: { zh: h.zh, id: h.id, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
-        away: { zh: a.zh, id: a.id, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
+        home: { zh: h.zh, id: h.id, logo: h.logo, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
+        away: { zh: a.zh, id: a.id, logo: a.logo, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
         pick: (preds[e.m.id] || {}).pick || ''
       };
     });

@@ -9,8 +9,11 @@ function lgZh(l) {
 Page({
   data: {
     nickname: '',
-    groups: [],
+    followedTeams: [],
+    followedIds: [],
+    myWeek: [],
     stats: { hours: '0h', preds: 0, hit: '—' },
+
     menu: [
       { id: 'preds', icon: '🎯', name: '我的预测' },
       { id: 'boasts', icon: '⚖️', name: '狂言存档' },
@@ -21,6 +24,11 @@ Page({
   },
 
   onShow: function () {
+    getApp().applyTheme(this);
+    this.refresh();
+  },
+
+  refresh: function () {
     var settings = wx.getStorageSync('settings') || {};
     var nickname = settings.nick || wx.getStorageSync('nickname');
     if (!nickname) {
@@ -28,7 +36,7 @@ Page({
       wx.setStorageSync('nickname', nickname);
     }
 
-    var followed = getApp().getFollowed();
+    var followed = getApp().getFollowed() || [];
     var preds = wx.getStorageSync('predictions') || {};
 
     // 打卡时长与预测命中率
@@ -46,24 +54,22 @@ Page({
       }
     });
 
-    var groups = ['PL', 'PD', 'SA', 'BL', 'FL'].map(function (lg) {
+    // 已关注球队完整信息列表（外层仅展示已关注）
+    var followedTeams = followed.map(function (id) {
+      var t = data.getTeam(id);
       return {
-        id: lg,
-        zh: lgZh(lg),
-        teams: data.getTeams().filter(function (t) { return t.league === lg; }).map(function (t) {
-          return {
-            id: t.id,
-            zh: t.zh,
-            color: t.color,
-            dot: data.tint(t.color, .9),
-            on: followed.indexOf(t.id) >= 0,
-            isNew: t.tag === 'promoted'
-          };
-        })
+        id: t.id,
+        zh: t.zh,
+        color: t.color,
+        logo: t.logo || '',
+        bg: data.tint(t.color, .2),
+        bd: data.tint(t.color, .4),
+        lg: t.league,
+        lgZh: lgZh(t.league)
       };
     });
 
-    // 我的关注 · 本周主队赛程（PM 7.4：关注球队聚合视图）
+    // 我的关注 · 本周主队赛程（PM 7.4 聚合视图）
     var now = new Date();
     var start = engine.dateStr(now);
     var end = engine.dateStr(new Date(now.getTime() + 7 * 86400000));
@@ -87,28 +93,27 @@ Page({
 
     this.setData({
       nickname: nickname,
-      groups: groups,
+      followedTeams: followedTeams,
+      followedIds: followed,
       myWeek: myWeek,
       stats: { hours: hours, preds: Object.keys(preds).length, hit: total ? Math.round(hit * 100 / total) + '%' : '—' }
     });
   },
 
-  onToggle: function (e) {
-    var id = e.currentTarget.dataset.id;
-    var app = getApp();
-    var followed = app.getFollowed();
-    var i = followed.indexOf(id);
-    if (i >= 0) followed.splice(i, 1); else followed.push(id);
-    app.setFollowed(followed);
+  goManageTeams: function () {
+    wx.navigateTo({ url: '/pages/teams/teams' });
+  },
 
-    var groups = this.data.groups.map(function (g) {
-      g.teams = g.teams.map(function (t) {
-        if (t.id === id) t.on = followed.indexOf(id) >= 0;
-        return t;
-      });
-      return g;
-    });
-    this.setData({ groups: groups });
+  onRemoveFollow: function (e) {
+    var id = e.currentTarget.dataset.id;
+    var followed = (this.data.followedIds || []).slice();
+    var idx = followed.indexOf(id);
+    if (idx >= 0) {
+      followed.splice(idx, 1);
+      getApp().setFollowed(followed);
+      this.refresh();
+      wx.showToast({ title: '已取消关注', icon: 'none' });
+    }
   },
 
   onEditNick: function () {
@@ -131,4 +136,6 @@ Page({
     wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
   }
 });
+
+
 

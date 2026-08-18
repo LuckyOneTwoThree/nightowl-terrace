@@ -1,8 +1,10 @@
-<view class="page">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
   <!-- 用户卡（_18） -->
   <view class="profile card-low" bindtap="onEditNick">
     <view class="avatar-wrap">
-      <view class="circle-xl avatar-box text-amber hl">OWL</view>
+      <view class="circle-xl avatar-box text-amber">
+        <view class="v-icon v-paw brand-avatar-icon text-amber"></view>
+      </view>
       <view class="dot-teal dot-pos animate-pulse"></view>
     </view>
     <view class="prof-mid">
@@ -33,10 +35,54 @@
     </view>
   </view>
 
+  <!-- 关注主队（已关注列表 + 去管理入口） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">关注主队</text>
+    <view class="sect-line"></view>
+    <text class="sect-more" bindtap="goManageTeams">管理主队 ›</text>
+  </view>
+
+  <!-- 状态 A：已有关注球队（精美流式卡片，支持一键移除与添加新队） -->
+  <view class="followed-box" wx:if="{{followedTeams.length}}">
+    <view class="followed-list">
+      <view class="f-card card-low floodlight-glow" wx:for="{{followedTeams}}" wx:key="id">
+        <image class="crest-md f-ava" src="{{item.logo}}" mode="aspectFill" /><view class="circle-md f-ava crest-fb" wx:if="{{!item.logo}}" style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
+        <view class="f-info">
+          <text class="f-name hl">{{item.zh}}</text>
+          <text class="f-lg mono muted">{{item.lgZh}}</text>
+        </view>
+        <view class="f-del" data-id="{{item.id}}" catchtap="onRemoveFollow">
+          <view class="v-icon v-cross text-muted f-del-ic"></view>
+        </view>
+      </view>
+      <!-- 添加主队入口药丸 -->
+      <view class="f-add-card" bindtap="goManageTeams">
+        <view class="v-icon v-bolt text-amber f-add-ic"></view>
+        <text class="mono text-amber f-add-txt">+ 添加主队</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 状态 B：未关注任何球队的空态提示 -->
+  <view class="f-empty card-low" wx:else bindtap="goManageTeams">
+    <view class="fe-left">
+      <view class="fe-icon-wrap">
+        <view class="v-icon v-paw text-amber fe-paw"></view>
+      </view>
+      <view class="fe-content">
+        <text class="fe-title hl">尚未关注任何主队</text>
+        <text class="fe-sub mono muted">关注主队，赛程自动提级并推送专属提醒</text>
+      </view>
+    </view>
+    <view class="chip chip-amber floodlight-glow fe-btn">
+      <text class="hl">+ 挑选主队</text>
+    </view>
+  </view>
+
   <!-- 我的关注 · 本周主队赛程（PM 7.4 聚合视图） -->
   <block wx:if="{{myWeek.length}}">
     <view class="sect sect-gap">
-      <text class="sect-title">我的关注 · 本周</text>
+      <text class="sect-title">本周主队赛程</text>
       <view class="sect-line"></view>
     </view>
     <view class="menu card-low">
@@ -52,26 +98,6 @@
       </view>
     </view>
   </block>
-
-  <!-- 关注球队（_18 气泡选择） -->
-  <view class="sect sect-gap">
-    <text class="sect-title">关注球队</text>
-    <view class="sect-line"></view>
-    <text class="sect-more">点击切换 ›</text>
-  </view>
-  <view class="lg-group" wx:for="{{groups}}" wx:key="id">
-    <text class="mono muted lg-hdr">{{item.zh}}</text>
-    <view class="team-pills">
-      <view
-        class="t-pill {{t.on ? 'on floodlight-glow' : ''}}"
-        wx:for="{{item.teams}}" wx:for-item="t" wx:key="id"
-        data-id="{{t.id}}" bindtap="onToggle">
-        <view class="t-dot" style="background: {{t.color}};"></view>
-        <text class="t-zh">{{t.zh}}</text>
-        <view class="v-icon v-check text-amber check-s" wx:if="{{t.on}}"></view>
-      </view>
-    </view>
-  </view>
 
   <!-- 菜单列表（_18） -->
   <view class="sect sect-gap">
@@ -112,5 +138,7 @@
     </view>
   </view>
 
-  <text class="ver mono">夜猫看台 · v0.1 体验版</text>
+  <text class="ver mono">夜猫看台 · v0.2 高保真版</text>
 </view>
+
+

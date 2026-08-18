@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
   <!-- 顶栏（_5 TopAppBar：爪标 + 日期/标题 + 日历） -->
   <view class="topbar">
     <view class="tb-left">
@@ -32,7 +32,8 @@
 
       <view class="vs">
         <view class="side">
-          <view class="circle-xl" style="background: {{hero.home.bg}}; border-color: {{hero.home.bd}};">{{hero.home.id}}</view>
+          <image class="crest-xl" src="{{hero.home.logo}}" mode="aspectFill" />
+          <view class="circle-xl crest-fb" wx:if="{{!hero.home.logo}}" style="background: {{hero.home.bg}}; border-color: {{hero.home.bd}};">{{hero.home.id}}</view>
           <text class="side-name">{{hero.home.zh}}</text>
         </view>
         <view class="mid">
@@ -44,7 +45,8 @@
           <text class="cd-sub mono muted" wx:if="{{!hero.tbd}}">当地 {{hero.local}}</text>
         </view>
         <view class="side">
-          <view class="circle-xl" style="background: {{hero.away.bg}}; border-color: {{hero.away.bd}};">{{hero.away.id}}</view>
+          <image class="crest-xl" src="{{hero.away.logo}}" mode="aspectFill" />
+          <view class="circle-xl crest-fb" wx:if="{{!hero.away.logo}}" style="background: {{hero.away.bg}}; border-color: {{hero.away.bd}};">{{hero.away.id}}</view>
           <text class="side-name">{{hero.away.zh}}</text>
         </view>
       </view>
@@ -103,11 +105,13 @@
           </view>
           <view class="t-row">
             <text class="t-name">{{item.home.zh}}</text>
-            <view class="circle-sm" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+            <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFill" />
+            <view class="circle-sm crest-fb" wx:if="{{!item.home.logo}}" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
           </view>
           <view class="t-row">
             <text class="t-name dim2">{{item.away.zh}}</text>
-            <view class="circle-sm" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+            <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFill" />
+            <view class="circle-sm crest-fb" wx:if="{{!item.away.logo}}" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
           </view>
           <view class="extra-foot mono">
             <text class="text-amber">★{{item.star}}</text>
@@ -147,7 +151,16 @@
         <text class="mono muted">{{item.lgZh}}</text>
         <view class="chip chip-teal rp-chip">剧透已屏蔽</view>
       </view>
-      <text class="rp-pair">{{item.pair}}</text>
+      <view class="rp-teams">
+        <text class="rp-name">{{item.pair}}</text>
+        <view class="rp-crests">
+          <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" />
+          <view class="circle-sm crest-fb" wx:if="{{!item.homeLogo}}" style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
+          <text class="mono muted vs-txt">vs</text>
+          <image class="crest-sm" src="{{item.awayLogo}}" mode="aspectFill" />
+          <view class="circle-sm crest-fb" wx:if="{{!item.awayLogo}}" style="background: {{item.awayBg}}; border-color: {{item.awayBd}};">{{item.awayCode}}</view>
+        </view>
+      </view>
       <text class="rp-teaser mono muted">{{item.teaser}}</text>
     </view>
   </block>
@@ -166,9 +179,11 @@
       <view class="tmr-div"></view>
       <view class="tmr-teams">
         <text class="t-name">{{item.home.zh}}</text>
-        <view class="circle-sm" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFill" />
+        <view class="circle-sm crest-fb" wx:if="{{!item.home.logo}}" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
         <text class="mono muted vs-txt">vs</text>
-        <view class="circle-sm" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFill" />
+        <view class="circle-sm crest-fb" wx:if="{{!item.away.logo}}" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
         <text class="t-name">{{item.away.zh}}</text>
       </view>
     </view>
@@ -178,7 +193,7 @@
   <view class="sect sect-gap">
     <text class="sect-title">正在追的剧</text>
     <view class="sect-line"></view>
-    <text class="sect-more">全季连载 ›</text>
+    <text class="sect-more" bindtap="goAllStories">全季连载 ›</text>
   </view>
   <scroll-view scroll-x class="stories" enhanced show-scrollbar="{{false}}">
     <view class="story glass-panel" wx:for="{{stories}}" wx:key="id" data-id="{{item.id}}" bindtap="onStoryTap">

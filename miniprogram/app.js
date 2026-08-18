@@ -11,9 +11,20 @@ App({
       });
       console.log('[nightowl] 云开发已初始化');
     }
+
+    // 监听系统深浅色切换
+    var that = this;
+    if (wx.onThemeChange) {
+      wx.onThemeChange(function (res) {
+        if (that.getThemeMode() === 'auto') {
+          that.applyTheme();
+        }
+      });
+    }
   },
   globalData: {
-    followedTeams: null // 关注球队 id 数组，首次进入「我的」页引导选择
+    followedTeams: null,
+    themeMode: null
   },
   getFollowed: function () {
     if (this.globalData.followedTeams === null) {
@@ -30,5 +41,128 @@ App({
     try {
       wx.setStorageSync('followedTeams', ids);
     } catch (e) { /* 存储失败不阻塞 */ }
+  },
+
+  // 主题管理（'dark' | 'light' | 'auto'）
+  getThemeMode: function () {
+    if (!this.globalData.themeMode) {
+      try {
+        var s = wx.getStorageSync('settings') || {};
+        this.globalData.themeMode = s.theme || 'dark';
+      } catch (e) {
+        this.globalData.themeMode = 'dark';
+      }
+    }
+    return this.globalData.themeMode;
+  },
+
+  getEffectiveTheme: function () {
+    var mode = this.getThemeMode();
+    if (mode === 'auto') {
+      try {
+        var info = wx.getSystemInfoSync();
+        return info.theme === 'light' ? 'light' : 'dark';
+      } catch (e) {
+        return 'dark';
+      }
+    }
+    return mode === 'light' ? 'light' : 'dark';
+  },
+
+  setThemeMode: function (mode) {
+    this.globalData.themeMode = mode;
+    try {
+      var s = wx.getStorageSync('settings') || {};
+      s.theme = mode;
+      wx.setStorageSync('settings', s);
+    } catch (e) { }
+
+    var theme = this.getEffectiveTheme();
+    var isLight = theme === 'light';
+
+    // 动态更新页面底层背景色
+    if (wx.setBackgroundColor) {
+      wx.setBackgroundColor({
+        backgroundColor: isLight ? '#F4F5F7' : '#101419',
+        backgroundColorTop: isLight ? '#F4F5F7' : '#101419',
+        backgroundColorBottom: isLight ? '#F4F5F7' : '#101419',
+        fail: function () { }
+      });
+    }
+
+    // 动态更新原生导航栏
+    if (wx.setNavigationBarColor) {
+      wx.setNavigationBarColor({
+        frontColor: isLight ? '#000000' : '#ffffff',
+        backgroundColor: isLight ? '#F4F5F7' : '#101419',
+        animation: { duration: 200, timingFunc: 'easeIn' },
+        fail: function () { }
+      });
+    }
+
+    // 动态更新 TabBar 样式
+    if (wx.setTabBarStyle) {
+      wx.setTabBarStyle({
+        color: isLight ? '#64748B' : '#9F8E79',
+        selectedColor: isLight ? '#D97706' : '#FFB224',
+        backgroundColor: isLight ? '#FFFFFF' : '#101419',
+        borderStyle: isLight ? 'white' : 'black',
+        fail: function () { }
+      });
+    }
+
+    // 实时更新当前页面栈上的所有页面
+    var that = this;
+    if (typeof getCurrentPages === 'function') {
+      try {
+        var pages = getCurrentPages() || [];
+        pages.forEach(function (p) {
+          that.applyTheme(p);
+        });
+      } catch (e) { }
+    }
+  },
+
+  applyTheme: function (pageInstance) {
+    var theme = this.getEffectiveTheme();
+    var isLight = theme === 'light';
+
+    // 动态更新当前页面 data 中的 theme
+    if (pageInstance && pageInstance.setData) {
+      pageInstance.setData({ theme: theme });
+    }
+
+    // 动态更新页面底层背景色（避免下拉回弹露黑底）
+    if (wx.setBackgroundColor) {
+      wx.setBackgroundColor({
+        backgroundColor: isLight ? '#F4F5F7' : '#101419',
+        backgroundColorTop: isLight ? '#F4F5F7' : '#101419',
+        backgroundColorBottom: isLight ? '#F4F5F7' : '#101419',
+        fail: function () { }
+      });
+    }
+
+    // 动态更新原生导航栏
+    if (wx.setNavigationBarColor) {
+      wx.setNavigationBarColor({
+        frontColor: isLight ? '#000000' : '#ffffff',
+        backgroundColor: isLight ? '#F4F5F7' : '#101419',
+        animation: { duration: 200, timingFunc: 'easeIn' },
+        fail: function () { }
+      });
+    }
+
+    // 动态更新 TabBar 样式
+    if (wx.setTabBarStyle) {
+      wx.setTabBarStyle({
+        color: isLight ? '#64748B' : '#9F8E79',
+        selectedColor: isLight ? '#D97706' : '#FFB224',
+        backgroundColor: isLight ? '#FFFFFF' : '#101419',
+        borderStyle: isLight ? 'white' : 'black',
+        fail: function () { }
+      });
+    }
   }
 });
+
+

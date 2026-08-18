@@ -8,6 +8,7 @@ var TYPE_ZH = {
 };
 
 Page({
+  onShow: function () { getApp().applyTheme(this); },
   data: {
     s: null,        // 故事线本体
     typeZh: '',

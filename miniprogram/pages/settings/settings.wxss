@@ -17,10 +17,52 @@
 .st-star { font-size: 26rpx; }
 
 /* 步进器 */
-.stepper { display: flex; align-items: center; border-radius: var(--r-md); overflow: hidden; border: 1rpx solid rgba(159,142,121,.2); }
-.st-btn { width: 68rpx; height: 60rpx; display: flex; align-items: center; justify-content: center; font-size: 32rpx; }
-.st-btn:active { background: rgba(255,178,36,.15); }
-.st-val { width: 96rpx; text-align: center; font-size: 28rpx; }
+.stepper {
+  display: flex; align-items: center; border-radius: var(--r-md); overflow: hidden;
+  border: 1rpx solid rgba(159,142,121,.25); background: var(--sc-high);
+}
+.st-btn {
+  width: 76rpx; height: 68rpx; display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx; color: var(--on-surface);
+}
+.st-btn:active { background: rgba(255,178,36,.2); }
+.st-val { width: 104rpx; text-align: center; font-size: 28rpx; font-weight: 700; }
+
+/* 主题卡片组（3列网格自适应） */
+.theme-section { padding: 28rpx 32rpx; }
+.theme-head { margin-bottom: 24rpx; }
+.theme-grid { display: flex; gap: 16rpx; }
+.theme-card {
+  flex: 1; min-width: 0; position: relative;
+  background: var(--sc-high); border: 2rpx solid rgba(159,142,121,.15);
+  border-radius: var(--r-lg); padding: 24rpx 12rpx;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  transition: all .2s ease;
+}
+.theme-card:active { transform: scale(0.97); }
+.theme-card.on {
+  border-color: var(--primary-container);
+  background: rgba(255,178,36,.08);
+}
+.tc-icon-wrap {
+  width: 68rpx; height: 68rpx; border-radius: var(--r-full);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12rpx;
+}
+.tc-dark { background: rgba(0, 0, 0, 0.45); }
+.tc-light { background: rgba(255, 255, 255, 0.9); }
+.tc-auto { background: linear-gradient(135deg, rgba(0,0,0,0.5) 50%, rgba(255,255,255,0.9) 50%); }
+.tc-icon { font-size: 32rpx; }
+.tc-name { font-size: 26rpx; color: var(--on-surface); margin-bottom: 4rpx; white-space: nowrap; }
+.tc-desc { font-size: 20rpx; white-space: nowrap; }
+.tc-badge {
+  position: absolute; right: 8rpx; top: 8rpx;
+  width: 28rpx; height: 28rpx; border-radius: var(--r-full);
+  background: rgba(255,178,36,.25); display: flex; align-items: center; justify-content: center;
+}
+.tc-badge .v-icon { width: 18rpx; height: 18rpx; }
+
+
 
 .logout {
   margin-top: 40rpx; padding: 24rpx 0; text-align: center;
@@ -31,25 +73,27 @@
 
 /* _13 居中绰号弹窗 */
 .modal-mask {
-  position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 100;
+  position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 1000;
   background: rgba(0,0,0,.75); backdrop-filter: blur(12px);
   display: flex; align-items: center; justify-content: center; padding: 48rpx;
 }
-.center-modal {
-  width: 100%; max-width: 600rpx; padding: 44rpx 36rpx; border-radius: var(--r-xl);
+.nick-modal {
+  width: 100%; max-width: 620rpx; padding: 44rpx 36rpx; border-radius: var(--r-xl);
   display: flex; flex-direction: column; align-items: center; gap: 16rpx;
-  border: 1rpx solid rgba(255,178,36,.4);
+  background: var(--sc-high); border: 1rpx solid rgba(255,178,36,.4);
+  box-shadow: 0 24rpx 64rpx rgba(0,0,0,.8);
+  opacity: 1; pointer-events: auto;
 }
 .modal-head { display: flex; align-items: center; gap: 12rpx; }
-.modal-icon { width: 40rpx; height: 40rpx; }
-.modal-title { font-size: 34rpx; color: var(--on-surface); }
+.modal-icon { width: 44rpx; height: 44rpx; }
+.modal-title { font-size: 34rpx; color: var(--on-surface); font-weight: 700; }
 .modal-desc { font-size: 22rpx; text-align: center; margin-bottom: 12rpx; }
 .modal-input-row {
   width: 100%; display: flex; align-items: center; justify-content: space-between;
   padding: 12rpx 20rpx; border-radius: var(--r-lg); border: 1rpx solid rgba(255,178,36,.3);
-  margin-bottom: 24rpx;
+  margin-bottom: 24rpx; background: var(--sc-low);
 }
-.nick-modal-in { flex: 1; font-size: 30rpx; color: var(--on-surface); padding-right: 12rpx; }
-.rand-chip { font-size: 22rpx; padding: 6rpx 16rpx; }
+.nick-modal-in { flex: 1; height: 72rpx; font-size: 30rpx; color: var(--on-surface); padding-right: 12rpx; }
+.rand-chip { font-size: 22rpx; padding: 10rpx 20rpx; border-radius: var(--r-full); }
 .modal-btns { width: 100%; display: flex; gap: 20rpx; }
-.m-btn { flex: 1; font-size: 28rpx; padding: 22rpx 0; }
+.m-btn { flex: 1; font-size: 28rpx; padding: 22rpx 0; border-radius: var(--r-lg); }

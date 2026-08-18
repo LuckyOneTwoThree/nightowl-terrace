@@ -8,7 +8,8 @@
 .record-row { border-radius: var(--r-xl); padding: 24rpx 28rpx; display: flex; align-items: center; justify-content: space-between; gap: 16rpx; }
 .r-left { display: flex; flex-direction: column; gap: 6rpx; min-width: 0; }
 .r-top { display: flex; align-items: center; gap: 12rpx; }
-.r-icon { width: 32rpx; height: 32rpx; }
+.r-icon { width: 32rpx; height: 32rpx; flex-shrink: 0; }
+.r-logo { width: 40rpx; height: 40rpx; flex-shrink: 0; }
 .r-name { font-size: 28rpx; color: var(--on-surface); }
 .r-sub { font-size: 22rpx; }
 

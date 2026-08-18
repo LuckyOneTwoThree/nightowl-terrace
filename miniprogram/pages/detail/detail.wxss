@@ -9,21 +9,24 @@
 .stars-row { display: flex; align-items: center; gap: 4rpx; }
 .star-on { color: var(--primary-container); font-size: 28rpx; }
 
-.vs { display: flex; align-items: center; justify-content: space-between; padding: 10rpx 8rpx 36rpx; }
-.side { width: 30%; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
-.side-name { font-size: 28rpx; font-weight: 600; text-align: center; color: var(--on-surface); }
-.mid { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10rpx; }
-.match-time { font-size: 34rpx; color: var(--on-surface); font-weight: 700; }
+.vs { display: flex; align-items: center; justify-content: space-between; padding: 10rpx 0 36rpx; }
+.side { width: 160rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
+.side-name { font-size: 28rpx; font-weight: 600; text-align: center; color: var(--on-surface); max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 12rpx; padding: 0 8rpx; }
+.match-time { font-size: 34rpx; color: var(--on-surface); font-weight: 700; white-space: nowrap; }
 .cd-pill {
-  padding: 6rpx 20rpx; border-radius: var(--r-full);
+  padding: 8rpx 20rpx; border-radius: var(--r-full);
   background: rgba(255,178,36,.12); border: 1rpx solid rgba(255,178,36,.4);
+  white-space: nowrap; max-width: 100%; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
 }
+.cd-pill text { font-size: 24rpx; white-space: nowrap; }
 .cal-chip {
-  padding: 6rpx 20rpx; border-radius: var(--r-full);
+  padding: 8rpx 22rpx; border-radius: var(--r-full);
   display: inline-flex; align-items: center; gap: 8rpx; font-size: 22rpx;
-  background: var(--sc-high);
+  background: var(--sc-high); white-space: nowrap;
 }
-.cal-s { width: 24rpx; height: 24rpx; }
+.cal-s { width: 24rpx; height: 24rpx; flex-shrink: 0; }
 
 .hero-chips { display: flex; flex-wrap: wrap; gap: 12rpx; padding-left: 6rpx; }
 
@@ -59,6 +62,8 @@
   background: var(--sc-low); border: 1rpx solid var(--outline-muted);
   color: var(--on-surface);
 }
+.act-sub:active { background: var(--sc-high); }
+
 
 /* 信息 bento 3宫格 */
 .bento { display: flex; gap: 16rpx; margin-top: 28rpx; }

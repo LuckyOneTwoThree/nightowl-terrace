@@ -17,7 +17,8 @@ Page({
     this.refresh();
   },
 
-  onShow: function () { this.refresh(); },
+  onShow: function () {
+    getApp().applyTheme(this); this.refresh(); },
 
   refresh: function () {
     var that = this;

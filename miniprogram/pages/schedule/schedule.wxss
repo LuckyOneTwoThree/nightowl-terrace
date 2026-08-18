@@ -1,7 +1,34 @@
 .page { padding-bottom: 64rpx; min-height: 100vh; }
 
+/* 顶部吸顶控制栏 (Sticky Header) */
+.sticky-bar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(16, 20, 25, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1rpx solid rgba(159, 142, 121, 0.12);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.45);
+}
+
+/* 视图切换（日历 / 轮次） */
+.vtoggle { display: flex; gap: 12rpx; padding: 16rpx 32rpx 6rpx; }
+.vt-btn {
+  flex: 0 0 auto; padding: 10rpx 28rpx; border-radius: var(--r-full);
+  background: var(--surface-2); border: 1rpx solid rgba(159,142,121,.18);
+  color: var(--on-surface-variant); font-size: 24rpx;
+  transition: all .15s ease;
+}
+.vt-btn:active { background: var(--sc-high); }
+.vt-btn.on {
+  background: rgba(255,178,36,.12); border-color: rgba(255,178,36,.45);
+  color: var(--primary-container); font-weight: 700;
+}
+
 /* 日期条 */
-.dstrip { white-space: nowrap; padding: 24rpx 32rpx 12rpx; width: 100%; box-sizing: border-box; }
+.dstrip { white-space: nowrap; padding: 14rpx 32rpx 10rpx; width: 100%; box-sizing: border-box; }
 .dchip {
   position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 6rpx;
   width: 136rpx; padding: 18rpx 0; margin-right: 16rpx;
@@ -21,9 +48,10 @@
 }
 
 /* 联赛药丸 */
-.pills { display: flex; white-space: nowrap; padding: 12rpx 32rpx 20rpx; width: 100%; box-sizing: border-box; }
+.pills { display: flex; white-space: nowrap; padding: 8rpx 32rpx 18rpx; width: 100%; box-sizing: border-box; }
 .pills .fpill { display: inline-flex; margin-right: 16rpx; }
 .star-pill { font-weight: 600; }
+
 
 /* 分组 */
 .list { padding: 4rpx 32rpx 0; }
@@ -73,14 +101,3 @@
 .g-empty { padding: 36rpx; text-align: center; margin-bottom: 16rpx; }
 .foot { text-align: center; padding: 36rpx 0 16rpx; font-size: 22rpx; }
 
-/* 视图切换（日历 / 轮次） */
-.vtoggle { display: flex; gap: 12rpx; padding: 16rpx 24rpx 4rpx; }
-.vt-btn {
-  flex: 0 0 auto; padding: 10rpx 28rpx; border-radius: var(--r-full);
-  background: var(--surface-2); border: 1rpx solid rgba(159,142,121,.18);
-  color: var(--on-surface-variant); font-size: 24rpx;
-}
-.vt-btn.on {
-  background: rgba(255,178,36,.12); border-color: rgba(255,178,36,.45);
-  color: var(--primary-container);
-}

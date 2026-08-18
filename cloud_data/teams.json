@@ -1,0 +1,96 @@
+{"id":"ARS","zh":"阿森纳","en":"Arsenal","league":"PL","color":"#EF0107","tag":"卫冕冠军","_id":"ARS"}
+{"id":"AVL","zh":"阿斯顿维拉","en":"Aston Villa","league":"PL","color":"#670E36","_id":"AVL"}
+{"id":"BOU","zh":"伯恩茅斯","en":"Bournemouth","league":"PL","color":"#DA291C","_id":"BOU"}
+{"id":"BRE","zh":"布伦特福德","en":"Brentford","league":"PL","color":"#E30613","_id":"BRE"}
+{"id":"BHA","zh":"布莱顿","en":"Brighton","league":"PL","color":"#0057B8","_id":"BHA"}
+{"id":"CHE","zh":"切尔西","en":"Chelsea","league":"PL","color":"#034694","_id":"CHE"}
+{"id":"COV","zh":"考文垂","en":"Coventry City","league":"PL","color":"#78D0F3","tag":"升班马","_id":"COV"}
+{"id":"CRY","zh":"水晶宫","en":"Crystal Palace","league":"PL","color":"#1B458F","_id":"CRY"}
+{"id":"EVE","zh":"埃弗顿","en":"Everton","league":"PL","color":"#003399","_id":"EVE"}
+{"id":"FUL","zh":"富勒姆","en":"Fulham","league":"PL","color":"#4A4A4A","_id":"FUL"}
+{"id":"HUL","zh":"赫尔城","en":"Hull City","league":"PL","color":"#F5A12D","tag":"升班马","_id":"HUL"}
+{"id":"IPS","zh":"伊普斯维奇","en":"Ipswich Town","league":"PL","color":"#3A64A3","tag":"升班马","_id":"IPS"}
+{"id":"LEE","zh":"利兹联","en":"Leeds United","league":"PL","color":"#1D428A","_id":"LEE"}
+{"id":"LIV","zh":"利物浦","en":"Liverpool","league":"PL","color":"#C8102E","_id":"LIV"}
+{"id":"MCI","zh":"曼城","en":"Manchester City","league":"PL","color":"#6CABDD","_id":"MCI"}
+{"id":"MUN","zh":"曼联","en":"Manchester United","league":"PL","color":"#DA291C","_id":"MUN"}
+{"id":"NEW","zh":"纽卡斯尔","en":"Newcastle United","league":"PL","color":"#241F20","_id":"NEW"}
+{"id":"NFO","zh":"诺丁汉森林","en":"Nottingham Forest","league":"PL","color":"#DD0000","_id":"NFO"}
+{"id":"SUN","zh":"桑德兰","en":"Sunderland","league":"PL","color":"#EB172B","_id":"SUN"}
+{"id":"TOT","zh":"热刺","en":"Tottenham Hotspur","league":"PL","color":"#132257","_id":"TOT"}
+{"id":"RMA","zh":"皇家马德里","en":"Real Madrid","league":"PD","color":"#FEBE10","_id":"RMA"}
+{"id":"BAR","zh":"巴塞罗那","en":"FC Barcelona","league":"PD","color":"#A50044","_id":"BAR"}
+{"id":"ATM","zh":"马德里竞技","en":"Atletico Madrid","league":"PD","color":"#CB3524","_id":"ATM"}
+{"id":"ATH","zh":"毕尔巴鄂竞技","en":"Athletic Bilbao","league":"PD","color":"#EE2523","_id":"ATH"}
+{"id":"BET","zh":"皇家贝蒂斯","en":"Real Betis","league":"PD","color":"#00954C","_id":"BET"}
+{"id":"CEL","zh":"塞尔塔","en":"Celta Vigo","league":"PD","color":"#8AC3EE","_id":"CEL"}
+{"id":"ELC","zh":"埃尔切","en":"Elche","league":"PD","color":"#00913F","_id":"ELC"}
+{"id":"ESP","zh":"西班牙人","en":"Espanyol","league":"PD","color":"#007FC8","_id":"ESP"}
+{"id":"DEP","zh":"拉科鲁尼亚","en":"Deportivo La Coruna","league":"PD","color":"#0072CE","tag":"升班马","_id":"DEP"}
+{"id":"LEV","zh":"莱万特","en":"Levante","league":"PD","color":"#004FA3","_id":"LEV"}
+{"id":"MAL","zh":"马拉加","en":"Malaga","league":"PD","color":"#0E4C9E","tag":"升班马","_id":"MAL"}
+{"id":"OSA","zh":"奥萨苏纳","en":"Osasuna","league":"PD","color":"#0A346F","_id":"OSA"}
+{"id":"RAY","zh":"巴列卡诺","en":"Rayo Vallecano","league":"PD","color":"#E53027","_id":"RAY"}
+{"id":"RAC","zh":"桑坦德竞技","en":"Racing Santander","league":"PD","color":"#D8192A","tag":"升班马","_id":"RAC"}
+{"id":"RSO","zh":"皇家社会","en":"Real Sociedad","league":"PD","color":"#0067B1","_id":"RSO"}
+{"id":"SEV","zh":"塞维利亚","en":"Sevilla","league":"PD","color":"#D81920","_id":"SEV"}
+{"id":"VAL","zh":"瓦伦西亚","en":"Valencia","league":"PD","color":"#F18E00","_id":"VAL"}
+{"id":"VIL","zh":"比利亚雷亚尔","en":"Villarreal","league":"PD","color":"#E5B611","_id":"VIL"}
+{"id":"GET","zh":"赫塔费","en":"Getafe","league":"PD","color":"#005999","_id":"GET"}
+{"id":"ALA","zh":"阿拉维斯","en":"Alaves","league":"PD","color":"#0761AF","_id":"ALA"}
+{"id":"INT","zh":"国际米兰","en":"Inter Milan","league":"SA","color":"#0068A8","_id":"INT"}
+{"id":"MIL","zh":"AC米兰","en":"AC Milan","league":"SA","color":"#FB090B","_id":"MIL"}
+{"id":"JUV","zh":"尤文图斯","en":"Juventus","league":"SA","color":"#1A1A1A","_id":"JUV"}
+{"id":"NAP","zh":"那不勒斯","en":"Napoli","league":"SA","color":"#12A0D7","_id":"NAP"}
+{"id":"ROM","zh":"罗马","en":"AS Roma","league":"SA","color":"#8E1F2F","_id":"ROM"}
+{"id":"LAZ","zh":"拉齐奥","en":"Lazio","league":"SA","color":"#87D8F7","_id":"LAZ"}
+{"id":"FIO","zh":"佛罗伦萨","en":"Fiorentina","league":"SA","color":"#582C83","_id":"FIO"}
+{"id":"ATA","zh":"亚特兰大","en":"Atalanta","league":"SA","color":"#1D71B8","_id":"ATA"}
+{"id":"BOL","zh":"博洛尼亚","en":"Bologna","league":"SA","color":"#A21C25","_id":"BOL"}
+{"id":"TOR","zh":"都灵","en":"Torino","league":"SA","color":"#881010","_id":"TOR"}
+{"id":"UDI","zh":"乌迪内斯","en":"Udinese","league":"SA","color":"#2B2B2B","_id":"UDI"}
+{"id":"GEN","zh":"热那亚","en":"Genoa","league":"SA","color":"#B4001F","_id":"GEN"}
+{"id":"CAG","zh":"卡利亚里","en":"Cagliari","league":"SA","color":"#B01B2E","_id":"CAG"}
+{"id":"PAR","zh":"帕尔马","en":"Parma","league":"SA","color":"#F2C300","_id":"PAR"}
+{"id":"COM","zh":"科莫","en":"Como","league":"SA","color":"#003C7D","_id":"COM"}
+{"id":"LEC","zh":"莱切","en":"Lecce","league":"SA","color":"#E8B923","_id":"LEC"}
+{"id":"SAS","zh":"萨索洛","en":"Sassuolo","league":"SA","color":"#00A752","_id":"SAS"}
+{"id":"FRO","zh":"弗罗西诺内","en":"Frosinone","league":"SA","color":"#D5B941","tag":"升班马","_id":"FRO"}
+{"id":"VEN","zh":"威尼斯","en":"Venezia","league":"SA","color":"#E5621F","tag":"升班马","_id":"VEN"}
+{"id":"MZA","zh":"蒙扎","en":"Monza","league":"SA","color":"#E2001A","tag":"升班马","_id":"MZA"}
+{"id":"FCB","zh":"拜仁慕尼黑","en":"Bayern Munich","league":"BL","color":"#DC052D","tag":"卫冕冠军","_id":"FCB"}
+{"id":"BVB","zh":"多特蒙德","en":"Borussia Dortmund","league":"BL","color":"#FDE100","_id":"BVB"}
+{"id":"B04","zh":"勒沃库森","en":"Bayer Leverkusen","league":"BL","color":"#E32221","_id":"B04"}
+{"id":"RBL","zh":"莱比锡红牛","en":"RB Leipzig","league":"BL","color":"#DD0741","_id":"RBL"}
+{"id":"SGE","zh":"法兰克福","en":"Eintracht Frankfurt","league":"BL","color":"#E1000F","_id":"SGE"}
+{"id":"VFB","zh":"斯图加特","en":"VfB Stuttgart","league":"BL","color":"#E32219","_id":"VFB"}
+{"id":"SCF","zh":"弗赖堡","en":"Freiburg","league":"BL","color":"#E2001A","_id":"SCF"}
+{"id":"TSG","zh":"霍芬海姆","en":"Hoffenheim","league":"BL","color":"#1961B5","_id":"TSG"}
+{"id":"FCU","zh":"柏林联合","en":"Union Berlin","league":"BL","color":"#EB1923","_id":"FCU"}
+{"id":"SVW","zh":"云达不来梅","en":"Werder Bremen","league":"BL","color":"#1D9053","_id":"SVW"}
+{"id":"MAI","zh":"美因茨","en":"Mainz 05","league":"BL","color":"#C3141E","_id":"MAI"}
+{"id":"BMG","zh":"门兴格拉德巴赫","en":"Borussia Monchengladbach","league":"BL","color":"#2B2B2B","_id":"BMG"}
+{"id":"FCA","zh":"奥格斯堡","en":"Augsburg","league":"BL","color":"#BA3733","_id":"FCA"}
+{"id":"KOE","zh":"科隆","en":"FC Koln","league":"BL","color":"#ED1C24","_id":"KOE"}
+{"id":"HSV","zh":"汉堡","en":"Hamburger SV","league":"BL","color":"#0F5EA8","_id":"HSV"}
+{"id":"S04","zh":"沙尔克04","en":"Schalke 04","league":"BL","color":"#0060A9","tag":"升班马","_id":"S04"}
+{"id":"SCP","zh":"帕德博恩","en":"Paderborn","league":"BL","color":"#004E9E","tag":"升班马","_id":"SCP"}
+{"id":"ELV","zh":"埃尔沃斯堡","en":"Elversberg","league":"BL","color":"#0A3A82","tag":"升班马","_id":"ELV"}
+{"id":"PSG","zh":"巴黎圣日耳曼","en":"Paris Saint-Germain","league":"FL","color":"#004170","tag":"卫冕冠军","_id":"PSG"}
+{"id":"OM","zh":"马赛","en":"Marseille","league":"FL","color":"#2FAEE0","_id":"OM"}
+{"id":"MCO","zh":"摩纳哥","en":"Monaco","league":"FL","color":"#CE1126","_id":"MCO"}
+{"id":"LIL","zh":"里尔","en":"Lille","league":"FL","color":"#E01E13","_id":"LIL"}
+{"id":"OL","zh":"里昂","en":"Lyon","league":"FL","color":"#1B4DA1","_id":"OL"}
+{"id":"NIC","zh":"尼斯","en":"Nice","league":"FL","color":"#A6192E","_id":"NIC"}
+{"id":"LEN","zh":"朗斯","en":"Lens","league":"FL","color":"#E3B505","_id":"LEN"}
+{"id":"STR","zh":"斯特拉斯堡","en":"Strasbourg","league":"FL","color":"#0A5FBE","_id":"STR"}
+{"id":"REN","zh":"雷恩","en":"Rennes","league":"FL","color":"#E23D2F","_id":"REN"}
+{"id":"TOU","zh":"图卢兹","en":"Toulouse","league":"FL","color":"#4B366D","_id":"TOU"}
+{"id":"BRT","zh":"布雷斯特","en":"Brest","league":"FL","color":"#E2001A","_id":"BRT"}
+{"id":"AUX","zh":"欧塞尔","en":"Auxerre","league":"FL","color":"#0069B4","_id":"AUX"}
+{"id":"ANG","zh":"昂热","en":"Angers","league":"FL","color":"#2B2B2B","_id":"ANG"}
+{"id":"HAV","zh":"勒阿弗尔","en":"Le Havre","league":"FL","color":"#0A4EA0","_id":"HAV"}
+{"id":"LOR","zh":"洛里昂","en":"Lorient","league":"FL","color":"#F58220","_id":"LOR"}
+{"id":"PAC","zh":"巴黎FC","en":"Paris FC","league":"FL","color":"#003C71","_id":"PAC"}
+{"id":"TRO","zh":"特鲁瓦","en":"Troyes","league":"FL","color":"#005CA9","tag":"升班马","_id":"TRO"}
+{"id":"LEM","zh":"勒芒","en":"Le Mans","league":"FL","color":"#D50032","tag":"升班马","_id":"LEM"}

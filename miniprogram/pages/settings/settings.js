@@ -1,6 +1,6 @@
 var cloud = require('../../utils/cloud.js');
 
-var DEFAULTS = { budget: 4.0, minStar: 2, remindKickoff: true, remindDeadline: false, nick: '', mid: '' };
+var DEFAULTS = { budget: 4.0, minStar: 2, remindKickoff: true, remindDeadline: false, nick: '', mid: '', theme: 'dark' };
 
 var NICK_PREFIX = ['午夜', '熬夜', '看台', '伯纳乌', '安菲尔德', '圣西罗', '老特拉福德', '诺坎普', '酋长', '威斯特法伦'];
 var NICK_SUFFIX = ['老猫', '夜猫子', '神算子', '球童', '名宿', '法官', '第十二人', '观察员', '看球仙人'];
@@ -9,6 +9,10 @@ function load() {
   var s = wx.getStorageSync('settings') || {};
   var out = {};
   Object.keys(DEFAULTS).forEach(function (k) { out[k] = s[k] !== undefined ? s[k] : DEFAULTS[k]; });
+  out.budget = Number(out.budget) || 4.0;
+  if (!out.nick) {
+    out.nick = wx.getStorageSync('nickname') || '夜猫子';
+  }
   if (!out.mid) {
     out.mid = '#MM-' + Math.random().toString(16).slice(2, 8).toUpperCase();
     wx.setStorageSync('settings', out);
@@ -20,6 +24,7 @@ Page({
   data: {
     s: null,
     starText: '★★',
+    themeModeText: '🌙 经典夜猫暗夜模式',
     version: 'v0.2.0 (M2 高保真版)',
     source: '内置种子数据',
     showNickModal: false,
@@ -29,7 +34,34 @@ Page({
   onShow: function () { this.apply(load()); },
 
   apply: function (s) {
-    this.setData({ s: s, starText: '★★★'.slice(0, s.minStar) });
+    var modeDesc = {
+      dark: '🌙 经典夜猫暗夜模式',
+      light: '☀️ 清爽晨曦白昼模式',
+      auto: '⚙️ 自动跟随系统外观'
+    }[s.theme || 'dark'] || '🌙 经典夜猫暗夜模式';
+
+    var b = Number(s.budget !== undefined ? s.budget : 4.0) || 4.0;
+
+    this.setData({
+      s: s,
+      budgetText: b.toFixed(1),
+      starText: '★★★'.slice(0, s.minStar || 2),
+      themeModeText: modeDesc
+    });
+    getApp().applyTheme(this);
+  },
+
+  selectTheme: function (e) {
+    var mode = e.currentTarget.dataset.mode;
+    if (mode) {
+      getApp().setThemeMode(mode);
+      var s = load();
+      this.apply(s);
+      wx.showToast({
+        title: mode === 'light' ? '已切换至晨曦浅色' : mode === 'dark' ? '已切换至暗夜深色' : '已切换至跟随系统',
+        icon: 'none'
+      });
+    }
   },
 
   save: function (patch) {
@@ -40,19 +72,27 @@ Page({
   },
 
   minus: function () {
-    var b = Math.max(1, (this.data.s.budget * 10 - 5) / 10);
+    var cur = Number(this.data.s && this.data.s.budget !== undefined ? this.data.s.budget : 4.0) || 4.0;
+    var b = Math.max(1.0, Math.round((cur - 0.5) * 10) / 10);
     this.save({ budget: b });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: '默认额度已设为 ' + b.toFixed(1) + 'h/周', icon: 'none' });
   },
 
   plus: function () {
-    // 上限 10h，与本周页额度抽屉滑杆范围一致
-    var b = Math.min(10, (this.data.s.budget * 10 + 5) / 10);
+    var cur = Number(this.data.s && this.data.s.budget !== undefined ? this.data.s.budget : 4.0) || 4.0;
+    var b = Math.min(10.0, Math.round((cur + 0.5) * 10) / 10);
     this.save({ budget: b });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: '默认额度已设为 ' + b.toFixed(1) + 'h/周', icon: 'none' });
   },
 
   cycleStar: function () {
     var next = this.data.s.minStar >= 3 ? 1 : this.data.s.minStar + 1;
     this.save({ minStar: next });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    var txt = next === 3 ? '★★★ 3星重磅' : next === 2 ? '★★ 2星及以上' : '★ 1星及全部';
+    wx.showToast({ title: '门槛: ' + txt, icon: 'none' });
   },
 
   onKickoff: function (e) { this.save({ remindKickoff: e.detail.value }); },
@@ -109,8 +149,12 @@ Page({
       return;
     }
     this.save({ nick: name });
+    try {
+      wx.setStorageSync('nickname', name);
+    } catch (e) {}
     this.setData({ showNickModal: false });
-    wx.showToast({ title: '昵称已保存', icon: 'none' });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
+    wx.showToast({ title: '圈内绰号已保存', icon: 'none' });
   },
 
   copyId: function () {
@@ -137,6 +181,8 @@ Page({
         wx.showToast({ title: '已清除', icon: 'none' });
       }
     });
-  }
+  },
+
+  preventD: function () {}
 });
 

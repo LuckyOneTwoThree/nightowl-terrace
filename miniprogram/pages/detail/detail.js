@@ -24,11 +24,36 @@ Page({
       m: m,
       quip: m.trivia || data.getQuip(raw.t.split('T')[0])
     });
+    this.startTimer();
+  },
+
+  onShow: function () {
+    getApp().applyTheme(this);
+    if (this._raw && !this._timer) {
+      this.startTimer();
+    }
+  },
+
+  onHide: function () {
+    this.stopTimer();
+  },
+
+  onUnload: function () {
+    this.stopTimer();
+  },
+
+  startTimer: function () {
+    this.stopTimer();
     this.tick();
     this._timer = setInterval(this.tick.bind(this), 1000);
   },
 
-  onUnload: function () { if (this._timer) clearInterval(this._timer); },
+  stopTimer: function () {
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
+  },
 
   tick: function () {
     if (!this.data.m || this.data.m.finished) return;

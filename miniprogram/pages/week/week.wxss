@@ -28,18 +28,33 @@
 .b-progress-bar { width: 100%; height: 12rpx; border-radius: var(--r-full); background: var(--sc-highest); overflow: hidden; margin-top: 8rpx; }
 .b-progress-fill { height: 100%; border-radius: var(--r-full); background: linear-gradient(90deg, #FFB224, #FFD79E); transition: width .3s ease; }
 
-/* 周一透支结算提示 */
-.over-note {
-  margin-top: 24rpx; padding: 22rpx 26rpx;
-  display: flex; align-items: center; justify-content: space-between; gap: 16rpx;
-  border-left: 6rpx solid var(--primary-container);
+/* 3视角分栏导航栏 (Segmented Nav Tabs) */
+.week-nav {
+  display: flex; gap: 12rpx; padding: 10rpx; margin-top: 28rpx;
+  border-radius: var(--r-xl); border: 1rpx solid rgba(159,142,121,.15);
+  background: var(--sc-low);
 }
-.over-left { display: flex; align-items: center; gap: 12rpx; flex: 1; }
-.over-text { font-size: 24rpx; color: var(--on-surface-variant); }
-.b-btn { font-size: 24rpx; padding: 10rpx 20rpx; border-radius: var(--r-md); }
+.wn-pill {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 10rpx;
+  padding: 18rpx 0; border-radius: var(--r-lg);
+  font-size: 26rpx; color: var(--on-surface-variant);
+  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.wn-pill.active {
+  background: var(--sc-high); color: var(--primary-container);
+  border: 1rpx solid rgba(255,178,36,.4); font-weight: 700;
+}
+.wn-ic { width: 30rpx; height: 30rpx; }
+.wn-badge { font-size: 18rpx; padding: 2rpx 10rpx; margin-left: 4rpx; }
 
-/* 最优组合 */
-.sect-gap { margin: 48rpx 0 24rpx; }
+.tab-pane { margin-top: 12rpx; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6rpx); } to { opacity: 1; transform: translateY(0); } }
+
+/* 分段标题 */
+.sect-gap { margin: 36rpx 0 20rpx; }
+.sect-sub { font-size: 22rpx; margin-left: auto; }
+.empty-tip { padding: 40rpx 32rpx; text-align: center; border-radius: var(--r-xl); }
+
 .plan { padding: 4rpx 0; overflow: hidden; }
 .plan-row { display: flex; align-items: center; gap: 20rpx; padding: 24rpx 28rpx; position: relative; border-bottom: 1rpx solid rgba(159,142,121,.08); }
 .plan-row:last-child { border-bottom: none; }
@@ -59,15 +74,15 @@
 .hl-head { display: flex; align-items: center; gap: 12rpx; padding: 20rpx 28rpx; border-bottom: 1rpx solid var(--hairline); background: rgba(255,178,36,.06); }
 .hl-fire { width: 32rpx; height: 32rpx; }
 .hl-label { font-size: 24rpx; font-weight: 700; letter-spacing: 1rpx; }
-.hl-body { display: flex; align-items: center; justify-content: space-between; padding: 28rpx; gap: 20rpx; }
-.hl-mid { flex: 1; display: flex; flex-direction: column; gap: 10rpx; }
-.hl-pair { font-family: var(--font-headline); font-size: 36rpx; font-weight: 700; line-height: 46rpx; }
-.hl-stats { display: flex; align-items: center; gap: 20rpx; }
-.hl-stat { display: flex; flex-direction: column; align-items: center; gap: 2rpx; }
-.hl-idx { font-size: 38rpx; line-height: 44rpx; }
-.hl-cost { font-size: 28rpx; font-weight: 700; color: var(--on-surface); }
-.hl-div { width: 2rpx; height: 48rpx; background: var(--sc-highest); }
-.hl-btn { padding: 12rpx 24rpx; font-size: 24rpx; border-radius: var(--r-md); }
+.hl-body { display: flex; align-items: center; justify-content: space-between; padding: 24rpx 28rpx; gap: 16rpx; }
+.hl-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8rpx; }
+.hl-pair { font-family: var(--font-headline); font-size: 32rpx; font-weight: 700; line-height: 42rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hl-stats { display: flex; align-items: center; gap: 16rpx; flex-shrink: 0; }
+.hl-stat { display: flex; flex-direction: column; align-items: center; gap: 2rpx; white-space: nowrap; }
+.hl-idx { font-size: 36rpx; line-height: 40rpx; }
+.hl-cost { font-size: 26rpx; font-weight: 700; color: var(--on-surface); }
+.hl-div { width: 2rpx; height: 44rpx; background: var(--sc-highest); }
+.hl-btn { padding: 12rpx 22rpx; font-size: 24rpx; border-radius: var(--r-md); white-space: nowrap; flex-shrink: 0; }
 
 /* 雷区 */
 .mine { padding: 24rpx 28rpx; margin-bottom: 16rpx; border-color: rgba(255,180,171,.25); }

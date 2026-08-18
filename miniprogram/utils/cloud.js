@@ -61,6 +61,8 @@ function addPrediction(p) {
     nick: myNick(),
     pick: p.pick,
     score: (p.scoreH !== '' && p.scoreH != null) ? (p.scoreH + '-' + (p.scoreA || '0')) : null,
+    scoreH: p.scoreH || '', // 与本地 predictions 字段对齐：云端复算哈希 + 比分加分判据都要用到
+    scoreA: p.scoreA || '',
     salt: p.salt,   // 服务端结算复算哈希用；集合只写不读，截止前不外泄
     hash: p.hash,
     revealed: false,

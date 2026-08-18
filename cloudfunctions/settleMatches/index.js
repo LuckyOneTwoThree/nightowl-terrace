@@ -77,7 +77,7 @@ exports.main = async (event) => {
       const perGid = {};
       for (const p of preds) {
         const update = { revealed: true, settledAt: Date.now(), sc: m.sc };
-        const late = p.ts && kickTs === kickTs && p.ts > kickTs + 60000; // 开球后才封存（1 分钟时钟宽容）
+        const late = !!p.ts && !Number.isNaN(kickTs) && p.ts > kickTs + 60000; // 开球后才封存（1 分钟时钟宽容）
         if ((p.salt && p.hash && commitHash(p) !== p.hash) || late) {
           // 封存校验失败 / 截止后封存 → 作废不计分（PM 八节）
           update.hit = false;

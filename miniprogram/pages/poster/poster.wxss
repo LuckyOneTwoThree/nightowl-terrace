@@ -17,10 +17,10 @@
 .p-title { font-size: 38rpx; font-weight: 700; color: var(--primary-container); }
 .p-sub { font-size: 20rpx; }
 
-.p-vs { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 36rpx; }
-.p-side { width: 38%; display: flex; flex-direction: column; align-items: center; gap: 16rpx; }
-.p-name { font-size: 30rpx; font-weight: 700; color: var(--on-surface); text-align: center; }
-.p-mid { width: 24%; text-align: center; }
+.p-vs { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 20rpx; }
+.p-side { width: 180rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 16rpx; }
+.p-name { font-size: 30rpx; font-weight: 700; color: var(--on-surface); text-align: center; max-width: 180rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-mid { flex: 1; min-width: 0; text-align: center; }
 .p-x { font-size: 36rpx; font-weight: 700; }
 
 .p-time {

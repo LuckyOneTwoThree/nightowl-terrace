@@ -1,4 +1,4 @@
-<view class="page" wx:if="{{m}}">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{m}}">
   <!-- 9:16 海报预览（_10） -->
   <view class="poster card-highest floodlight-glow">
     <view class="p-inner">
@@ -20,20 +20,20 @@
 
       <view class="p-vs">
         <view class="p-side">
-          <view class="circle-xl" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+          <image class="crest-xl" src="{{m.home.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!m.home.logo}}" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
           <text class="p-name hl">{{m.home.zh}}</text>
         </view>
         <view class="p-mid">
           <text class="p-x mono muted">VS</text>
         </view>
         <view class="p-side">
-          <view class="circle-xl" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+          <image class="crest-xl" src="{{m.away.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!m.away.logo}}" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
           <text class="p-name hl">{{m.away.zh}}</text>
         </view>
       </view>
 
       <view class="p-time card-low">
-        <text class="mono muted p-day">{{m.dayLabel}}</text>
+        <text class="mono muted p-day">{{m.dateHeader}}</text>
         <text class="p-hm score-m hl text-amber text-glow">{{m.hm}}</text>
         <view class="p-stars-row">
           <text class="star-on text-amber mono">{{m.stars}}</text>

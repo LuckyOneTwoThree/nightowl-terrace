@@ -28,7 +28,8 @@ function settle(pred, m, recMap) {
 Page({
   data: { groups: [], empty: false },
 
-  onShow: function () { this.refresh(); },
+  onShow: function () {
+    getApp().applyTheme(this); this.refresh(); },
 
   refresh: function () {
     var preds = wx.getStorageSync('predictions') || {};
@@ -45,11 +46,14 @@ Page({
       var late = !!p.ts && p.ts > engine.ts(m.t) + 60000; // 1 分钟宽容（客户端时钟偏差）
       var r = (tampered || late) ? null : settle(p, m, recMap);
       var pickZh = p.pick === 'h' ? '主胜' : p.pick === 'd' ? '平局' : '客胜';
+      var hTeam = data.getTeam(m.h) || {};
+      var aTeam = data.getTeam(m.a) || {};
       rows.push({
         key: 'pred-' + mid,
         label: labelOf(m.t.split('T')[0]),
         sort: p.ts || 0, type: 'pred',
-        names: data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh,
+        names: (hTeam.zh || m.h) + ' vs ' + (aTeam.zh || m.a),
+        logo: hTeam.logo || '',
         sub: tampered ? '封存校验失败 · 已作废'
           : late ? '开球后封存 · 已作废'
           : '预测: ' + pickZh + (p.scoreH !== '' ? ' (' + p.scoreH + '-' + p.scoreA + ')' : '') + (r && r.upset ? ' · 冷门×2' : ''),

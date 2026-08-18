@@ -26,6 +26,9 @@ Page({
     overNote: '',      // 周一透支结算提示（PM 9.1）
     suggest: 0,
 
+    // 3视角药丸分栏状态 ('plan' | 'focal' | 'radar')
+    curTab: 'plan',
+
     // _16 抽屉状态
     showSheet: false,
     sheetBudget: 4.0,
@@ -33,7 +36,15 @@ Page({
   },
 
   onShow: function () {
+    getApp().applyTheme(this);
     this.refresh();
+  },
+
+  onSwitchTab: function (e) {
+    var tab = e.currentTarget.dataset.tab;
+    if (tab && tab !== this.data.curTab) {
+      this.setData({ curTab: tab });
+    }
   },
 
   refresh: function () {
@@ -72,28 +83,37 @@ Page({
       .slice(0, 8);
 
     function dec(e, withReason) {
+      if (!e || !e.m) return {};
       var f = e.m.t.split('T');
       var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
       var meta = data.LEAGUE_META[e.m.l] || {};
+      var hTeam = data.getTeam(e.m.h) || { id: e.m.h, zh: e.m.h, color: '#514533' };
+      var aTeam = data.getTeam(e.m.a) || { id: e.m.a, zh: e.m.a, color: '#514533' };
+      var tier = engine.tierOf(e.m);
+      var idx = (e.index !== undefined && e.index !== null) ? e.index : (e.ev ? engine.owlIndex(e.ev, e.m) : 0);
+      
       var o = {
         id: e.m.id,
         lgZh: lgZh(e.m.l),
         accent: meta.accent || '#514533',
-        pair: data.getTeam(e.m.h).zh + ' vs ' + data.getTeam(e.m.a).zh,
-        homeCode: data.getTeam(e.m.h).id,
+        pair: hTeam.zh + ' vs ' + aTeam.zh,
+        homeCode: hTeam.id,
+        homeLogo: hTeam.logo || '',
+        homeBg: data.tint(hTeam.color, .2),
+        homeBd: data.tint(hTeam.color, .35),
         md: (d.getMonth() + 1) + '/' + d.getDate(),
         wd: '周' + WEEK[d.getDay()],
         hm: f[1],
         tbd: !!e.m.tbd, // 时间待定：S 档与成本为占位值，仅作提示
-        indexText: e.index.toFixed(1),
-        costText: '-' + engine.tierOf(e.m).cost + 'h',
-        tier: engine.tierOf(e.m).label
+        indexText: idx ? idx.toFixed(1) : '—',
+        costText: '-' + tier.cost + 'h',
+        tier: tier.label
       };
-      if (withReason) o.reason = e.reason || '';
+      if (withReason) o.reason = e.reason || (e.ev && e.ev.star <= 1 ? '凌晨档看点有限，建议睡觉' : '');
       return o;
     }
 
-    var used = plan.used;
+    var used = plan.used || 0;
     var pct = Math.min(1, budget > 0 ? used / budget : 0);
 
     // 周一透支结算（PM 9.1）：按自然周结算，每周只结算一次上周
@@ -126,28 +146,35 @@ Page({
     this._bestRaw = plan.best.map(function (e) { return e.m; });
     this._allEvs = evs;
 
+    var bestList = plan.best.map(function (e) { return dec(e, false); });
+    // 如果最优组合按背包算法正好为空（比如场次较少或成本限制），降级取焦点战前两场
+    if (!bestList.length && evs.length) {
+      bestList = evs.slice(0, 2).map(function (e) { return dec(e, false); });
+    }
+
+    var hlItem = evs.filter(function (e) { return !e.m.tbd; })[0] || evs[0] || null;
+
     this.setData({
       usedText: used.toFixed(1),
       budgetText: budget.toFixed(1),
       pctText: Math.round(pct * 100) + '%',
       ringStyle: 'background: conic-gradient(#FFB224 0% ' + (pct * 100) + '%, #262A30 ' + (pct * 100) + '% 100%);',
       ringDeg: Math.round(pct * 360),
-      best: plan.best.map(function (e) { return dec(e, false); }),
+      best: bestList,
       alt: plan.alt.map(function (e) { return dec(e, false); }),
       focal: focal.map(function (e) {
         var d = dec(e, false);
-        d.stars = '★★★'.slice(0, e.ev.star);
+        d.stars = '★★★'.slice(0, (e.ev ? e.ev.star : 2));
         return d;
       }),
-      // 本周之最取指数最高且时间已确定的场次（tbd 指数含占位成本，不可比）
-      highlight: evs.filter(function (e) { return !e.m.tbd; })[0] ? dec(evs.filter(function (e) { return !e.m.tbd; })[0], false) : null,
+      highlight: hlItem ? dec(hlItem, false) : null,
       mines: mines.map(function (e) { return dec(e, true); }),
-      nightOwls: evs.filter(function (e) { return !e.m.tbd && engine.tierOf(e.m).cost >= 2.5; }).slice(0, 6)
+      nightOwls: evs.filter(function (e) { return !e.m.tbd && engine.tierOf(e.m).cost >= 2.0; }).slice(0, 6)
         .map(function (e) { return dec(e, false); }),
       overNote: overNote,
       suggest: suggest,
       sheetBudget: budget,
-      sheetCoverCount: plan.best.filter(function(x) { return x.ev.star >= 3; }).length
+      sheetCoverCount: plan.best.filter(function(x) { return x.ev && x.ev.star >= 3; }).length
     });
   },
 

@@ -64,6 +64,242 @@ page {
   box-sizing: border-box;
 }
 
+/* ================= 浅色主题 · 晨曦看台 (Daylight Terrace) ================= */
+page.theme-light, .theme-light {
+  /* 表面层级 */
+  --bg: #F4F5F7;
+  --sc-lowest: #FFFFFF;
+  --sc-low: #FFFFFF;
+  --sc: #FFFFFF;
+  --sc-high: #F0F2F5;
+  --sc-highest: #E4E7EC;
+  --sc-variant: #E4E7EC;
+
+  /* 文字 */
+  --on-surface: #111827;
+  --on-surface-variant: #64748B;
+  --outline: #94A3B8;
+  --outline-variant: #CBD5E1;
+
+  /* 品牌色（浅色高对比度） */
+  --primary: #B45309;
+  --primary-container: #D97706; /* 暖金琥珀 */
+  --on-primary: #FFFFFF;
+  --on-primary-container: #78350F;
+  --surface-tint: #D97706;
+  --secondary: #0D9488;         /* 清爽青绿 */
+  --secondary-container: #14B8A6;
+  --on-secondary: #FFFFFF;
+  --tertiary: #6D28D9;
+  --tertiary-container: #7C3AED;
+  --error: #E11D48;
+  --error-container: #FFE4E6;
+
+  /* 半透明描边与发丝线 */
+  --outline-muted: rgba(0, 0, 0, 0.07);
+  --hairline: rgba(0, 0, 0, 0.08);
+
+  background: #F4F5F7 !important;
+  color: #111827 !important;
+}
+
+.page {
+  background: var(--bg);
+  color: var(--on-surface);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.theme-light .card-low {
+  background: var(--sc-low) !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
+  color: #111827;
+}
+.theme-light .card-high {
+  background: var(--sc-high) !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.07) !important;
+  color: #111827;
+}
+.theme-light .card-highest {
+  background: var(--sc-highest) !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8rpx 28rpx rgba(0, 0, 0, 0.06) !important;
+  color: #111827;
+}
+.theme-light .glass-panel {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+  color: #111827;
+}
+.theme-light .topbar {
+  background: #F4F5F7 !important;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.06) !important;
+}
+.theme-light .sticky-bar {
+  background: rgba(244, 245, 247, 0.96) !important;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04) !important;
+}
+.theme-light .bottom-bar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05) !important;
+}
+.theme-light .btn-amber {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #FFFFFF !important;
+  box-shadow: 0 8rpx 24rpx rgba(217, 119, 6, 0.25);
+}
+.theme-light .btn-amber:active {
+  background: #B45309;
+}
+.theme-light .btn-outline {
+  border: 2rpx solid rgba(0, 0, 0, 0.15);
+  color: var(--on-surface);
+  background: #FFFFFF;
+}
+.theme-light .btn-outline:active {
+  background: #F1F5F9;
+}
+.theme-light .btn-teal-ghost {
+  border: 1rpx solid rgba(13, 148, 136, 0.4);
+  color: #0D9488;
+  background: rgba(13, 148, 136, 0.08);
+}
+.theme-light .chip-ghost {
+  background: #E2E8F0;
+  color: #475569;
+}
+.theme-light .chip-amber {
+  background: rgba(217, 119, 6, 0.12);
+  color: #B45309;
+}
+.theme-light .chip-teal {
+  background: rgba(13, 148, 136, 0.12);
+  color: #0F766E;
+}
+.theme-light .chip-error {
+  background: rgba(225, 29, 72, 0.12);
+  color: #BE123C;
+}
+.theme-light .floodlight-glow {
+  box-shadow: 0 8rpx 24rpx rgba(217, 119, 6, 0.18);
+}
+.theme-light .text-glow {
+  text-shadow: none;
+}
+.theme-light .glow-amber {
+  background: rgba(217, 119, 6, 0.06);
+}
+.theme-light .glow-teal {
+  background: rgba(13, 148, 136, 0.05);
+}
+.theme-light .hl {
+  color: #111827;
+}
+.theme-light .muted {
+  color: #64748B !important;
+}
+.theme-light .text-amber {
+  color: #D97706 !important;
+}
+.theme-light .text-teal {
+  color: #0D9488 !important;
+}
+.theme-light .text-error {
+  color: #E11D48 !important;
+}
+.theme-light .avatar-box {
+  background: #FFFFFF !important;
+  border-color: rgba(217, 119, 6, 0.5) !important;
+  color: #D97706 !important;
+  box-shadow: 0 4rpx 16rpx rgba(217, 119, 6, 0.15) !important;
+}
+.theme-light .ring-inner {
+  background: #FFFFFF !important;
+}
+.theme-light .hl-wrap {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.4), rgba(0, 0, 0, 0.08)) !important;
+}
+.theme-light .hl-card {
+  background: #FFFFFF !important;
+}
+.theme-light .hl-head {
+  background: rgba(217, 119, 6, 0.06) !important;
+}
+.theme-light .dchip {
+  background: #FFFFFF !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.08) !important;
+}
+.theme-light .dchip .dchip-wd {
+  color: #64748B !important;
+}
+.theme-light .dchip.on {
+  background: #D97706 !important;
+  border-color: transparent !important;
+}
+.theme-light .dchip.on .dchip-wd,
+.theme-light .dchip.on .dchip-md,
+.theme-light .dchip.on .dchip-count {
+  color: #FFFFFF !important;
+}
+.theme-light .vt-btn {
+  background: #E2E8F0 !important;
+  color: #475569 !important;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
+}
+.theme-light .vt-btn.on {
+  background: rgba(217, 119, 6, 0.15) !important;
+  color: #D97706 !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+}
+.theme-light .bottom-sheet {
+  background: #FFFFFF !important;
+  color: #111827 !important;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.08) !important;
+}
+.theme-light .sheet-handle {
+  background: #CBD5E1 !important;
+}
+.theme-light .modal-mask,
+.theme-light .modal-backdrop {
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+.theme-light .center-modal,
+.theme-light .nick-modal {
+  background: #FFFFFF !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.12) !important;
+}
+.theme-light .modal-input-row {
+  background: #F1F4F8 !important;
+  border-color: rgba(217, 119, 6, 0.3) !important;
+}
+
+.theme-light .pcard {
+  background: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
+}
+.theme-light .theme-card {
+  background: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+}
+.theme-light .theme-card.on {
+  border-color: #D97706 !important;
+  background: rgba(217, 119, 6, 0.06) !important;
+  box-shadow: 0 4rpx 16rpx rgba(217, 119, 6, 0.12) !important;
+}
+.theme-light .tc-badge {
+  background: rgba(217, 119, 6, 0.15) !important;
+}
+
+
+
+
 view, scroll-view, text, button, input {
   box-sizing: border-box;
 }
@@ -233,6 +469,23 @@ view, scroll-view, text, button, input {
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-mono); font-size: 18rpx; font-weight: 600; color: var(--on-surface);
   background: var(--sc-highest); border: 1rpx solid var(--sc-variant);
+}
+
+/* ---------- 队徽图标（CDN 远程加载） ---------- */
+.crest-xl {
+  width: 108rpx; height: 108rpx; border-radius: var(--r-full);
+  background: var(--sc-low);
+}
+.crest-sm {
+  width: 44rpx; height: 44rpx; border-radius: var(--r-full);
+  background: var(--sc-highest);
+}
+.crest-md {
+  width: 68rpx; height: 68rpx; border-radius: var(--r-full);
+  background: var(--sc-low);
+}
+.crest-fb {
+  /* 队徽未收录时保留纯色圆标兜底，与 crest 互斥显示 */
 }
 
 /* ---------- 列表行 ---------- */

@@ -21,19 +21,32 @@
 /* 开庭中卡片 */
 .open-card { padding: 32rpx; border-radius: var(--r-xl); }
 .open-meta { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20rpx; border-bottom: 1rpx solid rgba(159,142,121,.1); }
-.open-vs { display: flex; align-items: center; justify-content: space-between; padding: 28rpx 16rpx; }
-.ov-side { width: 35%; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
-.ov-name { font-size: 28rpx; color: var(--on-surface); text-align: center; }
-.ov-mid { width: 30%; display: flex; align-items: center; justify-content: center; }
+.open-vs { display: flex; align-items: center; justify-content: space-between; padding: 28rpx 0; }
+.ov-side { width: 160rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
+.ov-name { font-size: 28rpx; color: var(--on-surface); text-align: center; max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ov-mid { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; }
 .ov-x { font-size: 32rpx; letter-spacing: 2rpx; }
 
-.input-wrap { position: relative; margin-top: 8rpx; border-radius: var(--r-lg); }
-.boast-input {
-  width: 100%; padding: 24rpx 100rpx 24rpx 24rpx; font-size: 26rpx; color: var(--on-surface);
+.input-wrap {
+  position: relative; margin-top: 14rpx; border-radius: var(--r-lg);
+  display: flex; align-items: center; padding: 0 24rpx; height: 96rpx;
+  background: var(--sc-high); border: 1rpx solid rgba(159,142,121,.25);
+  box-sizing: border-box;
 }
-.input-ph { color: var(--on-surface-variant); opacity: .6; }
-.input-count { position: absolute; right: 24rpx; top: 50%; transform: translateY(-50%); font-size: 22rpx; }
-.btn-submit { margin-top: 24rpx; }
+.boast-input {
+  flex: 1; height: 100%; font-size: 28rpx; color: var(--on-surface);
+  box-sizing: border-box; padding: 0; min-height: 96rpx; line-height: 96rpx;
+}
+.input-ph { color: var(--on-surface-variant); opacity: .6; font-size: 26rpx; }
+.input-count { font-size: 24rpx; flex-shrink: 0; margin-left: 16rpx; }
+
+.btn-submit {
+  width: 100% !important; margin-top: 24rpx; height: 96rpx;
+  display: flex !important; align-items: center; justify-content: center; gap: 14rpx;
+  white-space: nowrap; font-size: 32rpx; border-radius: var(--r-xl);
+  box-sizing: border-box; padding: 0 !important;
+}
+.btn-submit .v-icon { width: 36rpx; height: 36rpx; flex-shrink: 0; }
 
 .empty { padding: 48rpx 32rpx; text-align: center; font-size: 24rpx; border-radius: var(--r-lg); }
 

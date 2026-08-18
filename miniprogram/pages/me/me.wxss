@@ -1,4 +1,4 @@
-.page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; }
+.page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; box-sizing: border-box; }
 
 /* 用户信息卡 */
 .profile {
@@ -11,7 +11,9 @@
   width: 120rpx; height: 120rpx; font-size: 36rpx;
   background: var(--sc-high); border: 2rpx solid rgba(255,178,36,.4);
   box-shadow: 0 0 20rpx rgba(255,178,36,.2);
+  display: flex; align-items: center; justify-content: center;
 }
+.brand-avatar-icon { width: 60rpx; height: 60rpx; }
 .dot-pos { position: absolute; right: 4rpx; bottom: 4rpx; width: 18rpx; height: 18rpx; }
 
 .prof-mid { flex: 1; display: flex; flex-direction: column; gap: 8rpx; }
@@ -32,26 +34,55 @@
 .stat-num { line-height: 48rpx; }
 .stat-lbl { font-size: 22rpx; }
 
-.sect-gap { margin: 48rpx 0 20rpx; }
+.sect-gap { margin: 44rpx 0 20rpx; }
 
-/* 关注球队 */
-.lg-group { margin-bottom: 24rpx; }
-.lg-hdr { display: block; margin-bottom: 14rpx; font-size: 22rpx; }
-.team-pills { display: flex; flex-wrap: wrap; gap: 14rpx; }
-.t-pill {
-  display: inline-flex; align-items: center; gap: 12rpx;
-  padding: 12rpx 24rpx; border-radius: var(--r-full);
-  background: var(--sc-low); border: 1rpx solid var(--outline-muted);
-  color: var(--on-surface-variant); font-size: 24rpx;
+/* ---------- 关注主队：外层精简展示区 ---------- */
+.followed-box { width: 100%; margin-bottom: 24rpx; }
+.followed-list { display: flex; flex-wrap: wrap; gap: 16rpx; }
+
+.f-card {
+  display: inline-flex; align-items: center; gap: 14rpx;
+  padding: 10rpx 18rpx 10rpx 10rpx; border-radius: var(--r-full);
+  border: 1rpx solid rgba(255,178,36,.4); background: rgba(255,178,36,.06);
   transition: all .2s ease;
 }
-.t-pill.on {
-  background: rgba(255,178,36,.12); border-color: rgba(255,178,36,.5);
-  color: var(--primary-container); font-weight: 700;
+.f-ava { font-size: 18rpx; flex-shrink: 0; }
+.f-info { display: flex; flex-direction: column; gap: 2rpx; }
+.f-name { font-size: 26rpx; line-height: 32rpx; color: var(--on-surface); }
+.f-lg { font-size: 18rpx; line-height: 22rpx; }
+.f-del { padding: 8rpx; margin-left: 4rpx; display: flex; align-items: center; justify-content: center; }
+.f-del-ic { width: 22rpx; height: 22rpx; opacity: .7; }
+.f-del:active .f-del-ic { opacity: 1; color: var(--error); }
+
+.f-add-card {
+  display: inline-flex; align-items: center; gap: 10rpx;
+  padding: 12rpx 28rpx; border-radius: var(--r-full);
+  border: 1rpx dashed rgba(255,178,36,.5); background: rgba(255,178,36,.04);
+  transition: all .15s ease;
 }
-.t-dot { width: 14rpx; height: 14rpx; border-radius: var(--r-full); }
-.t-zh { font-family: var(--font-body); }
-.check-s { width: 24rpx; height: 24rpx; }
+.f-add-card:active { background: rgba(255,178,36,.12); transform: scale(0.98); }
+.f-add-ic { width: 24rpx; height: 24rpx; }
+.f-add-txt { font-size: 24rpx; font-weight: 600; }
+
+/* 未关注任何球队时的空态引导卡片 */
+.f-empty {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28rpx 32rpx; border-radius: var(--r-xl);
+  border: 1rpx dashed rgba(159,142,121,.25); background: var(--sc-low);
+  transition: background .15s ease;
+}
+.f-empty:active { background: var(--sc-high); }
+.fe-left { display: flex; align-items: center; gap: 20rpx; flex: 1; }
+.fe-icon-wrap {
+  width: 72rpx; height: 72rpx; border-radius: var(--r-full);
+  background: rgba(255,178,36,.1); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.fe-paw { width: 36rpx; height: 36rpx; }
+.fe-content { display: flex; flex-direction: column; gap: 4rpx; }
+.fe-title { font-size: 28rpx; color: var(--on-surface); }
+.fe-sub { font-size: 20rpx; line-height: 28rpx; }
+.fe-btn { font-size: 24rpx; padding: 12rpx 24rpx; flex-shrink: 0; margin-left: 16rpx; }
 
 /* 快捷菜单 */
 .menu { padding: 4rpx 0; overflow: hidden; border-radius: var(--r-xl); }
@@ -69,3 +100,8 @@
 /* 我的关注 · 本周赛程行 */
 .mw-mid { display: flex; flex-direction: column; gap: 4rpx; }
 .mw-sub { font-size: 22rpx; }
+
+.ver { display: block; text-align: center; margin: 48rpx auto 16rpx; font-size: 20rpx; color: var(--on-surface-variant); opacity: .6; }
+
+
+

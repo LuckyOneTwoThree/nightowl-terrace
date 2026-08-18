@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
   <!-- 筛选药丸（_14） -->
   <scroll-view class="pills" scroll-x enable-flex show-scrollbar="{{false}}">
     <view class="bpill {{item.on ? 'on floodlight-glow' : ''}}" wx:for="{{pills}}" wx:key="key"
@@ -49,12 +49,12 @@
         </view>
         <view class="bb-vs">
           <view class="bb-side">
-            <view class="circle-xl" style="background: {{back.home.bg}}; border-color: {{back.home.bd}};">{{back.home.id}}</view>
+            <image class="crest-xl" src="{{back.home.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!back.home.logo}}" style="background: {{back.home.bg}}; border-color: {{back.home.bd}};">{{back.home.id}}</view>
             <text class="bb-name hl">{{back.home.zh}}</text>
           </view>
           <text class="bb-x score-m text-glow">-</text>
           <view class="bb-side">
-            <view class="circle-xl" style="background: {{back.away.bg}}; border-color: {{back.away.bd}};">{{back.away.id}}</view>
+            <image class="crest-xl" src="{{back.away.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!back.away.logo}}" style="background: {{back.away.bg}}; border-color: {{back.away.bd}};">{{back.away.id}}</view>
             <text class="bb-name hl">{{back.away.zh}}</text>
           </view>
         </view>

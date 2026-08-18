@@ -6,7 +6,7 @@ module.exports = [
     "teams": ["ARS"],
     "status": "active",
     "desc": "卫冕冠军，社区盾 3-0 胜曼城开局",
-    "nodes": ["PL-1-ARS-COV"],
+    "nodes": ["PL-1-ARS-COV", "PL-2-AVL-ARS"],
     "keyNodes": ["PL-1-ARS-COV"]
   },
   {
@@ -26,7 +26,7 @@ module.exports = [
     "teams": ["PSG"],
     "status": "active",
     "desc": "五连冠在手，向六连冠发起冲击",
-    "nodes": ["FL-1-PSG-REN"],
+    "nodes": ["FL-1-PSG-REN", "FL-2-LIL-PSG"],
     "keyNodes": []
   },
   {
@@ -46,7 +46,7 @@ module.exports = [
     "teams": ["COV", "HUL", "IPS", "RAC", "DEP", "MAL", "VEN", "FRO", "MZA", "S04", "SCP", "ELV", "TRO", "LEM"],
     "status": "active",
     "desc": "英超考文垂、赫尔城、伊普斯维奇；德甲沙尔克04 等 14 队",
-    "nodes": ["PL-1-ARS-COV", "PL-1-HUL-MUN", "PD-1-DEP-ELC", "BL-1-FCA-S04", "BL-1-ELV-B04"],
+    "nodes": ["PL-1-ARS-COV", "PL-1-HUL-MUN", "PD-1-DEP-ELC", "BL-1-FCA-S04", "BL-1-ELV-B04", "PL-2-MUN-IPS"],
     "keyNodes": ["BL-1-FCA-S04", "PD-1-DEP-ELC"]
   },
   {
@@ -66,7 +66,7 @@ module.exports = [
     "teams": [],
     "status": "active",
     "desc": "瓜帅离任、Slot 下课，七队换帅创纪录——下一位是谁",
-    "nodes": ["PL-1-NEW-LIV", "PL-1-HUL-MUN"],
+    "nodes": ["PL-1-NEW-LIV", "PL-1-HUL-MUN", "PL-2-MUN-IPS"],
     "keyNodes": ["PL-1-NEW-LIV"]
   },
   {

@@ -26,18 +26,19 @@ function decorate(entry) {
   var a = data.getTeam(m.a);
   var meta = data.LEAGUE_META[m.l] || {};
   var f = fmt(m.t);
-  var isTmr = engine.ts(m.t) - Date.now() > 86400000;
+  var decResult = decorateUtil.dec(m, entry.ev);
   return {
     id: m.id,
     lgZh: lgZh(m.l),
     lgSolid: meta.solid || '#514533',
     lgAccent: meta.accent || '#514533',
-    home: { id: h.id, zh: h.zh, color: h.color, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
-    away: { id: a.id, zh: a.zh, color: a.color, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
+    home: { id: h.id, zh: h.zh, color: h.color, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35), logo: h.logo },
+    away: { id: a.id, zh: a.zh, color: a.color, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35), logo: a.logo },
     hm: f.hm,
     md: f.md,
     week: f.week,
-    dayLabel: isTmr ? '明天' : '今天',
+    dayLabel: decResult.dayLabel,
+    dateHeader: decResult.dateHeader,
     tbd: m.tbd,
     st: m.st,
     local: decorateUtil.localTime(m), // 当地开球时间（PM 7.1 Hero 小字）
@@ -74,6 +75,7 @@ Page({
   },
 
   onShow: function () {
+    getApp().applyTheme(this);
     // 首次进入引导选主队（_15）
     if (!wx.getStorageSync('onboarded')) {
       wx.navigateTo({ url: '/pages/onboarding/onboarding' });
@@ -81,10 +83,21 @@ Page({
     }
     // 关注球队变化后回到本页时刷新提级
     if (this._loaded) this.refresh();
+    else if (this.data.hero && this._heroTime) this.startCountdown(this._heroTime);
+  },
+
+  onHide: function () {
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
   },
 
   onUnload: function () {
-    if (this._timer) clearInterval(this._timer);
+    if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
+    }
   },
 
   refresh: function () {
@@ -114,6 +127,8 @@ Page({
         id: r.m.id,
         lgZh: lgZh(r.m.l) + (r.m.r ? ' 第' + r.m.r + '轮' : ''),
         pair: h.zh + ' vs ' + a.zh,
+        homeLogo: h.logo, homeBg: data.tint(h.color, .2), homeBd: data.tint(h.color, .35), homeCode: h.id,
+        awayLogo: a.logo, awayBg: data.tint(a.color, .2), awayBd: data.tint(a.color, .35), awayCode: a.id,
         teaser: r.m.sc ? '比分 ' + r.m.sc : '看点封存中 · 点击无剧透回顾'
       };
     });
@@ -145,7 +160,10 @@ Page({
       stories: stories
     });
 
-    if (pick.hero) this.startCountdown(pick.hero.m.t);
+    if (pick.hero) {
+      this._heroTime = pick.hero.m.t;
+      this.startCountdown(pick.hero.m.t);
+    }
   },
 
   startCountdown: function (t) {
@@ -175,6 +193,12 @@ Page({
   },
   onStoryTap: function (e) {
     wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
+  },
+  goAllStories: function () {
+    var first = this.data.stories && this.data.stories[0];
+    if (first) {
+      wx.navigateTo({ url: '/pages/story/story?id=' + first.id });
+    }
   },
   goDetail: function (e) {
     wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });

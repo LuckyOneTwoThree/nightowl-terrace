@@ -2,6 +2,7 @@ var data = require('../../utils/data.js');
 var decorate = require('../../utils/decorate.js');
 
 Page({
+  onShow: function () { getApp().applyTheme(this); },
   data: { m: null, slogan: '今晚哪场值得熬', sub: 'MIDNIGHT MATCH PREMIUM' },
 
   onLoad: function (q) {
@@ -11,7 +12,22 @@ Page({
       setTimeout(function () { wx.navigateBack(); }, 800);
       return;
     }
-    this.setData({ m: decorate.dec(raw, null, { followed: getApp().getFollowed() }) });
+    var m = decorate.dec(raw, null, { followed: getApp().getFollowed() });
+    var f = raw.t.split('T');
+    var mD = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
+    var now = new Date();
+    var todayD = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var diffDays = Math.round((mD.getTime() - todayD.getTime()) / 86400000);
+    var hour = Number(f[1].split(':')[0]);
+    var slogan = (diffDays === 0 || (diffDays === 1 && hour < 6)) ? '今晚哪场值得熬'
+      : (diffDays === 1) ? '明晚哪场值得熬'
+      : '焦点大战值得熬';
+
+    this.setData({
+      m: m,
+      slogan: slogan,
+      sub: 'MIDNIGHT MATCH PREMIUM'
+    });
   },
 
   // ---------- Canvas 绘制（PM 7.6：1080×1920 竖版导出） ----------
@@ -84,7 +100,7 @@ Page({
     ctx.arcTo(px, py + ph, py, py, pr); ctx.arcTo(px, py, px + pw, py, pr);
     ctx.fill();
     ctx.strokeStyle = 'rgba(159,142,121,.12)'; ctx.lineWidth = 3; ctx.stroke();
-    body(m.dayLabel + ' · ' + m.md, W / 2, py + 96, 72, '#D6C4AD');
+    body(m.dateHeader, W / 2, py + 96, 56, '#D6C4AD');
     mono(m.hm, W / 2, py + 240, 192, '#E0E2EA', 'center', '700');
     mono('北京时间', W / 2, py + 360, 42, '#9F8E79');
     if (m.local && !m.tbd) mono('当地 ' + m.local, W / 2, py + 420, 42, '#9F8E79');

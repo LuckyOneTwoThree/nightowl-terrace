@@ -13,10 +13,12 @@
 }
 
 /* 神秘卡：3D 翻转容器 */
-.mystery-wrap { position: relative; height: 680rpx; perspective: 1400rpx; }
+.mystery-wrap { position: relative; height: 680rpx; perspective: 1400rpx; -webkit-perspective: 1400rpx; }
 .flip-inner {
   position: relative; width: 100%; height: 100%;
-  transform-style: preserve-3d; transition: transform .7s cubic-bezier(.4,.2,.2,1);
+  transform-style: preserve-3d; -webkit-transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.4,.2,.2,1);
+  will-change: transform; /* 提前合成层，避免首次翻转创建图层卡顿 */
 }
 .flip-inner.flipped { transform: rotateY(180deg); }
 .face {
@@ -68,11 +70,10 @@
 }
 .bb-date { display: flex; flex-direction: column; align-items: center; gap: 4rpx; padding-top: 16rpx; }
 .match-time { font-size: 36rpx; font-weight: 700; }
-.bb-md { font-size: 24rpx; }
-.bb-vs { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 28rpx; }
-.bb-side { width: 36%; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
-.bb-name { font-size: 28rpx; color: var(--on-surface); text-align: center; }
-.bb-x { font-size: 40rpx; }
+.bb-vs { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 20rpx; }
+.bb-side { width: 180rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
+.bb-name { font-size: 28rpx; color: var(--on-surface); text-align: center; max-width: 180rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bb-x { font-size: 40rpx; flex: 1; text-align: center; }
 .bb-foot { margin: 0 28rpx; display: flex; align-items: center; justify-content: center; gap: 8rpx; font-size: 22rpx; padding: 10rpx 0; }
 
 .emptybox {

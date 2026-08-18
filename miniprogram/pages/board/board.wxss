@@ -20,11 +20,11 @@
 .live-status .mono { font-size: 22rpx; }
 
 .live-vs { display: flex; align-items: center; justify-content: space-between; padding: 10rpx 0 20rpx; }
-.lv-side { display: flex; flex-direction: column; align-items: center; gap: 12rpx; width: 32%; }
-.lv-name { font-size: 26rpx; color: var(--on-surface); text-align: center; }
-.lv-mid { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10rpx; }
-.score-m.sm { font-size: 44rpx; }
-.match-time { font-size: 32rpx; font-weight: 700; }
+.lv-side { display: flex; flex-direction: column; align-items: center; gap: 12rpx; width: 160rpx; flex-shrink: 0; }
+.lv-name { font-size: 26rpx; color: var(--on-surface); text-align: center; max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lv-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 10rpx; }
+.score-m.sm { font-size: 44rpx; white-space: nowrap; }
+.match-time { font-size: 32rpx; font-weight: 700; white-space: nowrap; }
 
 .live .btn-amber { margin-top: 24rpx; }
 .live .btn-amber.done { opacity: .55; box-shadow: none; }

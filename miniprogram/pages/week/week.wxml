@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
   <!-- 预算卡（_7：conic 进度环 + _16 调额入口） -->
   <view class="budget card-low">
     <view class="b-left">
@@ -36,39 +36,93 @@
     <view class="b-btn btn-teal-ghost" bindtap="onAdoptSuggest">收紧至 {{suggest}}h</view>
   </view>
 
-  <!-- 最优组合（_7） -->
-  <view class="sect sect-gap">
-    <text class="sect-title">最优组合</text>
-    <view class="sect-line"></view>
-  </view>
-  <view class="plan card-low">
-    <view class="plan-row" wx:for="{{best}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
-      <view class="pr-bar" style="background: {{item.accent}};"></view>
-      <view class="circle-sm">{{item.homeCode}}</view>
-      <view class="pr-mid">
-        <text class="pr-pair">{{item.pair}}</text>
-        <text class="mono muted">{{item.md}} {{item.wd}} {{item.hm}} · {{item.lgZh}}</text>
-      </view>
-      <view class="pr-right">
-        <text class="pr-idx text-amber">{{item.indexText}}</text>
-        <text class="mono pr-cost">{{item.costText}}</text>
-      </view>
+  <!-- 3视角药丸导航栏 (Segmented Nav Tabs) -->
+  <view class="week-nav card-low">
+    <view class="wn-pill {{curTab === 'plan' ? 'active floodlight-glow' : ''}}" data-tab="plan" bindtap="onSwitchTab">
+      <view class="v-icon v-bolt text-amber wn-ic"></view>
+      <text class="hl">预算组合</text>
     </view>
-    <view class="plan-alt mono muted" wx:if="{{alt.length}}">
-      备选：{{alt.length}} 场未入组合（超出预算上限）
+    <view class="wn-pill {{curTab === 'focal' ? 'active floodlight-glow' : ''}}" data-tab="focal" bindtap="onSwitchTab">
+      <view class="v-icon v-fire text-amber wn-ic"></view>
+      <text class="hl">全周焦点</text>
+      <text class="wn-badge chip chip-solid" wx:if="{{focal.length}}">{{focal.length}}</text>
+    </view>
+    <view class="wn-pill {{curTab === 'radar' ? 'active floodlight-glow' : ''}}" data-tab="radar" bindtap="onSwitchTab">
+      <view class="v-icon v-moon text-teal wn-ic"></view>
+      <text class="hl">熬夜雷达</text>
     </view>
   </view>
 
-  <!-- 本周焦点 Top 5–8（PM：跨联赛焦点） -->
-  <block wx:if="{{focal.length}}">
+  <!-- ================= TAB 1: 预算组合 (Plan) ================= -->
+  <view class="tab-pane" wx:if="{{curTab === 'plan'}}">
+    <!-- 若只熬一场（_7 highlight） -->
+    <block wx:if="{{highlight}}">
+      <view class="hl-wrap">
+        <view class="hl-card floodlight-glow">
+          <view class="hl-head">
+            <view class="v-icon v-fire text-amber hl-fire"></view>
+            <text class="hl-label mono text-amber">若只熬一场 · 选这场</text>
+          </view>
+          <view class="hl-body" data-id="{{highlight.id}}" bindtap="onMatch">
+            <view class="hl-mid">
+              <text class="hl-pair">{{highlight.pair}}</text>
+              <text class="mono muted">{{highlight.lgZh}} · {{highlight.md}} {{highlight.wd}} {{highlight.hm}}</text>
+            </view>
+            <view class="hl-stats">
+              <view class="hl-stat">
+                <text class="mono muted">爆表指数</text>
+                <text class="hl-idx text-glow text-amber">{{highlight.indexText}}</text>
+              </view>
+              <view class="hl-div"></view>
+              <view class="hl-stat">
+                <text class="mono muted">需耗时</text>
+                <text class="hl-cost mono">{{highlight.costText}}</text>
+              </view>
+              <view class="hl-btn btn-teal-ghost" catchtap="onRemind">一键提醒</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 最优推荐组合（背包算法） -->
     <view class="sect sect-gap">
-      <text class="sect-title">本周焦点</text>
+      <text class="sect-title">精选组合推荐</text>
+      <view class="sect-line"></view>
+      <text class="sect-more" bindtap="openSheet">调额度 ›</text>
+    </view>
+    <view class="plan card-low" wx:if="{{best.length}}">
+      <view class="plan-row" wx:for="{{best}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
+        <view class="pr-bar" style="background: {{item.accent}};"></view>
+        <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!item.homeLogo}}" style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
+        <view class="pr-mid">
+          <text class="pr-pair">{{item.pair}}</text>
+          <text class="mono muted">{{item.md}} {{item.wd}} {{item.hm}} · {{item.lgZh}}</text>
+        </view>
+        <view class="pr-right">
+          <text class="pr-idx text-amber">{{item.indexText}}</text>
+          <text class="mono pr-cost">{{item.costText}}</text>
+        </view>
+      </view>
+      <view class="plan-alt mono muted" wx:if="{{alt.length}}">
+        备选：还有 {{alt.length}} 场未入组合（超出预算上限）
+      </view>
+    </view>
+    <view class="card-low empty-tip" wx:else>
+      <text class="mono muted">当前额度下暂无排期，可点击上方「调额」增加预算。</text>
+    </view>
+  </view>
+
+  <!-- ================= TAB 2: 全周焦点 (Focal) ================= -->
+  <view class="tab-pane" wx:if="{{curTab === 'focal'}}">
+    <view class="sect sect-gap">
+      <text class="sect-title">跨联赛焦点战榜</text>
       <view class="sect-line"></view>
     </view>
-    <view class="plan card-low">
+    <view class="plan card-low" wx:if="{{focal.length}}">
       <view class="plan-row" wx:for="{{focal}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
         <view class="pr-bar" style="background: {{item.accent}};"></view>
-        <view class="circle-sm">{{item.homeCode}}</view>
+        <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!item.homeLogo}}" style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
         <view class="pr-mid">
           <text class="pr-pair">{{item.pair}}</text>
           <text class="mono muted">{{item.tbd ? '时间待定' : item.md + ' ' + item.wd + ' ' + item.hm}} · {{item.lgZh}}</text>
@@ -79,65 +133,47 @@
         </view>
       </view>
     </view>
-  </block>
+    <view class="card-low empty-tip" wx:else>
+      <text class="mono muted">本周暂无评级 ≥ 2 星的焦点战</text>
+    </view>
+  </view>
 
-  <!-- 若只熬一场（_7 highlight） -->
-  <block wx:if="{{highlight}}">
-    <view class="hl-wrap">
-      <view class="hl-card floodlight-glow">
-        <view class="hl-head">
-          <view class="v-icon v-fire text-amber hl-fire"></view>
-          <text class="hl-label mono text-amber">若只熬一场 · 选这场</text>
-        </view>
-        <view class="hl-body" data-id="{{highlight.id}}" bindtap="onMatch">
-          <view class="hl-mid">
-            <text class="hl-pair">{{highlight.pair}}</text>
-            <text class="mono muted">{{highlight.lgZh}} · {{highlight.md}} {{highlight.wd}} {{highlight.hm}}</text>
-          </view>
-          <view class="hl-stats">
-            <view class="hl-stat">
-              <text class="mono muted">爆表指数</text>
-              <text class="hl-idx text-glow text-amber">{{highlight.indexText}}</text>
-            </view>
-            <view class="hl-div"></view>
-            <view class="hl-stat">
-              <text class="mono muted">需耗时</text>
-              <text class="hl-cost mono">{{highlight.costText}}</text>
-            </view>
-            <view class="hl-btn btn-teal-ghost" catchtap="onRemind">一键提醒</view>
-          </view>
-        </view>
+  <!-- ================= TAB 3: 熬夜雷达 (Radar: 修仙场 + 雷区预警) ================= -->
+  <view class="tab-pane" wx:if="{{curTab === 'radar'}}">
+    <!-- 红榜 · 修仙场（PM：深夜硬核档） -->
+    <view class="sect sect-gap">
+      <text class="sect-title">硬核修仙场</text>
+      <view class="sect-line"></view>
+      <text class="mono muted sect-sub">高耗时硬仗</text>
+    </view>
+    <view class="owl card-low" wx:for="{{nightOwls}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
+      <view class="chip chip-teal">{{item.tier}}</view>
+      <text class="mine-pair">{{item.pair}}</text>
+      <text class="mono owl-time">{{item.md}} {{item.hm}} · 睡眠成本 {{item.costText}}</text>
+    </view>
+    <view class="card-low empty-tip" wx:if="{{!nightOwls.length}}">
+      <text class="mono muted">本周无极端熬夜修仙场次，安心作息。</text>
+    </view>
+
+    <!-- 黑榜 · 雷区预警（PM：建议睡觉） -->
+    <view class="sect sect-gap">
+      <text class="sect-title">雷区预警</text>
+      <view class="sect-line"></view>
+      <text class="mono muted sect-sub">避坑指南</text>
+    </view>
+    <view class="mine card-low" wx:for="{{mines}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
+      <view class="mine-head">
+        <view class="chip chip-error">建议睡觉</view>
+        <text class="mono muted">{{item.md}} {{item.hm}} · {{item.lgZh}}</text>
       </view>
+      <text class="mine-pair">{{item.pair}}</text>
+      <text class="mine-reason mono muted">{{item.reason}}</text>
     </view>
-  </block>
-
-  <!-- 雷区预警（PM：建议睡觉） -->
-  <view class="sect sect-gap">
-    <text class="sect-title">雷区预警</text>
-    <view class="sect-line"></view>
-  </view>
-  <view class="mine card-low" wx:for="{{mines}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
-    <view class="mine-head">
-      <view class="chip chip-error">建议睡觉</view>
-      <text class="mono muted">{{item.md}} {{item.hm}} · {{item.lgZh}}</text>
+    <view class="card-low mine-ok" wx:if="{{!mines.length}}">
+      <text class="mono muted">本周暂无雷区 —— 安心享受足球。</text>
     </view>
-    <text class="mine-pair">{{item.pair}}</text>
-    <text class="mine-reason mono muted">{{item.reason}}</text>
-  </view>
-  <view class="card-low mine-ok" wx:if="{{!mines.length}}">
-    <text class="mono muted">本周暂无雷区 —— 安心享受足球。</text>
   </view>
 
-  <!-- 修仙场（PM：凌晨档） -->
-  <view class="sect sect-gap">
-    <text class="sect-title">修仙场</text>
-    <view class="sect-line"></view>
-  </view>
-  <view class="owl card-low" wx:for="{{nightOwls}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
-    <view class="chip chip-teal">{{item.tier}}</view>
-    <text class="mine-pair">{{item.pair}}</text>
-    <text class="mono owl-time">{{item.md}} {{item.hm}} · 睡眠成本 {{item.costText}}</text>
-  </view>
 
   <!-- _16 额度调整底部抽屉 (Bottom Sheet) -->
   <view class="modal-backdrop {{showSheet ? 'show' : ''}}" bindtap="closeSheet"></view>

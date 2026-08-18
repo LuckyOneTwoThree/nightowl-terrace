@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
   <!-- 截止条（_11 亮金倒计时条） -->
   <view class="deadline card-highest floodlight-glow">
     <view class="dl-left">
@@ -38,12 +38,12 @@
 
       <view class="g-vs">
         <view class="g-side">
-          <view class="circle-md" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+          <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!item.home.logo}}" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
           <text class="g-name hl">{{item.home.zh}}</text>
         </view>
         <text class="mono muted g-vs-txt">VS</text>
         <view class="g-side">
-          <view class="circle-md" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+          <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!item.away.logo}}" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
           <text class="g-name hl">{{item.away.zh}}</text>
         </view>
       </view>

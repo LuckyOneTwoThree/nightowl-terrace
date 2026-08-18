@@ -24,6 +24,53 @@ function localTime(m) {
   return p2(Math.floor(local / 60)) + ':' + p2(local % 60);
 }
 
+function getDayLabel(t) {
+  var f = t.split('T');
+  var mDateStr = f[0];
+  var hm = f[1] || '00:00';
+  var mD = new Date(mDateStr.replace(/-/g, '/') + ' 00:00:00');
+  var now = new Date();
+  var todayD = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var diffDays = Math.round((mD.getTime() - todayD.getTime()) / 86400000);
+  var hour = Number(hm.split(':')[0]);
+  var isEarly = hour >= 0 && hour < 6;
+
+  if (diffDays === 0) {
+    return isEarly ? '今晨' : '今天';
+  } else if (diffDays === 1) {
+    return isEarly ? '明晨' : '明天';
+  } else if (diffDays === 2) {
+    return isEarly ? '后天凌晨' : '后天';
+  } else if (diffDays === -1) {
+    return '昨天';
+  } else {
+    return (mD.getMonth() + 1) + '月' + mD.getDate() + '日 周' + WEEK[mD.getDay()];
+  }
+}
+
+function getDateHeader(t) {
+  var f = t.split('T');
+  var mDateStr = f[0];
+  var hm = f[1] || '00:00';
+  var mD = new Date(mDateStr.replace(/-/g, '/') + ' 00:00:00');
+  var now = new Date();
+  var todayD = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var diffDays = Math.round((mD.getTime() - todayD.getTime()) / 86400000);
+  var hour = Number(hm.split(':')[0]);
+  var isEarly = hour >= 0 && hour < 6;
+  var mdStr = (mD.getMonth() + 1) + '月' + mD.getDate() + '日 (周' + WEEK[mD.getDay()] + ')';
+
+  if (diffDays === 0) {
+    return (isEarly ? '今晨 · ' : '今天 · ') + mdStr;
+  } else if (diffDays === 1) {
+    return (isEarly ? '明晨 · ' : '明天 · ') + mdStr;
+  } else if (diffDays === 2) {
+    return '后天 · ' + mdStr;
+  } else {
+    return mdStr;
+  }
+}
+
 function dpart(t) {
   var f = t.split('T');
   var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
@@ -43,16 +90,16 @@ function dec(m, ev, opts) {
   var f = dpart(m.t);
   var tier = engine.tierOf(m);
   var sc = m.sc ? m.sc.split('-') : null;
-  var isTmr = engine.ts(m.t) - Date.now() > 86400000;
   return {
     id: m.id,
     lg: m.l, lgZh: lgZh(m.l), lgEn: m.l === 'PL' ? 'Premier League' : m.l === 'PD' ? 'La Liga' : m.l === 'SA' ? 'Serie A' : m.l === 'BL' ? 'Bundesliga' : m.l === 'FL' ? 'Ligue 1' : m.l,
     lgSolid: meta.solid || '#514533', lgAccent: meta.accent || '#514533',
-    home: { id: h.id, zh: h.zh, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
-    away: { id: a.id, zh: a.zh, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
+    home: { id: h.id, zh: h.zh, logo: h.logo, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
+    away: { id: a.id, zh: a.zh, logo: a.logo, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
     hm: f.hm, md: (f.d.getMonth() + 1) + '月' + f.d.getDate() + '日', ms: (f.d.getMonth() + 1) + '/' + f.d.getDate(),
     week: '周' + WEEK[f.d.getDay()], wd: WEEK[f.d.getDay()],
-    dayLabel: isTmr ? '明天' : '今天',
+    dayLabel: getDayLabel(m.t),
+    dateHeader: getDateHeader(m.t),
     local: localTime(m),
     tbd: !!m.tbd, st: m.st, finished: m.st === 'ft' || m.st === 'done',
     scH: sc ? sc[0] : '-', scA: sc ? sc[1] : '-', scText: m.sc || '',

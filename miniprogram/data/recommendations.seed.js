@@ -158,5 +158,85 @@ module.exports = [
     "replay": false,
     "avoid": false,
     "upset": false
+  },
+  {
+    "m": "PD-2-ESP-RMA",
+    "star": 3,
+    "story": [],
+    "points": ["豪门焦点对阵", "皇马客场硬仗", "凌晨档西甲焦点"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PD-2-ELC-BAR",
+    "star": 3,
+    "story": [],
+    "points": ["豪门焦点对阵", "巴萨客场硬仗", "凌晨档西甲焦点"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PD-2-ATM-VIL",
+    "star": 2,
+    "story": [],
+    "points": ["西甲强强对话", "马竞主场硬仗", "凌晨档焦点"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "FL-2-LIL-PSG",
+    "star": 3,
+    "story": ["PSG_SIX_PEEP"],
+    "points": ["巴黎六连冠硬仗", "里尔主场挑战霸主", "法甲强强对话"],
+    "trivia": "巴黎上季法甲五连冠，本季冲击第六座",
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "FL-2-MCO-OM",
+    "star": 2,
+    "story": [],
+    "points": ["法甲传统强队对话", "南法势力碰撞", "凌晨档焦点"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PL-2-AVL-ARS",
+    "star": 3,
+    "story": ["ARS_TITLE_DEFENSE"],
+    "points": ["卫冕冠军客场考验", "维拉主场之利", "英超争冠焦点"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PL-2-MUN-IPS",
+    "star": 2,
+    "story": ["PROMOTED_SURVIVAL", "MANAGER_WATCH"],
+    "points": ["曼联新帅卡里克主场", "升班马伊普斯维奇考验", "豪门 vs 升班马"],
+    "trivia": "卡里克是英超本季七位新帅之一",
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "SA-2-JUV-PAR",
+    "star": 2,
+    "story": [],
+    "points": ["尤文豪门夜场", "帕尔马客场作战", "意甲凌晨档焦点"],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
   }
 ];
