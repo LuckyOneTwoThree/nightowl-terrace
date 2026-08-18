@@ -1,12 +1,15 @@
 // app.js
 App({
   onLaunch: function () {
-    // 云开发初始化（M2 阶段未开通，静默降级为内置数据）
+    // 云开发初始化
     if (!wx.cloud) {
       console.log('[nightowl] 基础库版本过低，无法使用云能力');
     } else {
-      // wx.cloud.init({ traceUser: true });
-      // AppID 就绪后取消上一行注释并填入 env
+      wx.cloud.init({
+        env: 'cloudbase-d3gvu54t8fbbb6b3f',
+        traceUser: true
+      });
+      console.log('[nightowl] 云开发已初始化');
     }
   },
   globalData: {
