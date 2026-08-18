@@ -1,7 +1,7 @@
 {
   "compileType": "miniprogram",
   "libVersion": "latest",
-  "appid": "touristappid",
+  "appid": "wxd8e4af12f9afffa4",
   "projectname": "nightowl-terrace",
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
