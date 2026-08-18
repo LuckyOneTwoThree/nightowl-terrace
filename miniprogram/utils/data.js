@@ -4,12 +4,12 @@
  * v1：切云数据库拉取，接口签名不变，页面零改动
  */
 
-var teams = require('../data/teams.json');
-var fixturesSeed = require('../data/fixtures.full.json'); // M1.1 全量 1752 场（ESPN 抓取生成，tools/fetch_espn.js + build_fixtures.js）
-var recsSeed = require('../data/recommendations.seed.json');
-var storylinesAll = require('../data/storylines.json');
-var rivalries = require('../data/rivalries.json');
-var quips = require('../data/quips.json');
+var teams = require('../data/teams.js');
+var fixturesSeed = require('../data/fixtures.full.js'); // M1.1 全量 1752 场（ESPN 抓取生成，tools/fetch_espn.js + build_fixtures.js）
+var recsSeed = require('../data/recommendations.seed.js');
+var storylinesAll = require('../data/storylines.js');
+var rivalries = require('../data/rivalries.js');
+var quips = require('../data/quips.js');
 
 var LEAGUES = [
   { id: 'PL', zh: '英超' },

@@ -70,7 +70,7 @@
         <text class="rel-desc">{{item.desc}}</text>
       </view>
     </view>
-  </view>
+  </block>
 
   <!-- 分享 FAB -->
   <view class="fab" bindtap="share"><text>📤</text></view>

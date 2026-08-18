@@ -1,0 +1,92 @@
+module.exports = [
+  {
+    "id": "ARS_TITLE_DEFENSE",
+    "name": "阿森纳卫冕之路",
+    "type": "title",
+    "teams": ["ARS"],
+    "status": "active",
+    "desc": "卫冕冠军，社区盾 3-0 胜曼城开局",
+    "nodes": ["PL-1-ARS-COV"],
+    "keyNodes": ["PL-1-ARS-COV"]
+  },
+  {
+    "id": "FCB_DOMINANCE",
+    "name": "拜仁连霸",
+    "type": "title",
+    "teams": ["FCB"],
+    "status": "active",
+    "desc": "上季第 34 座德甲冠军后继续卫冕",
+    "nodes": ["SCG-BVB-FCB", "BL-1-FCB-VFB"],
+    "keyNodes": ["SCG-BVB-FCB", "BL-1-FCB-VFB"]
+  },
+  {
+    "id": "PSG_SIX_PEEP",
+    "name": "巴黎六连冠",
+    "type": "title",
+    "teams": ["PSG"],
+    "status": "active",
+    "desc": "五连冠在手，向六连冠发起冲击",
+    "nodes": ["FL-1-PSG-REN"],
+    "keyNodes": []
+  },
+  {
+    "id": "WC_HANGOVER",
+    "name": "世界杯后遗症",
+    "type": "league",
+    "teams": [],
+    "status": "active",
+    "desc": "2026 世界杯刚结束，赛季初阵容疲劳与轮换是核心变量",
+    "nodes": [],
+    "keyNodes": []
+  },
+  {
+    "id": "PROMOTED_SURVIVAL",
+    "name": "升班马生存战",
+    "type": "relegation",
+    "teams": ["COV", "HUL", "IPS", "RAC", "DEP", "MAL", "VEN", "FRO", "MZA", "S04", "SCP", "ELV", "TRO", "LEM"],
+    "status": "active",
+    "desc": "英超考文垂、赫尔城、伊普斯维奇；德甲沙尔克04 等 14 队",
+    "nodes": ["PL-1-ARS-COV", "PL-1-HUL-MUN", "PD-1-DEP-ELC", "BL-1-FCA-S04", "BL-1-ELV-B04"],
+    "keyNodes": ["BL-1-FCA-S04", "PD-1-DEP-ELC"]
+  },
+  {
+    "id": "GOLDEN_BOOT",
+    "name": "跨联赛金靴竞速",
+    "type": "data",
+    "teams": [],
+    "status": "active",
+    "desc": "五大联赛射手榜并列追踪",
+    "nodes": [],
+    "keyNodes": []
+  },
+  {
+    "id": "MANAGER_WATCH",
+    "name": "名帅大迁徙",
+    "type": "suspense",
+    "teams": [],
+    "status": "active",
+    "desc": "瓜帅离任、Slot 下课，七队换帅创纪录——下一位是谁",
+    "nodes": ["PL-1-NEW-LIV", "PL-1-HUL-MUN"],
+    "keyNodes": ["PL-1-NEW-LIV"]
+  },
+  {
+    "id": "BETTING_BAN",
+    "name": "博彩广告禁令首季",
+    "type": "background",
+    "teams": [],
+    "status": "active",
+    "desc": "英超自本季起禁止胸前博彩赞助",
+    "nodes": [],
+    "keyNodes": []
+  },
+  {
+    "id": "TITLE_LINES_ES_IT",
+    "name": "西甲／意甲争冠线",
+    "type": "title",
+    "teams": [],
+    "status": "draft",
+    "desc": "待核实上季冠军与本季格局（Bingo 交付后激活）",
+    "nodes": [],
+    "keyNodes": []
+  }
+];
