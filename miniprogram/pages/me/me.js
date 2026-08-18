@@ -1,4 +1,5 @@
 var data = require('../../utils/data.js');
+var engine = require('../../utils/engine.js');
 
 function lgZh(l) {
   var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
@@ -62,9 +63,32 @@ Page({
       };
     });
 
+    // 我的关注 · 本周主队赛程（PM 7.4：关注球队聚合视图）
+    var now = new Date();
+    var start = engine.dateStr(now);
+    var end = engine.dateStr(new Date(now.getTime() + 7 * 86400000));
+    var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+    var myWeek = data.matchesAll().filter(function (m) {
+      var d = m.t.split('T')[0];
+      return d >= start && d <= end && (followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0);
+    }).sort(function (x, y) { return x.t < y.t ? -1 : 1; }).map(function (m) {
+      var f = m.t.split('T');
+      var dd = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
+      return {
+        id: m.id,
+        lgZh: lgZh(m.l),
+        pair: data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh,
+        md: (dd.getMonth() + 1) + '/' + dd.getDate(),
+        wd: '周' + WEEK[dd.getDay()],
+        hm: f[1],
+        tbd: !!m.tbd
+      };
+    }).slice(0, 8);
+
     this.setData({
       nickname: nickname,
       groups: groups,
+      myWeek: myWeek,
       stats: { hours: hours, preds: Object.keys(preds).length, hit: total ? Math.round(hit * 100 / total) + '%' : '—' }
     });
   },
@@ -87,6 +111,10 @@ Page({
     this.setData({ groups: groups });
   },
 
+  onEditNick: function () {
+    wx.navigateTo({ url: '/pages/settings/settings' });
+  },
+
   onMenu: function (e) {
     var id = e.currentTarget.dataset.id;
     var urls = {
@@ -97,5 +125,10 @@ Page({
       settings: '/pages/settings/settings'
     };
     if (urls[id]) wx.navigateTo({ url: urls[id] });
+  },
+
+  goMatch: function (e) {
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
   }
 });
+

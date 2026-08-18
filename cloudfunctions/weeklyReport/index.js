@@ -103,6 +103,21 @@ exports.main = async (event) => {
     }
     Object.values(courtAgg).forEach(a => { a.top = a.top.slice(-5).reverse(); }); // 近 5 条
 
+    // ── 3.5 透支快照（PM 9.1 周一结算：上周实际 vs 预算）──
+    const users = await fetchAll(db, 'users', {}, 2000);
+    const budgetMap = {}; // uid -> 每周睡眠预算（默认 4h，PM 7.3）
+    users.forEach(u => { budgetMap[u.uid] = (u.budget != null ? u.budget : 4); });
+    const overdraft = {}; // gid -> [{nick, hours, budget, over}]
+    Object.keys(owlBoards).forEach(g => {
+      overdraft[g] = owlBoards[g]
+        .map(a => {
+          const budget = budgetMap[a.uid] != null ? budgetMap[a.uid] : 4;
+          return { uid: a.uid, nick: a.nick, hours: a.hours, budget, over: Math.max(0, +(a.hours - budget).toFixed(1)) };
+        })
+        .filter(a => a.over > 0)
+        .sort((x, y) => y.over - x.over);
+    });
+
     // ── 4. 快照落库（weeklyReports，同周覆盖）──
     const gids = Array.from(new Set([
       ...Object.keys(guessBoards), ...Object.keys(owlBoards), ...Object.keys(courtAgg)
@@ -116,7 +131,8 @@ exports.main = async (event) => {
         owl: owlBoards[g] || [],
         sharpest: sharpest[g] || null,
         worstNight: worstNight[g] || null,
-        court: courtAgg[g] || { total: 0, hit: 0, miss: 0, pending: 0, top: [] }
+        court: courtAgg[g] || { total: 0, hit: 0, miss: 0, pending: 0, top: [] },
+        overdraft: overdraft[g] || []
       };
       const exist = await db.collection('weeklyReports').where({ gid: g, week: weekKey }).limit(1).get();
       if (exist.data.length) {
@@ -131,7 +147,8 @@ exports.main = async (event) => {
         lines: [
           (report.sharpest ? '最准之口 ' + report.sharpest.nick + ' ' + report.sharpest.pts + ' 分' : '本周无人参战'),
           (report.worstNight ? '最狠一夜 ' + report.worstNight.nick + ' 熬 ' + report.worstNight.hours + 'h' : ''),
-          '法庭应验 ' + report.court.hit + ' / 翻车 ' + report.court.miss
+          '法庭应验 ' + report.court.hit + ' / 翻车 ' + report.court.miss,
+          (report.overdraft.length ? '透支 ' + report.overdraft.length + ' 人，榜首 ' + report.overdraft[0].nick + ' 超 ' + report.overdraft[0].over + 'h' : '全员预算内')
         ].filter(Boolean)
       });
     }

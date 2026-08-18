@@ -1,6 +1,7 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
+var cloud = require('../../utils/cloud.js');
 
 Page({
   data: {
@@ -88,6 +89,8 @@ Page({
       result: boasts[m.id] ? boasts[m.id].result : null
     };
     wx.setStorageSync('boasts', boasts);
+    // 云端 best-effort 双写：德比法庭群存档
+    cloud.addBoast({ m: m.id, text: text, ts: boasts[m.id].ts });
     wx.showToast({ title: '狂言已存档', icon: 'none' });
     this.refresh();
   },

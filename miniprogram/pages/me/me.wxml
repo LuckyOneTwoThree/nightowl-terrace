@@ -1,65 +1,114 @@
 <view class="page">
-  <!-- 头部（_18：头像 + 昵称 + 设置） -->
-  <view class="head">
-    <view class="avatar">🦉</view>
-    <view class="h-col">
-      <text class="h-name">{{nickname}}</text>
-      <text class="mono muted">看台第 1 排 · 本季追剧中</text>
+  <!-- 用户卡（_18） -->
+  <view class="profile card-low" bindtap="onEditNick">
+    <view class="avatar-wrap">
+      <view class="circle-xl avatar-box text-amber hl">OWL</view>
+      <view class="dot-teal dot-pos animate-pulse"></view>
     </view>
-    <text class="h-set">⚙️</text>
-  </view>
-
-  <!-- 统计（_18） -->
-  <view class="stats card-low">
-    <view class="stat">
-      <text class="s-num">{{stats.hours}}</text>
-      <text class="s-label mono">熬夜时长</text>
+    <view class="prof-mid">
+      <view class="nick-row">
+        <text class="hl nick-text">{{nickname}}</text>
+        <view class="chip chip-amber lv-chip">Lv.3 夜猫子</view>
+      </view>
+      <text class="mono muted sign-text">“看球是生活的解药”</text>
     </view>
-    <view class="s-div"></view>
-    <view class="stat">
-      <text class="s-num">{{stats.preds}}</text>
-      <text class="s-label mono">预测</text>
-    </view>
-    <view class="s-div"></view>
-    <view class="stat">
-      <text class="s-num">{{stats.hit}}</text>
-      <text class="s-label mono">应验率</text>
+    <view class="edit-btn">
+      <view class="v-icon v-tune text-muted"></view>
     </view>
   </view>
 
-  <!-- 关注球队（_18：多选 chips） -->
+  <!-- 3列数据看板（_18 带顶部金线） -->
+  <view class="stats-grid">
+    <view class="stat-card card-low glow-top-gold">
+      <text class="stat-num hl text-amber score-sm">{{stats.hours}}</text>
+      <text class="mono muted stat-lbl">累计修仙</text>
+    </view>
+    <view class="stat-card card-low glow-top-teal">
+      <text class="stat-num hl text-teal score-sm">{{stats.preds}}</text>
+      <text class="mono muted stat-lbl">盲评参与</text>
+    </view>
+    <view class="stat-card card-low glow-top-gold">
+      <text class="stat-num hl text-amber score-sm">{{stats.hit}}</text>
+      <text class="mono muted stat-lbl">预测胜率</text>
+    </view>
+  </view>
+
+  <!-- 我的关注 · 本周主队赛程（PM 7.4 聚合视图） -->
+  <block wx:if="{{myWeek.length}}">
+    <view class="sect sect-gap">
+      <text class="sect-title">我的关注 · 本周</text>
+      <view class="sect-line"></view>
+    </view>
+    <view class="menu card-low">
+      <view class="menu-row" wx:for="{{myWeek}}" wx:key="id" data-id="{{item.id}}" bindtap="goMatch">
+        <view class="mr-left">
+          <view class="v-icon v-soccer mr-icon text-amber"></view>
+          <view class="mw-mid">
+            <text class="mr-title hl">{{item.pair}}</text>
+            <text class="mono muted mw-sub">{{item.tbd ? '时间待定' : item.md + ' ' + item.wd + ' ' + item.hm}} · {{item.lgZh}}</text>
+          </view>
+        </view>
+        <view class="v-icon v-chev text-muted"></view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 关注球队（_18 气泡选择） -->
   <view class="sect sect-gap">
     <text class="sect-title">关注球队</text>
     <view class="sect-line"></view>
+    <text class="sect-more">点击切换 ›</text>
   </view>
-  <view class="follow card-low">
-    <view class="f-group" wx:for="{{groups}}" wx:key="id">
-      <text class="mono muted f-lg">{{item.zh}}</text>
-      <view class="f-chips">
-        <view
-          class="f-chip {{team.on ? 'on' : ''}}"
-          wx:for="{{item.teams}}" wx:for-item="team" wx:key="id"
-          data-id="{{team.id}}" bindtap="onToggle">
-          <view class="f-dot" style="background: {{team.dot}};"></view>
-          <text>{{team.zh}}</text>
-          <text class="f-new" wx:if="{{team.isNew}}">新</text>
-        </view>
+  <view class="lg-group" wx:for="{{groups}}" wx:key="id">
+    <text class="mono muted lg-hdr">{{item.zh}}</text>
+    <view class="team-pills">
+      <view
+        class="t-pill {{t.on ? 'on floodlight-glow' : ''}}"
+        wx:for="{{item.teams}}" wx:for-item="t" wx:key="id"
+        data-id="{{t.id}}" bindtap="onToggle">
+        <view class="t-dot" style="background: {{t.color}};"></view>
+        <text class="t-zh">{{t.zh}}</text>
+        <view class="v-icon v-check text-amber check-s" wx:if="{{t.on}}"></view>
       </view>
     </view>
   </view>
 
-  <!-- 菜单（_18） -->
+  <!-- 菜单列表（_18） -->
   <view class="sect sect-gap">
-    <text class="sect-title">我的记录</text>
+    <text class="sect-title">快捷入口</text>
     <view class="sect-line"></view>
   </view>
   <view class="menu card-low">
-    <view class="menu-row" wx:for="{{menu}}" wx:key="id" data-id="{{item.id}}" bindtap="onMenu">
-      <view class="m-left">
-        <text class="m-icon">{{item.icon}}</text>
-        <text>{{item.name}}</text>
+    <view class="menu-row" data-id="preds" bindtap="onMenu">
+      <view class="mr-left">
+        <view class="v-icon v-soccer mr-icon text-amber"></view>
+        <text class="mr-title hl">我的预测记录</text>
       </view>
-      <text class="m-arrow">›</text>
+      <view class="v-icon v-chev text-muted"></view>
+    </view>
+
+    <view class="menu-row" data-id="boasts" bindtap="onMenu">
+      <view class="mr-left">
+        <view class="v-icon v-gavel mr-icon text-teal"></view>
+        <text class="mr-title hl">德比法庭 · 狂言存档</text>
+      </view>
+      <view class="v-icon v-chev text-muted"></view>
+    </view>
+
+    <view class="menu-row" data-id="checkins" bindtap="onMenu">
+      <view class="mr-left">
+        <view class="v-icon v-moon mr-icon text-amber"></view>
+        <text class="mr-title hl">夜猫打卡日历</text>
+      </view>
+      <view class="v-icon v-chev text-muted"></view>
+    </view>
+
+    <view class="menu-row" data-id="settings" bindtap="onMenu">
+      <view class="mr-left">
+        <view class="v-icon v-tune mr-icon text-muted"></view>
+        <text class="mr-title hl">偏好与提醒设置</text>
+      </view>
+      <view class="v-icon v-chev text-muted"></view>
     </view>
   </view>
 

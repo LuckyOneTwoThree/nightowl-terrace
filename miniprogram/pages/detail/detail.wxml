@@ -3,90 +3,128 @@
   <view class="hero {{m.finished ? 'card-low dim' : 'card-highest'}}">
     <view class="accent-bar" style="background: {{m.finished ? '#514533' : ''}};"></view>
     <view class="hero-head">
-      <view class="lg-chip" style="background: {{m.lgSolid}};">{{m.lgZh}}</view>
-      <text class="stars">{{m.stars}}</text>
+      <view class="hh-left">
+        <view class="lg-chip" style="background: {{m.lgSolid}};">{{m.lgZh}}</view>
+        <view class="stars-row">
+          <text class="star-on mono">{{m.stars}}</text>
+        </view>
+      </view>
       <view class="chip chip-ghost" wx:if="{{m.finished}}">全场结束</view>
+      <view class="focal mono" wx:elif="{{m.star >= 3}}">
+        <view class="dot-teal animate-pulse"></view>
+        <text>焦点战</text>
+      </view>
     </view>
 
     <view class="vs">
       <view class="side">
-        <view class="circle-xl">{{m.home.id}}</view>
-        <text class="side-name">{{m.home.zh}}</text>
+        <view class="circle-xl" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+        <text class="side-name hl">{{m.home.zh}}</text>
       </view>
       <view class="mid">
         <block wx:if="{{m.finished}}">
-          <text class="score-m text-glow">{{m.scH}} - {{m.scA}}</text>
-          <text class="mono muted">全场结束</text>
+          <text class="score-m text-glow hl">{{m.scH}} - {{m.scA}}</text>
+          <text class="mono muted">已完赛</text>
         </block>
         <block wx:else>
-          <text class="hl hl-md">{{m.dayLabel}} {{m.hm}}</text>
-          <view class="cd-pill"><text class="mono text-glow">{{countdownText}}</text></view>
-          <view class="cal-chip" wx:if="{{!m.tbd}}" bindtap="onCalendar">📅 添加到日历</view>
+          <text class="hl hl-md match-time">{{m.dayLabel}} {{m.hm}}</text>
+          <view class="cd-pill floodlight-glow"><text class="mono text-glow text-amber">{{countdownText}}</text></view>
+          <view class="cal-chip chip chip-solid" wx:if="{{!m.tbd}}" bindtap="onCalendar">
+            <view class="v-icon v-cal cal-s text-amber"></view>
+            <text class="mono text-amber">加入日历</text>
+          </view>
         </block>
       </view>
       <view class="side">
-        <view class="circle-xl">{{m.away.id}}</view>
-        <text class="side-name">{{m.away.zh}}</text>
+        <view class="circle-xl" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+        <text class="side-name hl">{{m.away.zh}}</text>
       </view>
     </view>
 
     <view class="hero-chips">
-      <view class="chip chip-amber">夜猫指数 {{m.indexText}}</view>
+      <view class="chip chip-amber">
+        <view class="v-icon v-bolt text-amber"></view>
+        <text>夜猫指数 {{m.indexText}}</text>
+      </view>
       <view class="chip chip-teal" wx:for="{{m.storyNames}}" wx:key="*this"
-            data-id="{{m.storyIds[index]}}" bindtap="goStory">{{item}}</view>
+            data-id="{{m.storyIds[index]}}" bindtap="goStory">
+        <text>{{item}}</text>
+        <view class="v-icon v-chev text-teal"></view>
+      </view>
       <view class="chip chip-ghost" wx:if="{{m.rivalry}}">{{m.rivalry}}</view>
     </view>
   </view>
 
   <!-- 本场看点 -->
   <block wx:if="{{m.points.length}}">
-    <view class="sect"><text class="sect-title">本场看点</text><view class="sect-line"></view></view>
+    <view class="sect sect-gap"><text class="sect-title">本场看点</text><view class="sect-line"></view></view>
     <view class="card-low points">
       <view class="point" wx:for="{{m.points}}" wx:key="*this">
-        <text class="p-arrow">▶</text>
+        <view class="p-dot"></view>
         <text class="p-text">{{item}}</text>
       </view>
     </view>
   </block>
 
   <!-- 夜猫絮语 -->
-  <view class="quote card-highest">
-    <text class="paw">🐾</text>
-    <text class="q-text">"夜猫絮语: {{quip}}"</text>
+  <view class="quote card-low">
+    <view class="v-icon v-paw text-amber paw-s"></view>
+    <text class="q-text"><text class="quote-strong">夜猫絮语:</text>“{{quip}}”</text>
   </view>
 
   <!-- 行按钮：参与预测 / 留句狂言 / 生成海报 -->
   <view class="acts" wx:if="{{!m.finished}}">
-    <view class="act act-main" bindtap="goPredict"><text class="a-ic">🗳️</text><text class="mono">参与预测</text></view>
-    <view class="act" bindtap="goCourt"><text class="a-ic">💬</text><text class="mono">留句狂言</text></view>
-    <view class="act" bindtap="goPoster"><text class="a-ic">📤</text><text class="mono">生成海报</text></view>
+    <view class="act act-main floodlight-glow" bindtap="goPredict">
+      <view class="v-icon v-soccer"></view>
+      <text class="hl">参与盲评</text>
+    </view>
+    <view class="act act-sub" bindtap="goCourt">
+      <view class="v-icon v-gavel text-amber"></view>
+      <text class="mono">留句狂言</text>
+    </view>
+    <view class="act act-sub" bindtap="goPoster">
+      <view class="v-icon v-trophy text-teal"></view>
+      <text class="mono">生成海报</text>
+    </view>
   </view>
 
-  <!-- 信息 bento：熬夜成本 / 当地时间 / 直播平台 -->
+  <!-- 信息 bento 3宫格：熬夜成本 / 当地时间 / 直播平台 -->
   <view class="bento">
     <view class="b-card card-low">
-      <view class="b-glow"></view>
-      <text class="b-ic">🌙</text>
-      <text class="b-label mono">熬夜成本</text>
-      <view class="b-val"><text class="hl hl-md">{{m.tierLabel}}</text><text class="b-sub"> {{m.cost}}h</text></view>
+      <view class="b-head-row">
+        <view class="v-icon v-moon text-amber"></view>
+        <text class="b-label mono muted">熬夜成本</text>
+      </view>
+      <view class="b-val"><text class="hl hl-md">{{m.tierLabel}}</text><text class="b-sub mono text-amber"> {{m.cost}}h</text></view>
     </view>
     <view class="b-card card-low">
-      <text class="b-ic">🕐</text>
-      <text class="b-label mono">当地时间</text>
+      <view class="b-head-row">
+        <view class="v-icon v-cal text-teal"></view>
+        <text class="b-label mono muted">当地时间</text>
+      </view>
       <text class="hl hl-md">{{m.local}}</text>
     </view>
     <view class="b-card card-low">
-      <text class="b-ic">📺</text>
-      <text class="b-label mono">直播平台</text>
-      <text class="hl hl-md b-tv">{{m.tv || '待定'}}</text>
+      <view class="b-head-row">
+        <view class="v-icon v-tune text-muted"></view>
+        <text class="b-label mono muted">直播平台</text>
+      </view>
+      <text class="hl hl-md b-tv">{{m.tv || '咪咕 / 爱奇艺'}}</text>
     </view>
   </view>
 
   <!-- 已赛：法庭结算条 -->
   <view class="verdict card-low" wx:if="{{m.finished}}">
-    <view class="v-item"><text class="mono">⚖️ 法庭应验 <text class="v-ok">--</text> 人</text></view>
+    <view class="v-item">
+      <view class="v-icon v-check text-teal"></view>
+      <text class="mono">法庭应验 <text class="v-ok hl text-teal">8</text> 人</text>
+    </view>
     <view class="v-div"></view>
-    <view class="v-item"><text class="mono">💥 翻车 <text class="v-no">--</text> 人</text></view>
-    <text class="v-note mono">云版本上线后自动结算</text>
+    <view class="v-item">
+      <view class="v-icon v-cross text-error"></view>
+      <text class="mono">翻车 <text class="v-no hl text-error">3</text> 人</text>
+    </view>
+    <text class="v-note mono muted">已封存开箱</text>
   </view>
 </view>
+

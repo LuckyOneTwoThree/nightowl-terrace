@@ -1,80 +1,108 @@
 <view class="page" wx:if="{{s}}">
-  <!-- 偏好 -->
-  <text class="g-label mono">偏好</text>
-  <view class="group glass-panel">
-    <view class="menu-row">
+  <!-- 偏好（_12） -->
+  <text class="g-label mono muted">熬夜偏好设置</text>
+  <view class="group card-low">
+    <view class="setting-row">
       <view class="g-left">
-        <text class="g-main">默认每周熬夜额度</text>
-        <text class="g-sub">推荐 2.0h – 6.0h</text>
+        <text class="g-main hl">默认每周熬夜额度</text>
+        <text class="mono muted g-sub">推荐 2.0h – 6.0h / 周</text>
       </view>
-      <view class="stepper">
-        <view class="st-btn" bindtap="minus"><text>−</text></view>
-        <text class="st-val mono">{{s.budget.toFixed(1)}}</text>
-        <view class="st-btn" bindtap="plus"><text>＋</text></view>
+      <view class="stepper card-high">
+        <view class="st-btn" bindtap="minus"><text class="mono hl">−</text></view>
+        <text class="st-val mono hl text-amber">{{s.budget.toFixed(1)}}h</text>
+        <view class="st-btn" bindtap="plus"><text class="mono hl">＋</text></view>
       </view>
     </view>
-    <view class="menu-row" bindtap="cycleStar">
-      <text class="g-main">默认星级筛选</text>
+    <view class="setting-row" bindtap="cycleStar">
+      <text class="g-main hl">默认焦点星级门槛</text>
       <view class="g-arrow">
-        <text class="st-star">{{starText}}以上</text>
-        <text class="chev">›</text>
+        <text class="st-star hl text-amber">{{starText}} 以上</text>
+        <view class="v-icon v-chev text-muted"></view>
       </view>
     </view>
   </view>
 
   <!-- 提醒 -->
-  <text class="g-label mono">提醒</text>
-  <view class="group glass-panel">
-    <view class="menu-row">
+  <text class="g-label mono muted">消息与提醒</text>
+  <view class="group card-low">
+    <view class="setting-row">
       <view class="g-left">
-        <text class="g-main">开赛提醒</text>
-        <text class="g-sub">开球前 15 分钟</text>
+        <text class="g-main hl">开赛提醒</text>
+        <text class="mono muted g-sub">焦点大战开球前 15 分钟</text>
       </view>
       <switch checked="{{s.remindKickoff}}" color="#FFB224" bindchange="onKickoff" />
     </view>
-    <view class="menu-row">
+    <view class="setting-row">
       <view class="g-left">
-        <text class="g-main">预测截止提醒</text>
-        <text class="g-sub">别错过封存窗口</text>
+        <text class="g-main hl">预测截止提醒</text>
+        <text class="mono muted g-sub">不错过每周封神榜封存窗口</text>
       </view>
       <switch checked="{{s.remindDeadline}}" color="#FFB224" bindchange="onDeadline" />
     </view>
   </view>
 
   <!-- 账号 -->
-  <text class="g-label mono">账号</text>
-  <view class="group glass-panel">
-    <view class="menu-row" bindtap="editNick">
-      <text class="g-main">昵称</text>
+  <text class="g-label mono muted">身份档案</text>
+  <view class="group card-low">
+    <view class="setting-row" bindtap="editNick">
+      <text class="g-main hl">圈内绰号</text>
       <view class="g-arrow">
-        <text class="g-val">{{s.nick || '未设置'}}</text>
-        <text class="chev">›</text>
+        <text class="g-val hl text-amber">{{s.nick || '未设置'}}</text>
+        <view class="v-icon v-chev text-muted"></view>
       </view>
     </view>
-    <view class="menu-row">
-      <text class="g-main">Midnight ID</text>
+    <view class="setting-row">
+      <text class="g-main hl">Midnight ID</text>
       <view class="g-arrow" bindtap="copyId">
         <text class="mono g-id">{{s.mid}}</text>
-        <text class="copy-ic">⧉</text>
+        <view class="chip chip-solid mono">复制</view>
       </view>
     </view>
   </view>
 
   <!-- 关于 -->
-  <text class="g-label mono">关于</text>
-  <view class="group glass-panel">
-    <view class="menu-row">
-      <text class="g-main">版本</text>
-      <text class="mono g-val">{{version}}</text>
+  <text class="g-label mono muted">关于与版本</text>
+  <view class="group card-low">
+    <view class="setting-row">
+      <text class="g-main hl">当前版本</text>
+      <text class="mono muted g-val">{{version}}</text>
     </view>
-    <view class="menu-row">
-      <text class="g-main">数据来源</text>
-      <view class="g-arrow">
-        <text class="g-sub">{{source}}</text>
-        <text class="chev">↗</text>
-      </view>
+    <view class="setting-row">
+      <text class="g-main hl">赛程数据源</text>
+      <text class="mono muted g-val">{{source}}</text>
+    </view>
+    <view class="setting-row" bindtap="reconnectCloud">
+      <text class="g-main hl">云端连接</text>
+      <text class="mono muted g-val">重新连接 ›</text>
     </view>
   </view>
 
-  <view class="logout" bindtap="logout">退出登录</view>
+  <view class="logout" bindtap="logout">
+    <text class="mono">清除本地数据并重置</text>
+  </view>
+
+  <!-- _13 圈内绰号居中弹窗 Modal -->
+  <view class="modal-mask" wx:if="{{showNickModal}}" bindtap="cancelNick">
+    <view class="center-modal card-highest floodlight-glow" catchtap="true">
+      <view class="modal-head">
+        <view class="v-icon v-paw text-amber modal-icon"></view>
+        <text class="hl hl-md modal-title">修改圈内绰号</text>
+      </view>
+      <text class="modal-desc mono muted">绰号将在修仙榜、德比法庭与海报中展示</text>
+
+      <view class="modal-input-row card-high">
+        <input class="nick-modal-in hl" value="{{inputNick}}" maxlength="12"
+               placeholder="输入圈内绰号..." bindinput="onNickInput" />
+        <view class="chip chip-amber rand-chip" bindtap="randomNick">
+          <text class="mono">随机</text>
+        </view>
+      </view>
+
+      <view class="modal-btns">
+        <button class="btn-outline m-btn" bindtap="cancelNick">取消</button>
+        <button class="btn-amber m-btn floodlight-glow" bindtap="confirmNick">保存绰号</button>
+      </view>
+    </view>
+  </view>
 </view>
+

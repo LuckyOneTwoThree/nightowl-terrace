@@ -1,4 +1,9 @@
+var cloud = require('../../utils/cloud.js');
+
 var DEFAULTS = { budget: 4.0, minStar: 2, remindKickoff: true, remindDeadline: false, nick: '', mid: '' };
+
+var NICK_PREFIX = ['午夜', '熬夜', '看台', '伯纳乌', '安菲尔德', '圣西罗', '老特拉福德', '诺坎普', '酋长', '威斯特法伦'];
+var NICK_SUFFIX = ['老猫', '夜猫子', '神算子', '球童', '名宿', '法官', '第十二人', '观察员', '看球仙人'];
 
 function load() {
   var s = wx.getStorageSync('settings') || {};
@@ -15,8 +20,10 @@ Page({
   data: {
     s: null,
     starText: '★★',
-    version: 'v0.2.0 (M2 本地版)',
-    source: '内置种子数据'
+    version: 'v0.2.0 (M2 高保真版)',
+    source: '内置种子数据',
+    showNickModal: false,
+    inputNick: ''
   },
 
   onShow: function () { this.apply(load()); },
@@ -38,7 +45,8 @@ Page({
   },
 
   plus: function () {
-    var b = Math.min(8, (this.data.s.budget * 10 + 5) / 10);
+    // 上限 10h，与本周页额度抽屉滑杆范围一致
+    var b = Math.min(10, (this.data.s.budget * 10 + 5) / 10);
     this.save({ budget: b });
   },
 
@@ -48,19 +56,61 @@ Page({
   },
 
   onKickoff: function (e) { this.save({ remindKickoff: e.detail.value }); },
-  onDeadline: function (e) { this.save({ remindDeadline: e.detail.value }); },
+
+  onDeadline: function (e) {
+    var on = e.detail.value;
+    this.save({ remindDeadline: on });
+    // 模板 ID 未配置时静默（订阅消息链路上线前走 ICS 兜底，见 pushReminders 云函数）
+    if (on && wx.requestSubscribeMessage) {
+      wx.requestSubscribeMessage({
+        tmplIds: [],
+        fail: function () { /* 模板未配置：开关仅记录偏好 */ }
+      });
+    }
+  },
+
+  // 云端重连：清除降级标记后立即试拉一次榜单（云环境开通后手动恢复云链路）
+  reconnectCloud: function () {
+    cloud.reset();
+    var that = this;
+    cloud.readBoard('owl').then(function () {
+      wx.showToast({ title: '云端已连接', icon: 'none' });
+      that.setData({ source: '云端数据' });
+    }).catch(function () {
+      wx.showToast({ title: '云端不可用 · 保持本地', icon: 'none' });
+    });
+  },
 
   editNick: function () {
-    var that = this;
-    wx.showModal({
-      title: '圈内昵称',
-      editable: true,
-      placeholderText: '排行榜里显示的名字',
-      content: this.data.s.nick,
-      success: function (r) {
-        if (r.confirm) that.save({ nick: (r.content || '').slice(0, 12) });
-      }
+    this.setData({
+      showNickModal: true,
+      inputNick: this.data.s.nick || ''
     });
+  },
+
+  onNickInput: function (e) {
+    this.setData({ inputNick: e.detail.value });
+  },
+
+  randomNick: function () {
+    var p = NICK_PREFIX[Math.floor(Math.random() * NICK_PREFIX.length)];
+    var s = NICK_SUFFIX[Math.floor(Math.random() * NICK_SUFFIX.length)];
+    this.setData({ inputNick: p + s });
+  },
+
+  cancelNick: function () {
+    this.setData({ showNickModal: false });
+  },
+
+  confirmNick: function () {
+    var name = (this.data.inputNick || '').trim().slice(0, 12);
+    if (!name) {
+      wx.showToast({ title: '请输入有效昵称', icon: 'none' });
+      return;
+    }
+    this.save({ nick: name });
+    this.setData({ showNickModal: false });
+    wx.showToast({ title: '昵称已保存', icon: 'none' });
   },
 
   copyId: function () {
@@ -73,13 +123,20 @@ Page({
   logout: function () {
     wx.showModal({
       title: '清除本地记录',
-      content: '本地体验版无需登录。将清除预测、狂言、打卡与偏好，确定？',
+      content: '本地体验版无需登录。将清除预测、狂言、打卡、关注与偏好，确定？',
       confirmColor: '#FFB4AB',
       success: function (r) {
         if (!r.confirm) return;
-        ['predictions', 'boasts', 'checkins', 'settings'].forEach(function (k) { wx.removeStorageSync(k); });
+        ['predictions', 'boasts', 'checkins', 'settings', 'nickname', 'onboarded', 'followedTeams', 'weekSuggest', '_cloudDown']
+          .forEach(function (k) { wx.removeStorageSync(k); });
+        // 透支结算标记 settled_* 逐键清理
+        var info = wx.getStorageInfoSync();
+        (info.keys || []).forEach(function (k) {
+          if (/^settled_/.test(k)) wx.removeStorageSync(k);
+        });
         wx.showToast({ title: '已清除', icon: 'none' });
       }
     });
   }
 });
+

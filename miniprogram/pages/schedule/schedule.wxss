@@ -1,52 +1,86 @@
-.page { padding-bottom: 48rpx; }
+.page { padding-bottom: 64rpx; min-height: 100vh; }
 
 /* 日期条 */
-.dstrip { white-space: nowrap; padding: 24rpx 32rpx 8rpx; width: 100%; box-sizing: border-box; }
+.dstrip { white-space: nowrap; padding: 24rpx 32rpx 12rpx; width: 100%; box-sizing: border-box; }
 .dchip {
-  display: inline-flex; flex-direction: column; align-items: center; gap: 8rpx;
-  width: 128rpx; padding: 16rpx 0; margin-right: 16rpx;
-  border-radius: var(--r-md); background: var(--sc-low); border: 1rpx solid var(--sc-variant);
+  position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 6rpx;
+  width: 136rpx; padding: 18rpx 0; margin-right: 16rpx;
+  border-radius: var(--r-lg); background: var(--sc-low); border: 1rpx solid var(--outline-muted);
+  transition: all .2s ease;
 }
-.dchip-wd { font-size: 22rpx; color: var(--on-surface-variant); }
-.dchip-md { font-family: var(--font-mono); font-size: 24rpx; }
-.dchip.on { background: var(--primary-container); border-color: transparent; box-shadow: 0 0 24rpx rgba(255,178,36,.2); }
-.dchip.on .dchip-wd, .dchip.on .dchip-md { color: var(--on-primary); font-weight: 700; }
+.dchip-dot { position: absolute; top: 10rpx; right: 12rpx; width: 10rpx; height: 10rpx; }
+.dchip-wd { font-size: 22rpx; color: var(--on-surface-variant); font-weight: 500; }
+.dchip-md { font-size: 26rpx; font-weight: 600; }
+.dchip-count { font-size: 20rpx; }
+.dchip.on {
+  background: var(--primary-container); border-color: transparent;
+  box-shadow: 0 4rpx 24rpx rgba(255,178,36,.3);
+}
+.dchip.on .dchip-wd, .dchip.on .dchip-md, .dchip.on .dchip-count {
+  color: var(--on-primary); font-weight: 700;
+}
 
 /* 联赛药丸 */
-.pills { display: flex; white-space: nowrap; padding: 16rpx 32rpx; width: 100%; box-sizing: border-box; }
+.pills { display: flex; white-space: nowrap; padding: 12rpx 32rpx 20rpx; width: 100%; box-sizing: border-box; }
 .pills .fpill { display: inline-flex; margin-right: 16rpx; }
+.star-pill { font-weight: 600; }
 
 /* 分组 */
-.list { padding: 8rpx 32rpx 0; }
-.group { scroll-margin-top: 20rpx; }
-.g-head { display: flex; align-items: baseline; gap: 16rpx; padding: 24rpx 0 16rpx; }
-.g-date { font-family: var(--font-headline); font-size: 34rpx; font-weight: 600; }
-.g-line { flex: 1; height: 2rpx; background: var(--sc-high); }
+.list { padding: 4rpx 32rpx 0; }
+.group { scroll-margin-top: 20rpx; margin-bottom: 32rpx; }
+.g-head { display: flex; align-items: baseline; gap: 16rpx; padding: 20rpx 0 16rpx; }
+.g-date { font-size: 34rpx; font-weight: 700; color: var(--on-surface); }
+.g-week { font-size: 24rpx; }
+.g-line { flex: 1; height: 2rpx; background: linear-gradient(90deg, rgba(159,142,121,.25) 0%, rgba(159,142,121,0) 100%); }
 
-/* 赛卡（_4：左联赛色条 + 时间列 + 双队行 + 星标） */
+/* 赛卡 */
 .match {
   position: relative; display: flex; align-items: center;
-  margin-bottom: 16rpx; padding: 0; overflow: hidden;
+  margin-bottom: 20rpx; padding: 0; overflow: hidden;
+  border-radius: var(--r-xl);
+  transition: transform .15s ease;
 }
+.match:active { transform: scale(0.99); background: var(--sc); }
 .m-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; }
-.m-body { flex: 1; padding: 20rpx 24rpx 20rpx 32rpx; }
-.m-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; gap: 8rpx; }
-.m-top .mono:first-child { flex-shrink: 0; }
-.tbd-chip { padding: 4rpx 12rpx; font-size: 18rpx; flex-shrink: 0; }
-.local-txt { font-size: 20rpx; margin-left: auto; flex-shrink: 0; }
-.t-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
-.t-row:last-child { margin-bottom: 0; }
-.t-name { font-size: 28rpx; font-weight: 500; }
-.dim2 { color: var(--on-surface-variant); }
-.m-right { display: flex; align-items: center; gap: 16rpx; }
-.score { font-family: var(--font-mono); font-size: 28rpx; color: var(--on-surface-variant); width: 32rpx; text-align: center; }
-.score.ft { color: var(--on-surface); font-weight: 700; }
-.m-side {
-  display: flex; flex-direction: column; align-items: center; gap: 12rpx;
-  padding-right: 24rpx;
-}
-.stars-sm { color: var(--primary-container); font-size: 20rpx; letter-spacing: 2rpx; }
-.st-btn { color: var(--outline); font-size: 32rpx; }
+.m-body { flex: 1; padding: 22rpx 24rpx 22rpx 32rpx; }
 
-.g-empty { padding: 32rpx; text-align: center; margin-bottom: 16rpx; }
-.foot { text-align: center; padding: 32rpx 0; font-size: 20rpx; }
+.m-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; gap: 10rpx; }
+.m-top-left { display: flex; align-items: center; gap: 12rpx; }
+.m-lg-name { font-size: 22rpx; color: var(--on-surface-variant); font-weight: 600; }
+.m-status-chip { padding: 2rpx 14rpx; font-size: 18rpx; }
+.m-top-right { display: flex; align-items: center; gap: 12rpx; }
+.local-txt { font-size: 20rpx; }
+.m-hm { font-size: 26rpx; font-weight: 700; }
+
+.t-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.t-row:last-child { margin-bottom: 0; }
+.t-name { font-size: 28rpx; font-weight: 600; color: var(--on-surface); }
+.dim2 { color: var(--on-surface-variant); font-weight: 400; }
+.m-team-info { display: flex; align-items: center; gap: 16rpx; }
+.score { font-size: 32rpx; width: 36rpx; text-align: center; }
+.score.ft { color: var(--on-surface); font-weight: 700; }
+.score.dim { color: var(--on-surface-variant); opacity: .6; }
+
+.m-side {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14rpx;
+  padding: 0 24rpx 0 12rpx; border-left: 1rpx solid rgba(159,142,121,.1);
+}
+.stars-col { display: flex; flex-direction: column; gap: 2rpx; }
+.star-gold { color: var(--primary-container); font-size: 20rpx; line-height: 1; }
+.st-btn { padding: 8rpx; border-radius: var(--r-full); }
+.st-icon { width: 32rpx; height: 32rpx; color: var(--on-surface-variant); }
+
+.g-empty { padding: 36rpx; text-align: center; margin-bottom: 16rpx; }
+.foot { text-align: center; padding: 36rpx 0 16rpx; font-size: 22rpx; }
+
+/* 视图切换（日历 / 轮次） */
+.vtoggle { display: flex; gap: 12rpx; padding: 16rpx 24rpx 4rpx; }
+.vt-btn {
+  flex: 0 0 auto; padding: 10rpx 28rpx; border-radius: var(--r-full);
+  background: var(--surface-2); border: 1rpx solid rgba(159,142,121,.18);
+  color: var(--on-surface-variant); font-size: 24rpx;
+}
+.vt-btn.on {
+  background: rgba(255,178,36,.12); border-color: rgba(255,178,36,.45);
+  color: var(--primary-container);
+}

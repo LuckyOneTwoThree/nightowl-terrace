@@ -29,11 +29,36 @@
     "backgroundColor": "#101419",
     "borderStyle": "black",
     "list": [
-      { "pagePath": "pages/today/today", "text": "今日" },
-      { "pagePath": "pages/week/week", "text": "本周" },
-      { "pagePath": "pages/schedule/schedule", "text": "赛程" },
-      { "pagePath": "pages/play/play", "text": "玩法" },
-      { "pagePath": "pages/me/me", "text": "我的" }
+      {
+        "pagePath": "pages/today/today",
+        "text": "今日",
+        "iconPath": "images/tab/today.png",
+        "selectedIconPath": "images/tab/today-active.png"
+      },
+      {
+        "pagePath": "pages/week/week",
+        "text": "本周",
+        "iconPath": "images/tab/week.png",
+        "selectedIconPath": "images/tab/week-active.png"
+      },
+      {
+        "pagePath": "pages/schedule/schedule",
+        "text": "赛程",
+        "iconPath": "images/tab/schedule.png",
+        "selectedIconPath": "images/tab/schedule-active.png"
+      },
+      {
+        "pagePath": "pages/play/play",
+        "text": "玩法",
+        "iconPath": "images/tab/play.png",
+        "selectedIconPath": "images/tab/play-active.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的",
+        "iconPath": "images/tab/me.png",
+        "selectedIconPath": "images/tab/me-active.png"
+      }
     ]
   },
   "style": "v2",

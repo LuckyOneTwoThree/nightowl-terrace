@@ -19,8 +19,8 @@ function commitHash(p) {
     .digest('hex');
 }
 
-// 胜平负 3 分，比分再 +2（PM 9.4，本地结算同款判据）
-function settle(pred, sc) {
+// 胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4，本地结算同款判据）
+function settle(pred, sc, upset) {
   const parts = String(sc).split('-');
   const h = Number(parts[0]), a = Number(parts[1]);
   const fact = h > a ? 'h' : h < a ? 'a' : 'd';
@@ -28,7 +28,15 @@ function settle(pred, sc) {
   let pts = hit ? 3 : 0;
   if (hit && pred.scoreH !== '' && pred.scoreH != null &&
       Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
+  if (hit && upset) pts *= 2;
   return { hit, pts };
+}
+
+// 北京时间 'YYYY-MM-DDTHH:mm' → 时间戳（截止校验用，纯 UTC 算术）
+function bjTs(t) {
+  const m = String(t || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (!m) return NaN;
+  return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) - 8 * 3600000;
 }
 
 // 分页拉全量（云数据库单次 limit 100）
@@ -49,6 +57,10 @@ exports.main = async (event) => {
   const summary = { matches: 0, predictions: 0, void: 0, standings: 0 };
 
   try {
+    // 0. 推荐层冷门标记（PM 9.4：命中冷门预警翻倍，判据可复算）
+    const recs = await fetchAll(db, 'recommendations', {}, 1000);
+    const upsetSet = new Set(recs.filter(r => r.upset).map(r => r.m));
+
     // 1. 已赛未结算场次
     const matches = await fetchAll(db, 'fixtures', {
       st: 'done',
@@ -59,19 +71,22 @@ exports.main = async (event) => {
     for (const m of matches) {
       // 2. 该场全部封存预测
       const preds = await fetchAll(db, 'predictions', { m: m.id }, 500);
+      const kickTs = bjTs(m.t);
 
       // uid -> 本场积分增量（跨群按 gid 分账）
       const perGid = {};
       for (const p of preds) {
         const update = { revealed: true, settledAt: Date.now(), sc: m.sc };
-        if (p.salt && p.hash && commitHash(p) !== p.hash) {
-          // 封存校验失败 → 作废不计分（PM 八节）
+        const late = p.ts && kickTs === kickTs && p.ts > kickTs + 60000; // 开球后才封存（1 分钟时钟宽容）
+        if ((p.salt && p.hash && commitHash(p) !== p.hash) || late) {
+          // 封存校验失败 / 截止后封存 → 作废不计分（PM 八节）
           update.hit = false;
           update.pts = 0;
           update.tampered = true;
+          update.voidReason = late ? 'late_seal' : 'hash_mismatch';
           summary.void++;
         } else {
-          const r = settle(p, m.sc);
+          const r = settle(p, m.sc, upsetSet.has(m.id));
           update.hit = r.hit;
           update.pts = r.pts;
           update.tampered = false;

@@ -1,77 +1,97 @@
 <view class="page" wx:if="{{s}}">
-  <!-- Hero 头部 -->
+  <!-- Hero 头部（_17） -->
   <view class="hero glass-panel">
     <view class="hero-top">
-      <text class="hl hl-lg">{{s.name}}</text>
+      <text class="hl hl-lg story-title">{{s.name}}</text>
       <view class="chip chip-teal st-{{s.status}}">
-        <view class="dot" wx:if="{{s.status === 'active'}}"></view>
+        <view class="dot-teal animate-pulse" wx:if="{{s.status === 'active'}}"></view>
         <text>{{statusZh}}</text>
       </view>
     </view>
+    
     <view class="hero-mid">
-      <view class="lg-chip" style="background: var(--sc-high); color: var(--on-surface-variant);">{{leagueZh || typeZh}}</view>
+      <view class="lg-chip" style="background: var(--sc-high); color: var(--on-surface);">{{leagueZh || typeZh}}</view>
       <text class="mono muted">{{seasonText}}</text>
     </view>
+    
     <view class="ava-row" wx:if="{{avatars.length}}">
       <view class="ava circle-xl" wx:for="{{avatars}}" wx:key="id"
             style="background: {{item.color}}22; border-color: {{item.color}}66;">{{item.id}}</view>
     </view>
+    
     <text class="hero-desc">{{s.desc}}</text>
   </view>
 
-  <!-- 时间轴 -->
-  <view class="sect"><text class="sect-title">时间轴</text><view class="sect-line"></view></view>
+  <!-- 时间轴（_17） -->
+  <view class="sect sect-gap">
+    <text class="sect-title">战役时间线</text>
+    <view class="sect-line"></view>
+  </view>
+  
   <view class="timeline">
     <view class="tl-line"></view>
     <view class="node {{item.state}}" wx:for="{{nodes}}" wx:key="id">
       <view class="n-date {{item.state === 'done' && item.isKey ? 'key' : ''}} {{item.state}}">
-        <text class="n-mon">{{item.mon}}</text>
-        <text class="n-day">{{item.day}}</text>
-        <text class="n-flag">{{item.state === 'done' ? '✓' : item.state === 'soon' ? '⏰' : ''}}</text>
+        <text class="mono n-mon">{{item.mon}}</text>
+        <text class="mono hl n-day">{{item.day}}</text>
+        <view class="v-icon v-check text-teal n-icon" wx:if="{{item.state === 'done'}}"></view>
+        <view class="v-icon v-cal text-amber n-icon" wx:elif="{{item.state === 'soon'}}"></view>
       </view>
-      <view class="n-card {{item.state === 'soon' ? 'dashed' : ''}} {{item.isKey ? 'iskey' : ''}}"
+      
+      <view class="n-card card-low {{item.state === 'soon' ? 'dashed' : ''}} {{item.isKey ? 'iskey' : ''}}"
             data-id="{{item.id}}" bindtap="goDetail">
         <view class="n-star" wx:if="{{item.isKey}}">★</view>
         <view class="n-head">
-          <text class="mono muted">{{item.state === 'soon' ? item.cdText : (item.isKey ? '关键战役' : item.lgZh)}}</text>
+          <text class="mono muted n-tag">{{item.state === 'soon' ? item.cdText : (item.isKey ? '焦点大战' : item.lgZh)}}</text>
         </view>
+        
         <view class="n-vs">
           <view class="nv-side">
             <view class="circle-md" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
-            <text class="nv-name">{{item.home.zh}}</text>
+            <text class="nv-name hl">{{item.home.zh}}</text>
           </view>
-          <block wx:if="{{item.finished}}">
-            <text class="nv-score">{{item.scH}} - {{item.scA}}</text>
-          </block>
-          <block wx:else>
-            <text class="nv-time mono">{{item.hm}}</text>
-          </block>
+          
+          <view class="nv-mid">
+            <block wx:if="{{item.finished}}">
+              <text class="nv-score hl text-glow">{{item.scH}} - {{item.scA}}</text>
+              <text class="mono muted nv-status">已完赛</text>
+            </block>
+            <block wx:else>
+              <text class="nv-time mono hl text-amber">{{item.hm}}</text>
+              <text class="mono muted nv-status">{{item.wd}}</text>
+            </block>
+          </view>
+          
           <view class="nv-side">
             <view class="circle-md" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
-            <text class="nv-name">{{item.away.zh}}</text>
+            <text class="nv-name hl">{{item.away.zh}}</text>
           </view>
-        </view>
-        <view class="n-foot" wx:if="{{item.finished}}">
-          <text class="mono muted">全场结束 · {{item.wd}}</text>
         </view>
       </view>
     </view>
-    <view class="tl-end" wx:if="{{!nodes.length}}">
-      <text class="muted">剧情待展开——后续轮次的节点将自动挂载</text>
+    
+    <view class="tl-end card-low" wx:if="{{!nodes.length}}">
+      <text class="mono muted">剧情待展开——后续焦点战将自动接入时间线</text>
     </view>
   </view>
 
   <!-- 相关故事线 -->
   <block wx:if="{{related.length}}">
-    <view class="sect"><text class="sect-title">相关故事线</text><view class="sect-line"></view></view>
+    <view class="sect sect-gap">
+      <text class="sect-title">同盟连载</text>
+      <view class="sect-line"></view>
+    </view>
     <view class="rel-grid">
       <view class="rel card-low" wx:for="{{related}}" wx:key="id" data-id="{{item.id}}" bindtap="goStory">
-        <text class="rel-name">{{item.name}}</text>
+        <text class="rel-name hl">{{item.name}}</text>
         <text class="rel-desc">{{item.desc}}</text>
       </view>
     </view>
   </block>
 
   <!-- 分享 FAB -->
-  <view class="fab" bindtap="share"><text>📤</text></view>
+  <view class="fab floodlight-glow" bindtap="share">
+    <view class="v-icon v-paw text-dark"></view>
+  </view>
 </view>
+

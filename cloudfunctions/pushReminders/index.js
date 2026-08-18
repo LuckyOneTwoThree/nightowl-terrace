@@ -1,12 +1,13 @@
 /**
- * 云函数：pushReminders 开球提醒
+ * 云函数：pushReminders 开球提醒 + 盲评截止提醒
  * 触发：定时（每 15 分钟扫描，见 config.json）
- * 职责（PM 十一）：
- *   1. 扫描未来 15~45 分钟内开球的场次
- *   2. 命中条件：用户关注球队出战，或推荐层 ★★★ 焦点战
- *   3. 对已授权订阅的用户下发订阅消息
+ * 职责（PM 十一 / 9.4）：
+ *   1. 开球提醒：扫描未来 15~45 分钟内开球的场次
+ *      命中条件：用户关注球队出战，或推荐层 ★★★ 焦点战
+ *   2. 截止提醒（PM 9.4）：扫描未来 15~45 分钟截止（=开球）的本周竞猜场次，
+ *      提醒「已订阅且尚未封存」的用户：盲评即将截止
  * 前置条件（未满足时安全空转，不报错）：
- *   - 小程序后台申请订阅消息模板，把模板 ID 配到本函数环境变量 TMPL_KICKOFF
+ *   - 小程序后台申请订阅消息模板，把模板 ID 配到本函数环境变量 TMPL_KICKOFF / TMPL_DEADLINE
  *   - 客户端调 wx.requestSubscribeMessage 后，把授权记录写入 subscriptions 集合
  *   - 模板未过审前，客户端走 ICS 日历导出兜底（已上线），本函数保持 notConfigured
  */
@@ -34,11 +35,10 @@ async function fetchAll(db, coll, where, limit) {
 
 exports.main = async () => {
   const db = cloud.database();
-  const TMPL = process.env.TMPL_KICKOFF; // 订阅消息模板 ID（环境变量注入）
+  const TMPL = process.env.TMPL_KICKOFF;     // 开球提醒模板
+  const TMPL_DL = process.env.TMPL_DEADLINE; // 盲评截止提醒模板（PM 9.4）
 
   try {
-    if (!TMPL) return { ok: true, skipped: '模板未配置（TMPL_KICKOFF），ICS 兜底中' };
-
     // 1. 未来 15~45 分钟开球的场次（北京时间 t 格式 'YYYY-MM-DDTHH:mm'）
     const now = Date.now();
     const from = now + 15 * 60000, to = now + 45 * 60000;
@@ -48,46 +48,91 @@ exports.main = async () => {
       const ts = bjTs(m.t);
       return !isNaN(ts) && !m.tbd && ts >= from && ts <= to;
     });
-    if (!upcoming.length) return { ok: true, sent: 0, reason: '窗口内无场次' };
 
     // 2. ★★★ 场次（推荐层人工星级）
     const recs = await fetchAll(db, 'recommendations', {}, 1000);
     const star3 = new Set(recs.filter(r => r.star === 3).map(r => r.m));
 
-    // 3. 订阅用户：关注球队命中 或 ★★★ 场次
+    // 3. 订阅用户
     const users = await fetchAll(db, 'users', {}, 1000);
     const subs = await fetchAll(db, 'subscriptions', { status: 'accept' }, 2000);
     const subMap = {}; // uid -> 最近一次授权
     subs.forEach(s => { subMap[s.uid] = s; });
 
     let sent = 0, skipped = 0;
-    for (const u of users) {
-      const sub = subMap[u.uid];
-      if (!sub) continue;
-      const followed = u.followed || [];
-      const hit = upcoming.find(m =>
-        (Array.isArray(followed) && (followed.includes(m.h) || followed.includes(m.a))) ||
-        star3.has(m.id)
-      );
-      if (!hit) continue;
 
-      try {
-        await cloud.openapi.subscribeMessage.send({
-          touser: u.uid,
-          templateId: TMPL,
-          page: 'pages/detail/detail?id=' + hit.id,
-          data: {
-            // 字段名以实际申请到的模板为准，部署前对照后台模板配置
-            thing1: { value: (hit.h || '') + ' vs ' + (hit.a || '') },
-            time2: { value: hit.t.replace('T', ' ') }
-          }
-        });
-        sent++;
-      } catch (e) {
-        skipped++; // 用户拒绝过/授权过期/频控，静默跳过
+    // ── 开球提醒（模板未配置则跳过该段，不影响截止提醒） ──
+    if (TMPL && upcoming.length) {
+      for (const u of users) {
+        const sub = subMap[u.uid];
+        if (!sub) continue;
+        const followed = u.followed || [];
+        const hit = upcoming.find(m =>
+          (Array.isArray(followed) && (followed.includes(m.h) || followed.includes(m.a))) ||
+          star3.has(m.id)
+        );
+        if (!hit) continue;
+
+        try {
+          await cloud.openapi.subscribeMessage.send({
+            touser: u.uid,
+            templateId: TMPL,
+            page: 'pages/detail/detail?id=' + hit.id,
+            data: {
+              // 字段名以实际申请到的模板为准，部署前对照后台模板配置
+              thing1: { value: (hit.h || '') + ' vs ' + (hit.a || '') },
+              time2: { value: hit.t.replace('T', ' ') }
+            }
+          });
+          sent++;
+        } catch (e) {
+          skipped++; // 用户拒绝过/授权过期/频控，静默跳过
+        }
       }
     }
-    return { ok: true, window: [from, to], matches: upcoming.length, sent, skipped };
+
+    // ── 盲评截止提醒（PM 9.4）：窗口内开球 = 竞猜即将截止，提醒未封存用户 ──
+    let dlSent = 0, dlSkipped = 0;
+    if (TMPL_DL && upcoming.length) {
+      const ids = upcoming.map(m => m.id);
+      const preds = await fetchAll(db, 'predictions', {}, 3000);
+      // 已封存用户 × 场次（uid 回退 _openid，与 readBoard 口径一致）
+      const sealed = new Set(preds
+        .filter(p => ids.includes(p.m))
+        .map(p => (p.uid || p._openid || '') + '|' + p.m));
+
+      for (const u of users) {
+        const sub = subMap[u.uid];
+        if (!sub) continue;
+        const pend = upcoming.find(m => !sealed.has(u.uid + '|' + m.id));
+        if (!pend) continue;
+
+        try {
+          await cloud.openapi.subscribeMessage.send({
+            touser: u.uid,
+            templateId: TMPL_DL,
+            page: 'pages/predict/predict',
+            data: {
+              // 字段名以实际申请到的模板为准，部署前对照后台模板配置
+              thing1: { value: '盲评即将截止' },
+              thing2: { value: (pend.h || '') + ' vs ' + (pend.a || '') + ' 开球封卷' }
+            }
+          });
+          dlSent++;
+        } catch (e) {
+          dlSkipped++;
+        }
+      }
+    }
+
+    return {
+      ok: true,
+      window: [from, to],
+      matches: upcoming.length,
+      sent, skipped,
+      deadlineSent: dlSent, deadlineSkipped: dlSkipped,
+      skippedReason: (!TMPL && !TMPL_DL) ? '模板未配置（TMPL_KICKOFF / TMPL_DEADLINE），ICS 兜底中' : undefined
+    };
   } catch (err) {
     return { ok: false, error: err.message };
   }

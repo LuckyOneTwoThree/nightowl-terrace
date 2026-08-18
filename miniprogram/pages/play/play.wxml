@@ -1,17 +1,27 @@
 <view class="page">
   <!-- 顶栏（_9：互动玩法 + 赛季积分） -->
   <view class="topbar">
-    <text class="tb-title">互动玩法</text>
-    <view class="chip chip-solid">🏆 赛季积分 0</view>
+    <text class="tb-title hl">玩法大厅</text>
+    <view class="chip chip-solid floodlight-glow">
+      <view class="v-icon v-trophy text-amber"></view>
+      <text class="text-amber hl">赛季积分 120</text>
+    </view>
   </view>
 
-  <!-- 2x2 玩法卡（_9：暗底 + 内描边 + 角落光球） -->
+  <!-- 2x2 Bento 玩法卡（_9：两列宫格 + 内部光晕 + 矢量图标） -->
   <view class="grid">
-    <view class="pcard {{item.cls}}" wx:for="{{cards}}" wx:key="id" data-id="{{item.id}}" bindtap="onCard">
+    <view class="pcard {{item.colorClass}}" wx:for="{{cards}}" wx:key="id" data-id="{{item.id}}" bindtap="onCard">
       <view class="orb"></view>
-      <text class="p-icon">{{item.icon}}</text>
-      <text class="p-name">{{item.name}}</text>
-      <text class="p-sub">{{item.sub}}</text>
+      <view class="p-top">
+        <view class="p-icon-box">
+          <view class="v-icon {{item.iconClass}} p-icon-v"></view>
+        </view>
+        <view class="v-icon v-chev text-muted p-arrow"></view>
+      </view>
+      <view class="p-bottom">
+        <text class="p-name hl">{{item.name}}</text>
+        <text class="p-sub mono">{{item.sub}}</text>
+      </view>
     </view>
   </view>
 
@@ -19,38 +29,76 @@
   <view class="sect sect-gap">
     <text class="sect-title">本周竞猜单</text>
     <view class="sect-line"></view>
+    <text class="sect-more" bindtap="goRecords">我的记录 ›</text>
   </view>
-  <view class="guess card-low" id="guess-form" wx:for="{{guesses}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
-    <text class="mono muted">{{item.label}}</text>
-    <view class="g-vs">
+  
+  <view class="guess card-low" wx:for="{{guesses}}" wx:key="id">
+    <view class="g-head">
+      <text class="mono muted g-label">{{item.label}}</text>
+      <view class="chip chip-teal g-badge" wx:if="{{item.pick}}">
+        <view class="v-icon v-check text-teal"></view>
+        <text>已封存</text>
+      </view>
+    </view>
+
+    <view class="g-vs" data-id="{{item.id}}" bindtap="goDetail">
       <view class="g-side">
         <view class="circle-md" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
-        <text class="g-name">{{item.home.zh}}</text>
+        <text class="g-name hl">{{item.home.zh}}</text>
       </view>
-      <text class="mono muted g-vs-txt">VS</text>
+      <view class="g-vs-center">
+        <text class="mono muted g-vs-txt">VS</text>
+      </view>
       <view class="g-side">
         <view class="circle-md" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
-        <text class="g-name">{{item.away.zh}}</text>
+        <text class="g-name hl">{{item.away.zh}}</text>
       </view>
     </view>
+
+    <!-- 1X2 预测胶囊 -->
     <view class="g-opts" wx:if="{{!item.pick}}">
       <view
-        class="g-opt" wx:for="{{options}}" wx:for-item="op" wx:key="key"
-        data-id="{{item.id}}" data-key="{{op.key}}" bindtap="onPick">{{op.zh}}</view>
+        class="g-opt {{item.pick === op.key ? 'opt-on floodlight-glow' : ''}}"
+        wx:for="{{options}}" wx:for-item="op" wx:key="key"
+        data-id="{{item.id}}" data-key="{{op.key}}" catchtap="onPick">
+        <text class="mono hl">{{op.zh}}</text>
+      </view>
     </view>
-    <view class="g-sealed" wx:else>
-      <text class="mono">🔒 已封存 · 开球后开箱</text>
+    <view class="g-sealed card-high" wx:else>
+      <view class="v-icon v-bolt text-teal"></view>
+      <text class="mono text-teal">选择已上锁 · 终场哨响自动开箱结算</text>
     </view>
   </view>
 
-  <!-- 本周排行榜（云版本占位） -->
+  <!-- 本周排行榜（_9 榜单行预览） -->
   <view class="sect sect-gap">
-    <text class="sect-title">本周排行榜</text>
+    <text class="sect-title">夜猫封神榜</text>
     <view class="sect-line"></view>
+    <text class="sect-more" data-id="owl" bindtap="onCard">完整榜单 ›</text>
   </view>
-  <view class="board card-low">
-    <text class="b-emoji">🦉</text>
-    <text class="b-title">夜猫榜虚位以待</text>
-    <text class="b-sub">云版本上线后，群友熬夜时长实时排名</text>
+
+  <view class="rank-card card-low">
+    <view class="rank-row" wx:for="{{rankList}}" wx:key="rank">
+      <view class="rank-num rank-{{item.rank}} hl">{{item.rank}}</view>
+      <view class="circle-sm rank-avatar">{{item.avatar}}</view>
+      <view class="rank-info">
+        <text class="rank-name hl">{{item.name}}</text>
+        <text class="rank-badge mono muted">{{item.badge}}</text>
+      </view>
+      <text class="rank-score mono hl text-amber">{{item.score}}</text>
+    </view>
+
+    <!-- 用户高亮行 -->
+    <view class="rank-row user-row card-high" wx:if="{{myRank}}">
+      <view class="rank-num user-rank hl">{{myRank.rank}}</view>
+      <view class="circle-sm user-avatar">{{myRank.avatar}}</view>
+      <view class="rank-info">
+        <text class="rank-name hl text-secondary">{{myRank.name}} (我)</text>
+        <text class="rank-badge mono muted">本周稳健</text>
+      </view>
+      <text class="rank-score mono hl text-secondary">{{myRank.score}}</text>
+    </view>
   </view>
 </view>
+
+

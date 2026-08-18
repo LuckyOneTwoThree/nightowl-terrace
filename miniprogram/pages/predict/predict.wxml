@@ -1,15 +1,27 @@
 <view class="page">
-  <!-- 截止条（_11） -->
-  <view class="deadline">
-    <view class="dl-left"><text class="mono">⏰ 截止 {{deadlineText}}</text></view>
-    <text class="mono dl-strong">{{leftText}}</text>
+  <!-- 截止条（_11 亮金倒计时条） -->
+  <view class="deadline card-highest floodlight-glow">
+    <view class="dl-left">
+      <view class="dot-amber animate-pulse"></view>
+      <text class="mono text-amber">本周盲评 · 截止 {{deadlineText}}</text>
+    </view>
+    <text class="mono dl-strong hl text-amber">{{leftText}}</text>
   </view>
 
   <!-- 规则 chips -->
   <view class="rules">
-    <view class="chip chip-ghost">✔ 胜平负 3 分</view>
-    <view class="chip chip-ghost">＋ 比分 +2</view>
-    <view class="chip chip-error">🔥 冷门翻倍</view>
+    <view class="chip chip-ghost">
+      <view class="v-icon v-check text-teal"></view>
+      <text>胜平负 3分</text>
+    </view>
+    <view class="chip chip-ghost">
+      <view class="v-icon v-bolt text-amber"></view>
+      <text>精确比分 +2</text>
+    </view>
+    <view class="chip chip-error">
+      <view class="v-icon v-fire text-error"></view>
+      <text>冷门翻倍</text>
+    </view>
   </view>
 
   <!-- 竞猜卡列表 -->
@@ -17,51 +29,75 @@
     <view class="gcard card-low {{item.pick ? 'picked' : ''}}" wx:for="{{cards}}" wx:key="id">
       <view class="g-bar" style="background: {{item.lgAccent}};"></view>
       <view class="g-top">
-        <text class="mono muted">{{item.md}} {{item.hm}} / {{item.lgZh}}</text>
-        <text class="g-fire" wx:if="{{item.upset}}">🔥</text>
+        <text class="mono muted">{{item.md}} {{item.hm}} · {{item.lgZh}}</text>
+        <view class="chip chip-error upset-chip" wx:if="{{item.upset}}">
+          <view class="v-icon v-fire text-error"></view>
+          <text>冷门狂热</text>
+        </view>
       </view>
+
       <view class="g-vs">
         <view class="g-side">
           <view class="circle-md" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
-          <text class="g-name">{{item.home.zh}}</text>
+          <text class="g-name hl">{{item.home.zh}}</text>
         </view>
-        <text class="mono muted">VS</text>
+        <text class="mono muted g-vs-txt">VS</text>
         <view class="g-side">
           <view class="circle-md" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
-          <text class="g-name">{{item.away.zh}}</text>
+          <text class="g-name hl">{{item.away.zh}}</text>
         </view>
       </view>
 
-      <block wx:if="{{!item.sealed}}">
+      <view class="g-sealed card-high" wx:if="{{item.closed}}">
+        <view class="v-icon v-bolt text-error"></view>
+        <text class="mono text-error">已开球 · 本场竞猜截止</text>
+      </view>
+
+      <block wx:elif="{{!item.sealed}}">
         <view class="g-opts">
-          <view class="g-opt {{item.pick === 'h' ? 'on' : ''}}" data-id="{{item.id}}" data-key="h" bindtap="onPick">主胜</view>
-          <view class="g-opt {{item.pick === 'd' ? 'on' : ''}}" data-id="{{item.id}}" data-key="d" bindtap="onPick">平局</view>
-          <view class="g-opt {{item.pick === 'a' ? 'on' : ''}}" data-id="{{item.id}}" data-key="a" bindtap="onPick">客胜</view>
+          <view class="g-opt {{item.pick === 'h' ? 'on floodlight-glow' : ''}}" data-id="{{item.id}}" data-key="h" bindtap="onPick">
+            <text class="mono hl">主胜</text>
+          </view>
+          <view class="g-opt {{item.pick === 'd' ? 'on floodlight-glow' : ''}}" data-id="{{item.id}}" data-key="d" bindtap="onPick">
+            <text class="mono hl">平局</text>
+          </view>
+          <view class="g-opt {{item.pick === 'a' ? 'on floodlight-glow' : ''}}" data-id="{{item.id}}" data-key="a" bindtap="onPick">
+            <text class="mono hl">客胜</text>
+          </view>
         </view>
-        <view class="g-score">
-          <text class="mono muted">预测比分 (可选)</text>
+        
+        <view class="g-score card-high">
+          <text class="mono muted score-lbl">精确比分预测 (可选 +2分)</text>
           <view class="g-inputs">
-            <input class="g-in" type="number" value="{{item.scoreH}}" data-id="{{item.id}}" data-side="h" bindinput="onScore" placeholder="-" />
-            <text class="mono muted">:</text>
-            <input class="g-in" type="number" value="{{item.scoreA}}" data-id="{{item.id}}" data-side="a" bindinput="onScore" placeholder="-" />
+            <input class="g-in mono hl" type="number" value="{{item.scoreH}}" data-id="{{item.id}}" data-side="h" bindinput="onScore" placeholder="-" />
+            <text class="mono muted g-colon">:</text>
+            <input class="g-in mono hl" type="number" value="{{item.scoreA}}" data-id="{{item.id}}" data-side="a" bindinput="onScore" placeholder="-" />
           </view>
         </view>
       </block>
-      <view class="g-sealed" wx:else>🔒 已封存 · 开球后开箱</view>
+      <view class="g-sealed card-high" wx:else>
+        <view class="v-icon v-bolt text-teal"></view>
+        <text class="mono text-teal">已封存上锁 · 赛后自动开箱结算</text>
+      </view>
     </view>
   </view>
 
-  <view class="to-records mono" bindtap="goRecords">查看我的预测档案 ›</view>
+  <view class="to-records mono muted" bindtap="goRecords">
+    <text>查看我的历史预测档案</text>
+    <view class="v-icon v-chev text-muted"></view>
+  </view>
+
   <view class="spacer"></view>
 
   <!-- 底部封存栏（_11 fixed bar） -->
-  <view class="sealbar">
+  <view class="sealbar glass-panel">
     <view class="sb-info">
-      <text class="mono muted">已选: {{pickedCount}}/{{cards.length}} 场</text>
-      <text class="mono sb-pts">潜在积分: {{potential}}</text>
+      <text class="mono muted">已完成预测: <text class="text-amber hl">{{pickedCount}}</text>/{{cards.length}}</text>
+      <text class="mono sb-pts">潜在最高积分: <text class="text-glow text-amber hl">+{{potential}} 分</text></text>
     </view>
-    <button class="btn-amber sb-btn" bindtap="onSeal" disabled="{{sealedAll}}">
-      {{sealedAll ? '本周已封存' : '封存我的预测'}}
+    <button class="btn-amber sb-btn floodlight-glow" bindtap="onSeal" disabled="{{sealedAll}}">
+      {{sealedAll ? '本周预测已全部封存' : '封存并提交预测'}}
     </button>
   </view>
 </view>
+

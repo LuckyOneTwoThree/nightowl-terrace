@@ -1,30 +1,55 @@
 <view class="page">
+  <!-- 视图切换（PM T7：日历视图 / 轮次视图） -->
+  <view class="vtoggle">
+    <view class="vt-btn {{viewMode === 'day' ? 'on' : ''}}" data-mode="day" bindtap="onSwitchView">
+      <text>日历视图</text>
+    </view>
+    <view class="vt-btn {{viewMode === 'round' ? 'on' : ''}}" data-mode="round" bindtap="onSwitchView">
+      <text>轮次视图</text>
+    </view>
+  </view>
+
   <!-- 日期条（_4：横滑日选） -->
-  <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}">
+  <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'day'}}">
     <view
       wx:for="{{days}}" wx:key="day"
-      class="dchip {{selDay === item.day ? 'on' : ''}}"
+      class="dchip {{selDay === item.day ? 'on floodlight-glow' : ''}}"
       data-day="{{item.day}}" bindtap="onPickDay">
+      <view class="dchip-dot dot-amber" wx:if="{{selDay === item.day}}"></view>
       <text class="dchip-wd">{{item.isToday ? '今天' : '周' + item.wd}}</text>
-      <text class="dchip-md">{{item.short}}</text>
+      <text class="dchip-md mono">{{item.short}}</text>
+      <text class="dchip-count mono muted">{{item.count}}场</text>
     </view>
   </scroll-view>
 
-  <!-- 联赛 + 星级筛选（_4 药丸） -->
+  <!-- 轮次条（轮次视图） -->
+  <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'round'}}">
+    <view
+      wx:for="{{rounds}}" wx:key="*this"
+      class="dchip {{selRound === item ? 'on floodlight-glow' : ''}}"
+      data-r="{{item}}" bindtap="onPickRound">
+      <text class="dchip-wd">第{{item}}轮</text>
+    </view>
+  </scroll-view>
+
+  <!-- 联赛 + 星级筛选（_4 药丸；轮次视图下「全部」回落英超） -->
   <scroll-view scroll-x class="pills" enhanced show-scrollbar="{{false}}">
     <view
       wx:for="{{leagues}}" wx:key="id"
+      wx:if="{{viewMode === 'day' || item.id !== 'ALL'}}"
       class="fpill on-{{selLg === item.id ? item.id : 'none'}}"
       data-lg="{{item.id}}" bindtap="onPickLg">{{item.zh}}</view>
-    <view class="fpill on-{{selStar ? 'ALL' : 'none'}}" bindtap="onStarFilter">{{starLabel}}</view>
+    <view class="fpill star-pill on-{{selStar ? 'ALL' : 'none'}}" bindtap="onStarFilter">
+      <text>★ {{starLabel}}</text>
+    </view>
   </scroll-view>
 
   <!-- 分组列表 -->
   <view class="list">
     <view class="group" wx:for="{{viewGroups}}" wx:key="day" id="d-{{item.day}}">
       <view class="g-head" wx:if="{{(selLg === 'ALL' || item.matches.length)}}">
-        <text class="g-date">{{item.label.md}}</text>
-        <text class="mono muted">{{item.label.week}}</text>
+        <text class="g-date hl">{{item.label.md}}</text>
+        <text class="mono muted g-week">{{item.label.week}}</text>
         <view class="g-line"></view>
       </view>
       <view
@@ -35,35 +60,50 @@
         <view class="m-accent" style="background: {{mt.accent}};"></view>
         <view class="m-body">
           <view class="m-top">
-            <text class="mono muted">{{mt.lgZh}}</text>
-            <view class="chip chip-ghost tbd-chip" wx:if="{{mt.tbd}}">时间待定</view>
-            <text class="mono muted local-txt" wx:if="{{!mt.tbd}}">当地 {{mt.local}}</text>
-            <text class="mono">{{mt.hm}}</text>
+            <view class="m-top-left">
+              <text class="mono m-lg-name">{{mt.lgZh}}</text>
+              <view class="chip chip-amber m-status-chip" wx:if="{{mt.followed}}">关注</view>
+              <view class="chip chip-teal m-status-chip" wx:if="{{mt.finished}}">完场</view>
+              <view class="chip chip-ghost m-status-chip" wx:elif="{{mt.tbd}}">时间待定</view>
+            </view>
+            <view class="m-top-right mono">
+              <text class="muted local-txt" wx:if="{{!mt.tbd}}">当地 {{mt.local}}</text>
+              <text class="m-hm text-amber">{{mt.hm}}</text>
+            </view>
           </view>
+          
           <view class="t-row">
             <text class="t-name">{{mt.home.zh}}</text>
-            <view class="m-right">
+            <view class="m-team-info">
               <view class="circle-sm" style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
-              <text class="score {{mt.finished ? 'ft' : ''}}">{{mt.finished ? mt.scH : '-'}}</text>
+              <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scH : '-'}}</text>
             </view>
           </view>
           <view class="t-row">
             <text class="t-name dim2">{{mt.away.zh}}</text>
-            <view class="m-right">
+            <view class="m-team-info">
               <view class="circle-sm" style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
-              <text class="score {{mt.finished ? 'ft' : ''}}">{{mt.finished ? mt.scA : '-'}}</text>
+              <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scA : '-'}}</text>
             </view>
           </view>
         </view>
+
         <view class="m-side">
-          <text class="stars-sm">{{mt.stars}}</text>
-          <text class="mono st-btn" data-id="{{mt.id}}" catchtap="onStar">☆</text>
+          <view class="stars-col">
+            <text class="star-gold mono">{{mt.stars}}</text>
+          </view>
+          <view class="st-btn" data-id="{{mt.id}}" catchtap="onStar">
+            <view class="v-icon v-cal st-icon"></view>
+          </view>
         </view>
       </view>
+
       <view class="g-empty card-low" wx:if="{{selLg !== 'ALL' && !item.matches.length}}">
         <text class="mono muted">当日无{{selLg === 'ALL' ? '' : '该联赛'}}赛事</text>
       </view>
     </view>
-    <view class="foot mono muted">— 五联赛全季 1,752 场 · 数据源 ESPN / OpenLigaDB —</view>
+
+    <view class="foot mono muted">— 全季 1,752 场 · 实时精准更新 —</view>
   </view>
 </view>
+

@@ -16,6 +16,22 @@ function dateOf(t) {
   return t.split('T')[0];
 }
 
+// Date → 'YYYY-MM-DD'（本地时区）
+function dateStr(d) {
+  var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+}
+
+/**
+ * 夜猫口径「今日」：凌晨 00:00–06:00 归前一晚（与 data.matchesOfDay 展示口径一致）
+ * 早 3 点打开小程序，看到的「今晚」仍是在看的那一夜，而不是日历上的明天
+ */
+function nightOf(now) {
+  var d = new Date(now.getTime());
+  if (d.getHours() < 6) d = new Date(d.getTime() - 86400000);
+  return dateStr(d);
+}
+
 // ---------- 睡眠成本分档（北京时间开球） ----------
 // S0 ≤22:30 → 0h；S1 22:30–00:30 → 1.0h；S2 00:30–02:30 → 2.5h；S3 02:30–04:00 → 3.5h；S4 ≥04:00 → 4.5h
 
@@ -130,7 +146,8 @@ function owlIndex(ev, match) {
 
 function pickToday(matches, recMap, rivalries, storylines, followed) {
   var evs = matches
-    .filter(function (m) { return m.st === 'sched'; })
+    // tbd 场次时间未定，不担任今晚之选（今日页仍会以「时间待定」列出）
+    .filter(function (m) { return m.st === 'sched' && !m.tbd; })
     .map(function (m) {
       var ev = evaluate(m, recMap, rivalries, storylines, followed);
       return { m: m, ev: ev, index: owlIndex(ev, m) };
@@ -188,7 +205,8 @@ function knapsack(entries, budgetHours) {
 function planWeek(matches, recMap, rivalries, storylines, followed, budget) {
   budget = budget || 4.0;
   var evs = matches
-    .filter(function (m) { return m.st === 'sched'; })
+    // tbd 场次开球时间未定，成本档不可信，不进背包规划
+    .filter(function (m) { return m.st === 'sched' && !m.tbd; })
     .map(function (m) {
       var ev = evaluate(m, recMap, rivalries, storylines, followed);
       return { m: m, ev: ev, index: owlIndex(ev, m) };
@@ -279,6 +297,8 @@ module.exports = {
   TIERS: TIERS,
   parseMin: parseMin,
   dateOf: dateOf,
+  dateStr: dateStr,
+  nightOf: nightOf,
   sleepTier: sleepTier,
   tierOf: tierOf,
   rivalryOf: rivalryOf,

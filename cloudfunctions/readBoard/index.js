@@ -68,8 +68,9 @@ exports.main = async (event) => {
       for (const p of preds) {
         const m = fixtures.find(x => x.id === p.m) || {};
         const sealed = bjTs(m.t) > now; // 未开球 = 封存中
-        agg[p.uid] = agg[p.uid] || { nick: p.nick || p.uid, pts: 0, count: 0, hit: 0, entries: [] };
-        const a = agg[p.uid];
+        const uid = p.uid || p._openid || ''; // 客户端直写时 uid 为空，回退 _openid
+        agg[uid] = agg[uid] || { nick: p.nick || uid, pts: 0, count: 0, hit: 0, entries: [] };
+        const a = agg[uid];
         if (p.pts) a.pts += p.pts;
         if (p.hit) a.hit++;
         a.count++;
@@ -96,8 +97,9 @@ exports.main = async (event) => {
         .filter(c => c.ts >= from && c.ts < to);
       const agg = {};
       for (const c of cis) {
-        agg[c.uid] = agg[c.uid] || { nick: c.nick || c.uid, hours: 0, nights: 0, worst: 0, worstM: null };
-        const a = agg[c.uid];
+        const uid = c.uid || c._openid || ''; // 客户端直写时回退 _openid
+        agg[uid] = agg[uid] || { nick: c.nick || uid, hours: 0, nights: 0, worst: 0, worstM: null };
+        const a = agg[uid];
         const cost = c.cost || 0;
         a.hours += cost;
         a.nights++;
@@ -117,7 +119,7 @@ exports.main = async (event) => {
       return {
         ok: true, board, gid,
         list: res.data.map(b => ({
-          m: b.m, nick: b.nick || b.uid, text: b.text, ts: b.ts,
+          m: b.m, nick: b.nick || b.uid || b._openid, text: b.text, ts: b.ts,
           result: b.result || null // 'hit' | 'miss' | null（人工判定，PM 九节法庭）
         }))
       };

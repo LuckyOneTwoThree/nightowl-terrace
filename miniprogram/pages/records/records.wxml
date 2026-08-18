@@ -1,37 +1,51 @@
 <view class="page">
-  <!-- 日期分组 -->
+  <!-- 日期分组（_6） -->
   <block wx:for="{{groups}}" wx:key="label" wx:for-item="g">
-    <view class="g-title mono">{{g.label}}</view>
+    <view class="g-title mono muted">
+      <view class="g-dot-gold"></view>
+      <text>{{g.label}}</text>
+    </view>
+    
     <view class="g-list">
-      <!-- 预测行 -->
-      <view class="row glass-panel" wx:for="{{g.rows}}" wx:key="key" wx:for-item="r">
+      <!-- 记录行 -->
+      <view class="record-row card-low" wx:for="{{g.rows}}" wx:key="key" wx:for-item="r">
+        <!-- 预测行 -->
         <block wx:if="{{r.type === 'pred'}}">
           <view class="r-left">
             <view class="r-top">
-              <text class="r-ic {{r.finished ? (r.hit ? 'teal' : 'gray') : 'gray'}}">⚽</text>
-              <text class="r-name">{{r.names}}</text>
+              <view class="v-icon v-soccer text-amber r-icon"></view>
+              <text class="r-name hl">{{r.names}}</text>
             </view>
-            <text class="r-sub">{{r.sub}}</text>
+            <text class="mono muted r-sub">{{r.sub}}</text>
           </view>
+          
           <view class="r-right">
             <block wx:if="{{r.tampered}}">
-              <text class="r-mark error">⚠</text>
-              <text class="r-pts gray">作废</text>
+              <text class="r-pts text-error mono">作废</text>
             </block>
             <block wx:elif="{{r.finished}}">
-              <text class="r-mark {{r.hit ? 'teal' : 'error'}}">{{r.hit ? '✓' : '✕'}}</text>
-              <text class="r-pts {{r.hit ? 'glow' : 'gray'}}">{{r.hit ? '+' + r.pts : '0'}}</text>
+              <view class="r-result-box">
+                <view class="v-icon v-check text-teal" wx:if="{{r.hit}}"></view>
+                <view class="v-icon v-cross text-error" wx:else></view>
+                <text class="r-pts hl {{r.hit ? 'text-teal text-glow' : 'muted'}} mono">{{r.hit ? '+' + r.pts : '0'}}</text>
+              </view>
             </block>
-            <text class="r-pending mono" wx:else>封存中</text>
+            <view class="chip chip-amber mono" wx:else>封存中</view>
           </view>
         </block>
 
         <!-- 狂言行 -->
         <block wx:elif="{{r.type === 'boast'}}">
-          <view class="boast card-low {{r.finished ? (r.hit ? 'ok' : 'bad') : ''}}">
-            <text class="b-quote">"{{r.sub}}"</text>
-            <view class="chip {{r.finished ? (r.hit ? 'chip-teal' : 'chip-error') : 'chip-amber'}}">
-              {{r.finished ? (r.hit ? '应验' : '翻车') : '待审判'}}
+          <view class="boast-full">
+            <view class="b-head">
+              <view class="v-icon v-gavel text-amber r-icon"></view>
+              <text class="r-name hl">{{r.names}}</text>
+              <view class="chip {{r.finished ? (r.hit ? 'chip-teal' : 'chip-error') : 'chip-amber'}} r-chip">
+                {{r.finished ? (r.hit ? '应验' : '打脸') : '待审判'}}
+              </view>
+            </view>
+            <view class="b-quote-box card-high {{r.finished && !r.hit ? 'strike' : ''}}">
+              <text class="b-quote">“{{r.sub}}”</text>
             </view>
           </view>
         </block>
@@ -40,22 +54,26 @@
         <block wx:else>
           <view class="r-left">
             <view class="r-top">
-              <text class="r-ic violet">⏰</text>
-              <text class="r-name">{{r.names}}</text>
+              <view class="v-icon v-moon text-teal r-icon"></view>
+              <text class="r-name hl">{{r.names}}</text>
             </view>
-            <text class="r-sub">{{r.sub}}</text>
+            <text class="mono muted r-sub">{{r.sub}}</text>
           </view>
-          <view class="r-time mono">+{{r.cost}}h</view>
+          <view class="r-time mono hl text-teal">+{{r.cost}}h</view>
         </block>
       </view>
     </view>
   </block>
 
-  <!-- 空态 -->
-  <view class="empty glass-panel" wx:if="{{empty}}">
-    <view class="e-mascot">🐱</view>
-    <text class="hl hl-md">还没有记录，今晚开始？</text>
-    <text class="e-desc">你的午夜传奇还是一张白纸，去看看今晚有什么焦点战吧。</text>
-    <view class="btn-amber e-btn" bindtap="goToday"><text>去看看今晚</text><text>→</text></view>
+  <!-- 空态（_6） -->
+  <view class="empty card-low" wx:if="{{empty}}">
+    <view class="v-icon v-paw text-amber e-mascot"></view>
+    <text class="hl hl-md empty-title">还没有深夜战绩，今晚启程？</text>
+    <text class="mono muted e-desc">你的修仙日记还是一张白纸，去看看今晚有什么焦点大战吧。</text>
+    <button class="btn-amber e-btn floodlight-glow" bindtap="goToday">
+      <text>查看今晚赛程</text>
+      <view class="v-icon v-chev"></view>
+    </button>
   </view>
 </view>
+

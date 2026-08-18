@@ -1,5 +1,6 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
+var decorateUtil = require('../../utils/decorate.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -39,6 +40,9 @@ function decorate(entry) {
     dayLabel: isTmr ? '明天' : '今天',
     tbd: m.tbd,
     st: m.st,
+    local: decorateUtil.localTime(m), // 当地开球时间（PM 7.1 Hero 小字）
+    tv: m.tv || null,                 // 转播平台位（数据运营补录后自动展示）
+    trivia: entry.ev.rec && entry.ev.rec.trivia ? entry.ev.rec.trivia : null, // 每日冷知识（PM 7.7）
     star: entry.ev.star,
     stars: '★★★'.slice(0, entry.ev.star),
     points: entry.ev.rec ? entry.ev.rec.points.slice(0, 3) : [],
@@ -86,10 +90,10 @@ Page({
   refresh: function () {
     this._loaded = true;
     var now = new Date();
-    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
-    var todayStr = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate());
-    var tmr = new Date(now.getTime() + 86400000);
-    var tmrStr = tmr.getFullYear() + '-' + p2(tmr.getMonth() + 1) + '-' + p2(tmr.getDate());
+    // 夜猫口径「今日」：凌晨 00:00–06:00 归前一晚（与 matchesOfDay 一致）
+    var todayStr = engine.nightOf(now);
+    var tmrStr = engine.nightOf(new Date(now.getTime() + 86400000));
+    var nightDate = new Date(todayStr.replace(/-/g, '/') + ' 00:00:00');
 
     var app = getApp();
     var followed = app.getFollowed();
@@ -125,7 +129,7 @@ Page({
     });
 
     this.setData({
-      dateLabel: (now.getMonth() + 1) + '月' + now.getDate() + '日 周' + WEEK[now.getDay()],
+      dateLabel: (nightDate.getMonth() + 1) + '月' + nightDate.getDate() + '日 周' + WEEK[nightDate.getDay()],
       quip: data.getQuip(todayStr),
       hero: pick.hero ? decorate(pick.hero) : null,
       extras: pick.extras.map(decorate),

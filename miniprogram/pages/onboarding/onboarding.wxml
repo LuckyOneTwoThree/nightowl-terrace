@@ -1,45 +1,46 @@
 <view class="page">
-  <!-- 光晕氛围 -->
+  <!-- 光晕氛围（_15） -->
   <view class="glow glow-amber"></view>
   <view class="glow glow-teal"></view>
 
   <!-- 头部 -->
   <view class="head">
-    <view class="skip-btn mono" bindtap="skip">跳过</view>
-    <text class="hl hl-lg">先选几支主队？</text>
-    <text class="head-sub">随时可改，不选也能用</text>
+    <view class="skip-btn chip chip-ghost mono" bindtap="skip">跳过 ›</view>
+    <text class="hl hl-lg onb-title">选几支关注的主队</text>
+    <text class="mono muted head-sub">为你量身定制赛程日历与熬夜推荐，随时可在“我的”更改</text>
   </view>
 
   <!-- 联赛分组 -->
   <view class="groups">
     <view class="group" wx:for="{{groups}}" wx:key="id" wx:for-item="g" wx:for-index="gi">
       <view class="g-head">
-        <text class="g-ic">⚽</text>
+        <view class="v-icon v-soccer text-amber g-ic"></view>
         <text class="hl hl-md">{{g.zh}}</text>
       </view>
       <view class="chips">
-        <view class="tchip {{t.on ? 'on' : ''}}"
+        <view class="tchip card-low {{t.on ? 'on floodlight-glow' : ''}}"
               wx:for="{{g.teams}}" wx:key="id" wx:for-item="t" wx:for-index="ti"
               data-g="{{gi}}" data-t="{{ti}}" bindtap="toggle">
-          <view class="t-ava {{t.on ? '' : 'gray'}}" style="{{t.on ? 'background: ' + t.color + '33; border-color: ' + t.color + '99;' : ''}}">{{t.id}}</view>
-          <text class="t-name">{{t.zh}}</text>
-          <text class="t-check" wx:if="{{t.on}}">✓</text>
+          <view class="t-ava circle-sm" style="{{t.on ? 'background: ' + t.color + '; border-color: ' + t.color + ';' : ''}}">{{t.id}}</view>
+          <text class="t-name hl">{{t.zh}}</text>
+          <view class="v-icon v-check text-amber t-check" wx:if="{{t.on}}"></view>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 底部操作栏 -->
-  <view class="bar">
-    <view class="bar-fade"></view>
+  <!-- 底部操作栏（_15） -->
+  <view class="bar glass-panel">
     <view class="bar-main">
       <view class="bar-count">
-        <text class="bar-label">已选球队</text>
-        <text class="bar-num"><text class="n">{{picked}}</text> 支</text>
+        <text class="mono muted bar-label">已选主队</text>
+        <text class="bar-num mono hl"><text class="text-amber text-glow n">{{picked}}</text> 支</text>
       </view>
-      <view class="done-btn" bindtap="finish">
-        <text>完成</text><text class="d-arrow">→</text>
-      </view>
+      <button class="btn-amber done-btn floodlight-glow" bindtap="finish">
+        <text>开启看台</text>
+        <view class="v-icon v-chev"></view>
+      </button>
     </view>
   </view>
 </view>
+

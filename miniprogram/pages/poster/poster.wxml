@@ -1,48 +1,57 @@
 <view class="page" wx:if="{{m}}">
-  <!-- 海报预览（9:16） -->
-  <view class="poster">
+  <!-- 9:16 海报预览（_10） -->
+  <view class="poster card-highest floodlight-glow">
     <view class="p-inner">
-    <view class="p-dots"></view>
-    <view class="p-bar" style="background: linear-gradient(90deg, {{m.lgAccent}}, #00FF85, #E90052);"></view>
+      <view class="p-bar" style="background: linear-gradient(90deg, {{m.lgAccent}}, #00FF85, #E90052);"></view>
 
-    <view class="p-head">
-      <view class="p-lg chip chip-ghost">⚽ {{m.lgEn}}</view>
-      <view class="p-slogan-row">
-        <view class="p-mascot">🐱</view>
-        <view class="p-slogan-col">
-          <text class="p-title">{{slogan}}</text>
-          <text class="p-sub mono">{{sub}}</text>
+      <view class="p-head">
+        <view class="p-lg chip chip-ghost">
+          <view class="v-icon v-soccer text-teal"></view>
+          <text>{{m.lgEn}}</text>
+        </view>
+        <view class="p-slogan-row">
+          <view class="v-icon v-paw text-amber p-mascot"></view>
+          <view class="p-slogan-col">
+            <text class="p-title hl">{{slogan}}</text>
+            <text class="p-sub mono muted">{{sub}}</text>
+          </view>
         </view>
       </view>
-    </view>
 
-    <view class="p-vs">
-      <view class="p-side">
-        <view class="circle-xl" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
-        <text class="p-name">{{m.home.zh}}</text>
+      <view class="p-vs">
+        <view class="p-side">
+          <view class="circle-xl" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+          <text class="p-name hl">{{m.home.zh}}</text>
+        </view>
+        <view class="p-mid">
+          <text class="p-x mono muted">VS</text>
+        </view>
+        <view class="p-side">
+          <view class="circle-xl" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+          <text class="p-name hl">{{m.away.zh}}</text>
+        </view>
       </view>
-      <text class="p-x">VS</text>
-      <view class="p-side">
-        <view class="circle-xl" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
-        <text class="p-name">{{m.away.zh}}</text>
+
+      <view class="p-time card-low">
+        <text class="mono muted p-day">{{m.dayLabel}}</text>
+        <text class="p-hm score-m hl text-amber text-glow">{{m.hm}}</text>
+        <view class="p-stars-row">
+          <text class="star-on text-amber mono">{{m.stars}}</text>
+        </view>
+        <view class="chip chip-amber p-idx">
+          <view class="v-icon v-bolt text-amber"></view>
+          <text class="mono">夜猫指数 {{m.indexText}}</text>
+        </view>
       </view>
-    </view>
 
-    <view class="p-time">
-      <text class="p-day muted">{{m.dayLabel}}</text>
-      <text class="p-hm score-m">{{m.hm}}</text>
-      <view class="p-line"></view>
-      <text class="p-stars">{{m.stars}}</text>
-      <view class="chip chip-amber p-idx">👁 夜猫指数 {{m.indexText}}</view>
-    </view>
-
-    <view class="p-points">
-      <view class="p-pt" wx:for="{{m.points.length ? m.points : ['焦点战', '熬夜成本 ' + m.cost + 'h']}}" wx:key="*this">
-        <view class="p-dot2"></view><text>{{item}}</text>
+      <view class="p-points card-low">
+        <view class="p-pt" wx:for="{{m.points.length ? m.points : ['本轮焦点大战', '熬夜成本 ' + m.cost + 'h']}}" wx:key="*this">
+          <view class="p-dot2"></view>
+          <text class="p-pt-text">{{item}}</text>
+        </view>
       </view>
-    </view>
 
-    <view class="p-foot mono">夜猫看台 · NIGHT OWL TERRACE</view>
+      <view class="p-foot mono muted">夜猫看台 · NIGHT OWL TERRACE</view>
     </view>
   </view>
 
@@ -50,6 +59,15 @@
   <canvas type="2d" id="poster" class="p-canvas"></canvas>
 
   <!-- 操作 -->
-  <view class="btn-amber" bindtap="save"><text>📥</text><text>保存到相册</text></view>
-  <view class="btn-teal-ghost p-share" bindtap="share"><text>📤</text><text>分享到群</text></view>
+  <view class="poster-acts">
+    <button class="btn-amber floodlight-glow" bindtap="save">
+      <view class="v-icon v-gift"></view>
+      <text>保存高清海报</text>
+    </button>
+    <button class="btn-teal-ghost p-share" bindtap="share">
+      <view class="v-icon v-paw text-teal"></view>
+      <text>分享给看球搭子</text>
+    </button>
+  </view>
 </view>
+

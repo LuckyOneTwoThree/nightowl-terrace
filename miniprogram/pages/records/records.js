@@ -1,4 +1,5 @@
 var data = require('../../utils/data.js');
+var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var crypt = require('../../utils/crypt.js');
 
@@ -10,8 +11,8 @@ function labelOf(dateStr) {
   return f[1] + '月' + f[2] + '日 周' + WEEK[d.getDay()];
 }
 
-// 结算：胜平负 3 分，比分再 +2（PM 9.4）
-function settle(pred, m) {
+// 结算：胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4）
+function settle(pred, m, recMap) {
   if (!m || !m.sc) return null;
   var sc = m.sc.split('-');
   var h = Number(sc[0]), a = Number(sc[1]);
@@ -19,7 +20,9 @@ function settle(pred, m) {
   var hit = pred.pick === fact;
   var pts = hit ? 3 : 0;
   if (hit && pred.scoreH !== '' && Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
-  return { hit: hit, pts: pts, sc: m.sc };
+  var rec = (recMap || {})[m.id];
+  if (hit && rec && rec.upset) pts *= 2; // 冷门翻倍
+  return { hit: hit, pts: pts, sc: m.sc, upset: hit && rec && !!rec.upset };
 }
 
 Page({
@@ -31,25 +34,29 @@ Page({
     var preds = wx.getStorageSync('predictions') || {};
     var boasts = wx.getStorageSync('boasts') || {};
     var checkins = wx.getStorageSync('checkins') || {};
+    var recMap = data.getRecMap();
 
     var rows = [];
     Object.keys(preds).forEach(function (mid) {
       var p = preds[mid], m = data.getMatch(mid);
       if (!m) return;
-      // commit-reveal 校验（PM 八节）：reveal 与封存哈希不一致 → 不计分
+      // commit-reveal 校验（PM 八节）：哈希不一致或开球后才封存 → 作废不计分
       var tampered = !crypt.verify(p);
-      var r = tampered ? null : settle(p, m);
+      var late = !!p.ts && p.ts > engine.ts(m.t) + 60000; // 1 分钟宽容（客户端时钟偏差）
+      var r = (tampered || late) ? null : settle(p, m, recMap);
       var pickZh = p.pick === 'h' ? '主胜' : p.pick === 'd' ? '平局' : '客胜';
       rows.push({
         key: 'pred-' + mid,
         label: labelOf(m.t.split('T')[0]),
         sort: p.ts || 0, type: 'pred',
         names: data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh,
-        sub: tampered ? '封存校验失败 · 已作废' : '预测: ' + pickZh + (p.scoreH !== '' ? ' (' + p.scoreH + '-' + p.scoreA + ')' : ''),
-        finished: tampered ? true : !!r,
+        sub: tampered ? '封存校验失败 · 已作废'
+          : late ? '开球后封存 · 已作废'
+          : '预测: ' + pickZh + (p.scoreH !== '' ? ' (' + p.scoreH + '-' + p.scoreA + ')' : '') + (r && r.upset ? ' · 冷门×2' : ''),
+        finished: tampered || late ? true : !!r,
         hit: r ? r.hit : false,
         pts: r ? r.pts : 0,
-        tampered: tampered
+        tampered: tampered || late
       });
     });
     Object.keys(boasts).forEach(function (mid) {

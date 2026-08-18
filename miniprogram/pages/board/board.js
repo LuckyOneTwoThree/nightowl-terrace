@@ -1,6 +1,7 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
+var cloud = require('../../utils/cloud.js');
 
 // 云版本上线前的演示榜单（openGid 群维度排行 v1 接入）
 var MOCK = [
@@ -35,7 +36,24 @@ Page({
 
   onShow: function () { this.refresh(); },
 
+  // 云端夜猫榜（readBoard 聚合）；不可用则保留演示榜单
+  fetchRanks: function () {
+    var that = this;
+    cloud.readBoard('owl')
+      .then(function (res) {
+        var list = (res && res.list) || [];
+        if (!list.length) return;
+        that.setData({
+          ranks: list.map(function (r, i) {
+            return { rank: i + 1, name: r.nick, hours: r.hours, streak: r.streak || 0 };
+          })
+        });
+      })
+      .catch(function () { /* 云不可用：静默回退演示榜单 */ });
+  },
+
   refresh: function () {
+    this.fetchRanks();
     var checkins = wx.getStorageSync('checkins') || {};
     var wk = weekKey(new Date());
 
@@ -99,6 +117,11 @@ Page({
       wk: this.data._liveRawT ? weekKeyOfDate(this.data._liveRawT.split('T')[0]) : null
     };
     wx.setStorageSync('checkins', checkins);
+    // 云端 best-effort 双写：夜猫榜聚合（readBoard/owl）
+    cloud.addCheckin({
+      m: live.id, md: live.md, names: live.home.zh + ' vs ' + live.away.zh,
+      cost: live.cost, ts: checkins[live.id].ts
+    });
     wx.showToast({ title: '修仙 +1 · ' + live.cost + 'h', icon: 'none' });
     this.refresh();
   },

@@ -1,81 +1,106 @@
 <view class="page">
-  <!-- 规则说明条 -->
+  <!-- 规则说明条（_8） -->
   <view class="rule glass-panel">
-    <view class="r-glow"></view>
-    <view class="r-ic"><text>⚖️</text></view>
+    <view class="r-ic">
+      <view class="v-icon v-gavel text-amber r-gavel"></view>
+    </view>
     <view class="r-body">
-      <text class="hl hl-md">德比法庭规则</text>
-      <text class="r-sub">赛前一句狂言，赛后自动审判</text>
+      <text class="hl hl-md">德比法庭 · 狂言录</text>
+      <text class="r-sub mono muted">赛前立字为证 · 赛后开箱审判</text>
     </view>
   </view>
 
   <!-- 开庭中 -->
-  <view class="sect"><view class="bar-amber"></view><text class="sect-title">开庭中</text></view>
-  <view class="card-low open-card" wx:if="{{open}}">
+  <view class="sect sect-gap">
+    <text class="sect-title">开庭对决</text>
+    <view class="sect-line"></view>
+    <view class="chip chip-amber focal-badge" wx:if="{{open}}">审理中</view>
+  </view>
+  
+  <view class="card-highest open-card floodlight-glow" wx:if="{{open}}">
     <view class="open-meta">
       <view class="chip chip-solid">{{open.md}} {{open.hm}}</view>
       <text class="mono muted">{{open.lgZh}}</text>
     </view>
     <view class="open-vs" bindtap="goDetail">
       <view class="ov-side">
-        <view class="circle-xl">{{open.home.id}}</view>
-        <text class="ov-name">{{open.home.zh}}</text>
+        <view class="circle-xl" style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
+        <text class="ov-name hl">{{open.home.zh}}</text>
       </view>
-      <text class="ov-x">VS</text>
+      <view class="ov-mid">
+        <text class="mono muted ov-x">VS</text>
+      </view>
       <view class="ov-side">
-        <view class="circle-xl">{{open.away.id}}</view>
-        <text class="ov-name">{{open.away.zh}}</text>
+        <view class="circle-xl" style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
+        <text class="ov-name hl">{{open.away.zh}}</text>
       </view>
     </view>
-    <view class="input-wrap">
-      <input class="boast-input" maxlength="40" placeholder="留下你的狂言 (限40字)..."
-             value="{{text}}" bindinput="onInput" />
-      <text class="input-count mono">{{count}}</text>
+    
+    <view class="input-wrap card-high">
+      <input class="boast-input" maxlength="40" placeholder="写下你的赛前狂言 (限40字)..."
+             placeholder-class="input-ph" value="{{text}}" bindinput="onInput" />
+      <text class="input-count mono muted">{{count}}</text>
     </view>
-    <view class="btn-amber" bindtap="submit"><text>📢</text><text>提交狂言</text></view>
+    
+    <button class="btn-amber btn-submit" bindtap="submit">
+      <view class="v-icon v-gavel"></view>
+      <text>立字存证 · 提交狂言</text>
+    </button>
   </view>
-  <view class="card-low empty" wx:else><text class="muted">暂无开庭中的焦点战</text></view>
+  <view class="card-low empty" wx:else><text class="mono muted">暂无开庭中的焦点大战</text></view>
 
-  <!-- 赛季统计双卡 -->
+  <!-- 赛季统计双卡（_8） -->
   <view class="duo">
-    <view class="duo-card card-low teal">
-      <view class="d-ic"><text>✅</text></view>
-      <text class="d-title">最准之口</text>
-      <view class="d-ava circle-xl">{{stats.hit}}</view>
-      <text class="d-name">我的狂言</text>
-      <view class="chip chip-teal">命中率 {{stats.rate}}</view>
+    <view class="duo-card card-low teal-glow">
+      <view class="d-head">
+        <view class="v-icon v-check text-teal d-icon"></view>
+        <text class="d-title hl">最准之口</text>
+      </view>
+      <text class="d-score score-m text-teal hl">{{stats.hit}}</text>
+      <text class="mono muted d-lbl">应验场次</text>
+      <view class="chip chip-teal d-chip">命中率 {{stats.rate}}</view>
     </view>
-    <view class="duo-card card-low dim2">
-      <view class="d-ic"><text>🙃</text></view>
-      <text class="d-title">最铁嘴皮</text>
-      <view class="d-ava circle-xl">{{stats.miss}}</view>
-      <text class="d-name muted">我的狂言</text>
-      <view class="chip chip-ghost">翻车 {{stats.miss}} 次</view>
+    
+    <view class="duo-card card-low red-glow">
+      <view class="d-head">
+        <view class="v-icon v-cross text-error d-icon"></view>
+        <text class="d-title hl">最铁嘴皮</text>
+      </view>
+      <text class="d-score score-m text-error hl">{{stats.miss}}</text>
+      <text class="mono muted d-lbl">翻车打脸</text>
+      <view class="chip chip-error d-chip">打脸 {{stats.miss}} 次</view>
     </view>
   </view>
 
   <!-- 狂言存档 -->
-  <view class="sect sect-mt"><view class="bar-teal"></view><text class="sect-title">狂言存档</text><view class="sect-line"></view></view>
-  <view class="card-low empty" wx:if="{{!archive.length}}"><text class="muted">还没有狂言，去上面开一句</text></view>
+  <view class="sect sect-mt">
+    <text class="sect-title">法庭判例存档</text>
+    <view class="sect-line"></view>
+  </view>
+  
+  <view class="card-low empty" wx:if="{{!archive.length}}"><text class="mono muted">暂无狂言记录，去上方为本轮大战立据！</text></view>
+  
   <view class="arch card-low" wx:for="{{archive}}" wx:key="id">
     <view class="a-head">
       <text class="mono muted">{{item.md}}</text>
-      <view class="a-dot"></view>
-      <text class="mono muted flex1">{{item.names}}</text>
-      <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-ghost' : 'chip-amber'}}">
-        {{item.result === 'hit' ? '应验' : item.result === 'miss' ? '翻车' : '待审判'}}
+      <text class="mono muted flex1 a-teams">{{item.names}}</text>
+      <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-error' : 'chip-amber'}}">
+        {{item.result === 'hit' ? '应验' : item.result === 'miss' ? '打脸翻车' : '开庭审理中'}}
       </view>
     </view>
     <view class="a-quote {{item.result === 'miss' ? 'strike' : ''}}">
-      <text class="a-text">"{{item.text}}"</text>
+      <text class="a-text">“{{item.text}}”</text>
     </view>
-    <view class="a-foot" wx:if="{{item.finished && !item.result}}">
-      <text class="mono muted">比分 {{item.sc}} · 自判：</text>
-      <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" bindtap="judge">应验</view>
-      <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" bindtap="judge">翻车</view>
+    <view class="a-foot card-high" wx:if="{{item.finished && !item.result}}">
+      <text class="mono muted">终场比分 {{item.sc}} · 请法官自判：</text>
+      <view class="a-actions">
+        <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" bindtap="judge">应验</view>
+        <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" bindtap="judge">翻车</view>
+      </view>
     </view>
-    <view class="a-foot" wx:elif="{{item.finished}}">
-      <text class="mono muted">比分 {{item.sc}}</text>
+    <view class="a-foot-done" wx:elif="{{item.finished}}">
+      <text class="mono muted">完赛比分 {{item.sc}}</text>
     </view>
   </view>
 </view>
+
