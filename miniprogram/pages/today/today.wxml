@@ -41,7 +41,7 @@
           <view class="cd-pill floodlight-glow">
             <text class="cd mono text-glow">{{countdownText}}</text>
           </view>
-          <text class="cd-sub mono muted">{{hero.dayLabel}} · {{hero.md}}</text>
+          <text class="cd-sub mono muted">{{hero.dateHeader}}</text>
           <text class="cd-sub mono muted" wx:if="{{!hero.tbd}}">当地 {{hero.local}}</text>
         </view>
         <view class="side">
@@ -162,6 +162,30 @@
         </view>
       </view>
       <text class="rp-teaser mono muted">{{item.teaser}}</text>
+    </view>
+  </block>
+
+  <!-- 时间待定（tbd 场次：开球时间未公布，先占位列出，关注球队在前） -->
+  <block wx:if="{{tbd.length}}">
+    <view class="sect sect-gap">
+      <text class="sect-title">时间待定</text>
+      <view class="sect-line"></view>
+    </view>
+    <view class="tmr card-low" wx:for="{{tbd}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="tmr-time">
+        <text class="mono muted">{{item.lgZh}}</text>
+        <text class="tmr-hm">TBD</text>
+      </view>
+      <view class="tmr-div"></view>
+      <view class="tmr-teams">
+        <text class="t-name">{{item.home.zh}}</text>
+        <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFill" />
+        <view class="circle-sm crest-fb" wx:if="{{!item.home.logo}}" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        <text class="mono muted vs-txt">vs</text>
+        <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFill" />
+        <view class="circle-sm crest-fb" wx:if="{{!item.away.logo}}" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        <text class="t-name">{{item.away.zh}}</text>
+      </view>
     </view>
   </block>
 

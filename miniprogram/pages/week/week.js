@@ -12,6 +12,7 @@ function lgZh(l) {
 
 Page({
   data: {
+    theme: '',
     usedText: '0',
     budgetText: '4.0',
     pctText: '0%',
@@ -35,9 +36,33 @@ Page({
     sheetCoverCount: 2
   },
 
+  onLoad: function () {
+    var settings = wx.getStorageSync('settings') || {};
+    this._lastFollowed = JSON.stringify(getApp().getFollowed());
+    this._lastBudget = settings.budget || 4.0;
+    this._lastMinStar = settings.minStar || 1;
+    this._lastTodayStr = engine.dateStr(new Date());
+    this.refresh();
+  },
+
   onShow: function () {
     getApp().applyTheme(this);
-    this.refresh();
+    var curFollowed = JSON.stringify(getApp().getFollowed());
+    var settings = wx.getStorageSync('settings') || {};
+    var curBudget = settings.budget || 4.0;
+    var curMinStar = settings.minStar || 1;
+    var curTodayStr = engine.dateStr(new Date());
+
+    if (this._lastFollowed !== curFollowed ||
+        this._lastBudget !== curBudget ||
+        this._lastMinStar !== curMinStar ||
+        this._lastTodayStr !== curTodayStr) {
+      this._lastFollowed = curFollowed;
+      this._lastBudget = curBudget;
+      this._lastMinStar = curMinStar;
+      this._lastTodayStr = curTodayStr;
+      this.refresh();
+    }
   },
 
   onSwitchTab: function (e) {
@@ -85,7 +110,7 @@ Page({
     function dec(e, withReason) {
       if (!e || !e.m) return {};
       var f = e.m.t.split('T');
-      var d = new Date(engine.owlDay(e.m.t).replace(/-/g, '/') + ' 00:00:00');
+      var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
       var meta = data.LEAGUE_META[e.m.l] || {};
       var hTeam = data.getTeam(e.m.h) || { id: e.m.h, zh: e.m.h, color: '#514533' };
       var aTeam = data.getTeam(e.m.a) || { id: e.m.a, zh: e.m.a, color: '#514533' };

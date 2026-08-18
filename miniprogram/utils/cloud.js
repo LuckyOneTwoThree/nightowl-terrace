@@ -7,8 +7,14 @@
  */
 
 var DOWN_KEY = '_cloudDown';
+var DOWN_TTL = 10 * 60 * 1000; // 降级闩锁时长：瞬时失败（断网等）10 分钟后自动重试
 var down = false;
-try { down = !!wx.getStorageSync(DOWN_KEY); } catch (e) { /* 忽略 */ }
+try {
+  var downAt = wx.getStorageSync(DOWN_KEY);
+  // 仅在闩锁有效期内保持降级；过期自动复位（防止一次飞行模式导致永久断云、云端数据分叉）
+  down = !!downAt && (Date.now() - downAt < DOWN_TTL);
+  if (!down && downAt) { try { wx.removeStorageSync(DOWN_KEY); } catch (e2) { /* 忽略 */ } }
+} catch (e) { /* 忽略 */ }
 
 function markDown() {
   down = true;
@@ -60,7 +66,8 @@ function addPrediction(p) {
     gid: 'default', // openGid 群维度待分享卡片（T14）接入后替换
     nick: myNick(),
     pick: p.pick,
-    score: (p.scoreH !== '' && p.scoreH != null) ? (p.scoreH + '-' + (p.scoreA || '0')) : null,
+    // 比分串仅双方都填写时写入（半比分不拼 '2-0'，与结算判据一致）
+    score: (p.scoreH !== '' && p.scoreH != null && p.scoreA !== '' && p.scoreA != null) ? (p.scoreH + '-' + p.scoreA) : null,
     scoreH: p.scoreH || '', // 与本地 predictions 字段对齐：云端复算哈希 + 比分加分判据都要用到
     scoreA: p.scoreA || '',
     salt: p.salt,   // 服务端结算复算哈希用；集合只写不读，截止前不外泄

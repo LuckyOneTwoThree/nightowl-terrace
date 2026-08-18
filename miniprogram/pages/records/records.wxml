@@ -8,7 +8,7 @@
     
     <view class="g-list">
       <!-- 记录行 -->
-      <view class="record-row card-low" wx:for="{{g.rows}}" wx:key="key" wx:for-item="r">
+      <view class="record-row card-low" wx:for="{{g.rows}}" wx:key="key" wx:for-item="r" data-id="{{r.mid}}" bindtap="goDetail">
         <!-- 预测行 -->
         <block wx:if="{{r.type === 'pred'}}">
           <view class="r-left">

@@ -18,6 +18,7 @@ function lgZh(l) {
 
 Page({
   data: {
+    theme: '',
     cards: [],
     guesses: [],
     options: OPTIONS,
@@ -25,10 +26,19 @@ Page({
     myRank: null
   },
 
-  onShow: function () {
-    getApp().applyTheme(this);
+  onLoad: function () {
+    this._lastPredsStr = JSON.stringify(wx.getStorageSync('predictions') || {});
     this.refresh();
     this.fetchRanks();
+  },
+
+  onShow: function () {
+    getApp().applyTheme(this);
+    var curPredsStr = JSON.stringify(wx.getStorageSync('predictions') || {});
+    if (this._lastPredsStr !== curPredsStr) {
+      this._lastPredsStr = curPredsStr;
+      this.refresh();
+    }
   },
 
   // 云端盲评榜（readBoard 聚合，本周）；不可用则保留演示榜单
@@ -86,7 +96,7 @@ Page({
       .sort(function (x, y) { return y.ev.star - x.ev.star || y.index - x.index; })
       .slice(0, 3).map(function (e) {
       var f = e.m.t.split('T');
-      var d = new Date(engine.owlDay(e.m.t).replace(/-/g, '/') + ' 00:00:00');
+      var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
       var h = data.getTeam(e.m.h);
       var a = data.getTeam(e.m.a);
       return {

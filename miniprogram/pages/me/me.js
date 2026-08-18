@@ -8,6 +8,7 @@ function lgZh(l) {
 
 Page({
   data: {
+    theme: '',
     nickname: '',
     followedTeams: [],
     followedIds: [],
@@ -21,6 +22,10 @@ Page({
       { id: 'subs', icon: '🔔', name: '订阅提醒' },
       { id: 'settings', icon: '⚙️', name: '设置' }
     ]
+  },
+
+  onLoad: function () {
+    this.refresh();
   },
 
   onShow: function () {
@@ -79,7 +84,7 @@ Page({
       return d >= start && d <= end && (followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0);
     }).sort(function (x, y) { return x.t < y.t ? -1 : 1; }).map(function (m) {
       var f = m.t.split('T');
-      var dd = new Date(engine.owlDay(m.t).replace(/-/g, '/') + ' 00:00:00');
+      var dd = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
       return {
         id: m.id,
         lgZh: lgZh(m.l),

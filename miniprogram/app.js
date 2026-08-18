@@ -44,6 +44,8 @@ App({
   },
 
   // 主题管理（'dark' | 'light' | 'auto'）
+  _lastAppliedTheme: null,
+
   getThemeMode: function () {
     if (!this.globalData.themeMode) {
       try {
@@ -77,39 +79,8 @@ App({
       wx.setStorageSync('settings', s);
     } catch (e) { }
 
-    var theme = this.getEffectiveTheme();
-    var isLight = theme === 'light';
-
-    // 动态更新页面底层背景色
-    if (wx.setBackgroundColor) {
-      wx.setBackgroundColor({
-        backgroundColor: isLight ? '#F4F5F7' : '#101419',
-        backgroundColorTop: isLight ? '#F4F5F7' : '#101419',
-        backgroundColorBottom: isLight ? '#F4F5F7' : '#101419',
-        fail: function () { }
-      });
-    }
-
-    // 动态更新原生导航栏
-    if (wx.setNavigationBarColor) {
-      wx.setNavigationBarColor({
-        frontColor: isLight ? '#000000' : '#ffffff',
-        backgroundColor: isLight ? '#F4F5F7' : '#101419',
-        animation: { duration: 200, timingFunc: 'easeIn' },
-        fail: function () { }
-      });
-    }
-
-    // 动态更新 TabBar 样式
-    if (wx.setTabBarStyle) {
-      wx.setTabBarStyle({
-        color: isLight ? '#64748B' : '#9F8E79',
-        selectedColor: isLight ? '#D97706' : '#FFB224',
-        backgroundColor: isLight ? '#FFFFFF' : '#101419',
-        borderStyle: isLight ? 'white' : 'black',
-        fail: function () { }
-      });
-    }
+    this._lastAppliedTheme = null; // 强制触发原生样式更新
+    this.applyTheme();
 
     // 实时更新当前页面栈上的所有页面
     var that = this;
@@ -127,40 +98,47 @@ App({
     var theme = this.getEffectiveTheme();
     var isLight = theme === 'light';
 
-    // 动态更新当前页面 data 中的 theme
+    // 仅在当前页面 theme 与实际生效主题不一致时才 setData，避免无谓重排
     if (pageInstance && pageInstance.setData) {
-      pageInstance.setData({ theme: theme });
+      if (!pageInstance.data || pageInstance.data.theme !== theme) {
+        pageInstance.setData({ theme: theme });
+      }
     }
 
-    // 动态更新页面底层背景色（避免下拉回弹露黑底）
-    if (wx.setBackgroundColor) {
-      wx.setBackgroundColor({
-        backgroundColor: isLight ? '#F4F5F7' : '#101419',
-        backgroundColorTop: isLight ? '#F4F5F7' : '#101419',
-        backgroundColorBottom: isLight ? '#F4F5F7' : '#101419',
-        fail: function () { }
-      });
-    }
+    // 仅在全局生效主题发生变化时，才调用微信原生 API（彻底解决切页时原生导航栏 200ms 动画闪烁问题）
+    if (this._lastAppliedTheme !== theme) {
+      this._lastAppliedTheme = theme;
 
-    // 动态更新原生导航栏
-    if (wx.setNavigationBarColor) {
-      wx.setNavigationBarColor({
-        frontColor: isLight ? '#000000' : '#ffffff',
-        backgroundColor: isLight ? '#F4F5F7' : '#101419',
-        animation: { duration: 200, timingFunc: 'easeIn' },
-        fail: function () { }
-      });
-    }
+      // 动态更新页面底层背景色（避免下拉回弹露黑底）
+      if (wx.setBackgroundColor) {
+        wx.setBackgroundColor({
+          backgroundColor: isLight ? '#F4F5F7' : '#101419',
+          backgroundColorTop: isLight ? '#F4F5F7' : '#101419',
+          backgroundColorBottom: isLight ? '#F4F5F7' : '#101419',
+          fail: function () { }
+        });
+      }
 
-    // 动态更新 TabBar 样式
-    if (wx.setTabBarStyle) {
-      wx.setTabBarStyle({
-        color: isLight ? '#64748B' : '#9F8E79',
-        selectedColor: isLight ? '#D97706' : '#FFB224',
-        backgroundColor: isLight ? '#FFFFFF' : '#101419',
-        borderStyle: isLight ? 'white' : 'black',
-        fail: function () { }
-      });
+      // 动态更新原生导航栏（无过渡动画，瞬间就绪）
+      if (wx.setNavigationBarColor) {
+        wx.setNavigationBarColor({
+          frontColor: isLight ? '#000000' : '#ffffff',
+          backgroundColor: isLight ? '#F4F5F7' : '#101419',
+          animation: { duration: 0 },
+          fail: function () { }
+        });
+      }
+
+      // 动态更新 TabBar 样式
+      if (wx.setTabBarStyle) {
+        wx.setTabBarStyle({
+          color: isLight ? '#64748B' : '#9F8E79',
+          selectedColor: isLight ? '#D97706' : '#FFB224',
+          backgroundColor: isLight ? '#FFFFFF' : '#101419',
+          borderStyle: isLight ? 'white' : 'black',
+          fail: function () { }
+        });
+      }
     }
   }
 });

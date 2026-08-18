@@ -67,7 +67,10 @@ exports.main = async (event) => {
       const agg = {}; // uid -> { nick, pts, count, hit, sealed: [..] }
       for (const p of preds) {
         const m = fixtures.find(x => x.id === p.m) || {};
-        const sealed = bjTs(m.t) > now; // 未开球 = 封存中
+        // m 未命中或时间非法时默认「封存中」：NaN > now 为 false，
+        // 若直接用 bjTs(m.t) > now 会误判已开箱而泄露明文
+        const kt = m.t ? bjTs(m.t) : NaN;
+        const sealed = !(kt > now); // 仅明确已开球才视为已开箱
         const uid = p.uid || p._openid || ''; // 客户端直写时 uid 为空，回退 _openid
         agg[uid] = agg[uid] || { nick: p.nick || uid, pts: 0, count: 0, hit: 0, entries: [] };
         const a = agg[uid];

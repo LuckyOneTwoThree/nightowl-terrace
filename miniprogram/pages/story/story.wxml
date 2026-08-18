@@ -17,7 +17,7 @@
     <view class="ava-row" wx:if="{{avatars.length}}">
       <block wx:for="{{avatars}}" wx:key="id">
         <image class="crest-xl" src="{{item.logo}}" mode="aspectFill" />
-        <view class="ava circle-xl crest-fb" wx:if="{{!item.logo}}" style="background: {{item.color}}22; border-color: {{item.color}}66;">{{item.id}}</view>
+        <view class="ava circle-xl crest-fb" wx:if="{{!item.logo}}" style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
       </block>
     </view>
     

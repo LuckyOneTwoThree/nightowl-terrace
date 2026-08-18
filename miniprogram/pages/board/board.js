@@ -25,13 +25,16 @@ function weekKeyOfDate(dateStr) {
 
 Page({
   data: {
+    theme: '',
     stats: { n: 0, hours: '0.0', streak: 0, pct: 0 },
     live: null,        // 可打卡：开球后 30 分钟内的 S2+ 场
     preview: null,     // 今晚凌晨档预告
     checked: false,
     ranks: MOCK,
-    myHours: 0,
-    myStreak: 0
+    myHours: '0.0',
+    myStreak: 0,
+    myNick: '夜猫子',
+    worst: null
   },
 
   onShow: function () {

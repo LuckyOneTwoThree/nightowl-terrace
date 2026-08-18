@@ -22,6 +22,7 @@ function load() {
 
 Page({
   data: {
+    theme: '',
     s: null,
     starText: '★★',
     themeModeText: '🌙 经典夜猫暗夜模式',
@@ -31,7 +32,13 @@ Page({
     inputNick: ''
   },
 
-  onShow: function () { this.apply(load()); },
+  onLoad: function () {
+    this.apply(load());
+  },
+
+  onShow: function () {
+    this.apply(load());
+  },
 
   apply: function (s) {
     var modeDesc = {
@@ -178,6 +185,12 @@ Page({
         (info.keys || []).forEach(function (k) {
           if (/^settled_/.test(k)) wx.removeStorageSync(k);
         });
+        // 同步复位全局缓存：否则 getFollowed 等仍持旧值直到重启小程序
+        var app = getApp();
+        app.setFollowed([]);
+        app.globalData.themeMode = null;
+        app._lastAppliedTheme = null;
+        app.applyTheme();
         wx.showToast({ title: '已清除', icon: 'none' });
       }
     });

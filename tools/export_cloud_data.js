@@ -44,6 +44,9 @@ files.forEach(f => {
     const doc = Object.assign({}, item);
     if (doc.id && !doc._id) {
       doc._id = String(doc.id);
+    } else if (doc.m && !doc._id) {
+      // recommendations 层以比赛 id（m）作稳定主键，避免重复导入产生重复文档
+      doc._id = String(doc.m);
     }
     // 自动补齐 settled：积分结算标记，初始全部 false（未结算），由 settleMatches 结算后置 true
     if (f.coll === 'fixtures' || f.coll === 'fixtures_seed') {

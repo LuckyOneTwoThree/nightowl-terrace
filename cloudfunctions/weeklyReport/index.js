@@ -33,18 +33,31 @@ async function fetchAll(db, coll, where, limit) {
   return out;
 }
 
+// 北京时间 'YYYY-MM-DDTHH:mm' → 时间戳（周归属按比赛开球时间，与 readBoard 一致）
+function bjTs(t) {
+  const m = String(t || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (!m) return NaN;
+  return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) - 8 * 3600000;
+}
+
 exports.main = async (event) => {
   const db = cloud.database();
   const { from, to } = lastWeekRange();
 
   try {
     // ── 1. 盲评周榜（已结算积分）+ 最准之口 ──
+    // 周归属按比赛开球时间（fixtures.t）而非 settledAt：settleMatches 定时每小时跑，
+    // 结算时序不再影响周报归属；uid 统一回退 _openid（客户端直写不携带 uid）
+    const fixtures = await fetchAll(db, 'fixtures', {}, 2000);
+    const mTs = {};
+    fixtures.forEach(f => { mTs[f.id] = bjTs(f.t); });
     const preds = (await fetchAll(db, 'predictions', {}, 3000))
-      .filter(p => p.settledAt >= from && p.settledAt < to && !p.tampered);
+      .filter(p => !p.tampered && mTs[p.m] != null && !Number.isNaN(mTs[p.m]) && mTs[p.m] >= from && mTs[p.m] < to);
     const guessAgg = {};
     for (const p of preds) {
-      const k = (p.gid || 'default') + '|' + p.uid;
-      guessAgg[k] = guessAgg[k] || { gid: p.gid || 'default', uid: p.uid, nick: p.nick || p.uid, pts: 0, hit: 0, count: 0 };
+      const uid = p.uid || p._openid || '';
+      const k = (p.gid || 'default') + '|' + uid;
+      guessAgg[k] = guessAgg[k] || { gid: p.gid || 'default', uid: uid, nick: p.nick || uid, pts: 0, hit: 0, count: 0 };
       guessAgg[k].pts += p.pts || 0;
       guessAgg[k].count++;
       if (p.hit) guessAgg[k].hit++;
@@ -68,9 +81,9 @@ exports.main = async (event) => {
     for (const c of cis) {
       const g = c.gid || 'default';
       owlAgg[g] = owlAgg[g] || {};
-      const k = c.uid;
-      owlAgg[g][k] = owlAgg[g][k] || { uid: c.uid, nick: c.nick || c.uid, hours: 0, nights: 0, worst: 0, worstM: null };
-      const a = owlAgg[g][k];
+      const uid = c.uid || c._openid || '';
+      owlAgg[g][uid] = owlAgg[g][uid] || { uid: uid, nick: c.nick || uid, hours: 0, nights: 0, worst: 0, worstM: null };
+      const a = owlAgg[g][uid];
       const cost = c.cost || 0;
       a.hours += cost;
       a.nights++;
@@ -106,7 +119,7 @@ exports.main = async (event) => {
     // ── 3.5 透支快照（PM 9.1 周一结算：上周实际 vs 预算）──
     const users = await fetchAll(db, 'users', {}, 2000);
     const budgetMap = {}; // uid -> 每周睡眠预算（默认 4h，PM 7.3）
-    users.forEach(u => { budgetMap[u.uid] = (u.budget != null ? u.budget : 4); });
+    users.forEach(u => { const uid = u.uid || u._openid || ''; budgetMap[uid] = (u.budget != null ? u.budget : 4); });
     const overdraft = {}; // gid -> [{nick, hours, budget, over}]
     Object.keys(owlBoards).forEach(g => {
       overdraft[g] = owlBoards[g]

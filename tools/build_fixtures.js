@@ -234,6 +234,7 @@ out.forEach(m => { delete m._d; });
 
 out.sort((x, y) => x.t.localeCompare(y.t) || x.id.localeCompare(y.id));
 fs.writeFileSync(DATA('fixtures.full.json'), JSON.stringify(out));
+fs.writeFileSync(DATA('fixtures.full.js'), 'module.exports = ' + JSON.stringify(out) + ';\n');
 
 // ---------- 报告 ----------
 console.log(report.join('\n'));

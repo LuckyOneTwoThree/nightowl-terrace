@@ -2,7 +2,8 @@ var data = require('../../utils/data.js');
 
 Page({
   onShow: function () { getApp().applyTheme(this); },
-  data: { groups: [], picked: 0 },
+  data: {
+    theme: '', groups: [], picked: 0 },
 
   onLoad: function () {
     var followed = getApp().getFollowed();
@@ -13,7 +14,8 @@ Page({
         teams: teams.filter(function (t) { return t.league === l.id; }).map(function (t) {
           return {
             id: t.id, zh: t.zh, color: t.color, logo: t.logo,
-            on: followed.indexOf(t.id) >= 0
+            on: followed.indexOf(t.id) >= 0,
+            bg: data.tint(t.color, .2), bd: data.tint(t.color, .35)
           };
         })
       };

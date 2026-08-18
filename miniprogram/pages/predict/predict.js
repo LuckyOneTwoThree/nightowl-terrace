@@ -9,6 +9,7 @@ var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
+    theme: '',
     deadlineText: '',
     leftText: '',
     cards: [],

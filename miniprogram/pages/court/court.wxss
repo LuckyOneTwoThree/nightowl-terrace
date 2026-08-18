@@ -81,5 +81,9 @@
   margin-top: 18rpx; padding: 14rpx 20rpx; border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: space-between; font-size: 22rpx;
 }
-.a-actions { display: flex; gap: 12rpx; }
-.a-foot-done { margin-top: 12rpx; font-size: 22rpx; }
+.a-foot-done {
+  margin-top: 14rpx; display: flex; align-items: center; justify-content: space-between;
+  font-size: 22rpx;
+}
+.a-link { font-size: 22rpx; opacity: .9; }
+

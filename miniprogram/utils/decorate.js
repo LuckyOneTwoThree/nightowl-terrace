@@ -24,26 +24,30 @@ function localTime(m) {
   return p2(Math.floor(local / 60)) + ':' + p2(local % 60);
 }
 
-// 相对「夜猫今天」的天数差（今天=0，明天=1，昨天=-1…）
+// 相对「今天」的天数差（今天=0，明天=1，昨天=-1…），基于北京时间自然日比对
 function relDay(t) {
-  var mD = new Date(engine.owlDay(t).replace(/-/g, '/') + ' 00:00:00');
-  var todayD = new Date(engine.nightOf(new Date()).replace(/-/g, '/') + ' 00:00:00');
+  var day = String(t || '').split('T')[0];
+  var mD = new Date(day.replace(/-/g, '/') + ' 00:00:00');
+  var todayStr = engine.dateStr(new Date());
+  var todayD = new Date(todayStr.replace(/-/g, '/') + ' 00:00:00');
   return Math.round((mD.getTime() - todayD.getTime()) / 86400000);
 }
 
 function getDayLabel(t) {
-  var mD = new Date(engine.owlDay(t).replace(/-/g, '/') + ' 00:00:00');
+  var parts = String(t || '').split('T');
+  var d = new Date((parts[0] || '2026-08-01').replace(/-/g, '/') + ' 00:00:00');
   var diff = relDay(t);
   if (diff === 0) return '今天';
   if (diff === 1) return '明天';
   if (diff === 2) return '后天';
   if (diff === -1) return '昨天';
-  return (mD.getMonth() + 1) + '月' + mD.getDate() + '日 周' + WEEK[mD.getDay()];
+  return (d.getMonth() + 1) + '月' + d.getDate() + '日 周' + WEEK[d.getDay()];
 }
 
 function getDateHeader(t) {
-  var mD = new Date(engine.owlDay(t).replace(/-/g, '/') + ' 00:00:00');
-  var mdStr = (mD.getMonth() + 1) + '月' + mD.getDate() + '日 (周' + WEEK[mD.getDay()] + ')';
+  var parts = String(t || '').split('T');
+  var d = new Date((parts[0] || '2026-08-01').replace(/-/g, '/') + ' 00:00:00');
+  var mdStr = (d.getMonth() + 1) + '月' + d.getDate() + '日 (周' + WEEK[d.getDay()] + ')';
   var diff = relDay(t);
   if (diff === 0) return '今天 · ' + mdStr;
   if (diff === 1) return '明天 · ' + mdStr;
@@ -52,9 +56,10 @@ function getDateHeader(t) {
 }
 
 function dpart(t) {
-  var day = engine.owlDay(t);
+  var parts = String(t || '').split('T');
+  var day = parts[0] || '2026-08-01';
   var d = new Date(day.replace(/-/g, '/') + ' 00:00:00');
-  return { d: d, hm: t.split('T')[1], day: day };
+  return { d: d, hm: parts[1] || '00:00', day: day };
 }
 
 /**

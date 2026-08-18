@@ -2,7 +2,7 @@
 {"l":"PD","r":1,"id":"PD-1-SEV-RAY","t":"2026-08-16T03:30","tbd":false,"st":"done","h":"SEV","a":"RAY","s":3,"sc":"2-1","tv":null,"_id":"PD-1-SEV-RAY","settled":false}
 {"l":"PD","r":1,"id":"PD-1-RAC-VIL","t":"2026-08-16T23:00","tbd":false,"st":"done","h":"RAC","a":"VIL","s":1,"sc":"2-2","tv":null,"_id":"PD-1-RAC-VIL","settled":false}
 {"l":"PD","r":1,"id":"PD-1-ESP-LEV","t":"2026-08-17T01:00","tbd":false,"st":"done","h":"ESP","a":"LEV","s":2,"sc":"3-0","tv":null,"_id":"PD-1-ESP-LEV","settled":false}
-{"l":"PD","r":1,"id":"PD-1-DEP-ELC","t":"2026-08-18T03:00","tbd":false,"st":"done","h":"DEP","a":"ELC","s":3,"sc":"1-1","tv":null,"_id":"PD-1-DEP-ELC","settled":false}
+{"l":"PD","r":1,"id":"PD-1-DEP-ELC","t":"2026-08-18T03:00","tbd":false,"st":"sched","h":"DEP","a":"ELC","s":3,"sc":null,"tv":null,"_id":"PD-1-DEP-ELC","settled":false}
 {"l":"PD","r":1,"id":"PD-1-ATM-MAL","t":"2026-08-20T03:00","tbd":false,"st":"sched","h":"ATM","a":"MAL","s":3,"sc":null,"tv":null,"_id":"PD-1-ATM-MAL","settled":false}
 {"l":"PD","r":2,"id":"PD-2-RAY-ALA","t":"2026-08-21T03:00","tbd":false,"st":"sched","h":"RAY","a":"ALA","s":3,"sc":null,"tv":null,"_id":"PD-2-RAY-ALA","settled":false}
 {"l":"FL","r":1,"id":"FL-1-OM-STR","t":"2026-08-22T02:45","tbd":false,"st":"sched","h":"OM","a":"STR","s":3,"sc":null,"tv":null,"_id":"FL-1-OM-STR","settled":false}

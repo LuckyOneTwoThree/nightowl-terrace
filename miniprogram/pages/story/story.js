@@ -10,6 +10,7 @@ var TYPE_ZH = {
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
+    theme: '',
     s: null,        // 故事线本体
     typeZh: '',
     leagueZh: '',
@@ -71,7 +72,13 @@ Page({
       s: s,
       typeZh: TYPE_ZH[s.type] || '故事线',
       leagueZh: lgZh,
-      avatars: (s.teams || []).slice(0, 3).map(function (t) { return data.getTeam(t); }),
+      avatars: (s.teams || []).slice(0, 3).map(function (t) {
+        var tm = data.getTeam(t);
+        return {
+          id: tm.id, zh: tm.zh, logo: tm.logo, color: tm.color,
+          bg: data.tint(tm.color, .2), bd: data.tint(tm.color, .35)
+        };
+      }),
       statusZh: s.status === 'active' ? '进行中' : s.status === 'done' ? '已完结' : '筹备中',
       nodes: nodes,
       related: related

@@ -12,9 +12,10 @@
     </view>
 
     <!-- 日期条（_4：横滑日选） -->
-    <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" wx:if="{{viewMode === 'day'}}">
+    <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" scroll-into-view="{{dchipId}}" scroll-with-animation wx:if="{{viewMode === 'day'}}">
       <view
         wx:for="{{days}}" wx:key="day"
+        id="dchip-{{item.day}}"
         class="dchip {{selDay === item.day ? 'on floodlight-glow' : ''}}"
         data-day="{{item.day}}" bindtap="onPickDay">
         <view class="dchip-dot dot-amber" wx:if="{{selDay === item.day}}"></view>

@@ -5,6 +5,7 @@ var cloud = require('../../utils/cloud.js');
 
 Page({
   data: {
+    theme: '',
     open: null,        // 开庭中：最近一场 ★★★ 未赛场
     text: '',
     count: '0/40',
@@ -13,12 +14,14 @@ Page({
   },
 
   onLoad: function (q) {
-    this._focusId = q.id || '';
+    this._focusId = q && q.id ? q.id : '';
     this.refresh();
   },
 
   onShow: function () {
-    getApp().applyTheme(this); this.refresh(); },
+    getApp().applyTheme(this);
+    this.refresh();
+  },
 
   refresh: function () {
     var that = this;
@@ -26,15 +29,28 @@ Page({
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
 
-    // 候选：★★★ 未赛场（焦点对阵/六强内战/推荐层三星），优先 URL 指定场
-    var now = Date.now();
-    var cands = data.matchesAll().filter(function (m) {
-      if (m.st !== 'sched') return false;
-      var ev = engine.evaluate(m, recMap, rivs, sls, []);
-      return ev.star >= 3 && engine.ts(m.t) > now;
-    }).sort(function (a, b) { return engine.ts(a.t) - engine.ts(b.t); });
+    // 优先取 URL 指定场（从详情页带入）
+    var pick = null;
+    if (this._focusId) {
+      pick = data.getMatch(this._focusId);
+    }
+    // 未指定时，默认定位距当前时间最近的焦点大战（★★★ 优先，若无则取最近未赛场）
+    if (!pick) {
+      var now = Date.now();
+      var cands = data.matchesAll().filter(function (m) {
+        if (m.st !== 'sched') return false;
+        var ev = engine.evaluate(m, recMap, rivs, sls, []);
+        return ev.star >= 3 && engine.ts(m.t) > now;
+      }).sort(function (a, b) { return engine.ts(a.t) - engine.ts(b.t); });
 
-    var pick = cands.filter(function (m) { return m.id === that._focusId; })[0] || cands[0] || null;
+      if (cands.length) {
+        pick = cands[0];
+      } else {
+        pick = data.matchesAll().filter(function (m) {
+          return m.st === 'sched' && engine.ts(m.t) > now;
+        }).sort(function (a, b) { return engine.ts(a.t) - engine.ts(b.t); })[0] || null;
+      }
+    }
 
     // 狂言存档：本地 storage（v1 切云后由 settleMatches 自动结算）
     var boasts = wx.getStorageSync('boasts') || {};
@@ -106,5 +122,25 @@ Page({
 
   goDetail: function () {
     if (this.data.open) wx.navigateTo({ url: '/pages/detail/detail?id=' + this.data.open.id });
+  },
+
+  // 点击法庭判例存档：直接跳转到对应比赛对决详情
+  onTapArchive: function (e) {
+    var id = e.currentTarget.dataset.id;
+    if (id) {
+      wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    }
+  },
+
+  // 切换上方开庭中卡片为该场对决
+  onSwitchDuel: function (e) {
+    var id = e.currentTarget.dataset.id;
+    if (!id) return;
+    this._focusId = id;
+    this.refresh();
+    if (wx.pageScrollTo) {
+      wx.pageScrollTo({ scrollTop: 0, duration: 200 });
+    }
+    wx.showToast({ title: '已切换至该场对决', icon: 'none' });
   }
 });

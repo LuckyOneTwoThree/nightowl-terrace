@@ -8,6 +8,7 @@ function lgZh(l) {
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
+    theme: '',
     groups: [],
     draftFollowed: [],
     pickedCount: 0

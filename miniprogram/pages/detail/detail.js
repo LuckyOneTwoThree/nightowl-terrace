@@ -5,6 +5,7 @@ var ics = require('../../utils/ics.js');
 
 Page({
   data: {
+    theme: '',
     m: null,
     countdownText: '',
     quip: ''
@@ -67,13 +68,16 @@ Page({
   },
 
   goPredict: function () { wx.navigateTo({ url: '/pages/predict/predict' }); },
-  goCourt: function () { wx.navigateTo({ url: '/pages/court/court' }); },
+  goCourt: function () {
+    var id = this.data.m ? this.data.m.id : '';
+    wx.navigateTo({ url: '/pages/court/court' + (id ? '?id=' + id : '') });
+  },
   goPoster: function () { wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.m.id }); },
   goStory: function (e) {
     wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
   },
 
-  // 添加到日历（PM 十一：订阅消息兜底，导出 ICS 由系统日历提醒）
+  // 添加到日历：优先写入微信系统日历，失败时降级导出 ICS 文件
   onCalendar: function () {
     var m = this.data.m;
     if (!m || m.tbd) {
@@ -81,11 +85,11 @@ Page({
       return;
     }
     var desc = m.points.length ? m.points[0] : '夜猫指数 ' + m.indexText;
-    ics.share(
-      [{ t: this._raw.t, title: '⚽ ' + m.home.zh + ' vs ' + m.away.zh + ' · ' + m.lgZh, desc: desc, alarmMin: 30 }],
+    ics.addCalendar(
+      { t: this._raw.t, title: '⚽ ' + m.home.zh + ' vs ' + m.away.zh + ' · ' + m.lgZh, desc: desc, alarmMin: 30 },
       '夜猫看台-' + m.home.id + m.away.id,
       function (ok, msg) {
-        wx.showToast({ title: ok ? '已导出，去日历看看' : (msg || '未导出'), icon: 'none' });
+        wx.showToast({ title: msg || (ok ? '已加入日历' : '添加失败'), icon: ok ? 'success' : 'none' });
       }
     );
   }

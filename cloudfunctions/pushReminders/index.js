@@ -39,14 +39,15 @@ exports.main = async () => {
   const TMPL_DL = process.env.TMPL_DEADLINE; // 盲评截止提醒模板（PM 9.4）
 
   try {
-    // 1. 未来 15~45 分钟开球的场次（北京时间 t 格式 'YYYY-MM-DDTHH:mm'）
+    // 1. 未来 [15, 30) 分钟开球的场次（北京时间 t 格式 'YYYY-MM-DDTHH:mm'）
+    // 窗口宽度与触发周期一致（15 分钟），相邻触发无缝衔接不重叠，同一场不会推两次
     const now = Date.now();
-    const from = now + 15 * 60000, to = now + 45 * 60000;
+    const from = now + 15 * 60000, to = now + 30 * 60000;
     const fixtures = await fetchAll(db, 'fixtures', { st: 'sched' }, 2000);
 
     const upcoming = fixtures.filter(m => {
       const ts = bjTs(m.t);
-      return !isNaN(ts) && !m.tbd && ts >= from && ts <= to;
+      return !isNaN(ts) && !m.tbd && ts >= from && ts < to;
     });
 
     // 2. ★★★ 场次（推荐层人工星级）

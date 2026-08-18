@@ -58,6 +58,7 @@ function decorate(entry) {
 
 Page({
   data: {
+    theme: '',
     dateLabel: '',
     quip: '',
     hero: null,
@@ -66,11 +67,14 @@ Page({
     tomorrow: [],
     nextFocal: null,
     replays: [],
+    tbd: [],
     stories: []
   },
 
   onLoad: function () {
     this._timer = null;
+    this._lastFollowed = JSON.stringify(getApp().getFollowed());
+    this._lastTodayStr = engine.nightOf(new Date());
     this.refresh();
   },
 
@@ -81,9 +85,16 @@ Page({
       wx.navigateTo({ url: '/pages/onboarding/onboarding' });
       return;
     }
-    // 关注球队变化后回到本页时刷新提级
-    if (this._loaded) this.refresh();
-    else if (this.data.hero && this._heroTime) this.startCountdown(this._heroTime);
+    // 仅在关注球队变化或跨天时才重新执行全量计算，切 Tab 保持平滑无闪烁
+    var curFollowed = JSON.stringify(getApp().getFollowed());
+    var curTodayStr = engine.nightOf(new Date());
+    if (this._lastFollowed !== curFollowed || this._lastTodayStr !== curTodayStr) {
+      this._lastFollowed = curFollowed;
+      this._lastTodayStr = curTodayStr;
+      this.refresh();
+    } else if (this.data.hero && this._heroTime && !this._timer) {
+      this.startCountdown(this._heroTime);
+    }
   },
 
   onHide: function () {
@@ -117,6 +128,16 @@ Page({
     var pick = engine.pickToday(data.matchesOfDay(todayStr), recMap, rivs, sls, followed);
     var tmrPick = engine.pickToday(data.matchesOfDay(tmrStr), recMap, rivs, sls, followed);
     var focal = engine.nextFocal(data.matchesAll(), recMap, rivs, sls, followed, Date.now());
+
+    // tbd 场次（开球时间未公布）：不进今晚之选/背包，但今日页以「时间待定」列出（关注球队优先）
+    var tbdList = data.matchesOfDay(todayStr).filter(function (m) {
+      return m.tbd && m.st === 'sched';
+    }).map(function (m) {
+      var ev = engine.evaluate(m, recMap, rivs, sls, followed);
+      var cared = followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0;
+      return { d: decorate({ m: m, ev: ev }), cared: cared };
+    }).sort(function (x, y) { return y.cared - x.cared; })
+      .map(function (x) { return x.d; });
 
     // 补番：本季已赛 + 剧透屏蔽标（sc 未补录时模糊看点文案）
     var rp = engine.replays(data.matchesAll(), recMap, 3).map(function (r) {
@@ -157,6 +178,7 @@ Page({
         return d;
       })() : null,
       replays: rp,
+      tbd: tbdList,
       stories: stories
     });
 

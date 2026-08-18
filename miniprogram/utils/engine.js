@@ -259,7 +259,7 @@ function minefield(matches, recMap, rivalries, storylines, followed) {
 // ---------- 补番推荐 ----------
 // 本季已赛高分场次（replay 标记优先，星级降序）
 
-function replays(matches, recMap, storylines, limit) {
+function replays(matches, recMap, limit) {
   limit = limit || 3;
   var recMapSafe = recMap || {};
   return matches
@@ -281,7 +281,8 @@ function replays(matches, recMap, storylines, limit) {
 function nextFocal(matches, recMap, rivalries, storylines, followed, nowTs) {
   var future = matches
     .filter(function (m) {
-      return m.st === 'sched' && ts(m.t) > nowTs;
+      // tbd 占位时间不可信，不作为焦点战倒计时目标
+      return m.st === 'sched' && !m.tbd && ts(m.t) > nowTs;
     })
     .map(function (m) {
       var ev = evaluate(m, recMap, rivalries, storylines, followed);

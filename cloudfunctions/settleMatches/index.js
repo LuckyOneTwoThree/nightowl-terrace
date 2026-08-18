@@ -23,10 +23,14 @@ function commitHash(p) {
 function settle(pred, sc, upset) {
   const parts = String(sc).split('-');
   const h = Number(parts[0]), a = Number(parts[1]);
+  // 比分无效（如 ESPN 补录前 sc=null）不结算，防止 NaN 比较恒 false 被当成平局骗分
+  if (!Number.isFinite(h) || !Number.isFinite(a)) return { hit: false, pts: 0 };
   const fact = h > a ? 'h' : h < a ? 'a' : 'd';
   const hit = pred.pick === fact;
   let pts = hit ? 3 : 0;
+  // 比分加分需双方比分都已填写（半比分如只填主队 2、赛果 2-0 不给 +2）
   if (hit && pred.scoreH !== '' && pred.scoreH != null &&
+      pred.scoreA !== '' && pred.scoreA != null &&
       Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
   if (hit && upset) pts *= 2;
   return { hit, pts };
@@ -61,10 +65,10 @@ exports.main = async (event) => {
     const recs = await fetchAll(db, 'recommendations', {}, 1000);
     const upsetSet = new Set(recs.filter(r => r.upset).map(r => r.m));
 
-    // 1. 已赛未结算场次
+    // 1. 已赛未结算场次（sc 需非空且非 null：String(null) 会解析成 NaN 被误判平局）
     const matches = await fetchAll(db, 'fixtures', {
       st: 'done',
-      sc: _.neq('').and(_.exists(true)),
+      sc: _.neq('').and(_.neq(null)).and(_.exists(true)),
       settled: _.neq(true)
     }, 200);
 
@@ -74,8 +78,12 @@ exports.main = async (event) => {
       const kickTs = bjTs(m.t);
 
       // uid -> 本场积分增量（跨群按 gid 分账）
+      // 客户端直写时不带 uid，云库自动补 _openid，此处统一回退（与 readBoard 口径一致）
       const perGid = {};
       for (const p of preds) {
+        // 幂等：带条件更新，仅当该预测尚未结算时才写入并计分——
+        // 超时重跑/并发触发时已结算的预测不会再次累加进 standings
+        const cond = { _id: p._id, settledAt: _.exists(false) };
         const update = { revealed: true, settledAt: Date.now(), sc: m.sc };
         const late = !!p.ts && !Number.isNaN(kickTs) && p.ts > kickTs + 60000; // 开球后才封存（1 分钟时钟宽容）
         if ((p.salt && p.hash && commitHash(p) !== p.hash) || late) {
@@ -91,12 +99,16 @@ exports.main = async (event) => {
           update.pts = r.pts;
           update.tampered = false;
         }
-        await db.collection('predictions').doc(p._id).update({ data: update });
+        const applied = await db.collection('predictions')
+          .where(cond).update({ data: update });
+        if (!applied.stats || !applied.stats.updated) continue; // 已被并发结算，跳过计分
         summary.predictions++;
 
+        const uid = p.uid || p._openid || '';
+        if (!uid) continue; // 无 uid 无法归属（理论上不会发生）
         const g = p.gid || 'default';
         perGid[g] = perGid[g] || {};
-        perGid[g][p.uid] = (perGid[g][p.uid] || 0) + (update.pts || 0);
+        perGid[g][uid] = (perGid[g][uid] || 0) + (update.pts || 0);
       }
 
       // 3. 写回 standings 总榜（uid 维度 upsert）
@@ -112,7 +124,7 @@ exports.main = async (event) => {
             });
           } else {
             await db.collection('standings').add({
-              data: { gid, uid, nick: (preds.find(x => x.uid === uid) || {}).nick || uid, pts: delta, updatedTs: Date.now() }
+              data: { gid, uid, nick: (preds.find(x => (x.uid || x._openid) === uid) || {}).nick || uid, pts: delta, updatedTs: Date.now() }
             });
             summary.standings++;
           }

@@ -99,4 +99,39 @@ function share(events, fileName, cb) {
   });
 }
 
-module.exports = { build: build, toUTC: toUTC, share: share };
+/**
+ * 优先调用微信原生 API wx.addPhoneCalendar 直接写入系统日历
+ * 若环境不支持或授权失败，平滑降级为 ICS 文件分享导出
+ */
+function addCalendar(event, fileName, cb) {
+  var p = event.t.split('T');
+  var d = p[0].split('-');
+  var hm = p[1].split(':');
+  var startSec = Math.floor(new Date(Date.UTC(Number(d[0]), Number(d[1]) - 1, Number(d[2]), Number(hm[0]) - 8, Number(hm[1]))).getTime() / 1000);
+  var endSec = startSec + 7200; // 默认 2 小时
+
+  if (typeof wx.addPhoneCalendar === 'function') {
+    wx.addPhoneCalendar({
+      title: event.title,
+      startTime: startSec,
+      endTime: endSec,
+      description: event.desc || '',
+      alarm: true,
+      alarmOffset: (event.alarmMin || 30) * 60,
+      success: function () {
+        cb(true, '已加入手机日历');
+      },
+      fail: function (err) {
+        if (err && err.errMsg && err.errMsg.indexOf('cancel') >= 0) {
+          cb(false, '已取消添加');
+          return;
+        }
+        share([event], fileName, cb);
+      }
+    });
+  } else {
+    share([event], fileName, cb);
+  }
+}
+
+module.exports = { build: build, toUTC: toUTC, share: share, addCalendar: addCalendar };

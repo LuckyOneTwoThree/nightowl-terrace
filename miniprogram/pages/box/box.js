@@ -8,6 +8,7 @@ var GIANTS = ['ARS', 'MCI', 'LIV', 'CHE', 'MUN', 'TOT', 'RMA', 'BAR', 'ATM', 'MI
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
+    theme: '',
     pills: [
       { key: 'prime', label: '仅黄金档', on: false },
       { key: 'star2', label: '★★以上', on: false },
@@ -62,7 +63,7 @@ Page({
     if (!tags.length) tags.push('悬念局');
 
     this.setData({
-      front: { tags: tags, stars: ev.star, cost: engine.tierOf(m).cost },
+      front: { tags: tags, stars: '★★★'.slice(0, ev.star), cost: engine.tierOf(m).cost },
       back: decorate.dec(m, ev, { followed: getApp().getFollowed() }),
       revealed: false
     });

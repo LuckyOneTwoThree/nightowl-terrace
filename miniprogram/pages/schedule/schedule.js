@@ -20,8 +20,8 @@ function dayLabel(day) {
 }
 
 Page({
-  onShow: function () { getApp().applyTheme(this); },
   data: {
+    theme: '',
     days: [],          // 日期条
     selDay: '',        // 选中日期（scroll-into-view）
     leagues: [],
@@ -35,10 +35,19 @@ Page({
     selRound: 0
   },
 
+  onShow: function () {
+    getApp().applyTheme(this);
+    var curFollowed = JSON.stringify(getApp().getFollowed());
+    if (this._lastFollowed !== curFollowed) {
+      this.onLoad();
+    }
+  },
+
   onLoad: function () {
+    this._lastFollowed = JSON.stringify(getApp().getFollowed());
     var now = new Date();
-    // 夜猫口径「今日」：凌晨场归前一晚，默认选中正在过的这一夜
-    var todayStr = engine.nightOf(now);
+    // 按照北京时间自然日展示赛程
+    var todayStr = engine.dateStr(now);
 
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
@@ -46,12 +55,12 @@ Page({
     // 关注球队参与星级评定（PM 7.4：关注球队提至最高 ★★，赛程页同步生效）
     var followed = getApp().getFollowed();
 
-    // 按展示日分组
+    // 按北京时间自然日分组
     var byDay = {};
     var groups = [];
     var byRound = {}; // lg -> { r: [cards] }（轮次视图）
     data.matchesAll().forEach(function (m) {
-      var day = engine.owlDay(m.t);
+      var day = m.t.split('T')[0];
       if (!byDay[day]) {
         byDay[day] = { day: day, label: dayLabel(day), matches: [] };
         groups.push(byDay[day]);
@@ -63,6 +72,7 @@ Page({
       var sc = m.sc ? m.sc.split('-') : null;
       var card = {
         id: m.id,
+        t: m.t,
         lg: m.l,
         r: m.r,
         lgZh: lgZh(m.l),
@@ -86,28 +96,28 @@ Page({
       byRound[m.l][m.r].push(card);
     });
     groups.sort(function (x, y) { return x.day < y.day ? -1 : 1; });
-    groups.forEach(function (g) { g.matches.sort(function (x, y) { return x.hm < y.hm ? -1 : 1; }); });
+    groups.forEach(function (g) { g.matches.sort(function (x, y) { return x.t < y.t ? -1 : 1; }); });
 
-    // 日期条：含今天的全部日期，今天为默认选中
+    // 日期条：按北京时间自然日，今天为默认选中
     var days = groups.map(function (g) {
       return { day: g.day, short: g.label.short, wd: g.label.wd, isToday: g.day === todayStr, count: g.matches.length };
     });
     var selDay = todayStr;
-    if (!byDay[selDay]) selDay = (groups.filter(function (g) { return g.day > todayStr; })[0] || groups[0] || {}).day || '';
+    if (!byDay[selDay]) selDay = (groups.filter(function (g) { return g.day >= todayStr; })[0] || groups[0] || {}).day || '';
 
-    // 全量分组留在内存（约 280 日 / 1752 场），仅按需 setData 渲染窗口（前 1 天 + 后 5 天）
+    // 全量分组留在内存（约 280 日 / 1752 场），仅按需 setData 渲染窗口（从选中日起展示 7 天）
     this._groups = groups;
     this._byRound = byRound;
     this.setData({
       days: days,
       selDay: selDay,
+      dchipId: 'dchip-' + selDay,
       leagues: [{ id: 'ALL', zh: '全部' }].concat(data.LEAGUES),
-      viewGroups: this.windowOf(selDay),
-      viewId: 'd-' + selDay
+      viewGroups: this.windowOf(selDay)
     });
   },
 
-  // 渲染窗口：选中日前 1 天起共 7 天（真机性能：单次 setData ≤ ~60 场）
+  // 渲染窗口：从选中日当天开始向后渲染 7 天（首个展示组即为所选日期）
   windowOf: function (day) {
     var gs = this._groups || [];
     var idx = -1;
@@ -115,14 +125,22 @@ Page({
       if (gs[i].day === day) { idx = i; break; }
     }
     if (idx < 0) return gs.slice(0, 7);
-    var from = Math.max(0, idx - 1);
+    var from = idx; // 严格从选中日当天开始
     var to = Math.min(gs.length, from + 7);
     return gs.slice(from, to);
   },
 
   onPickDay: function (e) {
     var d = e.currentTarget.dataset.day;
-    this.setData({ selDay: d, viewGroups: this.windowOf(d), viewId: 'd-' + d });
+    this.setData({
+      selDay: d,
+      dchipId: 'dchip-' + d,
+      viewGroups: this.windowOf(d)
+    });
+    // 切换日期后重置页面滚动高度至顶部，使所选日期置顶显示
+    if (wx.pageScrollTo) {
+      wx.pageScrollTo({ scrollTop: 0, duration: 150 });
+    }
   },
   onPickLg: function (e) {
     var lg = e.currentTarget.dataset.lg;
@@ -173,7 +191,7 @@ Page({
     return {
       day: 'round-' + lg + '-' + r,
       label: { md: lgZh(lg) + ' · 第' + r + '轮', week: cards.length + ' 场' },
-      matches: cards.slice().sort(function (x, y) { return x.hm < y.hm ? -1 : 1; })
+      matches: cards.slice().sort(function (x, y) { return x.t < y.t ? -1 : 1; })
     };
   },
 

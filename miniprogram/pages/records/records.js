@@ -8,7 +8,7 @@ var WEEK = decorate.WEEK;
 function labelOf(dateStr) {
   var f = dateStr.split('-');
   var d = new Date(Number(f[0]), Number(f[1]) - 1, Number(f[2]));
-  return f[1] + '月' + f[2] + '日 周' + WEEK[d.getDay()];
+  return Number(f[1]) + '月' + Number(f[2]) + '日 周' + WEEK[d.getDay()];
 }
 
 // 结算：胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4）
@@ -19,14 +19,18 @@ function settle(pred, m, recMap) {
   var fact = h > a ? 'h' : h < a ? 'a' : 'd';
   var hit = pred.pick === fact;
   var pts = hit ? 3 : 0;
-  if (hit && pred.scoreH !== '' && Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
+  // 比分加分需双方比分都已填写（半比分如只填主队 2、赛果 2-0 不给 +2，Number('') === 0）
+  if (hit && pred.scoreH !== '' && pred.scoreH != null &&
+      pred.scoreA !== '' && pred.scoreA != null &&
+      Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
   var rec = (recMap || {})[m.id];
   if (hit && rec && rec.upset) pts *= 2; // 冷门翻倍
   return { hit: hit, pts: pts, sc: m.sc, upset: hit && rec && !!rec.upset };
 }
 
 Page({
-  data: { groups: [], empty: false },
+  data: {
+    theme: '', groups: [], empty: false },
 
   onShow: function () {
     getApp().applyTheme(this); this.refresh(); },
@@ -49,8 +53,8 @@ Page({
       var hTeam = data.getTeam(m.h) || {};
       var aTeam = data.getTeam(m.a) || {};
       rows.push({
-        key: 'pred-' + mid,
-        label: labelOf(engine.owlDay(m.t)),
+        key: 'pred-' + mid, mid: mid,
+        label: labelOf(m.t.split('T')[0]),
         sort: p.ts || 0, type: 'pred',
         names: (hTeam.zh || m.h) + ' vs ' + (aTeam.zh || m.a),
         logo: hTeam.logo || '',
@@ -66,7 +70,7 @@ Page({
     Object.keys(boasts).forEach(function (mid) {
       var b = boasts[mid];
       rows.push({
-        key: 'boast-' + mid,
+        key: 'boast-' + mid, mid: mid,
         label: b.md, sort: b.ts || 0, type: 'boast',
         names: b.names, sub: b.text,
         finished: b.result !== null, hit: b.result === 'hit', pts: 0
@@ -75,7 +79,7 @@ Page({
     Object.keys(checkins).forEach(function (mid) {
       var c = checkins[mid];
       rows.push({
-        key: 'ci-' + mid,
+        key: 'ci-' + mid, mid: mid,
         label: c.md, sort: c.ts || 0, type: 'checkin',
         names: c.names, sub: '夜猫打卡', cost: c.cost,
         finished: true, hit: true, pts: 0
@@ -92,5 +96,10 @@ Page({
     this.setData({ groups: groups, empty: !rows.length });
   },
 
-  goToday: function () { wx.switchTab({ url: '/pages/today/today' }); }
+  goToday: function () { wx.switchTab({ url: '/pages/today/today' }); },
+
+  goDetail: function (e) {
+    var id = e.currentTarget.dataset.id;
+    if (id) wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+  }
 });

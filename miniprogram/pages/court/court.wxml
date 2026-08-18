@@ -80,10 +80,10 @@
   
   <view class="card-low empty" wx:if="{{!archive.length}}"><text class="mono muted">暂无狂言记录，去上方为本轮大战立据！</text></view>
   
-  <view class="arch card-low" wx:for="{{archive}}" wx:key="id">
+  <view class="arch card-low" wx:for="{{archive}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapArchive">
     <view class="a-head">
       <text class="mono muted">{{item.md}}</text>
-      <text class="mono muted flex1 a-teams">{{item.names}}</text>
+      <text class="mono flex1 a-teams hl">{{item.names}}</text>
       <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-error' : 'chip-amber'}}">
         {{item.result === 'hit' ? '应验' : item.result === 'miss' ? '打脸翻车' : '开庭审理中'}}
       </view>
@@ -94,12 +94,17 @@
     <view class="a-foot card-high" wx:if="{{item.finished && !item.result}}">
       <text class="mono muted">终场比分 {{item.sc}} · 请法官自判：</text>
       <view class="a-actions">
-        <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" bindtap="judge">应验</view>
-        <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" bindtap="judge">翻车</view>
+        <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" catchtap="judge">应验</view>
+        <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" catchtap="judge">翻车</view>
       </view>
     </view>
     <view class="a-foot-done" wx:elif="{{item.finished}}">
       <text class="mono muted">完赛比分 {{item.sc}}</text>
+      <view class="a-link mono text-amber">对决详情 ›</view>
+    </view>
+    <view class="a-foot-done" wx:else>
+      <text class="mono muted">赛前狂言已立据</text>
+      <view class="a-link mono text-amber">对决详情 ›</view>
     </view>
   </view>
 </view>
