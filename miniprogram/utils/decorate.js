@@ -24,57 +24,37 @@ function localTime(m) {
   return p2(Math.floor(local / 60)) + ':' + p2(local % 60);
 }
 
-function getDayLabel(t) {
-  var f = t.split('T');
-  var mDateStr = f[0];
-  var hm = f[1] || '00:00';
-  var mD = new Date(mDateStr.replace(/-/g, '/') + ' 00:00:00');
-  var now = new Date();
-  var todayD = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  var diffDays = Math.round((mD.getTime() - todayD.getTime()) / 86400000);
-  var hour = Number(hm.split(':')[0]);
-  var isEarly = hour >= 0 && hour < 6;
+// 相对「夜猫今天」的天数差（今天=0，明天=1，昨天=-1…）
+function relDay(t) {
+  var mD = new Date(engine.owlDay(t).replace(/-/g, '/') + ' 00:00:00');
+  var todayD = new Date(engine.nightOf(new Date()).replace(/-/g, '/') + ' 00:00:00');
+  return Math.round((mD.getTime() - todayD.getTime()) / 86400000);
+}
 
-  if (diffDays === 0) {
-    return isEarly ? '今晨' : '今天';
-  } else if (diffDays === 1) {
-    return isEarly ? '明晨' : '明天';
-  } else if (diffDays === 2) {
-    return isEarly ? '后天凌晨' : '后天';
-  } else if (diffDays === -1) {
-    return '昨天';
-  } else {
-    return (mD.getMonth() + 1) + '月' + mD.getDate() + '日 周' + WEEK[mD.getDay()];
-  }
+function getDayLabel(t) {
+  var mD = new Date(engine.owlDay(t).replace(/-/g, '/') + ' 00:00:00');
+  var diff = relDay(t);
+  if (diff === 0) return '今天';
+  if (diff === 1) return '明天';
+  if (diff === 2) return '后天';
+  if (diff === -1) return '昨天';
+  return (mD.getMonth() + 1) + '月' + mD.getDate() + '日 周' + WEEK[mD.getDay()];
 }
 
 function getDateHeader(t) {
-  var f = t.split('T');
-  var mDateStr = f[0];
-  var hm = f[1] || '00:00';
-  var mD = new Date(mDateStr.replace(/-/g, '/') + ' 00:00:00');
-  var now = new Date();
-  var todayD = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  var diffDays = Math.round((mD.getTime() - todayD.getTime()) / 86400000);
-  var hour = Number(hm.split(':')[0]);
-  var isEarly = hour >= 0 && hour < 6;
+  var mD = new Date(engine.owlDay(t).replace(/-/g, '/') + ' 00:00:00');
   var mdStr = (mD.getMonth() + 1) + '月' + mD.getDate() + '日 (周' + WEEK[mD.getDay()] + ')';
-
-  if (diffDays === 0) {
-    return (isEarly ? '今晨 · ' : '今天 · ') + mdStr;
-  } else if (diffDays === 1) {
-    return (isEarly ? '明晨 · ' : '明天 · ') + mdStr;
-  } else if (diffDays === 2) {
-    return '后天 · ' + mdStr;
-  } else {
-    return mdStr;
-  }
+  var diff = relDay(t);
+  if (diff === 0) return '今天 · ' + mdStr;
+  if (diff === 1) return '明天 · ' + mdStr;
+  if (diff === 2) return '后天 · ' + mdStr;
+  return mdStr;
 }
 
 function dpart(t) {
-  var f = t.split('T');
-  var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
-  return { d: d, hm: f[1], day: f[0] };
+  var day = engine.owlDay(t);
+  var d = new Date(day.replace(/-/g, '/') + ' 00:00:00');
+  return { d: d, hm: t.split('T')[1], day: day };
 }
 
 /**
