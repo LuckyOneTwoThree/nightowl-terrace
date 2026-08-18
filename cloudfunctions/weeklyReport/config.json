@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "weekly-mon-10am",
+      "type": "timer",
+      "config": "0 0 10 * * 1 *"
+    }
+  ]
+}
