@@ -1,24 +1,32 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 截止条（_11 亮金倒计时条） -->
+  <!-- 顶部公告面板（_11 高质感双层金框） -->
   <view class="deadline card-highest floodlight-glow">
-    <view class="dl-left">
-      <view class="dot-amber animate-pulse"></view>
-      <text class="mono text-amber">本周盲评 · 截止 {{deadlineText}}</text>
+    <view class="dl-main">
+      <view class="dl-left">
+        <view class="dot-amber animate-pulse"></view>
+        <text class="dl-title hl text-amber">本周焦点盲评</text>
+      </view>
+      <view class="chip chip-amber dl-chip">
+        <view class="v-icon v-fire text-amber"></view>
+        <text class="mono">冷门命中×2</text>
+      </view>
     </view>
-    <text class="mono dl-strong hl text-amber">{{leftText}}</text>
+    <view class="dl-sub-row">
+      <text class="mono dl-sub">各场开球前截止封存 · 终场哨响自动开箱</text>
+    </view>
   </view>
 
-  <!-- 规则 chips -->
+  <!-- 规则 chips（3列均匀自适应） -->
   <view class="rules">
-    <view class="chip chip-ghost">
+    <view class="chip chip-ghost rule-chip">
       <view class="v-icon v-check text-teal"></view>
       <text>胜平负 3分</text>
     </view>
-    <view class="chip chip-ghost">
+    <view class="chip chip-ghost rule-chip">
       <view class="v-icon v-bolt text-amber"></view>
       <text>精确比分 +2</text>
     </view>
-    <view class="chip chip-error">
+    <view class="chip chip-error rule-chip">
       <view class="v-icon v-fire text-error"></view>
       <text>冷门翻倍</text>
     </view>

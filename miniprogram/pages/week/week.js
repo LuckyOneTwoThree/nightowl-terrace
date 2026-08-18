@@ -85,7 +85,7 @@ Page({
     function dec(e, withReason) {
       if (!e || !e.m) return {};
       var f = e.m.t.split('T');
-      var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
+      var d = new Date(engine.owlDay(e.m.t).replace(/-/g, '/') + ' 00:00:00');
       var meta = data.LEAGUE_META[e.m.l] || {};
       var hTeam = data.getTeam(e.m.h) || { id: e.m.h, zh: e.m.h, color: '#514533' };
       var aTeam = data.getTeam(e.m.a) || { id: e.m.a, zh: e.m.a, color: '#514533' };

@@ -56,8 +56,6 @@ Page({
     });
 
     this.setData({
-      deadlineText: '各场开球前截止',
-      leftText: '冷门预警场命中翻倍',
       cards: cards,
       sealedAll: cards.length > 0 && cards.every(function (c) { return c.sealed; })
     });

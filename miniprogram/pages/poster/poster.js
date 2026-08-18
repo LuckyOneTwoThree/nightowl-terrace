@@ -13,14 +13,9 @@ Page({
       return;
     }
     var m = decorate.dec(raw, null, { followed: getApp().getFollowed() });
-    var f = raw.t.split('T');
-    var mD = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
-    var now = new Date();
-    var todayD = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var diffDays = Math.round((mD.getTime() - todayD.getTime()) / 86400000);
-    var hour = Number(f[1].split(':')[0]);
-    var slogan = (diffDays === 0 || (diffDays === 1 && hour < 6)) ? '今晚哪场值得熬'
-      : (diffDays === 1) ? '明晚哪场值得熬'
+    // 标语沿用夜猫口径（dayLabel 已把 <06:00 归前一晚，与日历视图一致）
+    var slogan = m.dayLabel === '今天' ? '今晚哪场值得熬'
+      : m.dayLabel === '明天' ? '明晚哪场值得熬'
       : '焦点大战值得熬';
 
     this.setData({

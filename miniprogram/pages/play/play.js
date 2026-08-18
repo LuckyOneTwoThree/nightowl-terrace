@@ -86,7 +86,7 @@ Page({
       .sort(function (x, y) { return y.ev.star - x.ev.star || y.index - x.index; })
       .slice(0, 3).map(function (e) {
       var f = e.m.t.split('T');
-      var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
+      var d = new Date(engine.owlDay(e.m.t).replace(/-/g, '/') + ' 00:00:00');
       var h = data.getTeam(e.m.h);
       var a = data.getTeam(e.m.a);
       return {

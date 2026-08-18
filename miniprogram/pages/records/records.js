@@ -50,7 +50,7 @@ Page({
       var aTeam = data.getTeam(m.a) || {};
       rows.push({
         key: 'pred-' + mid,
-        label: labelOf(m.t.split('T')[0]),
+        label: labelOf(engine.owlDay(m.t)),
         sort: p.ts || 0, type: 'pred',
         names: (hTeam.zh || m.h) + ' vs ' + (aTeam.zh || m.a),
         logo: hTeam.logo || '',

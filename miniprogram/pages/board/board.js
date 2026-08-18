@@ -17,7 +17,7 @@ function weekKey(d) {
   return mon.getFullYear() + '-' + p2(mon.getMonth() + 1) + '-' + p2(mon.getDate());
 }
 
-// 按比赛日期（YYYY-MM-DD）算归属周：凌晨场按「今日」口径归前一晚的周
+// 按夜猫口径「展示日」（YYYY-MM-DD，凌晨场已归前一晚）算归属周
 function weekKeyOfDate(dateStr) {
   var f = dateStr.split('-');
   return weekKey(new Date(Number(f[0]), Number(f[1]) - 1, Number(f[2])));
@@ -116,7 +116,7 @@ Page({
     if (checkins[live.id]) return;
     checkins[live.id] = {
       ts: Date.now(), md: live.md, names: live.home.zh + ' vs ' + live.away.zh, cost: live.cost,
-      wk: this.data._liveRawT ? weekKeyOfDate(this.data._liveRawT.split('T')[0]) : null
+      wk: this.data._liveRawT ? weekKeyOfDate(engine.owlDay(this.data._liveRawT)) : null
     };
     wx.setStorageSync('checkins', checkins);
     // 云端 best-effort 双写：夜猫榜聚合（readBoard/owl）

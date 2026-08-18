@@ -23,6 +23,23 @@ function dateStr(d) {
 }
 
 /**
+ * 夜猫口径「展示日」：北京时间 00:00–06:00 的场次归属前一晚（PM 3.2）
+ * 与 nightOf / data.matchesOfDay / schedule.displayDay 口径一致。
+ * 例：t="2026-08-22T03:00"（北京 8/22 凌晨）→ 返回 "2026-08-21"（8/21 的夜）
+ */
+function owlDay(t) {
+  var f = String(t || '').split('T');
+  var hm = (f[1] || '00:00').split(':');
+  var day = f[0];
+  if (Number(hm[0]) < 6) {
+    var d = new Date(day.replace(/-/g, '/') + ' 00:00:00');
+    d.setDate(d.getDate() - 1);
+    day = dateStr(d);
+  }
+  return day;
+}
+
+/**
  * 夜猫口径「今日」：凌晨 00:00–06:00 归前一晚（与 data.matchesOfDay 展示口径一致）
  * 早 3 点打开小程序，看到的「今晚」仍是在看的那一夜，而不是日历上的明天
  */
@@ -264,7 +281,7 @@ function replays(matches, recMap, storylines, limit) {
 function nextFocal(matches, recMap, rivalries, storylines, followed, nowTs) {
   var future = matches
     .filter(function (m) {
-      return m.st === 'sched' && new Date(m.t.replace('T', ' ') + ':00').getTime() > nowTs;
+      return m.st === 'sched' && ts(m.t) > nowTs;
     })
     .map(function (m) {
       var ev = evaluate(m, recMap, rivalries, storylines, followed);
@@ -272,8 +289,7 @@ function nextFocal(matches, recMap, rivalries, storylines, followed, nowTs) {
     })
     .sort(function (a, b) {
       if (b.ev.star !== a.ev.star) return b.ev.star - a.ev.star;
-      return new Date(a.m.t.replace('T', ' ') + ':00').getTime() -
-             new Date(b.m.t.replace('T', ' ') + ':00').getTime();
+      return ts(a.m.t) - ts(b.m.t);
     });
   return future[0] || null;
 }
@@ -290,7 +306,9 @@ function countdown(targetTs, nowTs) {
 }
 
 function ts(t) {
-  return new Date(t.replace('T', ' ') + ':00').getTime();
+  var m = String(t || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (!m) return NaN;
+  return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) - 8 * 3600000;
 }
 
 module.exports = {
@@ -298,6 +316,7 @@ module.exports = {
   parseMin: parseMin,
   dateOf: dateOf,
   dateStr: dateStr,
+  owlDay: owlDay,
   nightOf: nightOf,
   sleepTier: sleepTier,
   tierOf: tierOf,

@@ -3,23 +3,10 @@ var data = require('../../utils/data.js');
 var decorate = require('../../utils/decorate.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
-var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
 
 function lgZh(l) {
   var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
   return hit ? hit.zh : l;
-}
-
-// 展示日归档：<06:00 归前一夜（夜猫视角，PM 3.2）
-function displayDay(t) {
-  var day = engine.dateOf(t);
-  var hm = t.split('T')[1];
-  if (Number(hm.split(':')[0]) < 6) {
-    var d = new Date(day.replace(/-/g, '/') + ' 00:00:00');
-    d.setDate(d.getDate() - 1);
-    day = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
-  }
-  return day;
 }
 
 function dayLabel(day) {
@@ -64,7 +51,7 @@ Page({
     var groups = [];
     var byRound = {}; // lg -> { r: [cards] }（轮次视图）
     data.matchesAll().forEach(function (m) {
-      var day = displayDay(m.t);
+      var day = engine.owlDay(m.t);
       if (!byDay[day]) {
         byDay[day] = { day: day, label: dayLabel(day), matches: [] };
         groups.push(byDay[day]);
