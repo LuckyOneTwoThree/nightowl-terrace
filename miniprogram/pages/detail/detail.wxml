@@ -18,7 +18,7 @@
 
     <view class="vs">
       <view class="side">
-        <image class="crest-xl" src="{{m.home.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!m.home.logo}}" style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+        <image class="crest-xl" src="{{m.home.logo}}" mode="aspectFill" wx:if="{{m.home.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
         <text class="side-name hl">{{m.home.zh}}</text>
       </view>
       <view class="mid">
@@ -36,7 +36,7 @@
         </block>
       </view>
       <view class="side">
-        <image class="crest-xl" src="{{m.away.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!m.away.logo}}" style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+        <image class="crest-xl" src="{{m.away.logo}}" mode="aspectFill" wx:if="{{m.away.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
         <text class="side-name hl">{{m.away.zh}}</text>
       </view>
     </view>

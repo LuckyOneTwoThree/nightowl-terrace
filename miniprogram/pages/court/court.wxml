@@ -24,14 +24,14 @@
     </view>
     <view class="open-vs" bindtap="goDetail">
       <view class="ov-side">
-        <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!open.home.logo}}" style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
+        <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" wx:if="{{open.home.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
         <text class="ov-name hl">{{open.home.zh}}</text>
       </view>
       <view class="ov-mid">
         <text class="mono muted ov-x">VS</text>
       </view>
       <view class="ov-side">
-        <image class="crest-xl" src="{{open.away.logo}}" mode="aspectFill" /><view class="circle-xl crest-fb" wx:if="{{!open.away.logo}}" style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
+        <image class="crest-xl" src="{{open.away.logo}}" mode="aspectFill" wx:if="{{open.away.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
         <text class="ov-name hl">{{open.away.zh}}</text>
       </view>
     </view>

@@ -21,7 +21,7 @@
         <view class="tchip card-low {{t.on ? 'on floodlight-glow' : ''}}"
               wx:for="{{g.teams}}" wx:key="id" wx:for-item="t" wx:for-index="ti"
               data-g="{{gi}}" data-t="{{ti}}" bindtap="toggle">
-          <image class="crest-sm t-ava" src="{{t.logo}}" mode="aspectFill" /><view class="t-ava circle-sm crest-fb" wx:if="{{!t.logo}}" style="background: {{t.bg}}; border-color: {{t.bd}};">{{t.id}}</view>
+          <image class="crest-sm t-ava" src="{{t.logo}}" mode="aspectFill" wx:if="{{t.logo}}" /><view class="t-ava circle-sm crest-fb" wx:else style="background: {{t.bg}}; border-color: {{t.bd}};">{{t.id}}</view>
           <text class="t-name hl">{{t.zh}}</text>
           <view class="v-icon v-check text-amber t-check" wx:if="{{t.on}}"></view>
         </view>

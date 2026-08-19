@@ -75,6 +75,56 @@ function tierOf(match) {
   return TIERS[match.s] || TIERS[0];
 }
 
+// ---------- 比赛状态 ----------
+// 已赛口径统一：ESPN 源为 'done'，手工/历史数据可能为 'ft'，各页统一走本判据
+function isFinished(m) {
+  return !!m && (m.st === 'done' || m.st === 'ft');
+}
+
+// ---------- 北京时区日历工具（设备时区无关） ----------
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+// 时间戳 → 北京墙钟日期 'YYYY-MM-DD'
+function bjDateStr(ts) {
+  var b = new Date(ts + 8 * 3600000);
+  return b.getUTCFullYear() + '-' + pad2(b.getUTCMonth() + 1) + '-' + pad2(b.getUTCDate());
+}
+
+// 墙钟日期 → 所在周的周一（纯日历法，与时区无关）
+function mondayOfWall(ds) {
+  var f = String(ds || '').split('-');
+  var wall = Date.UTC(Number(f[0]), Number(f[1]) - 1, Number(f[2]));
+  var wd = new Date(wall).getUTCDay();
+  var mon = new Date(wall - ((wd + 6) % 7) * 86400000);
+  return mon.getUTCFullYear() + '-' + pad2(mon.getUTCMonth() + 1) + '-' + pad2(mon.getUTCDate());
+}
+
+// 当前北京所在周：周一日期串 + 周一 00:00（北京）的真实时间戳
+function weekStartBJ(nowTs) {
+  var str = mondayOfWall(bjDateStr(nowTs));
+  var f = str.split('-');
+  return { str: str, ts: Date.UTC(Number(f[0]), Number(f[1]) - 1, Number(f[2])) - 8 * 3600000 };
+}
+
+// ---------- 盲评结算判据（records 页 / play 页赛季积分 / 云端 settleMatches 三方一致） ----------
+// 胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4）
+function settlePred(pred, m, recMap) {
+  if (!m || !m.sc) return null;
+  var sc = String(m.sc).split('-');
+  var h = Number(sc[0]), a = Number(sc[1]);
+  var fact = h > a ? 'h' : h < a ? 'a' : 'd';
+  var hit = pred.pick === fact;
+  var pts = hit ? 3 : 0;
+  // 比分加分需双方比分都已填写（半比分如只填主队 2、赛果 2-0 不给 +2）
+  if (hit && pred.scoreH !== '' && pred.scoreH != null &&
+      pred.scoreA !== '' && pred.scoreA != null &&
+      Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
+  var rec = (recMap || {})[m.id];
+  if (hit && rec && rec.upset) pts *= 2;
+  return { hit: hit, pts: pts, upset: hit && rec && !!rec.upset };
+}
+
 // ---------- 星级判据 ----------
 // 命中焦点对阵表 → ★★★ 候选；故事线关键节点升一级；关注球队 +1（最高 ★★）
 // 有推荐层人工星级时以其为基准，再做升星
@@ -321,6 +371,11 @@ module.exports = {
   nightOf: nightOf,
   sleepTier: sleepTier,
   tierOf: tierOf,
+  isFinished: isFinished,
+  bjDateStr: bjDateStr,
+  mondayOfWall: mondayOfWall,
+  weekStartBJ: weekStartBJ,
+  settlePred: settlePred,
   rivalryOf: rivalryOf,
   isBigSixClash: isBigSixClash,
   storylinesOf: storylinesOf,

@@ -35,7 +35,7 @@
     
     <view class="live-vs">
       <view class="lv-side">
-        <image class="crest-md" src="{{live.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!live.home.logo}}" style="background: {{live.home.bg}}; border-color: {{live.home.bd}};">{{live.home.id}}</view>
+        <image class="crest-md" src="{{live.home.logo}}" mode="aspectFill" wx:if="{{live.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{live.home.bg}}; border-color: {{live.home.bd}};">{{live.home.id}}</view>
         <text class="lv-name hl">{{live.home.zh}}</text>
       </view>
       <view class="lv-mid">
@@ -43,7 +43,7 @@
         <view class="chip chip-solid">{{live.lgZh}}</view>
       </view>
       <view class="lv-side">
-        <image class="crest-md" src="{{live.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!live.away.logo}}" style="background: {{live.away.bg}}; border-color: {{live.away.bd}};">{{live.away.id}}</view>
+        <image class="crest-md" src="{{live.away.logo}}" mode="aspectFill" wx:if="{{live.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{live.away.bg}}; border-color: {{live.away.bd}};">{{live.away.id}}</view>
         <text class="lv-name hl">{{live.away.zh}}</text>
       </view>
     </view>
@@ -65,7 +65,7 @@
     </view>
     <view class="live-vs">
       <view class="lv-side">
-        <image class="crest-md" src="{{preview.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!preview.home.logo}}" style="background: {{preview.home.bg}}; border-color: {{preview.home.bd}};">{{preview.home.id}}</view>
+        <image class="crest-md" src="{{preview.home.logo}}" mode="aspectFill" wx:if="{{preview.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{preview.home.bg}}; border-color: {{preview.home.bd}};">{{preview.home.id}}</view>
         <text class="lv-name hl">{{preview.home.zh}}</text>
       </view>
       <view class="lv-mid">
@@ -73,7 +73,7 @@
         <view class="chip chip-ghost">{{preview.lgZh}}</view>
       </view>
       <view class="lv-side">
-        <image class="crest-md" src="{{preview.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!preview.away.logo}}" style="background: {{preview.away.bg}}; border-color: {{preview.away.bd}};">{{preview.away.id}}</view>
+        <image class="crest-md" src="{{preview.away.logo}}" mode="aspectFill" wx:if="{{preview.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{preview.away.bg}}; border-color: {{preview.away.bd}};">{{preview.away.id}}</view>
         <text class="lv-name hl">{{preview.away.zh}}</text>
       </view>
     </view>
@@ -84,9 +84,10 @@
   <view class="sect sect-gap">
     <text class="sect-title">本周榜单</text>
     <view class="sect-line"></view>
+    <text class="chip chip-ghost demo-chip" wx:if="{{rankDemo}}">演示数据</text>
     <text class="sect-more">Top 100 ›</text>
   </view>
-  
+
   <view class="rank-card card-low">
     <view class="rank-row" wx:for="{{ranks}}" wx:key="rank">
       <text class="rk-no rank-{{item.rank}} hl">{{item.rank}}</text>
@@ -98,9 +99,9 @@
       <text class="rk-h hl text-amber mono">{{item.hours}}h</text>
     </view>
 
-    <!-- 我的排位 -->
+    <!-- 我的排位（云端榜单按昵称匹配；未上榜/云不可用时显示 -） -->
     <view class="rank-row user-row card-high">
-      <text class="rk-no user-rank hl">18</text>
+      <text class="rk-no user-rank hl">{{myRankNo || '-'}}</text>
       <view class="circle-sm user-avatar">
         <view class="v-icon v-paw text-amber" style="width: 26rpx; height: 26rpx;"></view>
       </view>

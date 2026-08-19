@@ -46,7 +46,7 @@
   <view class="followed-box" wx:if="{{followedTeams.length}}">
     <view class="followed-list">
       <view class="f-card card-low floodlight-glow" wx:for="{{followedTeams}}" wx:key="id">
-        <image class="crest-md f-ava" src="{{item.logo}}" mode="aspectFill" /><view class="circle-md f-ava crest-fb" wx:if="{{!item.logo}}" style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
+        <image class="crest-md f-ava" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" /><view class="circle-md f-ava crest-fb" wx:else style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
         <view class="f-info">
           <text class="f-name hl">{{item.zh}}</text>
           <text class="f-lg mono muted">{{item.lgZh}}</text>

@@ -16,8 +16,8 @@
     
     <view class="ava-row" wx:if="{{avatars.length}}">
       <block wx:for="{{avatars}}" wx:key="id">
-        <image class="crest-xl" src="{{item.logo}}" mode="aspectFill" />
-        <view class="ava circle-xl crest-fb" wx:if="{{!item.logo}}" style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
+        <image class="crest-xl" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" />
+        <view class="ava circle-xl crest-fb" wx:else style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
       </block>
     </view>
     
@@ -49,7 +49,7 @@
         
         <view class="n-vs">
           <view class="nv-side">
-            <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!item.home.logo}}" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+            <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
             <text class="nv-name hl">{{item.home.zh}}</text>
           </view>
           
@@ -65,7 +65,7 @@
           </view>
           
           <view class="nv-side">
-            <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!item.away.logo}}" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+            <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
             <text class="nv-name hl">{{item.away.zh}}</text>
           </view>
         </view>

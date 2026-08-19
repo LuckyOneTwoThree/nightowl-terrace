@@ -4,7 +4,7 @@
     <text class="tb-title hl">玩法大厅</text>
     <view class="chip chip-solid floodlight-glow">
       <view class="v-icon v-trophy text-amber"></view>
-      <text class="text-amber hl">赛季积分 120</text>
+      <text class="text-amber hl">赛季积分 {{seasonPts}}</text>
     </view>
   </view>
 
@@ -43,14 +43,14 @@
 
     <view class="g-vs" data-id="{{item.id}}" bindtap="goDetail">
       <view class="g-side">
-        <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!item.home.logo}}" style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
         <text class="g-name hl">{{item.home.zh}}</text>
       </view>
       <view class="g-vs-center">
         <text class="mono muted g-vs-txt">VS</text>
       </view>
       <view class="g-side">
-        <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" /><view class="circle-md crest-fb" wx:if="{{!item.away.logo}}" style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
         <text class="g-name hl">{{item.away.zh}}</text>
       </view>
     </view>
@@ -78,6 +78,9 @@
   </view>
 
   <view class="rank-card card-low">
+    <view class="rank-empty mono muted" wx:if="{{!rankList.length}}">
+      暂无上榜 · 封存预测、开球结算后自动开榜
+    </view>
     <view class="rank-row" wx:for="{{rankList}}" wx:key="rank">
       <view class="rank-num rank-{{item.rank}} hl">{{item.rank}}</view>
       <view class="circle-sm rank-avatar">{{item.avatar}}</view>

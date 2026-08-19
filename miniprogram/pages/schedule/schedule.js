@@ -81,7 +81,7 @@ Page({
         local: decorate.localTime(m),
         tbd: m.tbd,
         st: m.st,
-        finished: m.st === 'done',
+        finished: engine.isFinished(m),
         scH: sc ? sc[0] : '-',
         scA: sc ? sc[1] : '-',
         star: ev.star,

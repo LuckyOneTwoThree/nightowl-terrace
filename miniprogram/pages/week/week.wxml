@@ -94,7 +94,7 @@
     <view class="plan card-low" wx:if="{{best.length}}">
       <view class="plan-row" wx:for="{{best}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
         <view class="pr-bar" style="background: {{item.accent}};"></view>
-        <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!item.homeLogo}}" style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
+        <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" wx:if="{{item.homeLogo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
         <view class="pr-mid">
           <text class="pr-pair">{{item.pair}}</text>
           <text class="mono muted">{{item.md}} {{item.wd}} {{item.hm}} · {{item.lgZh}}</text>
@@ -122,7 +122,7 @@
     <view class="plan card-low" wx:if="{{focal.length}}">
       <view class="plan-row" wx:for="{{focal}}" wx:key="id" data-id="{{item.id}}" bindtap="onMatch">
         <view class="pr-bar" style="background: {{item.accent}};"></view>
-        <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!item.homeLogo}}" style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
+        <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" wx:if="{{item.homeLogo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
         <view class="pr-mid">
           <text class="pr-pair">{{item.pair}}</text>
           <text class="mono muted">{{item.tbd ? '时间待定' : item.md + ' ' + item.wd + ' ' + item.hm}} · {{item.lgZh}}</text>

@@ -66,3 +66,6 @@
 .rp-worst-ic { width: 28rpx; height: 28rpx; }
 .rp-worst-text { font-size: 22rpx; color: var(--error); }
 .rp-btn { margin-top: 16rpx; width: 80%; }
+
+/* 演示数据标识 */
+.demo-chip { font-size: 20rpx; padding: 4rpx 14rpx; }

@@ -4,7 +4,6 @@ var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
-var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
 var OPTIONS = [
   { key: 'h', zh: '主胜' },
   { key: 'd', zh: '平局' },
@@ -23,7 +22,8 @@ Page({
     guesses: [],
     options: OPTIONS,
     rankList: [],
-    myRank: null
+    myRank: null,
+    seasonPts: 0
   },
 
   onLoad: function () {
@@ -41,16 +41,13 @@ Page({
     }
   },
 
-  // 云端盲评榜（readBoard 聚合，本周）；不可用则保留演示榜单
+  // 云端盲评榜（readBoard 聚合，本周）；不可用时榜单区显示空态引导
   fetchRanks: function () {
     var that = this;
-    var day = new Date().getDay();
-    var mon = new Date(Date.now() - ((day + 6) % 7) * 86400000);
-    var week = mon.getFullYear() + '-' + p2(mon.getMonth() + 1) + '-' + p2(mon.getDate());
+    var week = engine.weekStartBJ(Date.now()).str; // 北京周口径，与云函数 weekRange 一致
     cloud.readBoard('guess', 'default', week)
       .then(function (res) {
         var list = (res && res.list) || [];
-        if (!list.length) return;
         that.setData({
           rankList: list.map(function (r, i) {
             return {
@@ -61,21 +58,22 @@ Page({
           myRank: null // 云榜 uid 归属待 openGid 接入后补「我」行
         });
       })
-      .catch(function () { /* 云不可用：静默回退演示榜单 */ });
+      .catch(function () { /* 云不可用：显示空态 */ });
   },
 
   refresh: function () {
     var now = new Date();
-    var start = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate());
+    // 夜猫口径「本周」：凌晨场归前一晚（与今日/本周页一致）
+    var start = engine.nightOf(now);
     var endD = new Date(now.getTime() + 7 * 86400000);
-    var end = endD.getFullYear() + '-' + p2(endD.getMonth() + 1) + '-' + p2(endD.getDate());
+    var end = engine.nightOf(endD);
 
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
 
     var weekSched = data.matchesAll().filter(function (m) {
-      var d = m.t.split('T')[0];
+      var d = engine.owlDay(m.t);
       return d >= start && d <= end && m.st === 'sched' && !m.tbd; // tbd 时间未定，不进竞猜单
     });
 
@@ -108,14 +106,16 @@ Page({
       };
     });
 
-    // 玩法榜单前三 + 用户位
-    var app = getApp();
-    var profile = (app && app.globalData && app.globalData.profile) || { nickname: '熬夜小猫', avatarCode: 'OWL' };
-    var rankList = [
-      { rank: 1, name: '伯纳乌常驻幽灵', avatar: 'RMA', score: '88% (22/25)', badge: '神准之眼' },
-      { rank: 2, name: '安菲尔德守夜人', avatar: 'LIV', score: '84% (21/25)', badge: '夜巡官' },
-      { rank: 3, name: '多特蒙德小黄蜂', avatar: 'BVB', score: '80% (20/25)', badge: '百步穿杨' }
-    ];
+    // 本地赛季积分：已结算预测按统一判据累计（胜平负3 + 比分2 + 冷门×2，与 records/云端 settleMatches 一致）
+    var seasonPts = 0;
+    Object.keys(preds).forEach(function (mid) {
+      var p = preds[mid], mm = data.getMatch(mid);
+      if (!mm) return;
+      if (!crypt.verify(p)) return;                      // 封存校验失败作废
+      if (p.ts && p.ts > engine.ts(mm.t) + 60000) return; // 开球后封存作废
+      var r = engine.settlePred(p, mm, recMap);
+      if (r) seasonPts += r.pts;
+    });
 
     this.setData({
       cards: [
@@ -125,8 +125,9 @@ Page({
         { id: 'box', name: '盲盒开球', iconClass: 'v-gift', colorClass: 'c-violet', sub: '特征翻转 · 抽选今晚' }
       ],
       guesses: guesses,
-      rankList: rankList,
-      myRank: { rank: 18, name: profile.nickname, avatar: profile.avatarCode, score: '72% (18/25)' }
+      rankList: [],   // 云端榜单由 fetchRanks 异步填充
+      myRank: null,
+      seasonPts: seasonPts
     });
   },
 

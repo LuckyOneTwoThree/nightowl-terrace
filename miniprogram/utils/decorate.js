@@ -12,10 +12,21 @@ function lgZh(l) {
   return hit ? hit.zh : l;
 }
 
+// 欧洲夏令时：3 月最后一个周日 01:00 UTC 起，10 月最后一个周日 01:00 UTC 止（英国同日切换）
+function lastSundayUTC(year, month0) {
+  var lastDay = Date.UTC(year, month0 + 1, 0); // 该月最后一天
+  var wd = new Date(lastDay).getUTCDay();
+  return lastDay - wd * 86400000 + 3600000;    // 当月最后一个周日 01:00 UTC
+}
+
+function isEuDst(ts) {
+  var y = new Date(ts).getUTCFullYear();
+  return ts >= lastSundayUTC(y, 2) && ts < lastSundayUTC(y, 9); // 3月 / 10月
+}
+
 // 当地开球时间（PM 第三节时差表：夏令时英超 -7 / 欧陆 -6，冬令时 -8 / -7）
 function localTime(m) {
-  var month = Number(m.t.split('-')[1]);
-  var dst = (month >= 4 && month <= 10); // 8–10月末、3月末–5 近似为 4–10 月
+  var dst = isEuDst(engine.ts(m.t)); // 按开球时刻精确判断，替换 4–10 月近似
   var offset = m.l === 'PL' ? (dst ? 7 : 8) : (dst ? 6 : 7);
   var hm = m.t.split('T')[1].split(':');
   var local = Number(hm[0]) * 60 + Number(hm[1]) - offset * 60;

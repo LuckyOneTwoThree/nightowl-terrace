@@ -11,21 +11,9 @@ function labelOf(dateStr) {
   return Number(f[1]) + '月' + Number(f[2]) + '日 周' + WEEK[d.getDay()];
 }
 
-// 结算：胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4）
+// 结算：统一走 engine.settlePred（与 play 页赛季积分 / 云端 settleMarks 判据一致，PM 9.4）
 function settle(pred, m, recMap) {
-  if (!m || !m.sc) return null;
-  var sc = m.sc.split('-');
-  var h = Number(sc[0]), a = Number(sc[1]);
-  var fact = h > a ? 'h' : h < a ? 'a' : 'd';
-  var hit = pred.pick === fact;
-  var pts = hit ? 3 : 0;
-  // 比分加分需双方比分都已填写（半比分如只填主队 2、赛果 2-0 不给 +2，Number('') === 0）
-  if (hit && pred.scoreH !== '' && pred.scoreH != null &&
-      pred.scoreA !== '' && pred.scoreA != null &&
-      Number(pred.scoreH) === h && Number(pred.scoreA) === a) pts += 2;
-  var rec = (recMap || {})[m.id];
-  if (hit && rec && rec.upset) pts *= 2; // 冷门翻倍
-  return { hit: hit, pts: pts, sc: m.sc, upset: hit && rec && !!rec.upset };
+  return engine.settlePred(pred, m, recMap);
 }
 
 Page({

@@ -28,11 +28,13 @@
 }
 .face-front {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28rpx;
-  background: var(--sc-low); border: 1rpx solid rgba(255,178,36,.25);
-  position: relative;
+  /* 背景交给 glass-panel 渐变（避免被纯色覆盖） */
+  border: 1rpx solid rgba(255,178,36,.25);
+  /* 注意：不能写 position:relative，会覆盖 .face 的 absolute 导致正反面高度不一致 */
 }
 .face-glow {
-  position: absolute; width: 280rpx; height: 280rpx; border-radius: var(--r-full);
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 280rpx; height: 280rpx; border-radius: var(--r-full);
   background: radial-gradient(circle, rgba(255,178,36,.15), transparent 70%);
   pointer-events: none;
 }
@@ -61,20 +63,21 @@
   transform: rotateY(180deg);
   background: var(--sc-low); border: 1rpx solid rgba(255,178,36,.3);
   box-shadow: 0 24rpx 64rpx rgba(0,0,0,.5);
-  display: flex; flex-direction: column; justify-content: space-between;
-  padding-bottom: 24rpx;
+  display: flex; flex-direction: column;
+  padding-bottom: 28rpx;
 }
 .bb-strip {
   height: 88rpx; padding: 0 28rpx; background: var(--sc-high);
   display: flex; align-items: center; justify-content: space-between;
 }
-.bb-date { display: flex; flex-direction: column; align-items: center; gap: 4rpx; padding-top: 16rpx; }
+.bb-date { display: flex; flex-direction: column; align-items: center; gap: 4rpx; padding-top: 32rpx; }
 .match-time { font-size: 36rpx; font-weight: 700; }
-.bb-vs { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 20rpx; }
+/* vs 区吃掉剩余高度并垂直居中，避免 space-between 造成的大空洞 */
+.bb-vs { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 20rpx; }
 .bb-side { width: 180rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
 .bb-name { font-size: 28rpx; color: var(--on-surface); text-align: center; max-width: 180rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bb-x { font-size: 40rpx; flex: 1; text-align: center; }
-.bb-foot { margin: 0 28rpx; display: flex; align-items: center; justify-content: center; gap: 8rpx; font-size: 22rpx; padding: 10rpx 0; }
+.bb-foot { margin: 12rpx 28rpx 0; display: flex; align-items: center; justify-content: center; gap: 8rpx; font-size: 22rpx; padding: 10rpx 0; }
 
 .emptybox {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24rpx;

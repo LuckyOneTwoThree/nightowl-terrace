@@ -41,7 +41,7 @@ Page({
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
     this._lastBudget = settings.budget || 4.0;
     this._lastMinStar = settings.minStar || 1;
-    this._lastTodayStr = engine.dateStr(new Date());
+    this._lastTodayStr = engine.nightOf(new Date());
     this.refresh();
   },
 
@@ -51,7 +51,7 @@ Page({
     var settings = wx.getStorageSync('settings') || {};
     var curBudget = settings.budget || 4.0;
     var curMinStar = settings.minStar || 1;
-    var curTodayStr = engine.dateStr(new Date());
+    var curTodayStr = engine.nightOf(new Date());
 
     if (this._lastFollowed !== curFollowed ||
         this._lastBudget !== curBudget ||
@@ -74,9 +74,10 @@ Page({
 
   refresh: function () {
     var now = new Date();
-    var start = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate());
+    // 夜猫口径「本周」：起点为今晚（凌晨 00:00–06:00 归前一晚，与今日页一致）
+    var start = engine.nightOf(now);
     var endD = new Date(now.getTime() + 7 * 86400000);
-    var end = endD.getFullYear() + '-' + p2(endD.getMonth() + 1) + '-' + p2(endD.getDate());
+    var end = engine.nightOf(endD);
 
     var app = getApp();
     var followed = app.getFollowed();
@@ -88,7 +89,7 @@ Page({
     var sls = data.getStorylines();
 
     var week = data.matchesAll().filter(function (m) {
-      var d = m.t.split('T')[0];
+      var d = engine.owlDay(m.t); // 与今日页一致：凌晨场归前一晚
       return d >= start && d <= end;
     });
 
@@ -141,20 +142,18 @@ Page({
     var used = plan.used || 0;
     var pct = Math.min(1, budget > 0 ? used / budget : 0);
 
-    // 周一透支结算（PM 9.1）：按自然周结算，每周只结算一次上周
-    var monday = new Date(now.getTime() - ((now.getDay() + 6) % 7) * 86400000);
-    var mondayStr = engine.dateStr(monday);
-    var lastMondayStr = engine.dateStr(new Date(monday.getTime() - 7 * 86400000));
-    var settleKey = 'settled_' + mondayStr;
+    // 周一透支结算（PM 9.1）：按北京自然周结算，每周只结算一次上周（设备时区无关）
+    var thisWeek = engine.weekStartBJ(Date.now());
+    var lastWeek = engine.weekStartBJ(Date.now() - 7 * 86400000);
+    var settleKey = 'settled_' + thisWeek.str;
     var overNote = '', suggest = 0;
     if (!wx.getStorageSync(settleKey)) {
-      var lastFrom = monday.getTime() - 7 * 86400000;
       var actual = 0;
       var checkins = wx.getStorageSync('checkins') || {};
       Object.keys(checkins).forEach(function (k) {
         var c = checkins[k];
         // 优先用打卡时记录的比赛归属周（凌晨场归前一晚的周），无 wk 时回退时间戳区间
-        if (c.wk ? c.wk === lastMondayStr : (c.ts >= lastFrom && c.ts < monday.getTime())) actual += c.cost || 0;
+        if (c.wk ? c.wk === lastWeek.str : (c.ts >= lastWeek.ts && c.ts < thisWeek.ts)) actual += c.cost || 0;
       });
       wx.setStorageSync(settleKey, 1);
       if (actual > budget + 0.01) {

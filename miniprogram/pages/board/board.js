@@ -3,24 +3,21 @@ var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var cloud = require('../../utils/cloud.js');
 
-// 云版本上线前的演示榜单（openGid 群维度排行 v1 接入）
+// 云版本上线前的演示榜单（openGid 群维度排行 v1 接入；页面以 rankDemo 标识展示来源）
 var MOCK = [
   { rank: 1, name: 'Kopite_99', hours: 12.5, streak: 5 },
   { rank: 2, name: 'NightWalker', hours: 10.0, streak: 3 },
   { rank: 3, name: '凌晨三点见', hours: 7.5, streak: 2 }
 ];
 
-function weekKey(d) {
-  var day = d.getDay(), diff = (day + 6) % 7; // 周一为一周起点
-  var mon = new Date(d.getTime() - diff * 86400000);
-  var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
-  return mon.getFullYear() + '-' + p2(mon.getMonth() + 1) + '-' + p2(mon.getDate());
+// 时间戳 → 北京所在周周一（设备时区无关，与云函数 readBoard.weekRange 口径一致）
+function weekKeyOfTs(ts) {
+  return engine.mondayOfWall(engine.bjDateStr(ts));
 }
 
 // 按夜猫口径「展示日」（YYYY-MM-DD，凌晨场已归前一晚）算归属周
 function weekKeyOfDate(dateStr) {
-  var f = dateStr.split('-');
-  return weekKey(new Date(Number(f[0]), Number(f[1]) - 1, Number(f[2])));
+  return engine.mondayOfWall(dateStr);
 }
 
 Page({
@@ -31,6 +28,8 @@ Page({
     preview: null,     // 今晚凌晨档预告
     checked: false,
     ranks: MOCK,
+    rankDemo: true,    // 演示榜单标识（云端拉到真实数据后置 false）
+    myRankNo: null,    // 我的排位（云端榜单按昵称匹配，待 openGid/uid 接入后精确化）
     myHours: '0.0',
     myStreak: 0,
     myNick: '夜猫子',
@@ -47,10 +46,16 @@ Page({
       .then(function (res) {
         var list = (res && res.list) || [];
         if (!list.length) return;
+        var myNick = (wx.getStorageSync('settings') || {}).nick || wx.getStorageSync('nickname') || '夜猫子';
+        var myIdx = -1;
+        var rows = list.map(function (r, i) {
+          if (myIdx < 0 && r.nick === myNick) myIdx = i;
+          return { rank: i + 1, name: r.nick, hours: r.hours, streak: r.streak || 0 };
+        });
         that.setData({
-          ranks: list.map(function (r, i) {
-            return { rank: i + 1, name: r.nick, hours: r.hours, streak: r.streak || 0 };
-          })
+          ranks: rows,
+          rankDemo: false,
+          myRankNo: myIdx >= 0 ? String(myIdx + 1) : null
         });
       })
       .catch(function () { /* 云不可用：静默回退演示榜单 */ });
@@ -59,13 +64,13 @@ Page({
   refresh: function () {
     this.fetchRanks();
     var checkins = wx.getStorageSync('checkins') || {};
-    var wk = weekKey(new Date());
+    var wk = engine.weekStartBJ(Date.now()).str;
 
     // 本周修仙统计（优先用打卡时记录的比赛归属周）
     var n = 0, mins = 0, worst = null; // worst = 最狠一夜（PM 9.5 战报要素）
     Object.keys(checkins).forEach(function (mid) {
       var c = checkins[mid];
-      var w = c.wk || weekKey(new Date(c.ts));
+      var w = c.wk || weekKeyOfTs(c.ts);
       if (w === wk) {
         n++; mins += c.cost * 60;
         if (!worst || c.cost > worst.cost) worst = c;
@@ -73,14 +78,14 @@ Page({
     });
     var hours = Math.round(mins / 6) / 10;
 
-    // 连续周数
+    // 连续周数（北京周口径）
     var weeks = {};
     Object.keys(checkins).forEach(function (mid) {
       var c = checkins[mid];
-      weeks[c.wk || weekKey(new Date(c.ts))] = true;
+      weeks[c.wk || weekKeyOfTs(c.ts)] = true;
     });
-    var streak = 0, cursor = new Date();
-    while (weeks[weekKey(cursor)]) { streak++; cursor = new Date(cursor.getTime() - 7 * 86400000); }
+    var streak = 0, cursorTs = Date.now();
+    while (weeks[engine.weekStartBJ(cursorTs).str]) { streak++; cursorTs -= 7 * 86400000; }
 
     // 可打卡场：开球后 30 分钟内、S2+
     var now = Date.now();

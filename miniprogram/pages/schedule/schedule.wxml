@@ -79,14 +79,14 @@
           <view class="t-row">
             <text class="t-name">{{mt.home.zh}}</text>
             <view class="m-team-info">
-              <image class="crest-sm" src="{{mt.home.logo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!mt.home.logo}}" style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
+              <image class="crest-sm" src="{{mt.home.logo}}" mode="aspectFill" wx:if="{{mt.home.logo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
               <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scH : '-'}}</text>
             </view>
           </view>
           <view class="t-row">
             <text class="t-name dim2">{{mt.away.zh}}</text>
             <view class="m-team-info">
-              <image class="crest-sm" src="{{mt.away.logo}}" mode="aspectFill" /><view class="circle-sm crest-fb" wx:if="{{!mt.away.logo}}" style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
+              <image class="crest-sm" src="{{mt.away.logo}}" mode="aspectFill" wx:if="{{mt.away.logo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
               <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scA : '-'}}</text>
             </view>
           </view>
