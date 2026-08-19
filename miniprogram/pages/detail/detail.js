@@ -181,6 +181,15 @@ Page({
     wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.m.id });
   },
 
+  // 群分享：直达本 场次详情（含盲评/狂言入口）
+  onShareAppMessage: function () {
+    var m = this.data.m;
+    return {
+      title: m ? (m.home.zh + ' vs ' + m.away.zh + ' · ' + m.md + ' ' + m.hm + ' 开球') : '夜猫看台',
+      path: '/pages/detail/detail?id=' + (m ? m.id : '')
+    };
+  },
+
   goStory: function (e) {
     wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
   },

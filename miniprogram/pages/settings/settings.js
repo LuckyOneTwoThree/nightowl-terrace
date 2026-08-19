@@ -57,6 +57,8 @@ Page({
       themeModeText: modeDesc
     });
     getApp().applyTheme(this);
+    // 偏好同步 users 集合（best-effort：周报透支预算段 / 开球推送依赖；seal 不可用时静默跳过）
+    cloud.syncUser({ nick: s.nick, budget: s.budget, followed: getApp().getFollowed() });
   },
 
   selectTheme: function (e) {
@@ -108,12 +110,19 @@ Page({
   onDeadline: function (e) {
     var on = e.detail.value;
     this.save({ remindDeadline: on });
-    // 模板 ID 未配置时静默（订阅消息链路上线前走 ICS 兜底，见 pushReminders 云函数）
-    if (on && wx.requestSubscribeMessage) {
+    // 模板 ID 已配置时发起订阅授权并落库 subscriptions（pushReminders 扫描 status:'accept'）
+    if (on && cloud.TMPL.deadline && wx.requestSubscribeMessage) {
+      var tmplId = cloud.TMPL.deadline;
       wx.requestSubscribeMessage({
-        tmplIds: [],
-        fail: function () { /* 模板未配置：开关仅记录偏好 */ }
+        tmplIds: [tmplId],
+        success: function (res) {
+          var status = res[tmplId] === 'accept' ? 'accept' : 'reject';
+          cloud.saveSubscription(tmplId, status);
+        },
+        fail: function () { /* 用户拒绝或环境不支持：开关仅记录偏好 */ }
       });
+    } else if (on) {
+      wx.showToast({ title: '提醒模板待配置，已记录偏好', icon: 'none' });
     }
   },
 
@@ -190,7 +199,8 @@ Page({
         var app = getApp();
         app.setFollowed([]);
         app.globalData.themeMode = null;
-        app._lastAppliedTheme = null;
+        app._appliedNavTheme = null;
+        app._appliedTabBarTheme = null;
         app.applyTheme();
         wx.showToast({ title: '已清除', icon: 'none' });
       }

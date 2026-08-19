@@ -1,11 +1,12 @@
 /**
  * 云函数：settleMatches 比分结算
- * 触发：比分补录后手动触发（每周一，或赛果同步后）
+ * 触发：定时（每小时第 5 分钟，见 config.json）或手动（比分补录后即时验证）
  * 职责：
  *   1. fixtures 集合中 st=done、sc 非空、未结算的场次
- *   2. 逐场结算 predictions：commit-reveal 校验（哈希不一致作废）→ 胜平负 3 分、比分再 +2（与本地 records.js 判据一致）
- *   3. 写回 standings 总榜（按 gid 分群）
- *   4. boasts 为自由文本狠话，无法由比分自动判定应验/翻车——保持法庭页人工判定，本函数只聚合
+ *   2. 逐场结算 predictions：commit-reveal 校验（哈希不一致作废）→ 截止校验（sealTs 服务端
+ *      时间优先，降级直写旧数据回退客户端 ts + 60s 宽容）→ 胜平负 3 分、比分再 +2（与本地 records.js 判据一致）
+ *   3. 写回 standings 总榜（按 gid 分群，nick 随最新封存同步）
+ *   4. boasts 为自由文本狠话，无法由比分自动判定应验/翻车——保持法庭页人工判定，本函数只聚合（见 weeklyReport）
  */
 const cloud = require('wx-server-sdk');
 const crypto = require('crypto');
@@ -21,10 +22,11 @@ function commitHash(p) {
 
 // 胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4，本地结算同款判据）
 function settle(pred, sc, upset) {
-  const parts = String(sc).split('-');
+  const s = String(sc);
+  // 比分格式严格校验：'2-' 会被 Number('') 解析成 0 当成 2-0 骗分（与本地 settlePred 同判据）
+  if (!/^\d+-\d+$/.test(s)) return { hit: false, pts: 0 };
+  const parts = s.split('-');
   const h = Number(parts[0]), a = Number(parts[1]);
-  // 比分无效（如 ESPN 补录前 sc=null）不结算，防止 NaN 比较恒 false 被当成平局骗分
-  if (!Number.isFinite(h) || !Number.isFinite(a)) return { hit: false, pts: 0 };
   const fact = h > a ? 'h' : h < a ? 'a' : 'd';
   const hit = pred.pick === fact;
   let pts = hit ? 3 : 0;
@@ -85,7 +87,11 @@ exports.main = async (event) => {
         // 超时重跑/并发触发时已结算的预测不会再次累加进 standings
         const cond = { _id: p._id, settledAt: _.exists(false) };
         const update = { revealed: true, settledAt: Date.now(), sc: m.sc };
-        const late = !!p.ts && !Number.isNaN(kickTs) && p.ts > kickTs + 60000; // 开球后才封存（1 分钟时钟宽容）
+        // 截止判据：seal 云函数封存用服务端 sealTs（可信时钟，无宽容）；
+        // 降级直写的旧文档回退客户端 ts + 60s 时钟宽容（审查报告 P0-1 修复）
+        const late = !Number.isNaN(kickTs) && (
+          p.sealTs ? p.sealTs > kickTs : (!!p.ts && p.ts > kickTs + 60000)
+        );
         if ((p.salt && p.hash && commitHash(p) !== p.hash) || late) {
           // 封存校验失败 / 截止后封存 → 作废不计分（PM 八节）
           update.hit = false;
@@ -111,20 +117,21 @@ exports.main = async (event) => {
         perGid[g][uid] = (perGid[g][uid] || 0) + (update.pts || 0);
       }
 
-      // 3. 写回 standings 总榜（uid 维度 upsert）
+      // 3. 写回 standings 总榜（uid 维度 upsert，nick 随最新封存同步）
       for (const gid of Object.keys(perGid)) {
         for (const uid of Object.keys(perGid[gid])) {
           const delta = perGid[gid][uid];
           if (!delta) continue;
+          const nickSrc = (preds.find(x => (x.uid || x._openid) === uid) || {}).nick;
           const exist = await db.collection('standings')
             .where({ gid, uid }).limit(1).get();
           if (exist.data.length) {
-            await db.collection('standings').doc(exist.data[0]._id).update({
-              data: { pts: _.inc(delta), updatedTs: Date.now() }
-            });
+            const patch = { pts: _.inc(delta), updatedTs: Date.now() };
+            if (nickSrc) patch.nick = nickSrc; // 改昵称后总榜同步展示
+            await db.collection('standings').doc(exist.data[0]._id).update({ data: patch });
           } else {
             await db.collection('standings').add({
-              data: { gid, uid, nick: (preds.find(x => (x.uid || x._openid) === uid) || {}).nick || uid, pts: delta, updatedTs: Date.now() }
+              data: { gid, uid, nick: nickSrc || uid, pts: delta, updatedTs: Date.now() }
             });
             summary.standings++;
           }

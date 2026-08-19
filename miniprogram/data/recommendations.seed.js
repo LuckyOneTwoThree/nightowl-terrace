@@ -2,8 +2,15 @@ module.exports = [
   {
     "m": "PL-1-ARS-COV",
     "star": 3,
-    "story": ["ARS_TITLE_DEFENSE", "PROMOTED_SURVIVAL"],
-    "points": ["卫冕冠军赛季首战", "考文垂 25 年后重返英超", "社区盾 3-0 曼城余温"],
+    "story": [
+      "ARS_TITLE_DEFENSE",
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "卫冕冠军赛季首战",
+      "考文垂 25 年后重返英超",
+      "社区盾 3-0 曼城余温"
+    ],
     "trivia": "考文垂上次踢顶级联赛时，英超还没有 VAR",
     "replay": false,
     "avoid": false,
@@ -12,8 +19,14 @@ module.exports = [
   {
     "m": "SCG-BVB-FCB",
     "star": 3,
-    "story": ["FCB_DOMINANCE"],
-    "points": ["德国超级杯决赛", "国家德比赛季前哨战", "拜仁冲击赛季首冠"],
+    "story": [
+      "FCB_DOMINANCE"
+    ],
+    "points": [
+      "德国超级杯决赛",
+      "国家德比赛季前哨战",
+      "拜仁冲击赛季首冠"
+    ],
     "trivia": "德国超级杯由德甲冠军对阵德国杯冠军，多特正是上季德国杯冠军",
     "replay": false,
     "avoid": false,
@@ -22,8 +35,14 @@ module.exports = [
   {
     "m": "PL-1-NEW-LIV",
     "star": 3,
-    "story": ["MANAGER_WATCH"],
-    "points": ["利物浦新帅伊劳拉首秀", "喜鹊主场圣詹姆斯之夜", "争四六分战预演"],
+    "story": [
+      "MANAGER_WATCH"
+    ],
+    "points": [
+      "利物浦新帅伊劳拉首秀",
+      "喜鹊主场圣詹姆斯之夜",
+      "争四六分战预演"
+    ],
     "trivia": "伊劳拉是英超本季七位新帅之一",
     "replay": false,
     "avoid": false,
@@ -32,8 +51,15 @@ module.exports = [
   {
     "m": "PL-1-HUL-MUN",
     "star": 2,
-    "story": ["PROMOTED_SURVIVAL", "MANAGER_WATCH"],
-    "points": ["曼联新帅卡里克首秀", "赫尔城 9 年重返英超", "升班马主场揭幕"],
+    "story": [
+      "PROMOTED_SURVIVAL",
+      "MANAGER_WATCH"
+    ],
+    "points": [
+      "曼联新帅卡里克首秀",
+      "赫尔城 9 年重返英超",
+      "升班马主场揭幕"
+    ],
     "trivia": "赫尔城附加赛决赛 1-0 击败米堡升级",
     "replay": false,
     "avoid": false,
@@ -42,8 +68,14 @@ module.exports = [
   {
     "m": "PL-1-FUL-CHE",
     "star": 2,
-    "story": ["MANAGER_WATCH"],
-    "points": ["切尔西新帅阿隆索首秀", "伦敦德比", "周一档压轴"],
+    "story": [
+      "MANAGER_WATCH"
+    ],
+    "points": [
+      "切尔西新帅阿隆索首秀",
+      "伦敦德比",
+      "周一档压轴"
+    ],
     "trivia": "阿隆索球员时代最后一场欧冠决赛就在伦敦",
     "replay": false,
     "avoid": false,
@@ -52,8 +84,14 @@ module.exports = [
   {
     "m": "SA-1-INT-MZA",
     "star": 2,
-    "story": ["PROMOTED_SURVIVAL"],
-    "points": ["国米新赛季首战", "蒙扎一年后即回归", "凌晨档意大利夜场"],
+    "story": [
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "国米新赛季首战",
+      "蒙扎一年后即回归",
+      "凌晨档意大利夜场"
+    ],
     "trivia": "蒙扎上次升意甲用了 110 年，这次只用了一年",
     "replay": false,
     "avoid": false,
@@ -63,7 +101,11 @@ module.exports = [
     "m": "SA-1-FRO-JUV",
     "star": 3,
     "story": [],
-    "points": ["尤文新赛季首战", "弗罗西诺内回归", "凌晨档意大利夜场"],
+    "points": [
+      "尤文新赛季首战",
+      "弗罗西诺内回归",
+      "凌晨档意大利夜场"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -73,7 +115,11 @@ module.exports = [
     "m": "SA-1-ROM-FIO",
     "star": 2,
     "story": [],
-    "points": ["罗马奥林匹克夜场", "欧战区卡位战预演", "凌晨档压轴"],
+    "points": [
+      "罗马奥林匹克夜场",
+      "欧战区卡位战预演",
+      "凌晨档压轴"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -82,8 +128,14 @@ module.exports = [
   {
     "m": "FL-1-PSG-REN",
     "star": 3,
-    "story": ["PSG_SIX_PEEP"],
-    "points": ["巴黎卫冕首战", "六连冠征程第一块拼图", "王子公园夜场"],
+    "story": [
+      "PSG_SIX_PEEP"
+    ],
+    "points": [
+      "巴黎卫冕首战",
+      "六连冠征程第一块拼图",
+      "王子公园夜场"
+    ],
     "trivia": "巴黎已五连冠，追平里昂七连冠还差两季",
     "replay": false,
     "avoid": false,
@@ -93,7 +145,11 @@ module.exports = [
     "m": "FL-1-TOU-OL",
     "star": 2,
     "story": [],
-    "points": ["法国老牌对话", "里昂新季成色首验", "周五凌晨档"],
+    "points": [
+      "法国老牌对话",
+      "里昂新季成色首验",
+      "周五凌晨档"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -103,7 +159,11 @@ module.exports = [
     "m": "PD-1-RMA-RSO",
     "star": 3,
     "story": [],
-    "points": ["皇马新赛季首战", "巴斯克硬骨头来访", "伯纳乌开场白"],
+    "points": [
+      "皇马新赛季首战",
+      "巴斯克硬骨头来访",
+      "伯纳乌开场白"
+    ],
     "trivia": null,
     "replay": true,
     "avoid": false,
@@ -113,7 +173,11 @@ module.exports = [
     "m": "PD-1-BAR-ATH",
     "star": 3,
     "story": [],
-    "points": ["巴萨新赛季首战", "毕尔巴鄂从来不好惹", "技术流对撞"],
+    "points": [
+      "巴萨新赛季首战",
+      "毕尔巴鄂从来不好惹",
+      "技术流对撞"
+    ],
     "trivia": null,
     "replay": true,
     "avoid": false,
@@ -122,8 +186,14 @@ module.exports = [
   {
     "m": "BL-1-FCB-VFB",
     "star": 3,
-    "story": ["FCB_DOMINANCE"],
-    "points": ["德甲揭幕战", "拜仁卫冕第一步", "斯图加特硬仗"],
+    "story": [
+      "FCB_DOMINANCE"
+    ],
+    "points": [
+      "德甲揭幕战",
+      "拜仁卫冕第一步",
+      "斯图加特硬仗"
+    ],
     "trivia": "德甲揭幕战传统由卫冕冠军主场开球",
     "replay": false,
     "avoid": false,
@@ -132,8 +202,14 @@ module.exports = [
   {
     "m": "BL-1-BVB-HSV",
     "star": 2,
-    "story": ["PROMOTED_SURVIVAL"],
-    "points": ["多特主场首战", "汉堡德比氛围", "黄色城墙开张"],
+    "story": [
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "多特主场首战",
+      "汉堡德比氛围",
+      "黄色城墙开张"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -143,7 +219,11 @@ module.exports = [
     "m": "PD-1-VAL-BET",
     "star": 2,
     "story": [],
-    "points": ["西甲揭幕周收官战", "贝蒂斯技术流夜场", "瓦伦西亚主场首秀"],
+    "points": [
+      "西甲揭幕周收官战",
+      "贝蒂斯技术流夜场",
+      "瓦伦西亚主场首秀"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -152,8 +232,14 @@ module.exports = [
   {
     "m": "BL-1-FCA-S04",
     "star": 3,
-    "story": ["PROMOTED_SURVIVAL"],
-    "points": ["沙尔克回归德甲首战", "三年两落两起", "矿工回来了"],
+    "story": [
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "沙尔克回归德甲首战",
+      "三年两落两起",
+      "矿工回来了"
+    ],
     "trivia": "沙尔克上一次踢德甲时主帅还是临时工",
     "replay": false,
     "avoid": false,
@@ -163,7 +249,11 @@ module.exports = [
     "m": "PD-2-ESP-RMA",
     "star": 3,
     "story": [],
-    "points": ["豪门焦点对阵", "皇马客场硬仗", "凌晨档西甲焦点"],
+    "points": [
+      "豪门焦点对阵",
+      "皇马客场硬仗",
+      "凌晨档西甲焦点"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -173,7 +263,11 @@ module.exports = [
     "m": "PD-2-ELC-BAR",
     "star": 3,
     "story": [],
-    "points": ["豪门焦点对阵", "巴萨客场硬仗", "凌晨档西甲焦点"],
+    "points": [
+      "豪门焦点对阵",
+      "巴萨客场硬仗",
+      "凌晨档西甲焦点"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -183,7 +277,11 @@ module.exports = [
     "m": "PD-2-ATM-VIL",
     "star": 2,
     "story": [],
-    "points": ["西甲强强对话", "马竞主场硬仗", "凌晨档焦点"],
+    "points": [
+      "西甲强强对话",
+      "马竞主场硬仗",
+      "凌晨档焦点"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -192,8 +290,14 @@ module.exports = [
   {
     "m": "FL-2-LIL-PSG",
     "star": 3,
-    "story": ["PSG_SIX_PEEP"],
-    "points": ["巴黎六连冠硬仗", "里尔主场挑战霸主", "法甲强强对话"],
+    "story": [
+      "PSG_SIX_PEEP"
+    ],
+    "points": [
+      "巴黎六连冠硬仗",
+      "里尔主场挑战霸主",
+      "法甲强强对话"
+    ],
     "trivia": "巴黎上季法甲五连冠，本季冲击第六座",
     "replay": false,
     "avoid": false,
@@ -203,7 +307,11 @@ module.exports = [
     "m": "FL-2-MCO-OM",
     "star": 2,
     "story": [],
-    "points": ["法甲传统强队对话", "南法势力碰撞", "凌晨档焦点"],
+    "points": [
+      "法甲传统强队对话",
+      "南法势力碰撞",
+      "凌晨档焦点"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -212,8 +320,14 @@ module.exports = [
   {
     "m": "PL-2-AVL-ARS",
     "star": 3,
-    "story": ["ARS_TITLE_DEFENSE"],
-    "points": ["卫冕冠军客场考验", "维拉主场之利", "英超争冠焦点"],
+    "story": [
+      "ARS_TITLE_DEFENSE"
+    ],
+    "points": [
+      "卫冕冠军客场考验",
+      "维拉主场之利",
+      "英超争冠焦点"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,
@@ -222,8 +336,15 @@ module.exports = [
   {
     "m": "PL-2-MUN-IPS",
     "star": 2,
-    "story": ["PROMOTED_SURVIVAL", "MANAGER_WATCH"],
-    "points": ["曼联新帅卡里克主场", "升班马伊普斯维奇考验", "豪门 vs 升班马"],
+    "story": [
+      "PROMOTED_SURVIVAL",
+      "MANAGER_WATCH"
+    ],
+    "points": [
+      "曼联新帅卡里克主场",
+      "升班马伊普斯维奇考验",
+      "豪门 vs 升班马"
+    ],
     "trivia": "卡里克是英超本季七位新帅之一",
     "replay": false,
     "avoid": false,
@@ -233,7 +354,73 @@ module.exports = [
     "m": "SA-2-JUV-PAR",
     "star": 2,
     "story": [],
-    "points": ["尤文豪门夜场", "帕尔马客场作战", "意甲凌晨档焦点"],
+    "points": [
+      "尤文豪门夜场",
+      "帕尔马客场作战",
+      "意甲凌晨档焦点"
+    ],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PD-1-ATM-MAL",
+    "star": 3,
+    "story": [
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "西甲新赛季揭幕战",
+      "升班马马拉加回归首秀",
+      "马竞万达大都会新赛季首战"
+    ],
+    "trivia": "马拉加本季与拉科、桑坦德一同升入西甲",
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PD-2-RAY-ALA",
+    "star": 2,
+    "story": [
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "桑坦德竞技回归西甲主场首战",
+      "两支保级圈球队六分战预演",
+      "海港城市的足球之夜"
+    ],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "FL-1-OM-STR",
+    "star": 2,
+    "story": [
+      "PROMOTED_SURVIVAL"
+    ],
+    "points": [
+      "马赛主场新赛季首战",
+      "升班马特鲁瓦回归法甲",
+      "韦洛德罗姆球场之夜"
+    ],
+    "trivia": "特鲁瓦与勒芒同为本季法甲升班马",
+    "replay": false,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "PD-2-BET-RSO",
+    "star": 3,
+    "story": [],
+    "points": [
+      "西甲首轮强强对话",
+      "欧战席位竞争者直接对话",
+      "贝蒂斯洛佩拉球场之夜"
+    ],
     "trivia": null,
     "replay": false,
     "avoid": false,

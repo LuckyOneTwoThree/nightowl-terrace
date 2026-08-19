@@ -48,7 +48,7 @@ Page({
         logo: hTeam.logo || '',
         sub: tampered ? '封存校验失败 · 已作废'
           : late ? '开球后封存 · 已作废'
-          : '预测: ' + pickZh + (p.scoreH !== '' ? ' (' + p.scoreH + '-' + p.scoreA + ')' : '') + (r && r.upset ? ' · 冷门×2' : ''),
+          : '预测: ' + pickZh + ((p.scoreH !== '' && p.scoreH != null && p.scoreA !== '' && p.scoreA != null) ? ' (' + p.scoreH + '-' + p.scoreA + ')' : '') + (r && r.upset ? ' · 冷门×2' : ''),
         finished: tampered || late ? true : !!r,
         hit: r ? r.hit : false,
         pts: r ? r.pts : 0,
@@ -61,7 +61,7 @@ Page({
         key: 'boast-' + mid, mid: mid,
         label: b.md, sort: b.ts || 0, type: 'boast',
         names: b.names, sub: b.text,
-        finished: b.result !== null, hit: b.result === 'hit', pts: 0
+        finished: b.result != null, hit: b.result === 'hit', pts: 0
       });
     });
     Object.keys(checkins).forEach(function (mid) {

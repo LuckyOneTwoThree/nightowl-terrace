@@ -38,7 +38,7 @@ Page({
     if (!pick) {
       var now = Date.now();
       var cands = data.matchesAll().filter(function (m) {
-        if (m.st !== 'sched') return false;
+        if (m.st !== 'sched' || m.tbd) return false;
         var ev = engine.evaluate(m, recMap, rivs, sls, []);
         return ev.star >= 3 && engine.ts(m.t) > now;
       }).sort(function (a, b) { return engine.ts(a.t) - engine.ts(b.t); });
@@ -47,7 +47,7 @@ Page({
         pick = cands[0];
       } else {
         pick = data.matchesAll().filter(function (m) {
-          return m.st === 'sched' && engine.ts(m.t) > now;
+          return m.st === 'sched' && !m.tbd && engine.ts(m.t) > now;
         }).sort(function (a, b) { return engine.ts(a.t) - engine.ts(b.t); })[0] || null;
       }
     }
@@ -66,7 +66,7 @@ Page({
         ts: b.ts || 0,
         names: b.names,
         result: b.result,           // 'hit' | 'miss' | null
-        finished: m ? (m.st === 'ft' || m.st === 'done') : false,
+        finished: m ? engine.isFinished(m) : false,
         sc: m && m.sc ? m.sc : ''
       };
       if (b.result === 'hit') hit++;

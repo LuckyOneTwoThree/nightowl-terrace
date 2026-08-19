@@ -16,15 +16,9 @@ function dateOf(t) {
   return t.split('T')[0];
 }
 
-// Date → 'YYYY-MM-DD'（本地时区）
-function dateStr(d) {
-  var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
-  return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
-}
-
 /**
  * 夜猫口径「展示日」：北京时间 00:00–06:00 的场次归属前一晚（PM 3.2）
- * 与 nightOf / data.matchesOfDay / schedule.displayDay 口径一致。
+ * 纯 UTC 算术实现，不依赖运行环境时区。
  * 例：t="2026-08-22T03:00"（北京 8/22 凌晨）→ 返回 "2026-08-21"（8/21 的夜）
  */
 function owlDay(t) {
@@ -32,21 +26,23 @@ function owlDay(t) {
   var hm = (f[1] || '00:00').split(':');
   var day = f[0];
   if (Number(hm[0]) < 6) {
-    var d = new Date(day.replace(/-/g, '/') + ' 00:00:00');
-    d.setDate(d.getDate() - 1);
-    day = dateStr(d);
+    var p = day.split('-');
+    var d = new Date(Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2])) - 86400000);
+    day = d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate());
   }
   return day;
 }
 
 /**
- * 夜猫口径「今日」：凌晨 00:00–06:00 归前一晚（与 data.matchesOfDay 展示口径一致）
- * 早 3 点打开小程序，看到的「今晚」仍是在看的那一夜，而不是日历上的明天
+ * 夜猫口径「今日」：北京墙钟凌晨 00:00–06:00 归前一晚（与 data.matchesOfDay 展示口径一致）
+ * 纯 UTC 算术（+8h 平移读墙钟），设备时区无关——境外设备上「今晚」不错位。
+ * @param now Date 对象或毫秒时间戳
  */
 function nightOf(now) {
-  var d = new Date(now.getTime());
-  if (d.getHours() < 6) d = new Date(d.getTime() - 86400000);
-  return dateStr(d);
+  var ts = (now instanceof Date) ? now.getTime() : Number(now);
+  var bj = new Date(ts + 8 * 3600000);
+  if (bj.getUTCHours() < 6) bj = new Date(bj.getTime() - 86400000);
+  return bj.getUTCFullYear() + '-' + pad2(bj.getUTCMonth() + 1) + '-' + pad2(bj.getUTCDate());
 }
 
 // ---------- 睡眠成本分档（北京时间开球） ----------
@@ -111,8 +107,11 @@ function weekStartBJ(nowTs) {
 // 胜平负 3 分，比分再 +2，命中冷门预警翻倍（PM 9.4）
 function settlePred(pred, m, recMap) {
   if (!m || !m.sc) return null;
-  var sc = String(m.sc).split('-');
-  var h = Number(sc[0]), a = Number(sc[1]);
+  var sc = String(m.sc);
+  // 比分格式严格校验：'2-' 会被 Number('') 解析成 0 当成 2-0 骗分（云端 settleMatches 同判据）
+  if (!/^\d+-\d+$/.test(sc)) return null;
+  var p = sc.split('-');
+  var h = Number(p[0]), a = Number(p[1]);
   var fact = h > a ? 'h' : h < a ? 'a' : 'd';
   var hit = pred.pick === fact;
   var pts = hit ? 3 : 0;
@@ -286,7 +285,8 @@ function planWeek(matches, recMap, rivalries, storylines, followed, budget) {
   var alt = evs.filter(function (e) { return !bestIds[e.m.id]; }).slice(0, 3);
 
   var usedCost = best.reduce(function (s, e) { return s + tierOf(e.m).cost; }, 0);
-  return { best: best, alt: alt, budget: budget, used: usedCost };
+  // evs 一并返回供页面复用（focal/highlight 等），避免对同批场次二次全量 evaluate
+  return { best: best, alt: alt, budget: budget, used: usedCost, evs: evs };
 }
 
 // ---------- 雷区预警 ----------
@@ -313,7 +313,8 @@ function replays(matches, recMap, limit) {
   limit = limit || 3;
   var recMapSafe = recMap || {};
   return matches
-    .filter(function (m) { return m.st === 'done'; })
+    // 已赛口径统一走 isFinished（'done'/'ft' 双认，与各页一致）
+    .filter(isFinished)
     .map(function (m) {
       var rec = recMapSafe[m.id];
       var star = rec ? rec.star : 1;
@@ -366,7 +367,6 @@ module.exports = {
   TIERS: TIERS,
   parseMin: parseMin,
   dateOf: dateOf,
-  dateStr: dateStr,
   owlDay: owlDay,
   nightOf: nightOf,
   sleepTier: sleepTier,

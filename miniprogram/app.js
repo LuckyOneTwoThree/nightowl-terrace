@@ -22,6 +22,8 @@ App({
       });
     }
 
+    // 等宽字体已内联 app.wxss @font-face（woff2 base64），无需运行时加载
+
     // 启动即刻同步原生导航栏、背景与 TabBar 样式
     this.applyTheme();
   },
@@ -66,7 +68,7 @@ App({
     var mode = this.getThemeMode();
     if (mode === 'auto') {
       try {
-        var info = wx.getSystemInfoSync();
+        var info = wx.getAppBaseInfo ? wx.getAppBaseInfo() : {};
         return info.theme === 'light' ? 'light' : 'dark';
       } catch (e) {
         return 'dark';
@@ -106,7 +108,7 @@ App({
 
     if (wx.setTabBarStyle) {
       wx.setTabBarStyle({
-        color: isLight ? '#64748B' : '#8E8A81',
+        color: isLight ? '#64748B' : '#7C8794',
         selectedColor: isLight ? '#D97706' : '#FFB224',
         backgroundColor: isLight ? '#FFFFFF' : '#101419',
         borderStyle: isLight ? 'white' : 'black',

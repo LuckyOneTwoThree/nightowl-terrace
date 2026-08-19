@@ -93,7 +93,7 @@ Page({
     ctx.beginPath();
     ctx.moveTo(px + pr, py); ctx.arcTo(px + pw, py, px + pw, py + ph, pr);
     ctx.arcTo(px + pw, py + ph, px, py + ph, pr);
-    ctx.arcTo(px, py + ph, py, py, pr); ctx.arcTo(px, py, px + pw, py, pr);
+    ctx.arcTo(px, py + ph, px, py, pr); ctx.arcTo(px, py, px + pw, py, pr);
     ctx.fill();
     ctx.strokeStyle = 'rgba(159,142,121,.12)'; ctx.lineWidth = 3; ctx.stroke();
     body(m.dateHeader, W / 2, py + 96, 56, '#D6C4AD');

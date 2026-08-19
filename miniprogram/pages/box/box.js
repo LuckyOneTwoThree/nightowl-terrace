@@ -31,6 +31,10 @@ Page({
     if (this._shuffleTimer) clearTimeout(this._shuffleTimer);
   },
 
+  onHide: function () {
+    if (this._shuffleTimer) { clearTimeout(this._shuffleTimer); this._shuffleTimer = null; }
+  },
+
   onLoad: function () {
     this.draw(true);
   },

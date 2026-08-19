@@ -74,11 +74,19 @@ Page({
 
   /**
    * 收集用户多维度战绩数据（赛季总计、盲评周计、修仙肝度）
+   * 带签名缓存：封存集合与相关场次比分未变时复用上次结果（onShow/切 tab 高频调用）
    */
   getUserStats: function () {
     var preds = wx.getStorageSync('predictions') || {};
     var recMap = data.getRecMap();
     var nowWk = engine.weekStartBJ(Date.now()).str;
+
+    // 签名 = 每条封存(ts) + 该场比分（结算后 sc 补录会改变结果，必须纳入）
+    var sig = Object.keys(preds).sort().map(function (k) {
+      var m = data.getMatch(k);
+      return k + ':' + (preds[k].ts || 0) + ':' + (m ? (m.sc || '') + (m.st || '') : '?');
+    }).join('|');
+    if (this._statsSig === sig && this._statsCache) return this._statsCache;
 
     var seasonPts = 0, seasonHit = 0, seasonSettled = 0, seasonTotal = 0;
     var weekPts = 0, weekHit = 0, weekSettled = 0, weekTotal = 0;
@@ -87,6 +95,9 @@ Page({
       var p = preds[mid];
       var mm = data.getMatch(mid);
       if (!mm || !crypt.verify(p)) return;
+      // 开球后封存作废（与 records/play/云端 settleMatches 判据一致，1 分钟时钟宽容）
+      var kickTs = engine.ts(mm.t);
+      if (p.ts && !isNaN(kickTs) && p.ts > kickTs + 60000) return;
       seasonTotal++;
 
       // 判断比赛所属周
@@ -111,7 +122,7 @@ Page({
     var seasonRate = seasonSettled > 0 ? Math.round(seasonHit / seasonSettled * 100) : 0;
     var weekRate = weekSettled > 0 ? Math.round(weekHit / weekSettled * 100) : 0;
 
-    return {
+    var result = {
       seasonPts: seasonPts,
       seasonHit: seasonHit,
       seasonSettled: seasonSettled,
@@ -124,6 +135,9 @@ Page({
       weekTotal: weekTotal,
       weekRate: weekRate
     };
+    this._statsSig = sig;
+    this._statsCache = result;
+    return result;
   },
 
   /**
@@ -215,7 +229,7 @@ Page({
           var myIdx = -1;
           var rows = list.map(function (r, i) {
             if (myIdx < 0 && r.nick === myNick) myIdx = i;
-            return { rank: i + 1, name: r.nick, val: (r.hours || 0) + 'h', sub: '连续 ' + (r.streak || 0) + ' 周' };
+            return { rank: i + 1, name: r.nick, val: (r.hours || 0) + 'h', sub: '本周 ' + (r.nights || 0) + ' 夜' };
           });
           that.setData({
             ranks: rows,
@@ -301,7 +315,7 @@ Page({
     wx.setStorageSync('checkins', checkins);
     cloud.addCheckin({
       m: live.id, md: live.md, names: live.home.zh + ' vs ' + live.away.zh,
-      cost: live.cost, ts: checkins[live.id].ts
+      cost: live.cost, ts: checkins[live.id].ts, wk: checkins[live.id].wk // 比赛归属周，云端周过滤优先用
     });
     wx.showToast({ title: '打卡成功 · +' + live.cost + 'h', icon: 'success' });
     this.refresh();

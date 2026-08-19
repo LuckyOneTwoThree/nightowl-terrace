@@ -1,0 +1,128 @@
+/**
+ * 云函数：seal 玩法写入收口（盲评封存 / 打卡 / 狂言 / 用户偏好同步）
+ * 触发：客户端调用（替代 predictions/checkins/boasts 集合直写）
+ * 职责（PM 八节权限规则 + 审查报告 P0-1/P1-2/P1-7）：
+ *   1. 服务端落 sealTs（Date.now()，云环境可信时钟）——封存截止判据不再信任客户端 ts
+ *   2. 归属写 uid（OPENID），云端结算/榜单聚合统一口径
+ *   3. (uid, m) 唯一性：重复封存/打卡返回已有文档不重复计分；狂言为覆盖语义（同场可改口）
+ *   4. prediction 前置校验：服务端复算 commit-reveal 哈希，不一致拒绝；开球后拒绝
+ *   5. action=user：settings 变更 upsert users 集合（周报透支段 / 推送依赖）
+ * 降级兼容：云函数不可用时客户端回退集合直写（无 sealTs），结算侧回退 ts+60s 宽容判据
+ */
+const cloud = require('wx-server-sdk');
+const crypto = require('crypto');
+
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
+
+// 与 miniprogram/utils/crypt.js、settleMatches 完全一致的载荷格式
+function commitHash(p) {
+  return crypto.createHash('sha256')
+    .update(p.pick + '|' + (p.scoreH || '-') + ':' + (p.scoreA || '-') + '|' + p.salt, 'utf8')
+    .digest('hex');
+}
+
+// 北京墙钟 'YYYY-MM-DDTHH:mm' → 时间戳（纯 UTC 算术）
+function bjTs(t) {
+  const m = String(t || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (!m) return NaN;
+  return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) - 8 * 3600000;
+}
+
+// (uid, m) 查重：返回已有文档或 null
+async function findExisting(db, coll, uid, m) {
+  const res = await db.collection(coll).where({ uid, m }).limit(1).get();
+  return res.data.length ? res.data[0] : null;
+}
+
+exports.main = async (event) => {
+  const db = cloud.database();
+  const wxCtx = cloud.getWXContext();
+  const uid = wxCtx.OPENID || '';
+  if (!uid) return { ok: false, error: 'no openid' };
+
+  const action = event.action;
+  const now = Date.now();
+
+  try {
+    // ── 盲评封存 ──
+    if (action === 'prediction') {
+      const p = {
+        m: event.m, gid: event.gid || 'default', nick: event.nick || '夜猫',
+        pick: event.pick, scoreH: event.scoreH || '', scoreA: event.scoreA || '',
+        salt: event.salt, hash: event.hash
+      };
+      if (!p.m || !p.pick || !p.salt || !p.hash) return { ok: false, error: 'bad payload' };
+      // 哈希前置校验：载荷被客户端篡改的封存直接拒绝入库
+      if (commitHash(p) !== p.hash) return { ok: false, error: 'hash mismatch' };
+
+      const fix = await db.collection('fixtures').where({ id: p.m }).limit(1).get();
+      const kickTs = fix.data.length ? bjTs(fix.data[0].t) : NaN;
+      if (!isNaN(kickTs) && kickTs <= now) {
+        return { ok: false, error: 'kickoff passed' }; // 开球后禁封（服务端时钟）
+      }
+
+      const dup = await findExisting(db, 'predictions', uid, p.m);
+      if (dup) return { ok: true, dup: true, id: dup._id }; // 已封存不重复写
+
+      const doc = Object.assign({}, p, {
+        score: (p.scoreH !== '' && p.scoreA !== '') ? (p.scoreH + '-' + p.scoreA) : null,
+        uid, revealed: false, sealTs: now, ts: now
+      });
+      const added = await db.collection('predictions').add({ data: doc });
+      return { ok: true, id: added._id, sealTs: now };
+    }
+
+    // ── 夜猫打卡 ──
+    if (action === 'checkin') {
+      const c = { m: event.m, gid: event.gid || 'default', nick: event.nick || '夜猫' };
+      if (!c.m || event.cost == null) return { ok: false, error: 'bad payload' };
+      const dup = await findExisting(db, 'checkins', uid, c.m);
+      if (dup) return { ok: true, dup: true, id: dup._id };
+      const doc = Object.assign({}, c, {
+        md: event.md || '', names: event.names || '', cost: Number(event.cost) || 0,
+        wk: event.wk || null, // 比赛归属周（凌晨场归前一晚口径），榜单周过滤优先用
+        uid, sealTs: now, ts: now
+      });
+      const added = await db.collection('checkins').add({ data: doc });
+      return { ok: true, id: added._id, sealTs: now };
+    }
+
+    // ── 德比法庭狂言（同场覆盖语义，与本地 storage 一致） ──
+    if (action === 'boast') {
+      const b = { m: event.m, gid: event.gid || 'default', nick: event.nick || '夜猫' };
+      if (!b.m || !event.text) return { ok: false, error: 'bad payload' };
+      const doc = Object.assign({}, b, {
+        text: String(event.text).slice(0, 40), md: event.md || '', names: event.names || '',
+        result: null, uid, sealTs: now, ts: now
+      });
+      const dup = await findExisting(db, 'boasts', uid, b.m);
+      if (dup) {
+        // 覆盖文本但保留人工判定结果
+        await db.collection('boasts').doc(dup._id).update({
+          data: { text: doc.text, ts: now, nick: doc.nick, names: doc.names, md: doc.md }
+        });
+        return { ok: true, updated: true, id: dup._id };
+      }
+      const added = await db.collection('boasts').add({ data: doc });
+      return { ok: true, id: added._id, sealTs: now };
+    }
+
+    // ── 用户偏好同步（settings 变更时 upsert users） ──
+    if (action === 'user') {
+      const patch = { uid, nick: event.nick || '夜猫', updatedTs: now };
+      if (event.budget != null) patch.budget = Number(event.budget);
+      if (Array.isArray(event.followed)) patch.followed = event.followed;
+      const exist = await db.collection('users').where({ uid }).limit(1).get();
+      if (exist.data.length) {
+        await db.collection('users').doc(exist.data[0]._id).update({ data: patch });
+        return { ok: true, updated: true };
+      }
+      await db.collection('users').add({ data: patch });
+      return { ok: true, created: true };
+    }
+
+    return { ok: false, error: 'action 必须是 prediction | checkin | boast | user' };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+};

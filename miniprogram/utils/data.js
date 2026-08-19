@@ -6,6 +6,7 @@
 
 var teams = require('../data/teams.js');
 var crest = require('./crest.js');
+var engine = require('./engine.js');
 var fixturesSeed = require('../data/fixtures.full.js'); // M1.1 全量 1752 场（ESPN 抓取生成，tools/fetch_espn.js + build_fixtures.js）
 var recsSeed = require('../data/recommendations.seed.js');
 var storylinesAll = require('../data/storylines.js');
@@ -46,10 +47,14 @@ teams.forEach(function (t) {
   teamMap[t.id] = t;
 });
 
+// 推荐层索引（种子不可变，模块级缓存避免每次全量重建）
+var _recMap = null;
 function recMap() {
-  var map = {};
-  recsSeed.forEach(function (r) { map[r.m] = r; });
-  return map;
+  if (!_recMap) {
+    _recMap = {};
+    recsSeed.forEach(function (r) { _recMap[r.m] = r; });
+  }
+  return _recMap;
 }
 
 function storylines() {
@@ -57,8 +62,14 @@ function storylines() {
   return storylinesAll.filter(function (s) { return s.status !== 'draft'; });
 }
 
+// 场次索引（种子不可变，模块级缓存；原 filter 全量扫描 O(n) → O(1)）
+var _matchMap = null;
 function getMatch(id) {
-  return fixturesSeed.filter(function (m) { return m.id === id; })[0] || null;
+  if (!_matchMap) {
+    _matchMap = {};
+    fixturesSeed.forEach(function (m) { _matchMap[m.id] = m; });
+  }
+  return _matchMap[id] || null;
 }
 
 module.exports = {
@@ -91,27 +102,15 @@ module.exports = {
     return fixturesSeed.filter(function (m) { return m.t.split('T')[0] === dateStr; });
   },
   matchesOfDay: function (dateStr) {
-    // 北京时间口径：凌晨场（00:00–06:00）归属前一晚
-    return fixturesSeed.filter(function (m) {
-      var parts = m.t.split('T');
-      var day = parts[0];
-      var hm = parts[1].split(':');
-      if (Number(hm[0]) < 6) {
-        var d = new Date(day.replace(/-/g, '/') + ' 00:00:00');
-        d.setDate(d.getDate() - 1);
-        var m2 = (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1);
-        var dd = (d.getDate() < 10 ? '0' : '') + d.getDate();
-        day = d.getFullYear() + '-' + m2 + '-' + dd;
-      }
-      return day === dateStr;
-    });
+    // 北京时间口径：凌晨场（00:00–06:00）归属前一晚（统一走 engine.owlDay，避免双份口径漂移）
+    return fixturesSeed.filter(function (m) { return engine.owlDay(m.t) === dateStr; });
   },
   getInitTheme: function () {
     try {
       var s = wx.getStorageSync('settings') || {};
       var mode = s.theme || 'dark';
       if (mode === 'auto') {
-        var info = wx.getSystemInfoSync();
+        var info = wx.getAppBaseInfo ? wx.getAppBaseInfo() : {};
         return info.theme === 'light' ? 'light' : 'dark';
       }
       return mode === 'light' ? 'light' : 'dark';

@@ -227,5 +227,16 @@ Page({
   },
   onCal: function () {
     wx.switchTab({ url: '/pages/schedule/schedule' });
+  },
+
+  // 群分享（PM 主场景微信群）：带今晚 Hero 对阵引流
+  onShareAppMessage: function () {
+    var hero = this.data.hero;
+    return {
+      title: hero
+        ? '今晚熬不熬？' + hero.home.zh + ' vs ' + hero.away.zh + '（' + hero.stars + ' · 熬' + hero.cost + 'h）'
+        : '夜猫看台 · 3 秒回答今晚该熬哪一场',
+      path: '/pages/today/today'
+    };
   }
 });

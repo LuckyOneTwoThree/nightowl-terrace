@@ -38,6 +38,7 @@ Page({
     if (this._lastPredsStr !== curPredsStr) {
       this._lastPredsStr = curPredsStr;
       this.refresh();
+      this.fetchRanks(); // 封存状态变化后云端周榜同步刷新，避免返回本页时榜单空白
     }
   },
 
@@ -78,7 +79,8 @@ Page({
     });
 
     var evaluated = weekSched.map(function (m) {
-      return { m: m, ev: engine.evaluate(m, recMap, rivs, sls, []), index: engine.owlIndex(engine.evaluate(m, recMap, rivs, sls, []), m) };
+      var ev = engine.evaluate(m, recMap, rivs, sls, []);
+      return { m: m, ev: ev, index: engine.owlIndex(ev, m) };
     });
 
     // 盲评截止：各场开球时刻（PM 八节），入口卡片只提示口径
@@ -148,6 +150,14 @@ Page({
 
   goRecords: function () {
     wx.navigateTo({ url: '/pages/records/records' });
+  },
+
+  // 群分享：玩法聚合页引流
+  onShareAppMessage: function () {
+    return {
+      title: '盲评猜球 · 夜猫榜 · 德比法庭 · 盲盒开球，球迷群的深夜新玩法',
+      path: '/pages/play/play'
+    };
   },
 
   goDetail: function (e) {

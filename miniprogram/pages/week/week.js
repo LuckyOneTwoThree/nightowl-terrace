@@ -3,7 +3,6 @@ var data = require('../../utils/data.js');
 var ics = require('../../utils/ics.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
-var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
 
 function lgZh(l) {
   var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
@@ -96,12 +95,8 @@ Page({
     var plan = engine.planWeek(week, recMap, rivs, sls, followed, budget);
     var mines = engine.minefield(week, recMap, rivs, sls, followed);
 
-    var evs = week.filter(function (m) { return m.st === 'sched'; })
-      .map(function (m) {
-        var ev = engine.evaluate(m, recMap, rivs, sls, followed);
-        return { m: m, ev: ev, index: engine.owlIndex(ev, m) };
-      })
-      .sort(function (a, b) { return b.index - a.index; });
+    // 复用 planWeek 已算好的评估（index 降序，tbd 场次已排除），避免同批场次二次全量 evaluate
+    var evs = plan.evs;
 
     // 跨联赛焦点 Top 5–8
     var focal = evs.filter(function (e) { return e.ev.star >= Math.max(2, minStar); })
@@ -158,11 +153,12 @@ Page({
       wx.setStorageSync(settleKey, 1);
       if (actual > budget + 0.01) {
         suggest = Math.max(1, Math.round((budget - (actual - budget) / 2) * 2) / 2);
-        wx.setStorageSync('weekSuggest', { budget: budget, suggest: suggest, actual: actual });
+        // 带 week 归属：仅对「刚结算的上周」的建议有效，跨周自动过期
+        wx.setStorageSync('weekSuggest', { week: lastWeek.str, budget: budget, suggest: suggest, actual: actual });
       }
     }
     var sug = wx.getStorageSync('weekSuggest');
-    if (sug && sug.suggest && sug.suggest < budget) {
+    if (sug && sug.week === lastWeek.str && sug.suggest && sug.suggest < budget) {
       overNote = '上周实际透支 ' + sug.actual.toFixed(1) + 'h，建议本周收紧';
       suggest = sug.suggest;
     }

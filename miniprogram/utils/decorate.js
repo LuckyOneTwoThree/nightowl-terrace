@@ -39,7 +39,7 @@ function localTime(m) {
 function relDay(t) {
   var day = String(t || '').split('T')[0];
   var mD = new Date(day.replace(/-/g, '/') + ' 00:00:00');
-  var todayStr = engine.dateStr(new Date());
+  var todayStr = engine.bjDateStr(Date.now());
   var todayD = new Date(todayStr.replace(/-/g, '/') + ' 00:00:00');
   return Math.round((mD.getTime() - todayD.getTime()) / 86400000);
 }
@@ -97,7 +97,7 @@ function dec(m, ev, opts) {
     dayLabel: getDayLabel(m.t),
     dateHeader: getDateHeader(m.t),
     local: localTime(m),
-    tbd: !!m.tbd, st: m.st, finished: m.st === 'ft' || m.st === 'done',
+    tbd: !!m.tbd, st: m.st, finished: engine.isFinished(m),
     scH: sc ? sc[0] : '-', scA: sc ? sc[1] : '-', scText: m.sc || '',
     star: ev.star, stars: '★★★'.slice(0, ev.star),
     points: ev.rec ? (ev.rec.points || []) : [],

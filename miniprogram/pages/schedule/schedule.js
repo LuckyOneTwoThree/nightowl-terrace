@@ -39,15 +39,18 @@ Page({
     getApp().applyTheme(this);
     var curFollowed = JSON.stringify(getApp().getFollowed());
     if (this._lastFollowed !== curFollowed) {
-      this.onLoad();
+      this.init();
     }
   },
 
   onLoad: function () {
+    this.init();
+  },
+
+  init: function () {
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
-    var now = new Date();
-    // 按照北京时间自然日展示赛程
-    var todayStr = engine.dateStr(now);
+    // 按照北京时间自然日展示赛程（bjDateStr 纯 UTC 算术，设备时区无关）
+    var todayStr = engine.bjDateStr(Date.now());
 
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
@@ -190,7 +193,7 @@ Page({
     var cards = (this._byRound[lg] || {})[r] || [];
     return {
       day: 'round-' + lg + '-' + r,
-      label: { md: lgZh(lg) + ' · 第' + r + '轮', week: cards.length + ' 场' },
+      label: { md: lgZh(lg) + ' · ' + (r > 0 ? '第' + r + '轮' : '超级杯'), week: cards.length + ' 场' },
       matches: cards.slice().sort(function (x, y) { return x.t < y.t ? -1 : 1; })
     };
   },

@@ -4,8 +4,6 @@ var decorate = require('../../utils/decorate.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
 
-var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
-
 Page({
   _targetId: null,
 
@@ -44,10 +42,9 @@ Page({
    * 刷新与构建卡片列表
    */
   refreshCards: function () {
-    var now = new Date();
-    var start = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate());
-    var endD = new Date(now.getTime() + 14 * 86400000); // 扩展为两周范围
-    var end = endD.getFullYear() + '-' + p2(endD.getMonth() + 1) + '-' + p2(endD.getDate());
+    // 两周窗口按北京自然日口径（bjDateStr 纯 UTC 算术，设备时区无关）
+    var start = engine.bjDateStr(Date.now());
+    var end = engine.bjDateStr(Date.now() + 14 * 86400000);
 
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
@@ -253,6 +250,15 @@ Page({
 
   goRecords: function () {
     wx.navigateTo({ url: '/pages/records/records' });
+  },
+
+  // 群分享：带目标场次直达盲评单
+  onShareAppMessage: function () {
+    var id = this._targetId || (this.data.cards[0] && this.data.cards[0].id) || '';
+    return {
+      title: '开球前把预言封存进哈希，赛后开箱见真章 · 来盲评猜球',
+      path: '/pages/predict/predict' + (id ? '?id=' + id : '')
+    };
   }
 });
 

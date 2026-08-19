@@ -12,6 +12,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 // 北京时间周一起始（参数 week 为 'YYYY-MM-DD' 时按该周，缺省取当前周）
 // 云函数运行环境为 UTC，全部换算走北京墙钟：北京周一 00:00 = UTC 周日 16:00
+// 同时返回展示日窗口 [fromStr, toStr)：与客户端 owlDay 口径一致（凌晨场归前一晚）
 function weekRange(week) {
   let y, mo, d;
   if (week) {
@@ -25,7 +26,38 @@ function weekRange(week) {
   const wd = new Date(Date.UTC(y, mo, d)).getUTCDay();    // 该日星期几（日历法，与时区无关）
   const back = (wd + 6) % 7;                              // 距周一几天（周一=0）
   const from = dayStartUtcMs - back * 86400000;
-  return { from, to: from + 7 * 86400000 };
+  return { from, to: from + 7 * 86400000, fromStr: toStrOf(from), toStr: toStrOf(from + 7 * 86400000) };
+}
+
+// 北京墙钟串 'YYYY-MM-DDTHH:mm' → 夜猫展示日（凌晨 00:00–06:00 归前一晚，与 engine.owlDay 一致）
+function owlDayOf(t) {
+  const f = String(t || '').split('T');
+  const hm = (f[1] || '00:00').split(':');
+  let day = f[0];
+  if (Number(hm[0]) < 6) {
+    const p = day.split('-').map(Number);
+    day = new Date(Date.UTC(p[0], p[1] - 1, p[2]) - 86400000).toISOString().slice(0, 10);
+  }
+  return day;
+}
+
+function toStrOf(ts) {
+  return new Date(ts + 8 * 3600000).toISOString().slice(0, 10);
+}
+
+/**
+ * (uid, m) 去重：清缓存重封/降级直写会产生多条文档，聚合只认最新（sealTs 优先）
+ * 与 seal 云函数的唯一性约束互补，防重复计分（审查报告 P1-2）
+ */
+function dedupLatest(rows) {
+  const latest = {};
+  for (const r of rows) {
+    const uid = r.uid || r._openid || '';
+    const k = uid + '|' + r.m;
+    const cur = r.sealTs || r.ts || 0;
+    if (!latest[k] || cur > (latest[k].sealTs || latest[k].ts || 0)) latest[k] = r;
+  }
+  return Object.values(latest);
 }
 
 // 北京时间 'YYYY-MM-DDTHH:mm' → 时间戳（纯 UTC 算术，不依赖运行环境时区，同 ics.js 思路）
@@ -55,13 +87,20 @@ exports.main = async (event) => {
   try {
     if (board === 'guess') {
       // ── 盲评周榜：该周场次的封存预测，按 uid 聚合 ──
-      const { from, to } = weekRange(week);
-      const fixtures = await fetchAll(db, 'fixtures', {}, 2000);
+      // 周归属走 owlDay 展示日口径（与客户端 board.js 一致）：凌晨场归前一晚所在周
+      const { fromStr, toStr } = weekRange(week);
+      const _ = db.command;
+      // 展示日 [fromStr, toStr) ⟺ 原始 t ∈ [fromStr T06:00, toStr T06:00)，字符串区间查询免全量拉取
+      const fixtures = await db.collection('fixtures')
+        .where({ t: _.gte(fromStr + 'T06:00').and(_.lt(toStr + 'T06:00')) })
+        .limit(1000).get()
+        .then(r => r.data)
+        .catch(() => fetchAll(db, 'fixtures', {}, 2000)); // 索引/环境异常时回退全量
       const ids = new Set(fixtures
-        .filter(m => { const ts = bjTs(m.t); return ts >= from && ts < to; })
+        .filter(m => { const d = owlDayOf(m.t); return d >= fromStr && d < toStr; }) // 双保险
         .map(m => m.id));
-      const preds = (await fetchAll(db, 'predictions', { gid }, 2000))
-        .filter(p => ids.has(p.m));
+      const preds = dedupLatest((await fetchAll(db, 'predictions', { gid }, 2000))
+        .filter(p => ids.has(p.m)));
 
       const now = Date.now();
       const agg = {}; // uid -> { nick, pts, count, hit, sealed: [..] }
@@ -77,13 +116,14 @@ exports.main = async (event) => {
         if (p.pts) a.pts += p.pts;
         if (p.hit) a.hit++;
         a.count++;
-        // 截止前只给哈希，截止后给明文（PM 权限规则）
+        // 截止前只给哈希，截止后给明文（PM 权限规则）；比分串仅双方都填才拼（防 '2-'）
+        const hasScore = p.scoreH != null && p.scoreH !== '' && p.scoreA != null && p.scoreA !== '';
         a.entries.push({
           m: p.m,
           nick: a.nick,
           hash: p.hash || null,
           pick: sealed ? null : (p.pick || null),
-          score: sealed || p.scoreH == null ? null : (p.scoreH + '-' + p.scoreA),
+          score: sealed || !hasScore ? null : (p.scoreH + '-' + p.scoreA),
           pts: sealed ? null : (p.pts || 0),
           tampered: !!p.tampered
         });
@@ -95,9 +135,11 @@ exports.main = async (event) => {
 
     } else if (board === 'owl') {
       // ── 夜猫榜：该周打卡，按熬夜成本聚合 ──
-      const { from, to } = weekRange(week);
-      const cis = (await fetchAll(db, 'checkins', { gid }, 2000))
-        .filter(c => c.ts >= from && c.ts < to);
+      // 周归属优先用打卡时记录的比赛归属周 c.wk（凌晨场归前一晚，与客户端一致），
+      // 无 wk 的旧数据回退打卡时间戳区间；并按 (uid, m) 去重防清缓存重打卡重复计数
+      const { from, to, fromStr } = weekRange(week);
+      const cis = dedupLatest((await fetchAll(db, 'checkins', { gid }, 2000))
+        .filter(c => c.wk ? c.wk === fromStr : (c.ts >= from && c.ts < to)));
       const agg = {};
       for (const c of cis) {
         const uid = c.uid || c._openid || ''; // 客户端直写时回退 _openid

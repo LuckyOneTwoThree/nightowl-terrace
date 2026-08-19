@@ -1,5 +1,6 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
+var crypt = require('../../utils/crypt.js');
 
 function lgZh(l) {
   var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
@@ -50,13 +51,16 @@ Page({
     Object.keys(checkins).forEach(function (k) { mins += (checkins[k].cost || 0) * 60; });
     var hours = (Math.round(mins / 6) / 10) + 'h';
     var hit = 0, total = 0;
+    // 命中率统一走 settlePred 判据（含封存校验/开球后作废/比分加分，与 records/board/云端一致）
+    var recMap = data.getRecMap();
     Object.keys(preds).forEach(function (mid) {
+      var p = preds[mid];
       var m = data.getMatch(mid);
-      if (m && m.sc) {
-        var sc = m.sc.split('-'), h = Number(sc[0]), a = Number(sc[1]);
-        total++;
-        if (preds[mid].pick === (h > a ? 'h' : h < a ? 'a' : 'd')) hit++;
-      }
+      if (!m || !p || !crypt.verify(p)) return;
+      var kickTs = engine.ts(m.t);
+      if (p.ts && !isNaN(kickTs) && p.ts > kickTs + 60000) return; // 开球后封存作废
+      var r = engine.settlePred(p, m, recMap);
+      if (r) { total++; if (r.hit) hit++; }
     });
 
     // 已关注球队完整信息列表（外层仅展示已关注）
@@ -74,10 +78,9 @@ Page({
       };
     });
 
-    // 我的关注 · 本周主队赛程（PM 7.4 聚合视图）
-    var now = new Date();
-    var start = engine.dateStr(now);
-    var end = engine.dateStr(new Date(now.getTime() + 7 * 86400000));
+    // 我的关注 · 本周主队赛程（PM 7.4 聚合视图，北京自然日口径）
+    var start = engine.bjDateStr(Date.now());
+    var end = engine.bjDateStr(Date.now() + 7 * 86400000);
     var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
     var myWeek = data.matchesAll().filter(function (m) {
       var d = m.t.split('T')[0];
