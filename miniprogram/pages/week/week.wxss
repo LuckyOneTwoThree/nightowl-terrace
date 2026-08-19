@@ -31,7 +31,7 @@
 /* 3视角分栏导航栏 (Segmented Nav Tabs) */
 .week-nav {
   display: flex; gap: 12rpx; padding: 10rpx; margin-top: 28rpx;
-  border-radius: var(--r-xl); border: 1rpx solid rgba(159,142,121,.15);
+  border-radius: var(--r-xl); border: 1rpx solid var(--hairline);
   background: var(--sc-low);
 }
 .wn-pill {
@@ -56,7 +56,7 @@
 .empty-tip { padding: 40rpx 32rpx; text-align: center; border-radius: var(--r-xl); }
 
 .plan { padding: 4rpx 0; overflow: hidden; }
-.plan-row { display: flex; align-items: center; gap: 20rpx; padding: 24rpx 28rpx; position: relative; border-bottom: 1rpx solid rgba(159,142,121,.08); }
+.plan-row { display: flex; align-items: center; gap: 20rpx; padding: 24rpx 28rpx; position: relative; border-bottom: 1rpx solid var(--outline-muted); }
 .plan-row:last-child { border-bottom: none; }
 .plan-row:active { background: var(--sc-high); }
 .pr-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; }
@@ -69,7 +69,7 @@
 .plan-alt { padding: 18rpx 28rpx 22rpx; font-size: 22rpx; background: rgba(0,0,0,.15); }
 
 /* 若只熬一场（渐变描边 + 泛光） */
-.hl-wrap { padding: 2rpx; border-radius: var(--r-xl); background: linear-gradient(135deg, rgba(255,178,36,.6), rgba(159,142,121,.15)); }
+.hl-wrap { padding: 2rpx; border-radius: var(--r-xl); background: linear-gradient(135deg, rgba(255,178,36,.6), var(--hairline)); }
 .hl-card { background: var(--sc); border-radius: var(--r-xl); overflow: hidden; }
 .hl-head { display: flex; align-items: center; gap: 12rpx; padding: 20rpx 28rpx; border-bottom: 1rpx solid var(--hairline); background: rgba(255,178,36,.06); }
 .hl-fire { width: 32rpx; height: 32rpx; }

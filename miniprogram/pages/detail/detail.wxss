@@ -65,7 +65,7 @@
 .pb-opts { display: flex; gap: 14rpx; }
 .pb-opt {
   flex: 1; text-align: center; padding: 18rpx 0; border-radius: var(--r-md);
-  background: var(--sc-high); border: 1rpx solid rgba(159,142,121,.2);
+  background: var(--sc-high); border: 1rpx solid var(--outline-muted);
   color: var(--on-surface-variant); font-size: 26rpx; transition: all .15s ease;
   white-space: nowrap;
 }
@@ -77,12 +77,12 @@
 
 .pb-score-row {
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 20rpx; padding-top: 16rpx; border-top: 1rpx solid rgba(159,142,121,.15);
+  margin-top: 20rpx; padding-top: 16rpx; border-top: 1rpx solid var(--hairline);
 }
 .pb-score-in { display: flex; align-items: center; gap: 10rpx; font-size: 24rpx; }
 .pb-in {
   width: 80rpx; height: 60rpx; text-align: center;
-  background: var(--sc-high); border: 1rpx solid rgba(159,142,121,.25); border-radius: var(--r-sm);
+  background: var(--sc-high); border: 1rpx solid var(--line-strong); border-radius: var(--r-sm);
   font-size: 30rpx; color: var(--primary-container); font-weight: 700;
 }
 .pb-seal-btn {

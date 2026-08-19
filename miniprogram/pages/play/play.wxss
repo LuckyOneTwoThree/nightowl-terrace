@@ -15,7 +15,7 @@
   position: relative; overflow: hidden;
   height: 250rpx; padding: 24rpx; box-sizing: border-box;
   background: var(--sc-low); border-radius: var(--r-xl);
-  border: 1rpx solid rgba(159,142,121,.15);
+  border: 1rpx solid var(--hairline);
   display: flex; flex-direction: column; justify-content: space-between;
   transition: transform .15s ease, border-color .15s ease;
 }
@@ -64,7 +64,7 @@
 .g-opts { display: flex; gap: 16rpx; margin-top: 8rpx; }
 .g-opt {
   flex: 1; text-align: center; padding: 18rpx 0;
-  border: 1rpx solid rgba(159,142,121,.2); border-radius: var(--r-full);
+  border: 1rpx solid var(--outline-muted); border-radius: var(--r-full);
   color: var(--on-surface-variant); background: var(--sc-high);
   font-size: 26rpx; transition: all .15s ease;
 }
@@ -79,7 +79,7 @@
 
 /* 排行榜 */
 .rank-card { padding: 6rpx 0; overflow: hidden; border-radius: var(--r-xl); }
-.rank-row { display: flex; align-items: center; gap: 20rpx; padding: 22rpx 28rpx; border-bottom: 1rpx solid rgba(159,142,121,.08); }
+.rank-row { display: flex; align-items: center; gap: 20rpx; padding: 22rpx 28rpx; border-bottom: 1rpx solid var(--outline-muted); }
 .rank-row:last-child { border-bottom: none; }
 .rank-num { width: 44rpx; font-size: 32rpx; text-align: center; color: var(--on-surface-variant); }
 .rank-1 { color: #FFB224; font-size: 36rpx; }

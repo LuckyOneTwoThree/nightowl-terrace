@@ -5,7 +5,7 @@
 .bpill {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
   padding: 14rpx 32rpx; border-radius: var(--r-full);
-  background: var(--sc-low); border: 1rpx solid rgba(159,142,121,.2);
+  background: var(--sc-low); border: 1rpx solid var(--outline-muted);
   color: var(--on-surface-variant); font-size: 24rpx; transition: all .2s ease;
   white-space: nowrap;
 }
@@ -203,7 +203,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1rpx solid rgba(159,142,121,.15);
+  border-bottom: 1rpx solid var(--hairline);
 }
 
 .bb-date {
@@ -278,7 +278,7 @@
   justify-content: center;
   gap: 28rpx;
   height: 700rpx;
-  border: 1rpx dashed rgba(159,142,121,.3);
+  border: 1rpx dashed var(--outline-muted);
   border-radius: 40rpx;
 }
 
@@ -330,7 +330,7 @@
   font-size: 26rpx;
   color: var(--on-surface-variant);
   background: var(--sc-low);
-  border: 1rpx solid rgba(159, 142, 121, 0.25);
+  border: 1rpx solid var(--line-strong);
   border-radius: var(--r-full);
 }
 .feat-btn:active {
@@ -360,7 +360,7 @@
 }
 
 .ghost-btn {
-  border: 1rpx solid rgba(159,142,121,.35);
+  border: 1rpx solid var(--line-heavy);
   color: var(--on-surface);
   background: var(--sc-high);
 }
