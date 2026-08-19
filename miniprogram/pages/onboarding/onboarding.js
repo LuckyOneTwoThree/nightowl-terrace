@@ -3,7 +3,7 @@ var data = require('../../utils/data.js');
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
-    theme: '', groups: [], picked: 0 },
+    theme: data.getInitTheme(), groups: [], picked: 0 },
 
   onLoad: function () {
     var followed = getApp().getFollowed();

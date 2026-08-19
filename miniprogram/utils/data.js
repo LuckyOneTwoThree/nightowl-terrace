@@ -105,5 +105,18 @@ module.exports = {
       }
       return day === dateStr;
     });
+  },
+  getInitTheme: function () {
+    try {
+      var s = wx.getStorageSync('settings') || {};
+      var mode = s.theme || 'dark';
+      if (mode === 'auto') {
+        var info = wx.getSystemInfoSync();
+        return info.theme === 'light' ? 'light' : 'dark';
+      }
+      return mode === 'light' ? 'light' : 'dark';
+    } catch (e) {
+      return 'dark';
+    }
   }
 };

@@ -8,7 +8,7 @@ function lgZh(l) {
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     nickname: '',
     followedTeams: [],
     followedIds: [],

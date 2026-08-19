@@ -21,7 +21,7 @@ function dayLabel(day) {
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     days: [],          // 日期条
     selDay: '',        // 选中日期（scroll-into-view）
     leagues: [],

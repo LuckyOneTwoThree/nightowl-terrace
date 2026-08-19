@@ -46,6 +46,57 @@
 .q-text { font-size: 26rpx; font-style: italic; line-height: 38rpx; color: var(--on-surface-variant); }
 .quote-strong { font-style: normal; font-weight: 700; color: var(--on-surface); margin-right: 8rpx; }
 
+/* 单场盲评预测卡片 */
+.pred-box {
+  margin-top: 28rpx; padding: 24rpx 28rpx; border-radius: var(--r-xl);
+  border: 1rpx solid rgba(255,178,36,.3);
+}
+.sealed-box {
+  border-color: rgba(68,226,205,.4);
+  background: rgba(68,226,205,.05);
+}
+.pb-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx;
+}
+.pb-title-row {
+  display: flex; align-items: center; gap: 10rpx; font-size: 28rpx; font-weight: 700;
+}
+.pb-sub { font-size: 22rpx; }
+.pb-opts { display: flex; gap: 14rpx; }
+.pb-opt {
+  flex: 1; text-align: center; padding: 18rpx 0; border-radius: var(--r-md);
+  background: var(--sc-high); border: 1rpx solid rgba(159,142,121,.2);
+  color: var(--on-surface-variant); font-size: 26rpx; transition: all .15s ease;
+  white-space: nowrap;
+}
+.pb-opt:active { background: rgba(255,178,36,.12); color: var(--primary-container); }
+.pb-opt.on {
+  background: var(--primary-container); color: var(--on-primary); font-weight: 700;
+  border-color: transparent; box-shadow: 0 0 16rpx rgba(255,178,36,.35);
+}
+
+.pb-score-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 20rpx; padding-top: 16rpx; border-top: 1rpx solid rgba(159,142,121,.15);
+}
+.pb-score-in { display: flex; align-items: center; gap: 10rpx; font-size: 24rpx; }
+.pb-in {
+  width: 80rpx; height: 60rpx; text-align: center;
+  background: var(--sc-high); border: 1rpx solid rgba(159,142,121,.25); border-radius: var(--r-sm);
+  font-size: 30rpx; color: var(--primary-container); font-weight: 700;
+}
+.pb-seal-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12rpx 28rpx !important; border-radius: var(--r-full);
+  font-size: 24rpx; font-weight: 700; height: 64rpx; line-height: 64rpx;
+  width: auto !important;
+}
+.pb-body {
+  display: flex; flex-direction: column; gap: 6rpx;
+}
+.pb-result { font-size: 30rpx; }
+.pb-tip { font-size: 22rpx; }
+
 /* 行按钮 */
 .acts { display: flex; gap: 16rpx; margin-top: 32rpx; }
 .act {
@@ -63,6 +114,7 @@
   color: var(--on-surface);
 }
 .act-sub:active { background: var(--sc-high); }
+
 
 
 /* 信息 bento 3宫格 */

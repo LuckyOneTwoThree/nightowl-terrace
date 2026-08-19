@@ -4,7 +4,7 @@ var decorate = require('../../utils/decorate.js');
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
-    theme: '', m: null, slogan: '今晚哪场值得熬', sub: 'MIDNIGHT MATCH PREMIUM' },
+    theme: data.getInitTheme(), m: null, slogan: '今晚哪场值得熬', sub: 'MIDNIGHT MATCH PREMIUM' },
 
   onLoad: function (q) {
     var raw = data.getMatch(q.id);

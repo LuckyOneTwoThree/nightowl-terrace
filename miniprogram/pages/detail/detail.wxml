@@ -72,11 +72,61 @@
     <text class="q-text"><text class="quote-strong">夜猫絮语:</text>“{{quip}}”</text>
   </view>
 
+  <!-- 本场单场盲评预测卡片 -->
+  <block wx:if="{{!m.finished}}">
+    <!-- 已封存状态 -->
+    <view class="card-low pred-box sealed-box" wx:if="{{myPred && myPred.sealed}}">
+      <view class="pb-head">
+        <view class="v-icon v-bolt text-teal"></view>
+        <text class="hl text-teal">已封存本场预测</text>
+      </view>
+      <view class="pb-body">
+        <text class="pb-result hl text-amber">我的预测: {{myPred.pickZh}}{{myPred.scoreH !== '' ? ' (' + myPred.scoreH + '-' + myPred.scoreA + ')' : ''}}</text>
+        <text class="mono muted pb-tip">终场哨响自动开箱 · 命中得积分</text>
+      </view>
+    </view>
+
+    <!-- 未封存：单场即时预测面板 -->
+    <view class="card-low pred-box" wx:elif="{{myPred && !myPred.closed}}">
+      <view class="pb-head">
+        <view class="pb-title-row">
+          <view class="v-icon v-fire text-amber"></view>
+          <text class="hl">单场预言 · 猜这场</text>
+        </view>
+        <text class="mono muted pb-sub">猜中 +3分 · 精确比分 +2分</text>
+      </view>
+
+      <view class="pb-opts">
+        <view class="pb-opt {{inputPick === 'h' ? 'on floodlight-glow' : ''}}" data-key="h" bindtap="onSelectPick">
+          <text class="hl">{{m.home.zh}} 胜</text>
+        </view>
+        <view class="pb-opt {{inputPick === 'd' ? 'on floodlight-glow' : ''}}" data-key="d" bindtap="onSelectPick">
+          <text class="hl">平局</text>
+        </view>
+        <view class="pb-opt {{inputPick === 'a' ? 'on floodlight-glow' : ''}}" data-key="a" bindtap="onSelectPick">
+          <text class="hl">{{m.away.zh}} 胜</text>
+        </view>
+      </view>
+
+      <view class="pb-score-row" wx:if="{{inputPick}}">
+        <view class="pb-score-in">
+          <text class="mono muted">比分:</text>
+          <input class="pb-in mono hl" type="number" value="{{inputScoreH}}" data-side="h" bindinput="onInputScore" placeholder="-" />
+          <text class="mono muted">:</text>
+          <input class="pb-in mono hl" type="number" value="{{inputScoreA}}" data-side="a" bindinput="onInputScore" placeholder="-" />
+        </view>
+        <button class="btn-amber pb-seal-btn floodlight-glow" bindtap="onSealSingle">
+          <text>封存预测</text>
+        </button>
+      </view>
+    </view>
+  </block>
+
   <!-- 行按钮：参与预测 / 留句狂言 / 生成海报 -->
   <view class="acts" wx:if="{{!m.finished}}">
     <view class="act act-main floodlight-glow" bindtap="goPredict">
       <view class="v-icon v-soccer"></view>
-      <text class="hl">参与盲评</text>
+      <text class="hl">{{myPred && myPred.sealed ? '更多盲评' : '盲评单'}}</text>
     </view>
     <view class="act act-sub" bindtap="goCourt">
       <view class="v-icon v-gavel text-amber"></view>

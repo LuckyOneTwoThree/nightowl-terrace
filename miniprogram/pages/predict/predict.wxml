@@ -4,7 +4,7 @@
     <view class="dl-main">
       <view class="dl-left">
         <view class="dot-amber animate-pulse"></view>
-        <text class="dl-title hl text-amber">本周焦点盲评</text>
+        <text class="dl-title hl text-amber">夜猫盲评 · 赛前预言家</text>
       </view>
       <view class="chip chip-amber dl-chip">
         <view class="v-icon v-fire text-amber"></view>
@@ -12,9 +12,18 @@
       </view>
     </view>
     <view class="dl-sub-row">
-      <text class="mono dl-sub">各场开球前截止封存 · 终场哨响自动开箱</text>
+      <text class="mono dl-sub">任意比赛开球前均可独立预测 · 终场哨响自动开箱</text>
     </view>
   </view>
+
+  <!-- 联赛切换筛选药丸 -->
+  <scroll-view class="league-pills" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="lpill {{curLeague === item.id ? 'active floodlight-glow' : ''}}"
+          wx:for="{{leaguePills}}" wx:key="id"
+          data-id="{{item.id}}" bindtap="onSelectLeague">
+      {{item.zh}}
+    </view>
+  </scroll-view>
 
   <!-- 规则 chips（3列均匀自适应） -->
   <view class="rules">
@@ -34,10 +43,16 @@
 
   <!-- 竞猜卡列表 -->
   <view class="cards">
-    <view class="gcard card-low {{item.pick ? 'picked' : ''}}" wx:for="{{cards}}" wx:key="id">
+    <view class="gcard card-low {{item.pick ? 'picked' : ''}} {{item.isTarget ? 'target-focused' : ''}}" wx:for="{{cards}}" wx:key="id">
       <view class="g-bar" style="background: {{item.lgAccent}};"></view>
       <view class="g-top">
-        <text class="mono muted">{{item.md}} {{item.hm}} · {{item.lgZh}}</text>
+        <view class="g-meta">
+          <text class="mono muted">{{item.md}} {{item.hm}} · {{item.lgZh}}</text>
+          <view class="chip chip-amber target-chip" wx:if="{{item.isTarget}}">
+            <view class="v-icon v-bolt text-amber"></view>
+            <text>指定预测场次</text>
+          </view>
+        </view>
         <view class="chip chip-error upset-chip" wx:if="{{item.upset}}">
           <view class="v-icon v-fire text-error"></view>
           <text>冷门狂热</text>
@@ -82,10 +97,18 @@
             <input class="g-in mono hl" type="number" value="{{item.scoreA}}" data-id="{{item.id}}" data-side="a" bindinput="onScore" placeholder="-" />
           </view>
         </view>
+
+        <!-- 单场快捷封存 -->
+        <view class="single-seal-wrap" wx:if="{{item.pick}}">
+          <button class="btn-single-seal" data-id="{{item.id}}" bindtap="onSealSingle">
+            <view class="v-icon v-bolt text-amber"></view>
+            <text>单独封存本场</text>
+          </button>
+        </view>
       </block>
       <view class="g-sealed card-high" wx:else>
         <view class="v-icon v-bolt text-teal"></view>
-        <text class="mono text-teal">已封存上锁 · 赛后自动开箱结算</text>
+        <text class="mono text-teal">已封存上锁 · 预测: {{item.pick === 'h' ? '主胜' : item.pick === 'd' ? '平局' : '客胜'}}{{item.scoreH !== '' ? ' (' + item.scoreH + '-' + item.scoreA + ')' : ''}}</text>
       </view>
     </view>
   </view>
@@ -100,12 +123,13 @@
   <!-- 底部封存栏（_11 fixed bar） -->
   <view class="sealbar glass-panel">
     <view class="sb-info">
-      <text class="mono muted">已完成预测: <text class="text-amber hl">{{pickedCount}}</text>/{{cards.length}}</text>
-      <text class="mono sb-pts">潜在最高积分: <text class="text-glow text-amber hl">+{{potential}} 分</text></text>
+      <text class="mono muted">已选待封存: <text class="text-amber hl">{{pickedCount}}</text> 场</text>
+      <text class="mono sb-pts">潜在积分: <text class="text-glow text-amber hl">+{{potential}} 分</text></text>
     </view>
-    <button class="btn-amber sb-btn floodlight-glow" bindtap="onSeal" disabled="{{sealedAll}}">
-      {{sealedAll ? '本周预测已全部封存' : '封存并提交预测'}}
+    <button class="btn-amber sb-btn floodlight-glow" bindtap="onSeal" disabled="{{sealedAll || pickedCount === 0}}">
+      {{sealedAll ? '全部预测已封存' : pickedCount === 1 ? '封存该场预测' : '一键封存全部已选'}}
     </button>
   </view>
 </view>
+
 

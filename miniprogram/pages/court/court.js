@@ -5,7 +5,7 @@ var cloud = require('../../utils/cloud.js');
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     open: null,        // 开庭中：最近一场 ★★★ 未赛场
     text: '',
     count: '0/40',

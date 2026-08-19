@@ -12,7 +12,7 @@ function lgZh(l) {
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     usedText: '0',
     budgetText: '4.0',
     pctText: '0%',

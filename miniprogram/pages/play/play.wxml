@@ -2,9 +2,9 @@
   <!-- 顶栏（_9：互动玩法 + 赛季积分） -->
   <view class="topbar">
     <text class="tb-title hl">玩法大厅</text>
-    <view class="chip chip-solid floodlight-glow">
+    <view class="chip chip-solid floodlight-glow" bindtap="goSeasonRank">
       <view class="v-icon v-trophy text-amber"></view>
-      <text class="text-amber hl">赛季积分 {{seasonPts}}</text>
+      <text class="text-amber hl">赛季积分 {{seasonPts}} ›</text>
     </view>
   </view>
 

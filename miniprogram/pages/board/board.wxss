@@ -1,11 +1,26 @@
 .page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; }
 
 /* hero */
-.hero-head { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 8rpx 20rpx; }
-.hero-title { font-size: 48rpx; font-weight: 700; color: var(--on-surface); }
-.hero-moon { width: 52rpx; height: 52rpx; }
+.hero-head { display: flex; align-items: center; justify-content: space-between; padding: 12rpx 8rpx 16rpx; }
+.hero-title { font-size: 44rpx; font-weight: 700; color: var(--on-surface); }
+.hero-moon { width: 48rpx; height: 48rpx; }
 
-.stat { border-radius: var(--r-xl); padding: 28rpx 32rpx; display: flex; flex-direction: column; gap: 16rpx; }
+/* 榜单 Tab 切换器 */
+.board-tabs {
+  display: flex; gap: 12rpx; margin-bottom: 24rpx; background: var(--sc-low);
+  padding: 8rpx; border-radius: var(--r-xl); border: 1rpx solid rgba(159,142,121,.15);
+}
+.btab {
+  flex: 1; text-align: center; padding: 16rpx 0; border-radius: var(--r-lg);
+  font-size: 26rpx; color: var(--on-surface-variant); transition: all .2s ease;
+  white-space: nowrap;
+}
+.btab.active {
+  background: var(--primary-container); color: var(--on-primary); font-weight: 700;
+  box-shadow: 0 4rpx 16rpx rgba(255,178,36,.3);
+}
+
+.stat { border-radius: var(--r-xl); padding: 24rpx 28rpx; display: flex; flex-direction: column; gap: 14rpx; margin-bottom: 24rpx; }
 .stat-sub { font-size: 22rpx; }
 .stat-row { display: flex; align-items: center; justify-content: space-around; }
 .stat-item { display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
@@ -13,7 +28,7 @@
 .stat-div { width: 2rpx; height: 48rpx; background: var(--sc-highest); }
 
 /* 打卡卡 */
-.live { position: relative; overflow: hidden; margin-top: 28rpx; padding: 28rpx 32rpx; border-radius: var(--r-xl); }
+.live { position: relative; overflow: hidden; margin-bottom: 24rpx; padding: 28rpx 32rpx; border-radius: var(--r-xl); }
 .accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(68,226,205,.5); }
 .accent-bar.gray { background: var(--outline-muted); box-shadow: none; }
 .live-status { display: flex; align-items: center; gap: 12rpx; margin-bottom: 24rpx; }
@@ -31,8 +46,8 @@
 .live-note { display: block; text-align: center; margin-top: 16rpx; font-size: 22rpx; }
 
 /* 排名 */
-.sect-gap { margin: 48rpx 0 20rpx; }
-.rank-card { padding: 6rpx 0; overflow: hidden; border-radius: var(--r-xl); }
+.sect-gap { margin: 32rpx 0 16rpx; }
+.rank-card { padding: 6rpx 0; overflow: hidden; border-radius: var(--r-xl); border: 1rpx solid rgba(159,142,121,.15); }
 .rank-row {
   display: flex; align-items: center; gap: 20rpx; padding: 22rpx 28rpx;
   border-bottom: 1rpx solid rgba(159,142,121,.08);
@@ -53,19 +68,31 @@
 .user-rank { color: var(--primary-container); font-size: 32rpx; }
 .user-avatar { background: var(--primary-container); color: var(--on-primary); }
 
+/* 群友 PK 互动卡片 */
+.group-pk-card {
+  margin-top: 36rpx; padding: 32rpx 28rpx; border-radius: var(--r-xl);
+  border: 1rpx solid rgba(255,178,36,.35); display: flex; flex-direction: column; gap: 14rpx;
+}
+.gpk-head { display: flex; align-items: center; gap: 12rpx; }
+.gpk-sub { font-size: 22rpx; line-height: 32rpx; }
+.gpk-acts { display: flex; gap: 14rpx; margin-top: 12rpx; }
+.gpk-btn {
+  flex: 1; height: 80rpx; line-height: 80rpx; font-size: 26rpx;
+  display: flex; align-items: center; justify-content: center; gap: 8rpx;
+  white-space: nowrap !important; padding: 0 8rpx !important;
+}
+
 /* 周报卡片 */
-.report { margin-top: 36rpx; padding: 36rpx 32rpx; display: flex; flex-direction: column; align-items: center; gap: 14rpx; border-radius: var(--r-xl); }
+.report { margin-top: 24rpx; padding: 24rpx 28rpx; display: flex; flex-direction: column; gap: 10rpx; border-radius: var(--r-xl); }
 .rp-head { display: flex; align-items: center; gap: 12rpx; }
-.rp-ic { width: 44rpx; height: 44rpx; }
-.rp-sub { font-size: 24rpx; }
+.rp-ic { width: 36rpx; height: 36rpx; }
 .rp-worst {
   display: flex; align-items: center; gap: 10rpx;
-  margin-top: 8rpx; padding: 12rpx 28rpx; border-radius: var(--r-full);
+  padding: 10rpx 20rpx; border-radius: var(--r-full);
   background: rgba(255,180,171,.08); border: 1rpx solid rgba(255,180,171,.3);
 }
-.rp-worst-ic { width: 28rpx; height: 28rpx; }
 .rp-worst-text { font-size: 22rpx; color: var(--error); }
-.rp-btn { margin-top: 16rpx; width: 80%; }
 
 /* 演示数据标识 */
 .demo-chip { font-size: 20rpx; padding: 4rpx 14rpx; }
+

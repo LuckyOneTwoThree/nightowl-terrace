@@ -17,7 +17,7 @@ function lgZh(l) {
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     cards: [],
     guesses: [],
     options: OPTIONS,
@@ -135,11 +135,15 @@ Page({
     var id = e.currentTarget.dataset.id;
     var urls = {
       guess: '/pages/predict/predict',
-      owl: '/pages/board/board',
+      owl: '/pages/board/board?tab=owl',
       court: '/pages/court/court',
       box: '/pages/box/box'
     };
     if (urls[id]) wx.navigateTo({ url: urls[id] });
+  },
+
+  goSeasonRank: function () {
+    wx.navigateTo({ url: '/pages/board/board?tab=season' });
   },
 
   goRecords: function () {

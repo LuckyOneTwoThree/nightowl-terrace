@@ -18,7 +18,7 @@ function settle(pred, m, recMap) {
 
 Page({
   data: {
-    theme: '', groups: [], empty: false },
+    theme: data.getInitTheme(), groups: [], empty: false },
 
   onShow: function () {
     getApp().applyTheme(this); this.refresh(); },

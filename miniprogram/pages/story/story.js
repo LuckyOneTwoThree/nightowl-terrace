@@ -10,7 +10,7 @@ var TYPE_ZH = {
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     s: null,        // 故事线本体
     typeZh: '',
     leagueZh: '',

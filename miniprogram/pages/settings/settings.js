@@ -1,4 +1,5 @@
 var cloud = require('../../utils/cloud.js');
+var data = require('../../utils/data.js');
 
 var DEFAULTS = { budget: 4.0, minStar: 2, remindKickoff: true, remindDeadline: false, nick: '', mid: '', theme: 'dark' };
 
@@ -22,7 +23,7 @@ function load() {
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     s: null,
     starText: '★★',
     themeModeText: '🌙 经典夜猫暗夜模式',

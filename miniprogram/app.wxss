@@ -65,7 +65,7 @@ page {
 }
 
 /* ================= 浅色主题 · 晨曦看台 (Daylight Terrace) ================= */
-page.theme-light, .theme-light {
+.theme-light {
   /* 表面层级 */
   --bg: #F4F5F7;
   --sc-lowest: #FFFFFF;
@@ -98,9 +98,6 @@ page.theme-light, .theme-light {
   /* 半透明描边与发丝线 */
   --outline-muted: rgba(0, 0, 0, 0.07);
   --hairline: rgba(0, 0, 0, 0.08);
-
-  background: #F4F5F7 !important;
-  color: #111827 !important;
 }
 
 .page {
@@ -297,11 +294,38 @@ page.theme-light, .theme-light {
   background: rgba(217, 119, 6, 0.15) !important;
 }
 
+/* 浅色模式专属联赛药丸与筛选配色 */
+.theme-light .fpill { background: #FFFFFF; border-color: rgba(0,0,0,0.08); color: #64748B; }
+.theme-light .fpill.on-ALL { background: #D97706 !important; color: #FFFFFF !important; font-weight: 700; border-color: transparent; }
+.theme-light .fpill.on-PL { background: #F3E8FF !important; color: #7E22CE !important; border-color: rgba(126,34,206,.3) !important; font-weight: 700; }
+.theme-light .fpill.on-PD { background: #FFE4E6 !important; color: #BE123C !important; border-color: rgba(190,18,60,.3) !important; font-weight: 700; }
+.theme-light .fpill.on-SA { background: #E0F2FE !important; color: #0369A1 !important; border-color: rgba(3,105,161,.3) !important; font-weight: 700; }
+.theme-light .fpill.on-BL { background: #FEE2E2 !important; color: #B91C1C !important; border-color: rgba(185,28,28,.3) !important; font-weight: 700; }
+.theme-light .fpill.on-FL { background: #ECFDF5 !important; color: #047857 !important; border-color: rgba(4,120,87,.3) !important; font-weight: 700; }
+.theme-light .fpill.on-SCG { background: #FEF3C7 !important; color: #B45309 !important; border-color: rgba(180,83,9,.3) !important; font-weight: 700; }
+.theme-light .star-pill.on-ALL { background: #FEF3C7 !important; color: #B45309 !important; border-color: rgba(180,83,9,.3) !important; }
+
 
 
 
 view, scroll-view, text, button, input {
   box-sizing: border-box;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-size: inherit;
+  line-height: normal;
+  color: inherit;
+  background-color: transparent;
+  border-radius: 0;
+  width: auto;
+}
+
+button::after {
+  border: none;
 }
 
 /* ---------- 版式原子 ---------- */
@@ -427,7 +451,7 @@ view, scroll-view, text, button, input {
   background: var(--primary-container); color: var(--on-primary-container);
   font-family: var(--font-headline); font-size: 34rpx; font-weight: 700;
   box-shadow: 0 4rpx 20rpx rgba(255,178,36,.18);
-  border: none;
+  border: none; white-space: nowrap;
   transition: transform .15s ease, opacity .15s ease;
 }
 .btn-amber:active { transform: scale(0.98); opacity: .9; }
@@ -436,7 +460,7 @@ view, scroll-view, text, button, input {
   display: flex; align-items: center; justify-content: center; gap: 12rpx;
   padding: 18rpx 0; border-radius: var(--r-md);
   background: transparent; box-shadow: inset 0 0 0 2rpx var(--secondary);
-  color: var(--secondary); font-size: 28rpx; font-weight: 600;
+  color: var(--secondary); font-size: 28rpx; font-weight: 600; white-space: nowrap;
   transition: all .15s ease;
 }
 .btn-teal-ghost:active { background: rgba(68,226,205,.1); transform: scale(0.98); }
@@ -445,7 +469,7 @@ view, scroll-view, text, button, input {
   display: flex; align-items: center; justify-content: center; gap: 10rpx;
   padding: 16rpx 28rpx; border-radius: var(--r-md);
   border: 1rpx solid rgba(159,142,121,.3);
-  color: var(--on-surface); font-size: 28rpx;
+  color: var(--on-surface); font-size: 28rpx; white-space: nowrap;
 }
 .btn-outline:active { background: var(--sc-high); }
 

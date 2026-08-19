@@ -2,13 +2,19 @@ var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var ics = require('../../utils/ics.js');
+var crypt = require('../../utils/crypt.js');
+var cloud = require('../../utils/cloud.js');
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     m: null,
     countdownText: '',
-    quip: ''
+    quip: '',
+    myPred: null,       // { pick: 'h'|'d'|'a', scoreH: '', scoreA: '', sealed: bool, closed: bool }
+    inputPick: '',      // 详情页内即时选择
+    inputScoreH: '',
+    inputScoreA: ''
   },
 
   onLoad: function (q) {
@@ -33,6 +39,7 @@ Page({
     if (this._raw && !this._timer) {
       this.startTimer();
     }
+    this.checkPred();
   },
 
   onHide: function () {
@@ -41,6 +48,43 @@ Page({
 
   onUnload: function () {
     this.stopTimer();
+  },
+
+  checkPred: function () {
+    if (!this._raw) return;
+    var preds = wx.getStorageSync('predictions') || {};
+    var p = preds[this._raw.id];
+    var isClosed = this._ts <= Date.now();
+
+    if (p) {
+      var pickZh = p.pick === 'h' ? (this.data.m ? this.data.m.home.zh + ' 胜' : '主胜')
+                 : p.pick === 'a' ? (this.data.m ? this.data.m.away.zh + ' 胜' : '客胜')
+                 : '平局';
+      this.setData({
+        myPred: {
+          pick: p.pick,
+          pickZh: pickZh,
+          scoreH: p.scoreH || '',
+          scoreA: p.scoreA || '',
+          sealed: true,
+          closed: isClosed
+        },
+        inputPick: p.pick,
+        inputScoreH: p.scoreH || '',
+        inputScoreA: p.scoreA || ''
+      });
+    } else {
+      this.setData({
+        myPred: {
+          pick: '',
+          pickZh: '',
+          scoreH: '',
+          scoreA: '',
+          sealed: false,
+          closed: isClosed
+        }
+      });
+    }
   },
 
   startTimer: function () {
@@ -67,12 +111,76 @@ Page({
     this.setData({ countdownText: text });
   },
 
-  goPredict: function () { wx.navigateTo({ url: '/pages/predict/predict' }); },
+  onSelectPick: function (e) {
+    if (this.data.myPred && this.data.myPred.sealed) return;
+    var key = e.currentTarget.dataset.key;
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    this.setData({
+      inputPick: this.data.inputPick === key ? '' : key
+    });
+  },
+
+  onInputScore: function (e) {
+    if (this.data.myPred && this.data.myPred.sealed) return;
+    var side = e.currentTarget.dataset.side;
+    var val = e.detail.value.replace(/\D/g, '').slice(0, 1);
+    if (side === 'h') this.setData({ inputScoreH: val });
+    else this.setData({ inputScoreA: val });
+  },
+
+  onSealSingle: function () {
+    var raw = this._raw;
+    if (!raw) return;
+    if (!this.data.inputPick) {
+      wx.showToast({ title: '请先选择主胜/平局/客胜', icon: 'none' });
+      return;
+    }
+    if (this._ts <= Date.now()) {
+      wx.showToast({ title: '比赛已开球，无法预测', icon: 'none' });
+      return;
+    }
+
+    var preds = wx.getStorageSync('predictions') || {};
+    var p = {
+      pick: this.data.inputPick,
+      scoreH: this.data.inputScoreH,
+      scoreA: this.data.inputScoreA
+    };
+    p.salt = crypt.genSalt();
+    p.hash = crypt.commitHash(p);
+    p.ts = Date.now();
+    preds[raw.id] = p;
+    wx.setStorageSync('predictions', preds);
+
+    cloud.addPrediction({
+      m: raw.id,
+      pick: p.pick,
+      scoreH: p.scoreH,
+      scoreA: p.scoreA,
+      salt: p.salt,
+      hash: p.hash,
+      ts: p.ts
+    });
+
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
+    wx.showToast({ title: '本场预测已成功封存！', icon: 'success' });
+    this.checkPred();
+  },
+
+  goPredict: function () {
+    var id = this.data.m ? this.data.m.id : '';
+    wx.navigateTo({ url: '/pages/predict/predict' + (id ? '?id=' + id : '') });
+  },
+
   goCourt: function () {
     var id = this.data.m ? this.data.m.id : '';
     wx.navigateTo({ url: '/pages/court/court' + (id ? '?id=' + id : '') });
   },
-  goPoster: function () { wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.m.id }); },
+
+  goPoster: function () {
+    wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.m.id });
+  },
+
   goStory: function (e) {
     wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
   },
@@ -94,3 +202,4 @@ Page({
     );
   }
 });
+

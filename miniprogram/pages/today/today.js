@@ -58,7 +58,7 @@ function decorate(entry) {
 
 Page({
   data: {
-    theme: '',
+    theme: data.getInitTheme(),
     dateLabel: '',
     quip: '',
     hero: null,

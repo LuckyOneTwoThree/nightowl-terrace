@@ -5,8 +5,14 @@
           data-i="{{index}}" bindtap="toggle">{{item.label}}</view>
   </scroll-view>
 
+  <!-- 来源提示：今晚无赛事时提示抽选自近期焦点 -->
+  <view class="pool-tag mono muted" wx:if="{{front && !front.isTonight}}">
+    <view class="v-icon v-cal text-amber"></view>
+    <text>今晚暂无赛事 · 已为你抽选近期焦点战</text>
+  </view>
+
   <!-- 3D 翻转神秘卡片（_14） -->
-  <view class="mystery-wrap" bindtap="flip" wx:if="{{front}}">
+  <view class="mystery-wrap {{shuffling ? 'shuffling' : ''}}" bindtap="flip" wx:if="{{front}}">
     <view class="flip-inner {{revealed ? 'flipped' : ''}}">
       <!-- 正面：盲盒特征 -->
       <view class="face face-front glass-panel">
@@ -27,34 +33,36 @@
         </view>
         
         <view class="stars-row">
-          <text class="s-on text-amber" wx:for="{{front.stars}}" wx:key="*this">★</text>
+          <text class="s-on text-amber">{{front.stars}}</text>
           <text class="mono muted s-txt">起评</text>
         </view>
         
         <view class="tap-hint mono muted animate-pulse">
-          <text>点击翻转揭晓对阵</text>
+          <text>点击卡片或下方按钮揭晓</text>
           <view class="v-icon v-chev"></view>
         </view>
       </view>
 
       <!-- 反面：揭晓对阵 -->
-      <view class="face face-back card-highest">
+      <view class="face face-back">
         <view class="bb-strip">
-          <text class="mono lg-chip" style="background: var(--sc-high);">{{back.lgEn}}</text>
+          <text class="mono lg-chip" style="background: {{back.lgSolid || 'var(--sc-high)'}};">{{back.lgZh || back.lgEn}}</text>
           <text class="s-on text-amber">{{back.stars}}</text>
         </view>
         <view class="bb-date">
-          <text class="hl hl-md match-time">周{{back.wd}} {{back.hm}}</text>
+          <text class="hl match-time">周{{back.wd}} {{back.hm}}</text>
           <text class="mono muted bb-md">{{back.md}}</text>
         </view>
         <view class="bb-vs">
           <view class="bb-side">
-            <image class="crest-xl" src="{{back.home.logo}}" mode="aspectFill" wx:if="{{back.home.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{back.home.bg}}; border-color: {{back.home.bd}};">{{back.home.id}}</view>
+            <image class="crest-xl" src="{{back.home.logo}}" mode="aspectFill" wx:if="{{back.home.logo}}" />
+            <view class="circle-xl crest-fb" wx:else style="background: {{back.home.bg}}; border-color: {{back.home.bd}};">{{back.home.id}}</view>
             <text class="bb-name hl">{{back.home.zh}}</text>
           </view>
           <text class="bb-x score-m text-glow">-</text>
           <view class="bb-side">
-            <image class="crest-xl" src="{{back.away.logo}}" mode="aspectFill" wx:if="{{back.away.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{back.away.bg}}; border-color: {{back.away.bd}};">{{back.away.id}}</view>
+            <image class="crest-xl" src="{{back.away.logo}}" mode="aspectFill" wx:if="{{back.away.logo}}" />
+            <view class="circle-xl crest-fb" wx:else style="background: {{back.away.bg}}; border-color: {{back.away.bd}};">{{back.away.id}}</view>
             <text class="bb-name hl">{{back.away.zh}}</text>
           </view>
         </view>
@@ -67,26 +75,38 @@
   </view>
 
   <view class="mystery emptybox card-low" wx:else>
-    <text class="mono muted">今晚没有符合条件的比赛</text>
-    <view class="bpill on" bindtap="redraw">换组条件再抽</view>
+    <text class="mono muted empty-tip">当前筛选条件下暂无比赛</text>
+    <view class="bpill on floodlight-glow" bindtap="resetPills">清除筛选再抽</view>
   </view>
 
-  <!-- 操作区（_14） -->
-  <view class="acts">
+  <!-- 操作区 -->
+  <view class="acts" wx:if="{{front}}">
+    <!-- 正面未揭晓：主行为【翻开盲盒】，辅助操作【换个特征】 -->
     <block wx:if="{{!revealed}}">
-      <button class="btn-amber floodlight-glow" bindtap="redraw">
-        <view class="v-icon v-gift"></view>
-        <text>重新抽取</text>
+      <button class="btn-amber act-main-btn floodlight-glow" bindtap="openBox">
+        <view class="v-icon v-bolt"></view>
+        <text>揭晓对阵 · 翻开盲盒</text>
       </button>
+      <view class="duo-btn-single">
+        <button class="sub-btn ghost-btn feat-btn" bindtap="redraw">
+          <view class="v-icon v-gift"></view>
+          <text>换个特征抽</text>
+        </button>
+      </view>
     </block>
+
+    <!-- 反面已揭晓：主行为【查看详情】，辅助行为【换一场再抽】+【喊群友同抽】 -->
     <block wx:else>
-      <button class="btn-amber floodlight-glow" bindtap="watchIt">
+      <button class="btn-amber act-main-btn floodlight-glow" bindtap="watchIt">
         <view class="v-icon v-trophy"></view>
         <text>就看这场 · 查看详情</text>
       </button>
       <view class="duo-btn">
-        <button class="btn-outline ghost-btn" bindtap="redraw">再抽一次</button>
-        <button class="btn-teal-ghost teal-btn" bindtap="callFriends">
+        <button class="sub-btn ghost-btn" bindtap="redraw">
+          <view class="v-icon v-gift"></view>
+          <text>换一场再抽</text>
+        </button>
+        <button class="sub-btn teal-btn" bindtap="callFriends">
           <view class="v-icon v-paw text-teal"></view>
           <text>喊群友同抽</text>
         </button>
@@ -94,4 +114,5 @@
     </block>
   </view>
 </view>
+
 

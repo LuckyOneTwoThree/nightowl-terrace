@@ -60,13 +60,13 @@
 
   <!-- 操作 -->
   <view class="poster-acts">
-    <button class="btn-amber floodlight-glow" bindtap="save">
+    <button class="btn-amber poster-btn floodlight-glow" bindtap="save">
       <view class="v-icon v-gift"></view>
       <text>保存高清海报</text>
     </button>
-    <button class="btn-teal-ghost p-share" bindtap="share">
+    <button class="btn-teal-ghost poster-btn p-share" bindtap="share">
       <view class="v-icon v-paw text-teal"></view>
-      <text>分享给看球搭子</text>
+      <text>分享给球友</text>
     </button>
   </view>
 </view>
