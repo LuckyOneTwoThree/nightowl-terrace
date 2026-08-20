@@ -26,15 +26,18 @@ Page({
 
   onLoad: function () {
     this._lastPredsStr = JSON.stringify(wx.getStorageSync('predictions') || {});
+    this._lastDayStr = engine.nightOf(Date.now()); // 跨天指纹（二轮 P2-3）
     this.refresh();
   },
 
   onShow: function () {
     getApp().applyTheme(this);
     var curPredsStr = JSON.stringify(wx.getStorageSync('predictions') || {});
-    if (this._lastPredsStr !== curPredsStr) {
+    var curDay = engine.nightOf(Date.now());
+    if (this._lastPredsStr !== curPredsStr || this._lastDayStr !== curDay) {
       this._lastPredsStr = curPredsStr;
-      this.refresh();
+      this._lastDayStr = curDay;
+      this.refresh(); // 封存变化或挂起过午夜（周窗口/竞猜单滚动）时刷新
     }
   },
 

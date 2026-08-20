@@ -1,4 +1,6 @@
 // app.js
+var cloud = require('./utils/cloud.js');
+
 App({
   onLaunch: function () {
     // 云开发初始化
@@ -46,6 +48,11 @@ App({
     try {
       wx.setStorageSync('followedTeams', ids);
     } catch (e) { /* 存储失败不阻塞 */ }
+    // 云端 users.followed best-effort 同步（二轮 P2-5：onboarding/teams/me 页改关注后
+    // 主队推送不再停留旧值；失败静默，下次 settings 页 apply 会再同步）
+    try {
+      cloud.syncUser({ followed: ids });
+    } catch (e) { /* 忽略 */ }
   },
 
   // 原生系统级样式缓存状态

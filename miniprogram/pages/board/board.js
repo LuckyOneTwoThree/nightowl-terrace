@@ -145,7 +145,7 @@ Page({
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
           var rows = list.map(function (r, i) {
-            if (myIdx < 0 && r.nick === myNick) myIdx = i;
+            if (myIdx < 0 && (r.isMe || r.nick === myNick)) myIdx = i;
             return { rank: i + 1, name: r.nick, val: (r.pts || 0) + ' 分', sub: '赛季总积分' };
           });
           that.setData({
@@ -180,7 +180,7 @@ Page({
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
           var rows = list.map(function (r, i) {
-            if (myIdx < 0 && r.nick === myNick) myIdx = i;
+            if (myIdx < 0 && (r.isMe || r.nick === myNick)) myIdx = i;
             var rate = r.hit != null && r.count ? Math.round(r.hit / r.count * 100) + '% 命中' : '';
             return { rank: i + 1, name: r.nick, val: (r.pts || 0) + ' 分', sub: rate || '本周盲评' };
           });
@@ -213,7 +213,7 @@ Page({
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
           var rows = list.map(function (r, i) {
-            if (myIdx < 0 && r.nick === myNick) myIdx = i;
+            if (myIdx < 0 && (r.isMe || r.nick === myNick)) myIdx = i;
             return { rank: i + 1, name: r.nick, val: (r.hours || 0) + 'h', sub: '本周 ' + (r.nights || 0) + ' 夜' };
           });
           that.setData({

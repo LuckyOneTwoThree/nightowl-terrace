@@ -35,13 +35,13 @@ function localTime(m) {
   return p2(Math.floor(local / 60)) + ':' + p2(local % 60);
 }
 
-// 相对「今天」的天数差（今天=0，明天=1，昨天=-1…），基于北京时间自然日比对
+// 相对「今天」的天数差（今天=0，明天=1，昨天=-1…）
+// 夜猫口径：比赛日走 owlDay（凌晨 00:00–06:00 归前一晚），当前日走 nightOf，
+// 与 today/box/schedule 三页一致（二轮 P1-2：修复凌晨场「今晚」错标「明天」）
 function relDay(t) {
-  var day = String(t || '').split('T')[0];
-  var mD = new Date(day.replace(/-/g, '/') + ' 00:00:00');
-  var todayStr = engine.bjDateStr(Date.now());
-  var todayD = new Date(todayStr.replace(/-/g, '/') + ' 00:00:00');
-  return Math.round((mD.getTime() - todayD.getTime()) / 86400000);
+  var mP = engine.owlDay(t).split('-').map(Number);
+  var cP = engine.nightOf(Date.now()).split('-').map(Number);
+  return Math.round((Date.UTC(mP[0], mP[1] - 1, mP[2]) - Date.UTC(cP[0], cP[1] - 1, cP[2])) / 86400000);
 }
 
 function getDayLabel(t) {

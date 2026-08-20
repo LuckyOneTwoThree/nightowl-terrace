@@ -83,6 +83,8 @@ exports.main = async (event) => {
   const board = event.board;       // 'guess' | 'owl' | 'court' | 'season'
   const gid = event.gid || 'default';
   const week = event.week;         // 可选 'YYYY-MM-DD'（周内任意一天）
+  // 当前调用者 openid：榜单行打 isMe 标（二轮 P2-4，前端摆脱昵称匹配的重名串位）
+  const myUid = (cloud.getWXContext() || {}).OPENID || '';
 
   try {
     if (board === 'guess') {
@@ -106,10 +108,11 @@ exports.main = async (event) => {
       const agg = {}; // uid -> { nick, pts, count, hit, sealed: [..] }
       for (const p of preds) {
         const m = fixtures.find(x => x.id === p.m) || {};
-        // m 未命中或时间非法时默认「封存中」：NaN > now 为 false，
-        // 若直接用 bjTs(m.t) > now 会误判已开箱而泄露明文
+        // 封存保密判据（PM 八节：截止前只返回哈希）：
+        // 未开球（kt > now）或时间未知/非法（NaN）→ sealed=true 保密；
+        // 仅明确已开球（kt ≤ now 且非 NaN）才视为已开箱给明文
         const kt = m.t ? bjTs(m.t) : NaN;
-        const sealed = !(kt > now); // 仅明确已开球才视为已开箱
+        const sealed = isNaN(kt) || kt > now;
         const uid = p.uid || p._openid || ''; // 客户端直写时 uid 为空，回退 _openid
         agg[uid] = agg[uid] || { nick: p.nick || uid, pts: 0, count: 0, hit: 0, entries: [] };
         const a = agg[uid];
@@ -128,9 +131,12 @@ exports.main = async (event) => {
           tampered: !!p.tampered
         });
       }
-      const list = Object.values(agg)
-        .sort((x, y) => y.pts - x.pts || y.count - x.count)
-        .map((a, i) => ({ rank: i + 1, nick: a.nick, pts: a.pts, count: a.count, hit: a.hit, entries: a.entries }));
+      const list = Object.entries(agg)
+        .sort(([, x], [, y]) => y.pts - x.pts || y.count - x.count)
+        .map(([uid, a], i) => ({
+          rank: i + 1, nick: a.nick, pts: a.pts, count: a.count, hit: a.hit,
+          entries: a.entries, isMe: !!myUid && uid === myUid
+        }));
       return { ok: true, board, week: week || 'current', gid, sealed: Object.values(agg).some(a => a.entries.some(e => e.pick === null)), list };
 
     } else if (board === 'owl') {
@@ -150,9 +156,9 @@ exports.main = async (event) => {
         a.nights++;
         if (cost > a.worst) { a.worst = cost; a.worstM = c.m; }
       }
-      const list = Object.values(agg)
-        .sort((x, y) => y.hours - x.hours)
-        .map((a, i) => ({ rank: i + 1, ...a }));
+      const list = Object.entries(agg)
+        .sort(([, x], [, y]) => y.hours - x.hours)
+        .map(([uid, a], i) => ({ rank: i + 1, ...a, isMe: !!myUid && uid === myUid }));
       // 最狠一夜（PM 9.5）：全群本周单场成本之最
       const worst = list.length ? list.reduce((mx, a) => (a.worst > mx.worst ? a : mx), list[0]) : null;
       return { ok: true, board, gid, list, worst: worst ? { nick: worst.nick, hours: worst.worst, m: worst.worstM } : null };
@@ -173,7 +179,7 @@ exports.main = async (event) => {
       // ── 赛季总榜：standings 直读 ──
       const rows = await fetchAll(db, 'standings', { gid }, 500);
       const list = rows.sort((x, y) => y.pts - x.pts)
-        .map((r, i) => ({ rank: i + 1, nick: r.nick || r.uid, pts: r.pts }));
+        .map((r, i) => ({ rank: i + 1, nick: r.nick || r.uid, pts: r.pts, isMe: !!myUid && r.uid === myUid }));
       return { ok: true, board, gid, list };
     }
 

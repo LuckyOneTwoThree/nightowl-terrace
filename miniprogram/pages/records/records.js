@@ -49,7 +49,8 @@ Page({
         sub: tampered ? '封存校验失败 · 已作废'
           : late ? '开球后封存 · 已作废'
           : '预测: ' + pickZh + ((p.scoreH !== '' && p.scoreH != null && p.scoreA !== '' && p.scoreA != null) ? ' (' + p.scoreH + '-' + p.scoreA + ')' : '') + (r && r.upset ? ' · 冷门×2' : ''),
-        finished: tampered || late ? true : !!r,
+        // 已赛但比分未录入（r=null）时按 isFinished 标完赛，不误显示未完（二轮 P2-2）
+        finished: tampered || late || engine.isFinished(m) || !!r,
         hit: r ? r.hit : false,
         pts: r ? r.pts : 0,
         tampered: tampered || late

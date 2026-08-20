@@ -45,6 +45,19 @@ function bjTs(t) {
   return Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) - 8 * 3600000;
 }
 
+// (uid, m) 去重：与 readBoard 同款（seal findExisting→add 非原子、seal 成功后超时误降级直写
+// 都会产生重复文档），结算只认最新一条（sealTs 优先），防总榜重复计分（二轮 P0-3）
+function dedupLatest(rows) {
+  const latest = {};
+  for (const r of rows) {
+    const uid = r.uid || r._openid || '';
+    const k = uid + '|' + r.m;
+    const cur = r.sealTs || r.ts || 0;
+    if (!latest[k] || cur > (latest[k].sealTs || latest[k].ts || 0)) latest[k] = r;
+  }
+  return Object.values(latest);
+}
+
 // 分页拉全量（云数据库单次 limit 100）
 async function fetchAll(db, coll, where, limit) {
   const out = [];
@@ -75,9 +88,19 @@ exports.main = async (event) => {
     }, 200);
 
     for (const m of matches) {
-      // 2. 该场全部封存预测
-      const preds = await fetchAll(db, 'predictions', { m: m.id }, 500);
+      // 2. 该场全部封存预测，(uid,m) 去重只结算最新一条（二轮 P0-3）
+      const rawPreds = await fetchAll(db, 'predictions', { m: m.id }, 500);
+      const preds = dedupLatest(rawPreds);
       const kickTs = bjTs(m.t);
+
+      // 被取代的旧文档标记作废（防未来规则变更时复活计分；幂等：已结算的跳过）
+      const keepIds = new Set(preds.map(p => p._id));
+      for (const old of rawPreds) {
+        if (keepIds.has(old._id) || old.settledAt) continue;
+        await db.collection('predictions').doc(old._id).update({
+          data: { revealed: true, settledAt: Date.now(), hit: false, pts: 0, voidReason: 'superseded' }
+        });
+      }
 
       // uid -> 本场积分增量（跨群按 gid 分账）
       // 客户端直写时不带 uid，云库自动补 _openid，此处统一回退（与 readBoard 口径一致）

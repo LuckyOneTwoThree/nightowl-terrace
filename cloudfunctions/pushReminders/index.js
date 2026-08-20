@@ -2,9 +2,9 @@
  * 云函数：pushReminders 开球提醒 + 盲评截止提醒
  * 触发：定时（每 15 分钟扫描，见 config.json）
  * 职责（PM 十一 / 9.4）：
- *   1. 开球提醒：扫描未来 15~45 分钟内开球的场次
+ *   1. 开球提醒：扫描未来 [15, 30) 分钟内开球的场次（窗口与触发周期一致，衔接不重叠）
  *      命中条件：用户关注球队出战，或推荐层 ★★★ 焦点战
- *   2. 截止提醒（PM 9.4）：扫描未来 15~45 分钟截止（=开球）的本周竞猜场次，
+ *   2. 截止提醒（PM 9.4）：扫描未来 [15, 30) 分钟截止（=开球）的本周竞猜场次，
  *      提醒「已订阅且尚未封存」的用户：盲评即将截止
  * 前置条件（未满足时安全空转，不报错）：
  *   - 小程序后台申请订阅消息模板，把模板 ID 配到本函数环境变量 TMPL_KICKOFF / TMPL_DEADLINE
@@ -54,18 +54,23 @@ exports.main = async () => {
     const recs = await fetchAll(db, 'recommendations', {}, 1000);
     const star3 = new Set(recs.filter(r => r.star === 3).map(r => r.m));
 
-    // 3. 订阅用户
+    // 3. 订阅用户（subscriptions 直写文档无 uid，云库自动补 _openid——二轮 P1-1 修复）
     const users = await fetchAll(db, 'users', {}, 1000);
     const subs = await fetchAll(db, 'subscriptions', { status: 'accept' }, 2000);
-    const subMap = {}; // uid -> 最近一次授权
-    subs.forEach(s => { subMap[s.uid] = s; });
+    const subMap = {}; // uid -> 最近一次授权；uid|tmplId -> 模板维度授权（多模板不互相覆盖）
+    subs.forEach(s => {
+      const uid = s.uid || s._openid || '';
+      if (!uid) return;
+      if (!subMap[uid]) subMap[uid] = s;
+      if (s.tmplId) subMap[uid + '|' + s.tmplId] = s;
+    });
 
     let sent = 0, skipped = 0;
 
     // ── 开球提醒（模板未配置则跳过该段，不影响截止提醒） ──
     if (TMPL && upcoming.length) {
       for (const u of users) {
-        const sub = subMap[u.uid];
+        const sub = subMap[u.uid + '|' + TMPL] || subMap[u.uid];
         if (!sub) continue;
         const followed = u.followed || [];
         const hit = upcoming.find(m =>
@@ -103,7 +108,7 @@ exports.main = async () => {
         .map(p => (p.uid || p._openid || '') + '|' + p.m));
 
       for (const u of users) {
-        const sub = subMap[u.uid];
+        const sub = subMap[u.uid + '|' + TMPL_DL] || subMap[u.uid];
         if (!sub) continue;
         const pend = upcoming.find(m => !sealed.has(u.uid + '|' + m.id));
         if (!pend) continue;

@@ -47,14 +47,18 @@ function call(name, payload) {
 }
 
 /**
- * seal 云函数调用：失败只降级不闩锁（seal 未部署 ≠ 云环境断连，
- * 降级直写仍可用；闩锁留给 readBoard 等纯读链路）
+ * seal 云函数调用：三态返回（防作弊链路收口，审查报告二轮 P0-2）
+ *   true      → 封存成功（服务端 sealTs 已落）
+ *   'rejected'→ 业务拒绝（开球后封存/哈希不符/重复封存）：云端已明确说不，
+ *               禁止降级直写绕过服务端校验（本地 storage 照存，由本地判据自守）
+ *   false     → 基础设施失败（未部署/断网/超时）：允许降级集合直写（旧判据 ts+60s）
+ * 失败不闩锁（seal 未部署 ≠ 云环境断连，闩锁留给 readBoard 等纯读链路）
  */
 function callSeal(payload) {
   if (!available() || !wx.cloud.callFunction) return Promise.resolve(false);
   return wx.cloud.callFunction({ name: 'seal', data: payload }).then(function (r) {
     var res = r && r.result;
-    if (res && res.ok === false) return false; // 业务拒绝（重复封存/哈希不符等）静默降级
+    if (res && res.ok === false) return 'rejected';
     markUp();
     return true;
   }).catch(function () { return false; });
@@ -90,11 +94,13 @@ function addPrediction(p) {
     revealed: false,
     ts: p.ts
   };
-  // 优先 seal 云函数（服务端 sealTs + (uid,m) 唯一 + 哈希前置校验）；失败降级直写
+  // 优先 seal 云函数（服务端 sealTs + (uid,m) 唯一 + 哈希前置校验）；
+  // 业务拒绝不降级直写（防绕过服务端开球校验，二轮 P0-2），仅基础设施失败才降级
   return callSeal({
     action: 'prediction', m: doc.m, gid: doc.gid, nick: doc.nick,
     pick: doc.pick, scoreH: doc.scoreH, scoreA: doc.scoreA, salt: doc.salt, hash: doc.hash
   }).then(function (sealed) {
+    if (sealed === 'rejected') return 'rejected'; // 云端已拒绝（开球后/哈希不符），不入库
     return sealed ? true : add('predictions', doc);
   });
 }
@@ -104,6 +110,7 @@ function addCheckin(c) {
     action: 'checkin', m: c.m, gid: 'default', nick: myNick(),
     md: c.md, names: c.names, cost: c.cost, wk: c.wk || null
   }).then(function (sealed) {
+    if (sealed === 'rejected') return 'rejected'; // 业务拒绝不降级直写
     return sealed ? true : add('checkins', {
       m: c.m,
       gid: 'default',
@@ -122,11 +129,14 @@ function addBoast(b) {
     action: 'boast', m: b.m, gid: 'default', nick: myNick(),
     text: b.text, md: b.md || '', names: b.names || ''
   }).then(function (sealed) {
+    if (sealed === 'rejected') return 'rejected'; // 业务拒绝不降级直写
     return sealed ? true : add('boasts', {
       m: b.m,
       gid: 'default',
       nick: myNick(),
       text: b.text,
+      md: b.md || '',       // 直写分支同步补齐（二轮 P2-1：schema 对齐 seal 端）
+      names: b.names || '',
       result: null,
       ts: b.ts
     });

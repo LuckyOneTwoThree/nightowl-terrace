@@ -106,8 +106,11 @@ Page({
       result: boasts[m.id] ? boasts[m.id].result : null
     };
     wx.setStorageSync('boasts', boasts);
-    // 云端 best-effort 双写：德比法庭群存档
-    cloud.addBoast({ m: m.id, text: text, ts: boasts[m.id].ts });
+    // 云端 best-effort 双写：德比法庭群存档（md/names 供云端卡片展示，二轮 P2-1）
+    cloud.addBoast({
+      m: m.id, text: text, ts: boasts[m.id].ts,
+      md: m.md, names: m.home.zh + ' vs ' + m.away.zh
+    });
     wx.showToast({ title: '狂言已存档', icon: 'none' });
     this.refresh();
   },
