@@ -131,7 +131,7 @@ Page({
       d.scoreH = (p.scoreH !== undefined && p.scoreH !== null) ? String(p.scoreH) : '';
       d.scoreA = (p.scoreA !== undefined && p.scoreA !== null) ? String(p.scoreA) : '';
       d.sealed = !!preds[m.id];
-      d.closed = engine.ts(m.t) <= Date.now();
+      d.closed = !m.tbd && (engine.ts(m.t) <= Date.now());
       d.upset = ev.rec ? !!ev.rec.upset : false;
       d.isTarget = targetId && m.id === targetId;
       return d;

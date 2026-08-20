@@ -359,15 +359,15 @@ function planWeek(matches, recMap, rivalries, storylines, followed, budget, foll
   });
 
   // 3. 剩余预算优先通过背包算法填充「关注联赛」的高价值比赛
-  if (curBudget > 0 && followedLeagueNeutralEvs.length > 0) {
-    var filledLeague = knapsack(followedLeagueNeutralEvs, curBudget);
+  if (curBudget >= 0 && followedLeagueNeutralEvs.length > 0) {
+    var filledLeague = knapsack(followedLeagueNeutralEvs, Math.max(0, curBudget));
     best = best.concat(filledLeague);
     filledLeague.forEach(function (e) { curBudget -= tierOf(e.m).cost; });
   }
 
   // 4. 若仍有剩余预算，再从「其他联赛」中挑选最高星级跨联赛焦点战填补
-  if (curBudget > 0 && otherNeutralEvs.length > 0) {
-    var filledOther = knapsack(otherNeutralEvs, curBudget);
+  if (curBudget >= 0 && otherNeutralEvs.length > 0) {
+    var filledOther = knapsack(otherNeutralEvs, Math.max(0, curBudget));
     best = best.concat(filledOther);
   }
 

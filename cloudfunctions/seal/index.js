@@ -116,18 +116,47 @@ exports.main = async (event) => {
       }
       const doc = Object.assign({}, b, {
         text: String(event.text).slice(0, 40), md: event.md || '', names: event.names || '',
+        camp: event.camp || 'neutral', likes: 0, flags: 0, milks: 0,
         result: null, uid, sealTs: now, ts: now
       });
       const dup = await findExisting(db, 'boasts', uid, b.m);
       if (dup) {
-        // 覆盖文本但保留人工判定结果
-        await db.collection('boasts').doc(dup._id).update({
-          data: { text: doc.text, ts: now, nick: doc.nick, names: doc.names, md: doc.md }
-        });
-        return { ok: true, updated: true, id: dup._id };
+        // 防刷屏与篡改：同人同场次仅可立字存据一次，落槌无悔不可修改
+        return { ok: false, error: 'boast sealed: 本场次您已立字存据，不可重复提交或修改' };
       }
       const added = await db.collection('boasts').add({ data: doc });
       return { ok: true, id: added._id, sealTs: now };
+    }
+
+    // ── 德比法庭互动反应（点赞/插旗/毒奶） ──
+    if (action === 'boast_reaction') {
+      const boastId = event.id;
+      const type = event.type; // 'like' | 'flag' | 'milk'
+      const delta = Number(event.delta) || 1;
+      if (!boastId || !['like', 'flag', 'milk'].includes(type)) return { ok: false, error: 'bad payload' };
+      const field = type === 'like' ? 'likes' : (type === 'flag' ? 'flags' : 'milks');
+      try {
+        const _ = db.command;
+        if (_) {
+          await db.collection('boasts').doc(boastId).update({ data: { [field]: _.inc(delta) } });
+        }
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
+    }
+
+    // ── 德比法庭判定 ──
+    if (action === 'judge') {
+      const boastId = event.id;
+      const result = event.result; // 'hit' | 'miss' | null
+      if (!boastId) return { ok: false, error: 'bad payload' };
+      try {
+        await db.collection('boasts').doc(boastId).update({ data: { result: result } });
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: e.message };
+      }
     }
 
     // ── 用户偏好同步（settings 变更时 upsert users） ──

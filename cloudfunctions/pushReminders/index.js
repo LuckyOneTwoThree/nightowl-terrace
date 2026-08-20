@@ -54,13 +54,21 @@ exports.main = async () => {
     const recs = await fetchAll(db, 'recommendations', {}, 1000);
     const star3 = new Set(recs.filter(r => r.star === 3).map(r => r.m));
 
-    // 3. 订阅用户（subscriptions 直写文档无 uid，云库自动补 _openid——二轮 P1-1 修复）
+    // 3. 订阅用户（subscriptions 直写文档无 uid，云库自动补 _openid）
     const users = await fetchAll(db, 'users', {}, 1000);
+    const userMap = {};
+    users.forEach(u => {
+      const uid = u.uid || u._openid || '';
+      if (uid) userMap[uid] = u;
+    });
+
     const subs = await fetchAll(db, 'subscriptions', { status: 'accept' }, 2000);
     const subMap = {}; // uid -> 最近一次授权；uid|tmplId -> 模板维度授权（多模板不互相覆盖）
+    const subscriberUids = new Set();
     subs.forEach(s => {
       const uid = s.uid || s._openid || '';
       if (!uid) return;
+      subscriberUids.add(uid);
       if (!subMap[uid]) subMap[uid] = s;
       if (s.tmplId) subMap[uid + '|' + s.tmplId] = s;
     });
@@ -81,9 +89,10 @@ exports.main = async () => {
 
     // ── 开球提醒（模板未配置则跳过该段，不影响截止提醒） ──
     if (TMPL && upcoming.length) {
-      for (const u of users) {
-        const sub = subMap[u.uid + '|' + TMPL] || subMap[u.uid];
+      for (const uid of subscriberUids) {
+        const sub = subMap[uid + '|' + TMPL] || subMap[uid];
         if (!sub) continue;
+        const u = userMap[uid] || { uid: uid, followed: [] };
         const followed = u.followed || [];
         const hit = upcoming.find(m =>
           (Array.isArray(followed) && (followed.includes(m.h) || followed.includes(m.a))) ||
@@ -93,7 +102,7 @@ exports.main = async () => {
 
         try {
           await cloud.openapi.subscribeMessage.send({
-            touser: u.uid,
+            touser: uid,
             templateId: TMPL,
             page: 'pages/detail/detail?id=' + hit.id,
             data: {
@@ -121,15 +130,15 @@ exports.main = async () => {
         .filter(p => ids.includes(p.m))
         .map(p => (p.uid || p._openid || '') + '|' + p.m));
 
-      for (const u of users) {
-        const sub = subMap[u.uid + '|' + TMPL_DL] || subMap[u.uid];
+      for (const uid of subscriberUids) {
+        const sub = subMap[uid + '|' + TMPL_DL] || subMap[uid];
         if (!sub) continue;
-        const pend = upcoming.find(m => !sealed.has(u.uid + '|' + m.id));
+        const pend = upcoming.find(m => !sealed.has(uid + '|' + m.id));
         if (!pend) continue;
 
         try {
           await cloud.openapi.subscribeMessage.send({
-            touser: u.uid,
+            touser: uid,
             templateId: TMPL_DL,
             page: 'pages/predict/predict',
             data: {

@@ -59,13 +59,34 @@ Page({
     if (!this._raw) return;
     var preds = wx.getStorageSync('predictions') || {};
     var p = preds[this._raw.id];
-    // tbd 场次时间未定（占位 t 不可信）：隐藏盲评面板（三轮 P1-5）
-    // 1191/1753 场为 tbd，占位时间参与截止判定会造成「真实提前→赛后可封存」的作弊面
-    if (this._raw.tbd) {
-      this.setData({ myPred: null });
+    var isFin = this.data.m ? this.data.m.finished : engine.isFinished(this._raw);
+    var isClosed = isFin || (!this._raw.tbd && this._ts <= Date.now());
+
+    if (isFin && p) {
+      // 已完赛且此前已封存预言：结算展示
+      var settle = engine.settlePred(p, this._raw, data.getRecMap());
+      var pickZh = p.pick === 'h' ? (this.data.m ? this.data.m.home.zh + ' 胜' : '主胜')
+                 : p.pick === 'a' ? (this.data.m ? this.data.m.away.zh + ' 胜' : '客胜')
+                 : '平局';
+      this.setData({
+        myPred: {
+          pick: p.pick,
+          pickZh: pickZh,
+          scoreH: p.scoreH || '',
+          scoreA: p.scoreA || '',
+          sealed: true,
+          closed: true,
+          finished: true,
+          hit: settle ? settle.hit : false,
+          pts: settle ? settle.pts : 0,
+          ptsText: settle && settle.hit ? ('命中 +' + settle.pts + ' 分' + (settle.pts >= 5 ? ' (精准命中)' : '')) : '未命中'
+        },
+        inputPick: p.pick,
+        inputScoreH: p.scoreH || '',
+        inputScoreA: p.scoreA || ''
+      });
       return;
     }
-    var isClosed = this._ts <= Date.now();
 
     if (p) {
       var pickZh = p.pick === 'h' ? (this.data.m ? this.data.m.home.zh + ' 胜' : '主胜')
@@ -78,7 +99,8 @@ Page({
           scoreH: p.scoreH || '',
           scoreA: p.scoreA || '',
           sealed: true,
-          closed: isClosed
+          closed: isClosed,
+          finished: isFin
         },
         inputPick: p.pick,
         inputScoreH: p.scoreH || '',
@@ -92,7 +114,8 @@ Page({
           scoreH: '',
           scoreA: '',
           sealed: false,
-          closed: isClosed
+          closed: isClosed,
+          finished: isFin
         }
       });
     }
@@ -149,15 +172,15 @@ Page({
   onSealSingle: function () {
     var raw = this._raw;
     if (!raw) return;
-    if (raw.tbd) { // 双保险（三轮 P1-5）：tbd 时间未定不可封存
-      wx.showToast({ title: '开球时间未定，暂不可预测', icon: 'none' });
+    if (this.data.m && this.data.m.finished) {
+      wx.showToast({ title: '比赛已完赛，无法预测', icon: 'none' });
       return;
     }
     if (!this.data.inputPick) {
       wx.showToast({ title: '请先选择主胜/平局/客胜', icon: 'none' });
       return;
     }
-    if (this._ts <= Date.now()) {
+    if (!raw.tbd && this._ts <= Date.now()) {
       wx.showToast({ title: '比赛已开球，无法预测', icon: 'none' });
       return;
     }

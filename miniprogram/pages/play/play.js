@@ -167,7 +167,7 @@ Page({
         stars: '★★★'.slice(0, item.ev.star),
         tierLabel: tier.label,
         cost: tier.cost,
-        reason: item.ev.rivalry ? ('🔥 ' + item.ev.rivalry.title) : (item.ev.star === 3 ? '🌟 全欧焦点对决' : (h.zh + ' vs ' + a.zh + ' 争分夺位'))
+        reason: item.ev.rivalry ? ('🔥 ' + item.ev.rivalry) : (item.ev.star === 3 ? '🌟 全欧焦点对决' : (h.zh + ' vs ' + a.zh + ' 争分夺位'))
       };
 
       that.setData({ boxMatch: boxMatch, isDrawing: false });

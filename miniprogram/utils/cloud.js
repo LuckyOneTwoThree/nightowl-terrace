@@ -135,7 +135,8 @@ function addCheckin(c) {
 function addBoast(b) {
   return callSeal({
     action: 'boast', m: b.m, gid: 'default', nick: myNick(),
-    text: b.text, md: b.md || '', names: b.names || ''
+    text: b.text, md: b.md || '', names: b.names || '',
+    camp: b.camp || 'neutral'
   }).then(function (sealed) {
     if (sealed === 'rejected') return 'rejected'; // 业务拒绝不降级直写
     return sealed ? true : add('boasts', {
@@ -145,9 +146,30 @@ function addBoast(b) {
       text: b.text,
       md: b.md || '',       // 直写分支同步补齐（二轮 P2-1：schema 对齐 seal 端）
       names: b.names || '',
+      camp: b.camp || 'neutral',
+      likes: 0,
+      flags: 0,
+      milks: 0,
       result: null,
       ts: b.ts
     });
+  });
+}
+
+function reactBoast(r) {
+  return callSeal({
+    action: 'boast_reaction',
+    id: r.id,
+    type: r.type, // 'like' | 'flag' | 'milk'
+    delta: r.delta || 1
+  });
+}
+
+function judgeBoast(j) {
+  return callSeal({
+    action: 'judge',
+    id: j.id,
+    result: j.result // 'hit' | 'miss' | null
   });
 }
 
@@ -178,8 +200,8 @@ function saveSubscription(tmplId, status) {
 }
 
 /** 榜单读取：readBoard 云函数聚合；失败 reject 由页面渲染空态引导 */
-function readBoard(board, gid, week) {
-  return call('readBoard', { board: board, gid: gid || 'default', week: week || undefined });
+function readBoard(board, gid, week, m) {
+  return call('readBoard', { board: board, gid: gid || 'default', week: week || undefined, m: m || undefined });
 }
 
 module.exports = {
@@ -192,6 +214,8 @@ module.exports = {
   addPrediction: addPrediction,
   addCheckin: addCheckin,
   addBoast: addBoast,
+  reactBoast: reactBoast,
+  judgeBoast: judgeBoast,
   syncUser: syncUser,
   saveSubscription: saveSubscription,
   TMPL: TMPL,

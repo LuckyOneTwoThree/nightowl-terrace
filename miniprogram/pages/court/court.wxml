@@ -3,149 +3,395 @@
   <view class="glow glow-red"></view>
   <view class="glow glow-amber"></view>
 
-  <!-- ==================== 1. 法庭威严 Header ==================== -->
-  <view class="rule card-highest floodlight-glow">
-    <view class="r-ic">
-      <view class="v-icon v-gavel text-amber r-gavel"></view>
+  <!-- ==================== 1. 顶部一级导航 Tab ==================== -->
+  <view class="court-top-nav card-high floodlight-glow">
+    <view class="ct-tab {{mainTab === 'court' ? 'ct-active' : ''}}" data-tab="court" bindtap="onMainTab">
+      <view class="v-icon v-gavel ct-ic"></view>
+      <text class="hl">德比论战</text>
+      <view class="ct-dot" wx:if="{{mainTab === 'court'}}"></view>
     </view>
-    <view class="r-body">
-      <view class="r-tag-row">
-        <text class="mono hl r-tag text-amber">DERBY COURT</text>
-        <view class="chip chip-amber r-badge">立字为证</view>
-      </view>
-      <text class="hl hl-md text-amber r-title">德比法庭 · 狂言对决录</text>
-      <text class="r-sub mono muted">“赛前押上尊严 · 终场落槌审判 · 绝不抵赖”</text>
+    <view class="ct-tab {{mainTab === 'dossier' ? 'ct-active' : ''}}" data-tab="dossier" bindtap="onMainTab">
+      <text class="ct-emoji">📜</text>
+      <text class="hl">判例卷宗</text>
+      <view class="chip chip-amber ct-badge" wx:if="{{archive.length}}">{{archive.length}}</view>
+      <view class="ct-dot" wx:if="{{mainTab === 'dossier'}}"></view>
     </view>
   </view>
 
-  <!-- ==================== 2. 开庭焦点对决 ==================== -->
-  <view class="sect sect-gap">
-    <view class="sect-head-row">
-      <text class="sect-title">开庭焦点大战</text>
-      <view class="chip chip-red focal-badge" wx:if="{{open}}">⚡ 审理中</view>
-    </view>
-    <view class="sect-line"></view>
-  </view>
-  
-  <view class="card-highest open-card floodlight-glow" wx:if="{{open}}">
-    <view class="open-meta">
-      <view class="om-left">
-        <view class="g-lg-bar" style="background: {{open.lgSolid || 'var(--secondary)'}};"></view>
-        <text class="hl om-lg">{{open.lgZh}}</text>
-        <text class="mono muted om-time">{{open.md}} {{open.hm}}</text>
-      </view>
-      <view class="chip chip-amber" wx:if="{{open.stars}}">{{open.stars}}</view>
-    </view>
-
-    <view class="open-vs" bindtap="goDetail">
-      <view class="ov-side">
-        <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" wx:if="{{open.home.logo}}" />
-        <view class="circle-xl crest-fb" wx:else style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
-        <text class="ov-name hl">{{open.home.zh}}</text>
-      </view>
-      <view class="ov-mid">
-        <view class="ov-x-pill floodlight-glow">
-          <text class="mono text-amber">VS</text>
+  <!-- ==================== VIEW 1: 德比论战主战场 (mainTab === 'court') ==================== -->
+  <view class="main-view" wx:if="{{mainTab === 'court'}}">
+    
+    <!-- 紧凑集成式对决台 -->
+    <view class="card-highest battle-card floodlight-glow" wx:if="{{open}}">
+      
+      <!-- 场次下拉切换触点 -->
+      <view class="battle-picker-bar" bindtap="togglePickerModal">
+        <view class="bpb-left">
+          <view class="g-lg-bar" style="background: {{open.lgSolid || 'var(--secondary)'}};"></view>
+          <text class="hl bpb-lg">{{open.lgZh || open.lg}}</text>
+          <text class="mono muted bpb-time">{{open.md}} {{open.hm}}</text>
+        </view>
+        <view class="bpb-trigger mono text-amber">
+          <text>切换场次 ({{cands.length}}场) ▾</text>
         </view>
       </view>
-      <view class="ov-side">
-        <image class="crest-xl" src="{{open.away.logo}}" mode="aspectFill" wx:if="{{open.away.logo}}" />
-        <view class="circle-xl crest-fb" wx:else style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
-        <text class="ov-name hl">{{open.away.zh}}</text>
-      </view>
-    </view>
-    
-    <!-- 快捷态度气泡 -->
-    <view class="quick-tags">
-      <view class="chip chip-ghost mono q-tag" wx:for="{{quickTags}}" wx:key="*this" data-tag="{{item}}" bindtap="onQuickTag">
-        <text>{{item}}</text>
-      </view>
-    </view>
 
-    <view class="input-wrap card-high">
-      <input class="boast-input" maxlength="40" placeholder="押上尊严，立下你的赛前狂言..."
-             placeholder-class="input-ph" value="{{text}}" bindinput="onInput" />
-      <text class="input-count mono muted">{{count}}/40</text>
-    </view>
-    
-    <button class="btn-amber btn-submit floodlight-glow" bindtap="submit">
-      <view class="v-icon v-gavel"></view>
-      <text>落槌存据 · 提交狂言</text>
-    </button>
-  </view>
-  <view class="card-low empty" wx:else><text class="mono muted">本轮暂无正在开庭的焦点大战</text></view>
-
-  <!-- ==================== 3. 赛季法庭战绩双卡 ==================== -->
-  <view class="duo">
-    <view class="duo-card card-low teal-glow">
-      <view class="d-head">
-        <view class="v-icon v-check text-teal d-icon"></view>
-        <text class="d-title hl">最准之口</text>
-      </view>
-      <text class="d-score score-m text-teal hl">{{stats.hit}}</text>
-      <text class="mono muted d-lbl">应验封神</text>
-      <view class="chip chip-teal d-chip">胜率 {{stats.rate}}</view>
-    </view>
-    
-    <view class="duo-card card-low red-glow">
-      <view class="d-head">
-        <view class="v-icon v-cross text-error d-icon"></view>
-        <text class="d-title hl">最铁嘴皮</text>
-      </view>
-      <text class="d-score score-m text-error hl">{{stats.miss}}</text>
-      <text class="mono muted d-lbl">打脸翻车</text>
-      <view class="chip chip-error d-chip">翻车 {{stats.miss}} 次</view>
-    </view>
-  </view>
-
-  <!-- ==================== 4. 判例存档列表 ==================== -->
-  <view class="sect sect-mt">
-    <view class="sect-head-row">
-      <text class="sect-title">法庭判例存档 ({{archive.length}})</text>
-    </view>
-    <view class="sect-line"></view>
-  </view>
-
-  <!-- 分类筛选 Tab -->
-  <scroll-view class="filter-pills" scroll-x enable-flex show-scrollbar="{{false}}" wx:if="{{archive.length}}">
-    <view class="fpill {{filterTab === item.id ? 'active floodlight-glow' : ''}}"
-          wx:for="{{filterTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="onFilterTab">
-      {{item.zh}}
-    </view>
-  </scroll-view>
-  
-  <view class="card-low empty" wx:if="{{!displayArchive.length}}">
-    <text class="mono muted">暂无匹配的狂言记录，去上方为本轮大战立据！</text>
-  </view>
-  
-  <view class="arch-list" wx:else>
-    <view class="arch card-low" wx:for="{{displayArchive}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapArchive">
-      <view class="a-head">
-        <text class="mono muted a-md">{{item.md}}</text>
-        <text class="mono flex1 a-teams hl">{{item.names}}</text>
-        <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-error' : 'chip-amber'}}">
-          {{item.result === 'hit' ? '✓ 应验' : item.result === 'miss' ? '✕ 翻车' : '审理中'}}
+      <!-- VS 对决展示 -->
+      <view class="open-vs" bindtap="goDetail">
+        <view class="ov-side">
+          <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" wx:if="{{open.home.logo}}" />
+          <view class="circle-xl crest-fb" wx:else style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
+          <text class="ov-name hl">{{open.home.zh}}</text>
+        </view>
+        <view class="ov-mid">
+          <view class="ov-x-pill floodlight-glow">
+            <text class="mono text-amber">VS</text>
+          </view>
+          <text class="mono muted ov-hint">对决详情 ›</text>
+        </view>
+        <view class="ov-side">
+          <image class="crest-xl" src="{{open.away.logo}}" mode="aspectFill" wx:if="{{open.away.logo}}" />
+          <view class="circle-xl crest-fb" wx:else style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
+          <text class="ov-name hl">{{open.away.zh}}</text>
         </view>
       </view>
-      <view class="a-quote {{item.result === 'miss' ? 'strike' : ''}}">
-        <text class="a-text">“{{item.text}}”</text>
-      </view>
-      <view class="a-foot card-high" wx:if="{{item.finished && !item.result}}">
-        <text class="mono muted">终场比分 {{item.sc}} · 请法官自判：</text>
-        <view class="a-actions">
-          <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" catchtap="judge">应验</view>
-          <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" catchtap="judge">翻车</view>
+
+      <!-- 阵营声量天平 -->
+      <view class="camp-gauge card-high">
+        <view class="cg-head">
+          <view class="cg-team text-error hl">🔴 {{open.home.zh}} {{campRatio.homePct}}%</view>
+          <text class="mono muted cg-vs">⚔️ 声量对抗 ⚔️</text>
+          <view class="cg-team text-teal hl">{{campRatio.awayPct}}% {{open.away.zh}} 🔵</view>
+        </view>
+        <view class="cg-track">
+          <view class="cg-bar-h" style="width: {{campRatio.homePct}}%;"></view>
+          <view class="cg-bar-a" style="width: {{campRatio.awayPct}}%;"></view>
+        </view>
+        <view class="cg-sub mono muted">
+          <text>主队 {{campRatio.homeCount}} 票</text>
+          <text>共 {{campRatio.total}} 票对决</text>
+          <text>客队 {{campRatio.awayCount}} 票</text>
         </view>
       </view>
-      <view class="a-foot-done" wx:elif="{{item.finished}}">
-        <text class="mono muted">完赛比分 {{item.sc}}</text>
-        <view class="a-link mono text-amber">对决详情 ›</view>
+    </view>
+    <view class="card-low empty" wx:else><text class="mono muted">本轮暂无正在开庭的焦点大战</text></view>
+
+    <!-- 呈堂辩论互动流 -->
+    <view class="sect sect-compact">
+      <view class="sect-head-row">
+        <view class="sh-left">
+          <text class="sect-title">呈堂辩论流</text>
+          <view class="chip chip-amber count-chip">{{debates.length}} 条</view>
+        </view>
+        <text class="mono muted fs-xs">点击反应即可点赞互动</text>
       </view>
-      <view class="a-foot-done" wx:else>
-        <text class="mono muted">赛前狂言已立据</text>
-        <view class="a-link mono text-amber">对决详情 ›</view>
+      <view class="sect-line"></view>
+    </view>
+
+    <!-- 辩论筛选 Tab -->
+    <view class="filter-bar">
+      <view class="f-tab {{debateTab === item.id ? 'active' : ''}}"
+            wx:for="{{debateTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="onDebateTab">
+        {{item.zh}}
       </view>
+    </view>
+
+    <!-- 辩论列表 -->
+    <view class="debate-list" wx:if="{{displayDebates.length}}">
+      <view class="deb-card card-low {{item.isMe ? 'deb-me' : ''}}"
+            wx:for="{{displayDebates}}" wx:key="_id">
+        
+        <!-- 头部用户与阵营 -->
+        <view class="deb-head">
+          <view class="dh-user">
+            <view class="u-avatar {{item.camp === 'home' ? 'av-home' : item.camp === 'away' ? 'av-away' : 'av-neutral'}}">
+              {{item.camp === 'home' ? '🔴' : item.camp === 'away' ? '🔵' : '⚖️'}}
+            </view>
+            <view class="u-meta">
+              <view class="u-name-row">
+                <text class="hl u-nick">{{item.nick}}</text>
+                <view class="chip chip-amber me-tag" wx:if="{{item.isMe}}">我</view>
+                <view class="chip {{item.camp === 'home' ? 'chip-error' : item.camp === 'away' ? 'chip-teal' : 'chip-ghost'}} camp-chip">
+                  {{item.camp === 'home' ? '主队派' : item.camp === 'away' ? '客队派' : '陪审席'}}
+                </view>
+              </view>
+              <text class="mono muted u-time">{{item.timeStr}}</text>
+            </view>
+          </view>
+
+          <!-- 审判状态印章 -->
+          <view class="stamp-box">
+            <view class="stamp stamp-hit" wx:if="{{item.result === 'hit'}}">🏆 封神应验</view>
+            <view class="stamp stamp-miss" wx:elif="{{item.result === 'miss'}}">🤡 翻车打脸</view>
+            <view class="stamp stamp-pending" wx:else>⚖️ 审理中</view>
+          </view>
+        </view>
+
+        <!-- 狂言引言内容 -->
+        <view class="deb-quote {{item.result === 'miss' ? 'strike' : ''}}">
+          <text class="deb-text">“{{item.text}}”</text>
+        </view>
+
+        <!-- 多维互动反应点赞栏 -->
+        <view class="react-row">
+          <view class="react-btn {{item.myReaction === 'like' ? 'r-active r-active-like' : ''}}"
+                data-id="{{item._id}}" data-type="like" bindtap="onReact">
+            <text class="r-icon">🔥</text>
+            <text class="mono r-lbl">顶</text>
+            <text class="mono r-num">{{item.likes || 0}}</text>
+          </view>
+
+          <view class="react-btn {{item.myReaction === 'flag' ? 'r-active r-active-flag' : ''}}"
+                data-id="{{item._id}}" data-type="flag" bindtap="onReact">
+            <text class="r-icon">🚩</text>
+            <text class="mono r-lbl">插旗</text>
+            <text class="mono r-num">{{item.flags || 0}}</text>
+          </view>
+
+          <view class="react-btn {{item.myReaction === 'milk' ? 'r-active r-active-milk' : ''}}"
+                data-id="{{item._id}}" data-type="milk" bindtap="onReact">
+            <text class="r-icon">🥛</text>
+            <text class="mono r-lbl">毒奶</text>
+            <text class="mono r-num">{{item.milks || 0}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="card-low empty" wx:else>
+      <text class="mono muted">本阵营暂无呈堂发言，快点击下方发表首条狂言！</text>
+    </view>
+
+    <!-- 底部悬浮发声快捷栏 -->
+    <view class="float-bar-pad"></view>
+    <view class="float-action-bar card-highest floodlight-glow" bindtap="toggleDrawer">
+      <view class="fab-left">
+        <view class="v-icon v-gavel fab-ic {{hasBoasted ? 'text-teal' : 'text-amber'}}"></view>
+        <text class="fab-text" wx:if="{{!hasBoasted}}">押上尊严，立下你的呈堂狂言... ✍️</text>
+        <text class="fab-text text-teal hl" wx:else>🔒 已立据：“{{text}}” · 不可修改</text>
+      </view>
+      <view class="chip {{hasBoasted ? 'chip-ghost mono' : 'chip-amber'}} fab-btn">
+        {{hasBoasted ? '查看据状' : '呈堂发声'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- ==================== VIEW 2: 判例卷宗与风云榜 (mainTab === 'dossier') ==================== -->
+  <view class="dossier-view" wx:if="{{mainTab === 'dossier'}}">
+    
+    <!-- 荣誉殿堂横幅 -->
+    <view class="hof-banner card-high" bindtap="toggleRuleModal">
+      <view class="hof-left">
+        <text class="hof-title hl text-amber">🏆 法庭风云录 · 荣誉殿堂</text>
+        <text class="mono muted hof-sub">最准之口 & 最铁嘴皮 评选细则</text>
+      </view>
+      <view class="chip chip-ghost mono">说明 ℹ️</view>
+    </view>
+
+    <!-- 赛季法庭战绩双卡 -->
+    <view class="duo">
+      <view class="duo-card card-low teal-glow">
+        <view class="d-head">
+          <view class="v-icon v-check text-teal d-icon"></view>
+          <text class="d-title hl">最准之口</text>
+        </view>
+        <text class="d-score score-m text-teal hl">{{stats.hit}}</text>
+        <text class="mono muted d-lbl">应验封神</text>
+        <view class="chip chip-teal d-chip">胜率 {{stats.rate}}</view>
+      </view>
+      
+      <view class="duo-card card-low red-glow">
+        <view class="d-head">
+          <view class="v-icon v-cross text-error d-icon"></view>
+          <text class="d-title hl">最铁嘴皮</text>
+        </view>
+        <text class="d-score score-m text-error hl">{{stats.miss}}</text>
+        <text class="mono muted d-lbl">打脸翻车</text>
+        <view class="chip chip-error d-chip">翻车 {{stats.miss}} 次</view>
+      </view>
+    </view>
+
+    <!-- 判例案卷列表 -->
+    <view class="sect sect-mt">
+      <view class="sect-head-row">
+        <text class="sect-title">我的法庭案卷 ({{archive.length}})</text>
+        <text class="mono muted fs-xs">完赛后可在此自判</text>
+      </view>
+      <view class="sect-line"></view>
+    </view>
+
+    <!-- 存档筛选 Tab -->
+    <scroll-view class="filter-pills" scroll-x enable-flex show-scrollbar="{{false}}" wx:if="{{archive.length}}">
+      <view class="fpill {{archiveTab === item.id ? 'active floodlight-glow' : ''}}"
+            wx:for="{{archiveTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="onArchiveTab">
+        {{item.zh}}
+      </view>
+    </scroll-view>
+    
+    <view class="card-low empty" wx:if="{{!displayArchive.length}}">
+      <text class="mono muted">暂无匹配的案卷记录，去【德比论战】为焦点大战立据！</text>
+    </view>
+    
+    <view class="arch-list" wx:else>
+      <view class="arch card-low" wx:for="{{displayArchive}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapArchive">
+        <view class="a-head">
+          <text class="mono muted a-md">{{item.md}}</text>
+          <text class="mono flex1 a-teams hl">{{item.names}}</text>
+          <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-error' : 'chip-amber'}}">
+            {{item.result === 'hit' ? '✓ 应验' : item.result === 'miss' ? '✕ 翻车' : '审理中'}}
+          </view>
+        </view>
+        <view class="a-quote {{item.result === 'miss' ? 'strike' : ''}}">
+          <text class="a-text">“{{item.text}}”</text>
+        </view>
+        <view class="a-foot card-high" wx:if="{{item.finished && !item.result}}">
+          <text class="mono muted">终场比分 {{item.sc}} · 请法官自判：</text>
+          <view class="a-actions">
+            <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" catchtap="judge">封神应验</view>
+            <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" catchtap="judge">打脸翻车</view>
+          </view>
+        </view>
+        <view class="a-foot-done" wx:elif="{{item.finished}}">
+          <text class="mono muted">完赛比分 {{item.sc}}</text>
+          <view class="a-link mono text-amber">对决详情 ›</view>
+        </view>
+        <view class="a-foot-done" wx:else>
+          <text class="mono muted">赛前狂言已立据</text>
+          <view class="a-link mono text-amber">对决详情 ›</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ==================== 模态弹窗 1: 开庭场次选择盘 (Picker Sheet) ==================== -->
+  <view class="modal-mask" wx:if="{{showPickerModal}}" bindtap="togglePickerModal">
+    <view class="picker-sheet card-highest floodlight-glow" catchtap="true">
+      <view class="ps-head">
+        <view class="ps-head-title">
+          <text class="hl ps-title text-amber">选择开庭焦点对决</text>
+          <text class="mono muted ps-count">共 {{cands.length}} 场焦点德比</text>
+        </view>
+        <view class="ps-close mono muted" bindtap="togglePickerModal">✕</view>
+      </view>
+
+      <!-- 场次分类 Tab -->
+      <view class="picker-filter-bar">
+        <view class="pf-tab {{pickerFilter === item.id ? 'pf-active' : ''}}"
+              wx:for="{{pickerTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="onPickerTab">
+          {{item.zh}}
+        </view>
+      </view>
+
+      <scroll-view class="ps-list" scroll-y>
+        <view class="ps-item {{openId === item.id ? 'ps-item-active' : ''}}"
+              wx:for="{{displayCands}}" wx:key="id" data-id="{{item.id}}" bindtap="onSelectMatch">
+          <view class="psi-left">
+            <view class="psi-top">
+              <view class="g-lg-bar psi-bar" style="background: {{item.lgSolid || 'var(--secondary)'}};"></view>
+              <text class="mono psi-lg muted">{{item.lgZh || item.lg}} · {{item.md}} {{item.hm}}</text>
+            </view>
+            <text class="hl psi-names">{{item.home.zh}} vs {{item.away.zh}}</text>
+          </view>
+          <view class="psi-right">
+            <view class="chip chip-amber" wx:if="{{openId === item.id}}">开庭中</view>
+            <view class="chip chip-teal" wx:elif="{{item.st === 'done'}}">已完赛</view>
+            <view class="chip chip-ghost mono" wx:else>切换 ›</view>
+          </view>
+        </view>
+        <view class="card-low empty" wx:if="{{!displayCands.length}}">
+          <text class="mono muted">该分类下暂无场次</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- ==================== 模态弹窗 2: 呈堂发声抽屉 (Drawer) ==================== -->
+  <view class="modal-mask" wx:if="{{showDrawer}}" bindtap="toggleDrawer">
+    <view class="drawer-sheet card-highest floodlight-glow" catchtap="true">
+      <view class="ds-head">
+        <view class="ds-title-row">
+          <view class="v-icon v-gavel ds-ic {{hasBoasted ? 'text-teal' : 'text-amber'}}"></view>
+          <text class="hl ds-title {{hasBoasted ? 'text-teal' : 'text-amber'}}">
+            {{hasBoasted ? '呈堂据状 · 封存锁定' : '法官席 · 呈堂立字为证'}}
+          </text>
+        </view>
+        <view class="ds-close mono muted" bindtap="toggleDrawer">✕</view>
+      </view>
+
+      <!-- 已立据锁定提示 -->
+      <view class="locked-banner card-high teal-glow" wx:if="{{hasBoasted}}">
+        <view class="lb-head">
+          <view class="v-icon v-check text-teal lb-ic"></view>
+          <text class="hl text-teal lb-title">狂言已立字存据 · 落槌不可修改</text>
+        </view>
+        <text class="mono muted lb-desc">每位球迷每场德比仅限立据一次。终场完赛后将对照比分开箱自判！</text>
+      </view>
+
+      <!-- 立场阵营选择 -->
+      <view class="stance-pills">
+        <view class="spill spill-h {{myCamp === 'home' ? 'active-h' : ''}} {{hasBoasted ? 'spill-disabled' : ''}}"
+              data-camp="home" bindtap="onSelectCamp">
+          <text>🔴 站 {{open.home.zh}}</text>
+        </view>
+        <view class="spill spill-a {{myCamp === 'away' ? 'active-a' : ''}} {{hasBoasted ? 'spill-disabled' : ''}}"
+              data-camp="away" bindtap="onSelectCamp">
+          <text>🔵 站 {{open.away.zh}}</text>
+        </view>
+        <view class="spill spill-n {{myCamp === 'neutral' ? 'active-n' : ''}} {{hasBoasted ? 'spill-disabled' : ''}}"
+              data-camp="neutral" bindtap="onSelectCamp">
+          <text>⚖️ 中立陪审</text>
+        </view>
+      </view>
+
+      <!-- 快捷态度标签 (未提交时展示) -->
+      <view class="quick-tags" wx:if="{{!hasBoasted}}">
+        <view class="chip chip-ghost mono q-tag" wx:for="{{quickTags}}" wx:key="*this" data-tag="{{item}}" bindtap="onQuickTag">
+          <text>{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 狂言输入框 -->
+      <view class="input-wrap {{hasBoasted ? 'input-wrap-locked' : ''}}">
+        <input class="boast-input {{hasBoasted ? 'input-locked' : ''}}" maxlength="40"
+               placeholder="押上尊严，立下你的呈堂狂言..." disabled="{{hasBoasted}}"
+               placeholder-class="input-ph" value="{{text}}" bindinput="onInput" />
+        <text class="input-count mono muted">{{count}}/40</text>
+      </view>
+      
+      <!-- 操作按钮 -->
+      <button class="btn-amber btn-submit floodlight-glow" bindtap="submit" wx:if="{{!hasBoasted}}">
+        <view class="v-icon v-gavel"></view>
+        <text>落槌呈堂 · 立字存据</text>
+      </button>
+      <button class="btn-ghost btn-submit-locked mono" bindtap="toggleDrawer" wx:else>
+        <text>据状已封存 · 关闭</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- ==================== 模态弹窗 3: 荣誉规则说明弹窗 (Rule Modal) ==================== -->
+  <view class="modal-mask" wx:if="{{showRuleModal}}" bindtap="toggleRuleModal">
+    <view class="rule-modal card-highest floodlight-glow" catchtap="true">
+      <view class="rm-head">
+        <text class="hl rm-title text-amber">德比法庭 · 称号判定与计分规则</text>
+        <view class="rm-close mono muted" bindtap="toggleRuleModal">✕</view>
+      </view>
+      <view class="rm-body mono">
+        <view class="rm-item">
+          <text class="rm-lbl hl text-teal">🏆 最准之口 (Sharpest Mouth)</text>
+          <text class="rm-desc muted">在德比法庭与盲评中，赛后狂言被判定为「封神应验」次数最多且命中胜率最高的用户。获封全群“预言大师”，在周报战报中高亮置顶！</text>
+        </view>
+        <view class="rm-item">
+          <text class="rm-lbl hl text-error">🤡 最铁嘴皮 (Most Stubborn Lip)</text>
+          <text class="rm-desc muted">赛前狂言立得最狠、完赛翻车被打脸最多、且被群友插旗围观最多的用户。获封“嘴硬打脸王”，最具娱乐精神的球迷反向预言风向标！</text>
+        </view>
+        <view class="rm-item">
+          <text class="rm-lbl hl text-amber">⚖️ 判定机制</text>
+          <text class="rm-desc muted">狂言为自由自然语言。完赛录入比分后，用户可在【判例卷宗】中对照比分进行「落槌自判」，真实沉淀个人战绩！</text>
+        </view>
+      </view>
+      <button class="btn-amber rm-btn" bindtap="toggleRuleModal">我明白了</button>
     </view>
   </view>
 </view>
+
 

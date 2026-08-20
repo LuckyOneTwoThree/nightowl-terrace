@@ -78,10 +78,38 @@
   </view>
 
   <!-- ==================== 3. 本场单场盲评预测卡片 ==================== -->
-  <!-- tbd 场次时间未定，myPred 为 null 时整段隐藏（三轮 P1-5） -->
-  <block wx:if="{{!m.finished && myPred}}">
-    <!-- 已封存状态 -->
-    <view class="card-low pred-box sealed-box" wx:if="{{myPred && myPred.sealed}}">
+  <block wx:if="{{myPred}}">
+    <!-- 状态 1: 已完赛且此前已封存预言 -->
+    <view class="card-low pred-box {{myPred.hit ? 'sealed-box' : ''}}" wx:if="{{myPred.finished && myPred.sealed}}">
+      <view class="pb-head">
+        <view class="pb-title-row">
+          <view class="v-icon v-bolt {{myPred.hit ? 'text-teal' : 'text-amber'}}"></view>
+          <text class="hl {{myPred.hit ? 'text-teal' : 'text-amber'}}">盲评结算 · {{myPred.hit ? '预言应验 👏' : '遗憾翻车 💔'}}</text>
+        </view>
+        <view class="chip {{myPred.hit ? 'chip-teal' : 'chip-ghost'}}">{{myPred.ptsText}}</view>
+      </view>
+      <view class="pb-body">
+        <text class="pb-result hl {{myPred.hit ? 'text-teal' : 'text-amber'}}">我的预测: {{myPred.pickZh}}{{myPred.scoreH !== '' ? ' (' + myPred.scoreH + '-' + myPred.scoreA + ')' : ''}}</text>
+        <text class="mono muted pb-tip">全场比分 {{m.scH}} - {{m.scA}} · 战绩已同步至赛季风云榜</text>
+      </view>
+    </view>
+
+    <!-- 状态 2: 已完赛但未参与预测 -->
+    <view class="card-low pred-box" wx:elif="{{myPred.finished}}">
+      <view class="pb-head">
+        <view class="pb-title-row">
+          <view class="v-icon v-trophy text-amber"></view>
+          <text class="hl">本场已完赛</text>
+        </view>
+        <view class="chip chip-ghost">全场 {{m.scH}} - {{m.scA}}</view>
+      </view>
+      <view class="pb-body" bindtap="goPredict">
+        <text class="mono muted pb-tip">终场哨响已封箱结算 · 点击前往盲评大厅预言下一场 ›</text>
+      </view>
+    </view>
+
+    <!-- 状态 3: 未完赛且已封存 -->
+    <view class="card-low pred-box sealed-box" wx:elif="{{myPred.sealed}}">
       <view class="pb-head">
         <view class="pb-title-row">
           <view class="v-icon v-bolt text-teal"></view>
@@ -95,8 +123,22 @@
       </view>
     </view>
 
-    <!-- 未封存：单场即时预测面板 -->
-    <view class="card-low pred-box" wx:elif="{{myPred && !myPred.closed}}">
+    <!-- 状态 4: 未完赛但已开球截止 -->
+    <view class="card-low pred-box" wx:elif="{{myPred.closed}}">
+      <view class="pb-head">
+        <view class="pb-title-row">
+          <view class="v-icon v-moon text-muted"></view>
+          <text class="hl muted">比赛进行中 · 预测已截止</text>
+        </view>
+        <view class="chip chip-ghost">封停开箱中</view>
+      </view>
+      <view class="pb-body">
+        <text class="mono muted pb-tip">比赛已开球打响，无法再修改或新增预测。赛后自动结算战果。</text>
+      </view>
+    </view>
+
+    <!-- 状态 5: 未完赛可预测（单场即时预测面板） -->
+    <view class="card-low pred-box" wx:else>
       <view class="pb-head">
         <view class="pb-title-row">
           <view class="v-icon v-fire text-amber"></view>
@@ -132,18 +174,18 @@
   </block>
 
   <!-- ==================== 4. 底部三联快捷操作岛 ==================== -->
-  <view class="acts" wx:if="{{!m.finished}}">
+  <view class="acts">
     <view class="act act-main floodlight-glow" bindtap="goPredict">
       <view class="v-icon v-soccer"></view>
       <text class="hl">{{myPred && myPred.sealed ? '全部盲评单' : '去盲评大厅'}}</text>
     </view>
     <view class="act act-sub" bindtap="goCourt">
       <view class="v-icon v-gavel text-amber"></view>
-      <text class="mono">留句狂言</text>
+      <text class="mono">{{m.finished ? '法庭判例' : '留句狂言'}}</text>
     </view>
     <view class="act act-sub" bindtap="goPoster">
       <view class="v-icon v-trophy text-teal"></view>
-      <text class="mono">生成海报</text>
+      <text class="mono">{{m.finished ? '战报海报' : '生成海报'}}</text>
     </view>
   </view>
 

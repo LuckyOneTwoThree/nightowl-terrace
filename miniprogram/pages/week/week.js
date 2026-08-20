@@ -1,6 +1,7 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 var ics = require('../../utils/ics.js');
+var cloud = require('../../utils/cloud.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -397,6 +398,7 @@ Page({
     var settings = wx.getStorageSync('settings') || {};
     settings.budget = this.data.sheetBudget;
     wx.setStorageSync('settings', settings);
+    cloud.syncUser({ budget: this.data.sheetBudget });
     this.setData({ showSheet: false });
     this.refresh();
     wx.showToast({ title: '预算已更新', icon: 'success' });
@@ -407,6 +409,7 @@ Page({
     var settings = wx.getStorageSync('settings') || {};
     settings.budget = this.data.suggest;
     wx.setStorageSync('settings', settings);
+    cloud.syncUser({ budget: this.data.suggest });
     wx.removeStorageSync('weekSuggest');
     wx.showToast({ title: '本周额度已收紧', icon: 'none' });
     this.refresh();

@@ -164,14 +164,25 @@ exports.main = async (event) => {
       return { ok: true, board, gid, list, worst: worst ? { nick: worst.nick, hours: worst.worst, m: worst.worstM } : null };
 
     } else if (board === 'court') {
-      // ── 德比法庭：留言流（近 50 条，含人工判定结果）──
+      // ── 德比法庭：留言流（近 50 条，含人工判定结果、阵营与互动点赞）──
+      const query = { gid };
+      if (event.m) query.m = event.m;
       const res = await db.collection('boasts')
-        .where({ gid }).orderBy('ts', 'desc').limit(50).get();
+        .where(query).orderBy('ts', 'desc').limit(50).get();
       return {
         ok: true, board, gid,
         list: res.data.map(b => ({
-          m: b.m, nick: b.nick || b.uid || b._openid, text: b.text, ts: b.ts,
-          result: b.result || null // 'hit' | 'miss' | null（人工判定，PM 九节法庭）
+          _id: b._id,
+          m: b.m,
+          nick: b.nick || b.uid || b._openid || '夜猫',
+          text: b.text,
+          ts: b.ts,
+          camp: b.camp || 'neutral', // 'home' | 'away' | 'neutral'
+          likes: b.likes || 0,
+          flags: b.flags || 0,
+          milks: b.milks || 0,
+          result: b.result || null, // 'hit' | 'miss' | null
+          isMe: !!myUid && (b.uid === myUid || b._openid === myUid)
         }))
       };
 

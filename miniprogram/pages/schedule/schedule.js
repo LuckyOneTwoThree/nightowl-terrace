@@ -146,17 +146,38 @@ Page({
     });
   },
 
-  // 渲染窗口：从选中日当天开始向后渲染 7 天（首个展示组即为所选日期）
-  windowOf: function (day) {
+  // 渲染窗口：从选中日当天开始向后渲染（首个展示组即为所选日期）
+  windowOf: function (day, count) {
     var gs = this._groups || [];
+    var limit = count || 7;
     var idx = -1;
     for (var i = 0; i < gs.length; i++) {
       if (gs[i].day === day) { idx = i; break; }
     }
-    if (idx < 0) return gs.slice(0, 7);
+    if (idx < 0) return gs.slice(0, limit);
     var from = idx; // 严格从选中日当天开始
-    var to = Math.min(gs.length, from + 7);
+    var to = Math.min(gs.length, from + limit);
     return gs.slice(from, to);
+  },
+
+  onReachBottom: function () {
+    if (this.data.viewMode !== 'day') return;
+    var curGroups = this.data.viewGroups || [];
+    var allGroups = this._groups || [];
+    if (!allGroups.length || curGroups.length >= allGroups.length) return;
+    var selDay = this.data.selDay;
+    var idx = -1;
+    for (var i = 0; i < allGroups.length; i++) {
+      if (allGroups[i].day === selDay) { idx = i; break; }
+    }
+    if (idx < 0) idx = 0;
+    var nextCount = curGroups.length + 7;
+    var to = Math.min(allGroups.length, idx + nextCount);
+    if (to > idx + curGroups.length) {
+      this.setData({
+        viewGroups: allGroups.slice(idx, to)
+      });
+    }
   },
 
   onPickDay: function (e) {
@@ -165,7 +186,7 @@ Page({
       selDay: d,
       dchipId: 'dchip-' + d,
       isViewingToday: d === this.data.todayStr,
-      viewGroups: this.windowOf(d)
+      viewGroups: this.windowOf(d, 7)
     });
     // 切换日期后重置页面滚动高度至顶部，使所选日期置顶显示
     if (wx.pageScrollTo) {

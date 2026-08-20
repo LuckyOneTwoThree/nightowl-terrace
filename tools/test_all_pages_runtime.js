@@ -67,6 +67,45 @@ pageFolders.forEach(folder => {
         ctx.switchTab({ currentTarget: { dataset: { tab: 'leagues' } } });
       }
     }
+    // 针对 court 测试德比法庭两栏切换、抽屉与互动点赞
+    if (folder === 'court') {
+      if (typeof ctx.onMainTab === 'function') {
+        ctx.onMainTab({ currentTarget: { dataset: { tab: 'dossier' } } });
+        ctx.onMainTab({ currentTarget: { dataset: { tab: 'court' } } });
+      }
+      if (typeof ctx.togglePickerModal === 'function') ctx.togglePickerModal();
+      if (typeof ctx.onPickerTab === 'function') {
+        ctx.onPickerTab({ currentTarget: { dataset: { id: 'season' } } });
+        ctx.onPickerTab({ currentTarget: { dataset: { id: 'done' } } });
+        ctx.onPickerTab({ currentTarget: { dataset: { id: 'recent' } } });
+      }
+      if (typeof ctx.toggleDrawer === 'function') ctx.toggleDrawer();
+      if (typeof ctx.toggleRuleModal === 'function') ctx.toggleRuleModal();
+      if (typeof ctx.onSelectMatch === 'function' && ctx.data.cands && ctx.data.cands.length) {
+        ctx.onSelectMatch({ currentTarget: { dataset: { id: ctx.data.cands[0].id } } });
+      }
+      if (typeof ctx.onSelectCamp === 'function') ctx.onSelectCamp({ currentTarget: { dataset: { camp: 'away' } } });
+      if (typeof ctx.onQuickTag === 'function') ctx.onQuickTag({ currentTarget: { dataset: { tag: '🔥 零封拿下' } } });
+      if (typeof ctx.submit === 'function') {
+        ctx.submit(); // 首次提交
+        ctx.submit(); // 二次尝试修改被阻断
+      }
+      if (typeof ctx.onReact === 'function') {
+        ctx.onReact({ currentTarget: { dataset: { id: 'mock_h1_PL-1-ARS-COV', type: 'like' } } });
+        ctx.onReact({ currentTarget: { dataset: { id: 'mock_h1_PL-1-ARS-COV', type: 'flag' } } });
+        ctx.onReact({ currentTarget: { dataset: { id: 'mock_h1_PL-1-ARS-COV', type: 'milk' } } });
+      }
+      if (typeof ctx.onDebateTab === 'function') {
+        ctx.onDebateTab({ currentTarget: { dataset: { id: 'home' } } });
+        ctx.onDebateTab({ currentTarget: { dataset: { id: 'hot' } } });
+      }
+      if (typeof ctx.onArchiveTab === 'function') {
+        ctx.onArchiveTab({ currentTarget: { dataset: { id: 'hit' } } });
+      }
+      if (typeof ctx.judge === 'function') {
+        ctx.judge({ currentTarget: { dataset: { id: 'PL-1-ARS-COV', r: 'hit' } } });
+      }
+    }
 
     console.log('  ✅ [pages/' + folder + '] onLoad & onShow & 交互逻辑通过');
     passed++;

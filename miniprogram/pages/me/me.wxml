@@ -11,9 +11,10 @@
         <view class="v-icon v-soccer text-amber ph-brand-ic"></view>
         <text class="mono ph-brand-txt">NIGHTOWL MATCH PASS · 观赛通票</text>
       </view>
-      <view class="chip chip-amber pass-lv-chip">
+      <view class="chip chip-amber pass-lv-chip" bindtap="onShowLevelModal">
         <view class="dot-teal pass-online-dot animate-pulse"></view>
         <text>{{levelZh}}</text>
+        <text class="lv-arrow mono">›</text>
       </view>
     </view>
 
@@ -260,6 +261,78 @@
   </view>
 
   <text class="ver mono">夜猫追球 · 今晚哪场值得熬 · v1.0</text>
+
+  <!-- ==================== 6. 夜猫段位与荣誉称号弹窗 (Level & Title Modal) ==================== -->
+  <view class="modal-backdrop {{showLevelModal ? 'show' : ''}}" bindtap="onCloseLevelModal"></view>
+  <view class="level-sheet {{showLevelModal ? 'show' : ''}}">
+    <view class="ls-handle"></view>
+    <view class="ls-content">
+      <view class="ls-header">
+        <view class="ls-title-wrap">
+          <text class="hl ls-title">夜猫荣誉段位与特权</text>
+          <text class="mono muted ls-sub">NIGHTOWL RANKS & BADGES</text>
+        </view>
+        <view class="ls-close" bindtap="onCloseLevelModal">
+          <view class="v-icon v-cross text-amber"></view>
+        </view>
+      </view>
+
+      <!-- 当前段位与进阶进度卡片 -->
+      <view class="ls-hero card-highest floodlight-glow">
+        <view class="ls-hero-top">
+          <view class="ls-badge-box text-amber">
+            <text class="ls-badge-icon">{{curLevel.icon}}</text>
+          </view>
+          <view class="ls-hero-info">
+            <view class="ls-cur-title hl text-amber">Lv.{{curLevel.lv}} {{curLevel.title}}</view>
+            <text class="mono muted ls-cur-desc">当前享受: {{curLevel.perk}}</text>
+          </view>
+        </view>
+
+        <!-- 进度条 -->
+        <view class="ls-prog-wrap" wx:if="{{nextLevel}}">
+          <view class="ls-prog-labels mono">
+            <text class="muted">晋级下阶: Lv.{{nextLevel.lv}} {{nextLevel.title}}</text>
+            <text class="text-amber hl">{{progressPct}}%</text>
+          </view>
+          <view class="ls-prog-track">
+            <view class="ls-prog-bar" style="width: {{progressPct}}%;"></view>
+          </view>
+          <view class="ls-prog-cond mono muted">
+            <text>需累计修仙 {{nextLevel.reqHours}}h 或 赛季总分达到 {{nextLevel.reqPts}} 分</text>
+          </view>
+        </view>
+        <view class="ls-max-level mono text-amber hl" wx:else>
+          <text>👑 已登峰造极 · 荣获殿堂级最高荣誉</text>
+        </view>
+      </view>
+
+      <!-- 全量段位天梯体系列表 -->
+      <view class="ls-ladder-title mono muted">全量 5 大荣誉段位体系</view>
+      <view class="ls-ladder">
+        <view class="ls-tier card-low {{curLevel.lv === item.lv ? 'ls-tier-active' : ''}} {{curLevel.lv > item.lv ? 'ls-tier-unlocked' : ''}}"
+              wx:for="{{levelsList}}" wx:key="lv">
+          <view class="ls-tier-left">
+            <text class="ls-tier-icon">{{item.icon}}</text>
+            <view class="ls-tier-info">
+              <view class="ls-tier-name hl">Lv.{{item.lv}} {{item.title}}
+                <text class="chip chip-amber ls-cur-chip" wx:if="{{curLevel.lv === item.lv}}">当前</text>
+                <text class="chip chip-teal ls-done-chip" wx:elif="{{curLevel.lv > item.lv}}">已达成</text>
+              </view>
+              <text class="ls-tier-perk mono muted">{{item.perk}}</text>
+            </view>
+          </view>
+          <view class="ls-tier-req mono muted">
+            <text>{{item.reqHours > 0 ? item.reqHours + 'h / ' + item.reqPts + '分' : '初始解锁'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <button class="btn-amber ls-confirm-btn floodlight-glow" bindtap="onCloseLevelModal">
+        <text>我知道了</text>
+      </button>
+    </view>
+  </view>
 </view>
 
 

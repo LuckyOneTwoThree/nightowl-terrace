@@ -51,11 +51,7 @@ Page({
       wx.setStorageSync('nickname', nickname);
     }
 
-    var followed = getApp().getFollowed() || [];
-    var preds = wx.getStorageSync('predictions') || {};
-
     // 打卡时长与预测命中率
-    var checkins = wx.getStorageSync('checkins') || {};
     var mins = 0;
     Object.keys(checkins).forEach(function (k) { mins += (checkins[k].cost || 0) * 60; });
     var hours = (Math.round(mins / 6) / 10) + 'h';
@@ -157,7 +153,33 @@ Page({
     });
 
     var hoursNum = parseFloat(hours) || 0;
-    var levelZh = hoursNum >= 10 ? 'Lv.5 修仙宗师' : hoursNum >= 5 ? 'Lv.4 资深夜猫' : 'Lv.3 夜猫子';
+    
+    var LEVELS = [
+      { lv: 1, title: '新晋球客', icon: '🌱', reqHours: 0, reqPts: 0, perk: '基础赛事赛程与焦点推荐' },
+      { lv: 2, title: '看台夜行者', icon: '🌙', reqHours: 2, reqPts: 10, perk: '解锁 1X2 盲评预测与哈希封存' },
+      { lv: 3, title: '硬核夜猫子', icon: '⚡', reqHours: 5, reqPts: 25, perk: '解锁主队专属赛程一键导入系统日历' },
+      { lv: 4, title: '资深预言家', icon: '🔮', reqHours: 10, reqPts: 50, perk: '解锁德比法庭辩护与狂言认证徽章' },
+      { lv: 5, title: '殿堂级宗师', icon: '👑', reqHours: 20, reqPts: 100, perk: '全服天梯风云榜尊享黑金专属光环' }
+    ];
+
+    var curLevel = LEVELS[0];
+    var nextLevel = LEVELS[1];
+    for (var i = LEVELS.length - 1; i >= 0; i--) {
+      if (hoursNum >= LEVELS[i].reqHours || seasonPts >= LEVELS[i].reqPts) {
+        curLevel = LEVELS[i];
+        nextLevel = LEVELS[i + 1] || null;
+        break;
+      }
+    }
+
+    var progressPct = 100;
+    if (nextLevel) {
+      var hourPct = (hoursNum / nextLevel.reqHours) * 100;
+      var ptsPct = nextLevel.reqPts > 0 ? (seasonPts / nextLevel.reqPts) * 100 : 0;
+      progressPct = Math.min(99, Math.max(5, Math.round(Math.max(hourPct, ptsPct))));
+    }
+
+    var levelZh = 'Lv.' + curLevel.lv + ' ' + curLevel.title;
     var mid = settings.mid || 'MID-' + Math.abs(nickname.split('').reduce(function(a,b){return (a<<5)-a+b.charCodeAt(0);},0)).toString(16).toUpperCase().slice(0, 6);
 
     var primaryGlow = followedTeams.length > 0 ? followedTeams[0].color : '#FFB800';
@@ -166,6 +188,11 @@ Page({
       nickname: nickname,
       mid: mid,
       levelZh: levelZh,
+      curLevel: curLevel,
+      nextLevel: nextLevel,
+      progressPct: progressPct,
+      levelsList: LEVELS,
+      showLevelModal: false,
       seasonPts: seasonPts,
       primaryGlow: primaryGlow,
       followedLeagues: followedLeagues,
@@ -174,6 +201,15 @@ Page({
       myWeek: myWeek,
       stats: { hours: hours, preds: Object.keys(preds).length, hit: total ? Math.round(hit * 100 / total) + '%' : '—', seasonPts: seasonPts }
     });
+  },
+
+  onShowLevelModal: function () {
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    this.setData({ showLevelModal: true });
+  },
+
+  onCloseLevelModal: function () {
+    this.setData({ showLevelModal: false });
   },
 
   toggleExpandMatches: function () {
@@ -239,7 +275,7 @@ Page({
     var id = e.currentTarget.dataset.id;
     var urls = {
       preds: '/pages/records/records',
-      boasts: '/pages/court/court',
+      boasts: '/pages/court/court?tab=dossier',
       checkins: '/pages/board/board',
       subs: '/pages/settings/settings',
       settings: '/pages/settings/settings'
