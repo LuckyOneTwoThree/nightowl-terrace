@@ -69,41 +69,6 @@
       <text class="mono text-teal">选择已上锁 · 终场哨响自动开箱结算</text>
     </view>
   </view>
-
-  <!-- 本周排行榜（_9 榜单行预览） -->
-  <view class="sect sect-gap">
-    <text class="sect-title">夜猫封神榜</text>
-    <view class="sect-line"></view>
-    <text class="sect-more" data-id="owl" bindtap="onCard">完整榜单 ›</text>
-  </view>
-
-  <view class="rank-card card-low">
-    <view class="rank-empty mono muted" wx:if="{{!rankList.length}}">
-      暂无上榜 · 封存预测、开球结算后自动开榜
-    </view>
-    <view class="rank-row" wx:for="{{rankList}}" wx:key="rank">
-      <view class="rank-num rank-{{item.rank}} hl">{{item.rank}}</view>
-      <view class="circle-sm rank-avatar">{{item.avatar}}</view>
-      <view class="rank-info">
-        <text class="rank-name hl">{{item.name}}</text>
-        <text class="rank-badge mono muted">{{item.badge}}</text>
-      </view>
-      <text class="rank-score mono hl text-amber">{{item.score}}</text>
-    </view>
-
-    <!-- 用户高亮行 -->
-    <view class="rank-row user-row card-high" wx:if="{{myRank}}">
-      <view class="rank-num user-rank hl">{{myRank.rank}}</view>
-      <view class="circle-sm user-avatar">
-        <view class="v-icon v-paw text-secondary" style="width: 24rpx; height: 24rpx;"></view>
-      </view>
-      <view class="rank-info">
-        <text class="rank-name hl text-secondary">{{myRank.name}} (我)</text>
-        <text class="rank-badge mono muted">本周稳健</text>
-      </view>
-      <text class="rank-score mono hl text-secondary">{{myRank.score}}</text>
-    </view>
-  </view>
 </view>
 
 

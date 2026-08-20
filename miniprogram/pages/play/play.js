@@ -21,15 +21,12 @@ Page({
     cards: [],
     guesses: [],
     options: OPTIONS,
-    rankList: [],
-    myRank: null,
     seasonPts: 0
   },
 
   onLoad: function () {
     this._lastPredsStr = JSON.stringify(wx.getStorageSync('predictions') || {});
     this.refresh();
-    this.fetchRanks();
   },
 
   onShow: function () {
@@ -38,28 +35,7 @@ Page({
     if (this._lastPredsStr !== curPredsStr) {
       this._lastPredsStr = curPredsStr;
       this.refresh();
-      this.fetchRanks(); // 封存状态变化后云端周榜同步刷新，避免返回本页时榜单空白
     }
-  },
-
-  // 云端盲评榜（readBoard 聚合，本周）；不可用时榜单区显示空态引导
-  fetchRanks: function () {
-    var that = this;
-    var week = engine.weekStartBJ(Date.now()).str; // 北京周口径，与云函数 weekRange 一致
-    cloud.readBoard('guess', 'default', week)
-      .then(function (res) {
-        var list = (res && res.list) || [];
-        that.setData({
-          rankList: list.map(function (r, i) {
-            return {
-              rank: i + 1, name: r.nick, avatar: (r.nick || '??').slice(0, 3).toUpperCase(),
-              score: (r.pts || 0) + ' 分', badge: r.hit != null && r.count ? Math.round(r.hit / r.count * 100) + '% 命中' : ''
-            };
-          }),
-          myRank: null // 云榜 uid 归属待 openGid 接入后补「我」行
-        });
-      })
-      .catch(function () { /* 云不可用：显示空态 */ });
   },
 
   refresh: function () {
@@ -127,8 +103,6 @@ Page({
         { id: 'box', name: '盲盒开球', iconClass: 'v-gift', colorClass: 'c-violet', sub: '特征翻转 · 抽选今晚' }
       ],
       guesses: guesses,
-      rankList: [],   // 云端榜单由 fetchRanks 异步填充
-      myRank: null,
       seasonPts: seasonPts
     });
   },
