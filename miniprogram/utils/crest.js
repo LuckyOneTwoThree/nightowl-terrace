@@ -1,21 +1,26 @@
 /**
- * 队徽图标工具（云存储版）
- * 96 支五大联赛球队队徽存放于云存储 crests/ 目录（源头：luukhopman/football-logos，
- * tools/fetch_crests.js 下载 + tools/compress_crests.js 压缩后上传）
+ * 队徽图标工具（本地打包版，云存储双模式兼容）
+ * 96 支五大联赛球队队徽打包于包内 images/crests/（调色板 PNG 共 698KB，源头
+ * luukhopman/football-logos，tools/fetch_crests.js 下载 + compress_crests.js 压缩）
  *
- * <image> 组件 src 原生支持 cloud:// fileID（基础库 2.2.3+，自动下载+CDN 缓存），
- * 不受 downloadFile 域名白名单约束；包内已不打包队徽（体验评分静态资源 ≤200KB 达标）
+ * 模式说明（BUCKET 驱动）：
+ *   - BUCKET = ''（当前）：本地包路径 '/images/crests/ARS.png'——零网络依赖、零流量成本、
+ *     离线可用。体验评分「静态资源≤200KB」为建议项不阻塞审核；主包 1.56MB < 2MB 硬限安全。
+ *     （曾切云存储：96 张已上传 crests/ 目录并验证 96/96，后因流量计费顾虑 + image 组件
+ *     用户态读取 500（存储权限需「所有用户可读」）回退本地）
+ *   - BUCKET = '<bucket>'：切云存储 fileID，image 组件原生支持 cloud://（需先在
+ *     云开发控制台把存储权限设为「所有用户可读」）
  *
- * 使用：crest.getUrl('ARS') → 'cloud://<env>.<bucket>/crests/ARS.png'
+ * 使用：crest.getUrl('ARS') → '/images/crests/ARS.png'
  *       crest.getUrl('XXX') → null（未收录时页面回退纯色三字码圆标）
  *
  * 新赛季更新流程：tools/fetch_crests.js 下载 → tools/compress_crests.js png 压缩 →
- * 云存储上传到 crests/ 目录 → BUNDLED 表加三字码
+ * 覆盖 miniprogram/images/crests/ → BUNDLED 表加三字码
  */
 
 // 云存储 fileID 前缀（cloud://<envId>.<bucket>）：上传后在云存储面板任一文件详情里复制
 var ENV = 'cloudbase-d3gvu54t8fbbb6b3f';
-var BUCKET = '636c-cloudbase-d3gvu54t8fbbb6b3f-1470591947'; // 云存储已上传 crests/ 目录（96 张）
+var BUCKET = ''; // 空 = 本地包模式；填 bucket（636c-cloudbase-d3gvu54t8fbbb6b3f-1470591947）即切云存储
 
 // 已收录队徽的三字码（与云存储 crests/ 目录文件一一对应，共 96 支）
 var BUNDLED = {
