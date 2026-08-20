@@ -100,7 +100,7 @@ Page({
     };
 
     // 底（与 app 全局 --bg 同源）
-    ctx.fillStyle = '#080B10';
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, W, H);
     // 顶部联赛彩条（联赛主题色 PM 7.6）
     var grad = ctx.createLinearGradient(0, 0, W, 0);
@@ -120,7 +120,7 @@ Page({
     [[m.home, homeImg, W * .25], [m.away, awayImg, W * .75]].forEach(function (t) {
       var team = t[0], img = t[1], cx = t[2];
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.fillStyle = team.bg || '#151922'; ctx.fill();
+      ctx.fillStyle = team.bg || '#16161A'; ctx.fill();
       if (img) {
         // 队徽非正方形（如 ARS 139×181），等比缩放至圆内 90% 居中，圆形裁剪防溢出
         ctx.save();

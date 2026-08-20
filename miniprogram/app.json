@@ -18,16 +18,16 @@
     "pages/teams/teams"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#080B10",
+    "navigationBarBackgroundColor": "#000000",
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "夜猫追球",
-    "backgroundColor": "#080B10",
+    "backgroundColor": "#000000",
     "backgroundTextStyle": "dark"
   },
   "tabBar": {
     "color": "#8E9AB0",
     "selectedColor": "#FFB800",
-    "backgroundColor": "#080B10",
+    "backgroundColor": "#000000",
     "borderStyle": "black",
     "list": [
       {

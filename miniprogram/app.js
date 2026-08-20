@@ -130,9 +130,9 @@ App({
 
     if (wx.setTabBarStyle) {
       wx.setTabBarStyle({
-        color: isLight ? '#64748B' : '#94A3B8',
+        color: isLight ? '#64748B' : '#8C8C96',
         selectedColor: isLight ? '#D97706' : '#FFB800',
-        backgroundColor: isLight ? '#FFFFFF' : '#080B10',
+        backgroundColor: isLight ? '#FFFFFF' : '#000000',
         borderStyle: isLight ? 'white' : 'black',
         success: function () {
           that._appliedTabBarTheme = theme;
@@ -163,7 +163,7 @@ App({
         if (wx.setNavigationBarColor) {
           wx.setNavigationBarColor({
             frontColor: isLight ? '#000000' : '#ffffff',
-            backgroundColor: isLight ? '#F4F5F7' : '#080B10',
+            backgroundColor: isLight ? '#F4F5F7' : '#000000',
             animation: { duration: 0 },
             success: function () {
               pageInstance._appliedNavTheme = theme;
@@ -177,9 +177,9 @@ App({
       if (pageInstance._appliedBgTheme !== theme) {
         if (wx.setBackgroundColor) {
           wx.setBackgroundColor({
-            backgroundColor: isLight ? '#F4F5F7' : '#080B10',
-            backgroundColorTop: isLight ? '#F4F5F7' : '#080B10',
-            backgroundColorBottom: isLight ? '#F4F5F7' : '#080B10',
+            backgroundColor: isLight ? '#F4F5F7' : '#000000',
+            backgroundColorTop: isLight ? '#F4F5F7' : '#000000',
+            backgroundColorBottom: isLight ? '#F4F5F7' : '#000000',
             success: function () {
               pageInstance._appliedBgTheme = theme;
             },
