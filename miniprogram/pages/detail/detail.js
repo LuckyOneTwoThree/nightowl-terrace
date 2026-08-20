@@ -102,7 +102,14 @@ Page({
 
   tick: function () {
     if (!this.data.m || this.data.m.finished) return;
-    var c = engine.countdown(this._ts, Date.now());
+    var now = Date.now();
+    var state = engine.matchState(this._raw, now);
+    if (state === 'ended_pending') {
+      this.setData({ countdownText: '等待比分录入' });
+      this.stopTimer();
+      return;
+    }
+    var c = engine.countdown(this._ts, now);
     var text;
     if (c.over) text = '比赛中';
     else if (c.d > 0) text = '距开球 ' + c.d + '天' + c.h + '小时';

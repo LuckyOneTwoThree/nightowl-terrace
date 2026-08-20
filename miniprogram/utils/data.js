@@ -62,14 +62,69 @@ function storylines() {
   return storylinesAll.filter(function (s) { return s.status !== 'draft'; });
 }
 
-// 场次索引（种子不可变，模块级缓存；原 filter 全量扫描 O(n) → O(1)）
+// 场次索引与动态比分缓存
 var _matchMap = null;
-function getMatch(id) {
+var _dynamicFixtures = null;
+
+function initFixtures() {
   if (!_matchMap) {
     _matchMap = {};
-    fixturesSeed.forEach(function (m) { _matchMap[m.id] = m; });
+    _dynamicFixtures = fixturesSeed.map(function (m) {
+      return Object.assign({}, m);
+    });
+    _dynamicFixtures.forEach(function (m) { _matchMap[m.id] = m; });
+
+    // 应用本地已缓存的比分数据（保证离线秒开即有最新比分）
+    try {
+      var cached = (typeof wx !== 'undefined' && wx.getStorageSync) ? (wx.getStorageSync('cached_scores') || {}) : {};
+      Object.keys(cached).forEach(function (id) {
+        var patch = cached[id];
+        if (_matchMap[id] && patch) {
+          if (patch.st) _matchMap[id].st = patch.st;
+          if (patch.sc) _matchMap[id].sc = patch.sc;
+        }
+      });
+    } catch (e) {}
   }
+}
+
+function getMatch(id) {
+  initFixtures();
   return _matchMap[id] || null;
+}
+
+function matchesAll() {
+  initFixtures();
+  return _dynamicFixtures;
+}
+
+function syncScores() {
+  if (typeof wx === 'undefined' || !wx.cloud || !wx.cloud.database) return Promise.resolve(false);
+  var db = wx.cloud.database();
+  var _ = db.command;
+  // 拉近 10 天完赛场次：不带时间窗的 st=done 查询赛季中后期会超 100 条上限，
+  // 云库返回任意子集导致新比分可能丢失；10 天窗口内 done 场次必在 100 内
+  var since = engine.bjDateStr(Date.now() - 10 * 86400000) + 'T00:00';
+  return db.collection('fixtures').where({ st: 'done', t: _.gte(since) }).limit(100).get().then(function (res) {
+    var docs = (res && res.data) || [];
+    initFixtures();
+    var cache = {};
+    try { cache = wx.getStorageSync('cached_scores') || {}; } catch (e) {}
+    var changed = false;
+    docs.forEach(function (doc) {
+      if (doc.id && doc.sc) {
+        cache[doc.id] = { st: doc.st, sc: doc.sc };
+        var m = _matchMap[doc.id];
+        if (m && (m.st !== doc.st || m.sc !== doc.sc)) {
+          m.st = doc.st;
+          m.sc = doc.sc;
+          changed = true;
+        }
+      }
+    });
+    try { wx.setStorageSync('cached_scores', cache); } catch (e2) {}
+    return changed;
+  }).catch(function () { return false; });
 }
 
 module.exports = {
@@ -93,17 +148,16 @@ module.exports = {
    * @return Promise<fixtures[]>
    */
   loadFixtures: function () {
-    return Promise.resolve(fixturesSeed);
+    return Promise.resolve(matchesAll());
   },
-  matchesAll: function () {
-    return fixturesSeed;
-  },
+  matchesAll: matchesAll,
+  syncScores: syncScores,
   fixturesByDate: function (dateStr) {
-    return fixturesSeed.filter(function (m) { return m.t.split('T')[0] === dateStr; });
+    return matchesAll().filter(function (m) { return m.t.split('T')[0] === dateStr; });
   },
   matchesOfDay: function (dateStr) {
     // 北京时间口径：凌晨场（00:00–06:00）归属前一晚（统一走 engine.owlDay，避免双份口径漂移）
-    return fixturesSeed.filter(function (m) { return engine.owlDay(m.t) === dateStr; });
+    return matchesAll().filter(function (m) { return engine.owlDay(m.t) === dateStr; });
   },
   getInitTheme: function () {
     try {

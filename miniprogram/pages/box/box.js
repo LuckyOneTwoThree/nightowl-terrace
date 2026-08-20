@@ -50,8 +50,10 @@ Page({
     var flags = {};
     this.data.pills.forEach(function (p) { flags[p.key] = p.on; });
 
+    var now = Date.now();
     var filterMatch = function (m) {
       if (m.st !== 'sched' || m.tbd) return null;
+      if (engine.ts(m.t) <= now) return null;                     // 排除已开球/已完赛场次
       var ev = engine.evaluate(m, recMap, rivs, sls, []);
       if (flags.prime && m.s > 1) return null;                     // 黄金档：S1 及以前 (23:00前)
       if (flags.star2 && ev.star < 2) return null;                 // 星级下限

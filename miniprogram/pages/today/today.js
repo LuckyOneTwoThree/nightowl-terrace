@@ -184,6 +184,7 @@ Page({
 
     if (pick.hero) {
       this._heroTime = pick.hero.m.t;
+      this._heroRaw = pick.hero.m;
       this.startCountdown(pick.hero.m.t);
     }
   },
@@ -193,7 +194,15 @@ Page({
     if (this._timer) clearInterval(this._timer);
     var target = engine.ts(t);
     var tick = function () {
-      var c = engine.countdown(target, Date.now());
+      var now = Date.now();
+      var rawMatch = that._heroRaw || { t: t, st: (that.data.hero && that.data.hero.st) || 'sched' };
+      var state = engine.matchState(rawMatch, now);
+      if (state === 'ended_pending') {
+        that.setData({ countdownText: '等待比分' });
+        if (that._timer) { clearInterval(that._timer); that._timer = null; }
+        return;
+      }
+      var c = engine.countdown(target, now);
       var text;
       if (c.over) {
         text = '比赛中';

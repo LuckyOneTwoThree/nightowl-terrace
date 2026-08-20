@@ -14,9 +14,9 @@ Page({
       return;
     }
     var m = decorate.dec(raw, null, { followed: getApp().getFollowed() });
-    // 标语沿用夜猫口径（dayLabel 已把 <06:00 归前一晚，与日历视图一致）
-    var slogan = m.dayLabel === '今天' ? '今晚哪场值得熬'
-      : m.dayLabel === '明天' ? '明晚哪场值得熬'
+    // 标语沿用口径（适配今天/今天凌晨/明天/明晨）
+    var slogan = (m.dayLabel === '今天' || m.dayLabel === '今天凌晨') ? '今晚哪场值得熬'
+      : (m.dayLabel === '明天' || m.dayLabel === '明晨') ? '明晚哪场值得熬'
       : '焦点大战值得熬';
 
     this.setData({

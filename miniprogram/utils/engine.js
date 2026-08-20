@@ -77,6 +77,27 @@ function isFinished(m) {
   return !!m && (m.st === 'done' || m.st === 'ft');
 }
 
+// 足球比赛常规预计时长：120 分钟（90m 常规 + 15m 中场 + 补时）
+var MATCH_DURATION_MS = 120 * 60 * 1000;
+
+/**
+ * 比赛生命周期自动推断状态
+ * @param m 比赛对象
+ * @param nowTs 当前毫秒时间戳（可选，默认 Date.now()）
+ * @return 'finished' | 'live' | 'ended_pending' | 'sched' | 'pp'
+ */
+function matchState(m, nowTs) {
+  if (!m) return 'sched';
+  if (isFinished(m)) return 'finished';
+  if (m.st === 'pp') return 'pp';
+  nowTs = nowTs || Date.now();
+  var kickTs = ts(m.t);
+  if (isNaN(kickTs)) return m.st || 'sched';
+  if (nowTs < kickTs) return 'sched';
+  if (nowTs < kickTs + MATCH_DURATION_MS) return 'live';
+  return 'ended_pending'; // 已过比赛时长，等待录入比分或结算
+}
+
 // ---------- 北京时区日历工具（设备时区无关） ----------
 
 function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -372,6 +393,8 @@ module.exports = {
   sleepTier: sleepTier,
   tierOf: tierOf,
   isFinished: isFinished,
+  matchState: matchState,
+  MATCH_DURATION_MS: MATCH_DURATION_MS,
   bjDateStr: bjDateStr,
   mondayOfWall: mondayOfWall,
   weekStartBJ: weekStartBJ,

@@ -12,6 +12,10 @@ App({
         traceUser: true
       });
       console.log('[nightowl] 云开发已初始化');
+      try {
+        var dataUtil = require('./utils/data.js');
+        dataUtil.syncScores();
+      } catch (e) {}
     }
 
     // 监听系统深浅色切换

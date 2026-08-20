@@ -35,34 +35,43 @@ function localTime(m) {
   return p2(Math.floor(local / 60)) + ':' + p2(local % 60);
 }
 
-// 相对「今天」的天数差（今天=0，明天=1，昨天=-1…）
-// 夜猫口径：比赛日走 owlDay（凌晨 00:00–06:00 归前一晚），当前日走 nightOf，
-// 与 today/box/schedule 三页一致（二轮 P1-2：修复凌晨场「今晚」错标「明天」）
-function relDay(t) {
-  var mP = engine.owlDay(t).split('-').map(Number);
-  var cP = engine.nightOf(Date.now()).split('-').map(Number);
+// 相对自然日天数差（今天=0，明天=1，昨天=-1…）
+// 基于北京时间自然日对比，设备时区无关（与 schedule 赛程列表日历严格对齐）
+function relDay(t, nowTs) {
+  var parts = String(t || '').split('T');
+  var mP = (parts[0] || '2026-08-01').split('-').map(Number);
+  var cP = engine.bjDateStr(nowTs || Date.now()).split('-').map(Number);
   return Math.round((Date.UTC(mP[0], mP[1] - 1, mP[2]) - Date.UTC(cP[0], cP[1] - 1, cP[2])) / 86400000);
 }
 
-function getDayLabel(t) {
+function getDayLabel(t, nowTs) {
   var parts = String(t || '').split('T');
+  var hm = (parts[1] || '00:00').split(':');
+  var hour = Number(hm[0]);
+  var isMidnight = hour < 6; // 00:00–06:00 凌晨档
   var d = new Date((parts[0] || '2026-08-01').replace(/-/g, '/') + ' 00:00:00');
-  var diff = relDay(t);
-  if (diff === 0) return '今天';
-  if (diff === 1) return '明天';
+  var diff = relDay(t, nowTs);
+
+  if (diff === 0) return isMidnight ? '今天凌晨' : '今天';
+  if (diff === 1) return isMidnight ? '明晨' : '明天';
   if (diff === 2) return '后天';
-  if (diff === -1) return '昨天';
+  if (diff === -1) return isMidnight ? '昨天凌晨' : '昨天';
   return (d.getMonth() + 1) + '月' + d.getDate() + '日 周' + WEEK[d.getDay()];
 }
 
-function getDateHeader(t) {
+function getDateHeader(t, nowTs) {
   var parts = String(t || '').split('T');
+  var hm = (parts[1] || '00:00').split(':');
+  var hour = Number(hm[0]);
+  var isMidnight = hour < 6;
   var d = new Date((parts[0] || '2026-08-01').replace(/-/g, '/') + ' 00:00:00');
   var mdStr = (d.getMonth() + 1) + '月' + d.getDate() + '日 (周' + WEEK[d.getDay()] + ')';
-  var diff = relDay(t);
-  if (diff === 0) return '今天 · ' + mdStr;
-  if (diff === 1) return '明天 · ' + mdStr;
+  var diff = relDay(t, nowTs);
+
+  if (diff === 0) return (isMidnight ? '今天凌晨 · ' : '今天 · ') + mdStr;
+  if (diff === 1) return (isMidnight ? '明晨 · ' : '明天 · ') + mdStr;
   if (diff === 2) return '后天 · ' + mdStr;
+  if (diff === -1) return (isMidnight ? '昨天凌晨 · ' : '昨天 · ') + mdStr;
   return mdStr;
 }
 
@@ -117,5 +126,8 @@ module.exports = {
   dec: dec,
   lgZh: lgZh,
   localTime: localTime,
-  WEEK: WEEK
+  WEEK: WEEK,
+  getDayLabel: getDayLabel,
+  getDateHeader: getDateHeader,
+  relDay: relDay
 };
