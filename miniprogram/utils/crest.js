@@ -1,25 +1,21 @@
 /**
- * 队徽图标工具（云存储版，本地包双模式兼容）
+ * 队徽图标工具（云存储版）
  * 96 支五大联赛球队队徽存放于云存储 crests/ 目录（源头：luukhopman/football-logos，
  * tools/fetch_crests.js 下载 + tools/compress_crests.js 压缩后上传）
  *
  * <image> 组件 src 原生支持 cloud:// fileID（基础库 2.2.3+，自动下载+CDN 缓存），
- * 不受 downloadFile 域名白名单约束；云端切换完成后删除包内 images/crests/
- * （主包静态资源检测 ≤200KB 达标，微信开发者工具体验评分）
+ * 不受 downloadFile 域名白名单约束；包内已不打包队徽（体验评分静态资源 ≤200KB 达标）
  *
  * 使用：crest.getUrl('ARS') → 'cloud://<env>.<bucket>/crests/ARS.png'
- *       crest.getUrl('ARS') → '/images/crests/ARS.png'（BUCKET 未配置时本地兜底）
  *       crest.getUrl('XXX') → null（未收录时页面回退纯色三字码圆标）
  *
- * 部署前置（缺一不可）：
- *   1. 云存储上传：开发者工具 → 云存储 → 上传文件夹（当前 miniprogram/images/crests/ 全部 96 张）→ 目录名 crests/
- *   2. BUCKET 常量：面板中任一队徽文件「详情 → FileID」的 cloud://<env>.<bucket> 前缀填入下方
- *   3. 两条就绪后执行删除包内目录：git rm -r miniprogram/images/crests/
+ * 新赛季更新流程：tools/fetch_crests.js 下载 → tools/compress_crests.js png 压缩 →
+ * 云存储上传到 crests/ 目录 → BUNDLED 表加三字码
  */
 
 // 云存储 fileID 前缀（cloud://<envId>.<bucket>）：上传后在云存储面板任一文件详情里复制
 var ENV = 'cloudbase-d3gvu54t8fbbb6b3f';
-var BUCKET = ''; // ← 上传 crests/ 后填：面板文件 FileID 中 cloud://env. 之后、/crests 之前的部分；空值 = 走本地包兜底
+var BUCKET = '636c-cloudbase-d3gvu54t8fbbb6b3f-1470591947'; // 云存储已上传 crests/ 目录（96 张）
 
 // 已收录队徽的三字码（与云存储 crests/ 目录文件一一对应，共 96 支）
 var BUNDLED = {
