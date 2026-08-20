@@ -112,10 +112,16 @@
   <view class="sect sect-gap">
     <text class="sect-title">{{curTab === 'season' ? '赛季总积分 Top 50' : curTab === 'guess' ? '本周盲评榜' : '本周修仙肝度榜'}}</text>
     <view class="sect-line"></view>
-    <text class="chip chip-ghost demo-chip" wx:if="{{rankDemo}}">全网排行</text>
+    <text class="chip chip-ghost demo-chip" wx:if="{{!rankDemo && ranks.length}}">实时榜单</text>
   </view>
 
   <view class="rank-card card-low">
+    <!-- 空榜引导：真实数据为空时不再回退演示数据 -->
+    <view class="rank-empty" wx:if="{{!ranks.length}}">
+      <view class="v-icon v-moon rank-empty-icon"></view>
+      <text class="rank-empty-title hl">榜上暂无夜猫</text>
+      <text class="rank-empty-sub mono muted">{{curTab === 'season' ? '封存预言 · 结算后赛季积分自动上榜' : curTab === 'guess' ? '本周盲评第一人，虚位以待' : '看球打卡 · 做本周熬得最狠的夜猫'}}</text>
+    </view>
     <view class="rank-row" wx:for="{{ranks}}" wx:key="rank">
       <text class="rk-no rank-{{item.rank}} hl">{{item.rank}}</text>
       <view class="circle-sm rk-avatar">{{item.name[0]}}</view>

@@ -4,24 +4,7 @@ var decorate = require('../../utils/decorate.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
 
-// 演示榜单数据备用（云端无数据或无网络时回退）
-var MOCK_OWL = [
-  { rank: 1, name: 'Kopite_99', val: '12.5h', sub: '连续 5 周' },
-  { rank: 2, name: 'NightWalker', val: '10.0h', sub: '连续 3 周' },
-  { rank: 3, name: '凌晨三点见', val: '7.5h', sub: '连续 2 周' }
-];
-
-var MOCK_GUESS = [
-  { rank: 1, name: '预言家阿森纳', val: '18 分', sub: '83% 命中' },
-  { rank: 2, name: '球场诸葛', val: '15 分', sub: '71% 命中' },
-  { rank: 3, name: '夜猫毒奶王', val: '12 分', sub: '60% 命中' }
-];
-
-var MOCK_SEASON = [
-  { rank: 1, name: '预言家阿森纳', val: '142 分', sub: '本季命中 48 场' },
-  { rank: 2, name: '伯纳乌守夜人', val: '128 分', sub: '本季命中 42 场' },
-  { rank: 3, name: '圣西罗不眠夜', val: '115 分', sub: '本季命中 39 场' }
-];
+// 榜单数据一律来自云端 readBoard 聚合；云不可用或空榜时显示空态引导（上线期已移除演示数据）
 
 function weekKeyOfTs(ts) {
   return engine.mondayOfWall(engine.bjDateStr(ts));
@@ -45,7 +28,7 @@ Page({
     preview: null,
     checked: false,
     ranks: [],
-    rankDemo: true,
+    rankDemo: false,
     myRankNo: null,
     myVal: '',
     mySub: '',
@@ -174,9 +157,10 @@ Page({
           });
         })
         .catch(function () {
+          // 云不可用/空榜：显示空态引导（上线期不再回退演示数据）
           that.setData({
-            ranks: MOCK_SEASON,
-            rankDemo: true,
+            ranks: [],
+            rankDemo: false,
             myRankNo: '-',
             myVal: uStats.seasonPts + ' 分',
             mySub: mySubText
@@ -209,9 +193,10 @@ Page({
           });
         })
         .catch(function () {
+          // 云不可用/空榜：显示空态引导
           that.setData({
-            ranks: MOCK_GUESS,
-            rankDemo: true,
+            ranks: [],
+            rankDemo: false,
             myRankNo: '-',
             myVal: uStats.weekPts + ' 分',
             mySub: mySubGuess
@@ -240,9 +225,10 @@ Page({
           });
         })
         .catch(function () {
+          // 云不可用/空榜：显示空态引导
           that.setData({
-            ranks: MOCK_OWL,
-            rankDemo: true,
+            ranks: [],
+            rankDemo: false,
             myRankNo: '-',
             myVal: s.hours + 'h',
             mySub: mySubOwl

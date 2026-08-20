@@ -2,7 +2,7 @@
  * 云开发服务层（最小闭环，PM 八节）
  * - 写入：优先走 seal 云函数（服务端 sealTs + openid + (uid,m) 唯一性，防伪造时间戳/重复计分）
  *        seal 不可用时降级集合直写（本地 storage 始终为主数据源，M2 可跑）
- * - 读取：优先云函数聚合（readBoard），失败回退页面内置演示数据
+ * - 读取：优先云函数聚合（readBoard），失败时榜单显示空态引导
  * - 降级：云环境未开通 / 集合未建 / 网络失败 → 标记本会话不可用，静默走本地，不弹错
  *   （下次冷启动自动重试；也可在设置页「重新连接云端」手动复位）
  */
@@ -158,7 +158,7 @@ function saveSubscription(tmplId, status) {
   return add('subscriptions', { tmplId: tmplId, status: status, ts: Date.now() });
 }
 
-/** 榜单读取：readBoard 云函数聚合；失败 reject 由页面回退演示数据 */
+/** 榜单读取：readBoard 云函数聚合；失败 reject 由页面渲染空态引导 */
 function readBoard(board, gid, week) {
   return call('readBoard', { board: board, gid: gid || 'default', week: week || undefined });
 }

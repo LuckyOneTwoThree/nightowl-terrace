@@ -96,3 +96,15 @@
 /* 演示数据标识 */
 .demo-chip { font-size: 20rpx; padding: 4rpx 14rpx; }
 
+
+/* 空榜引导态（上线期移除演示数据后） */
+.rank-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 56rpx 32rpx;
+}
+.rank-empty-icon { width: 56rpx; height: 56rpx; color: var(--on-surface-variant); opacity: .6; }
+.rank-empty-title { font-size: 30rpx; }
+.rank-empty-sub { font-size: 22rpx; text-align: center; }
