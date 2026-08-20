@@ -36,6 +36,7 @@ Page({
   },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     var settings = wx.getStorageSync('settings') || {};
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
     this._lastBudget = settings.budget || 4.0;
@@ -108,15 +109,15 @@ Page({
       var f = e.m.t.split('T');
       var d = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
       var meta = data.LEAGUE_META[e.m.l] || {};
-      var hTeam = data.getTeam(e.m.h) || { id: e.m.h, zh: e.m.h, color: '#514533' };
-      var aTeam = data.getTeam(e.m.a) || { id: e.m.a, zh: e.m.a, color: '#514533' };
+      var hTeam = data.getTeam(e.m.h) || { id: e.m.h, zh: e.m.h, color: '#334155' };
+      var aTeam = data.getTeam(e.m.a) || { id: e.m.a, zh: e.m.a, color: '#334155' };
       var tier = engine.tierOf(e.m);
       var idx = (e.index !== undefined && e.index !== null) ? e.index : (e.ev ? engine.owlIndex(e.ev, e.m) : 0);
       
       var o = {
         id: e.m.id,
         lgZh: lgZh(e.m.l),
-        accent: meta.accent || '#514533',
+        accent: meta.accent || '#1E293B',
         pair: hTeam.zh + ' vs ' + aTeam.zh,
         homeCode: hTeam.id,
         homeLogo: hTeam.logo || '',
@@ -246,11 +247,11 @@ Page({
       return {
         t: m.t,
         title: '⚽ ' + data.getTeam(m.h).zh + ' vs ' + data.getTeam(m.a).zh + ' · ' + lgZh(m.l),
-        desc: '熬夜 ' + engine.tierOf(m).cost + 'h · 夜猫看台',
+        desc: '熬夜 ' + engine.tierOf(m).cost + 'h · 夜猫追球',
         alarmMin: 30
       };
     });
-    ics.share(events, '夜猫看台-本周看球计划', function (ok, msg) {
+    ics.share(events, '夜猫追球-本周看球计划', function (ok, msg) {
       wx.showToast({ title: ok ? '已导出 ' + events.length + ' 场，去日历看看' : (msg || '未导出'), icon: 'none' });
     });
   },
@@ -261,6 +262,15 @@ Page({
     } else {
       wx.switchTab({ url: '/pages/schedule/schedule' });
     }
+  },
+
+  onShareAppMessage: function () {
+    var used = this.data.usedText || '0';
+    var count = this.data.best ? this.data.best.length : 0;
+    return {
+      title: '本周看球熬夜预算已生成：精选 ' + count + ' 场最优组合，预计耗时 ' + used + 'h',
+      path: '/pages/week/week'
+    };
   }
 });
 

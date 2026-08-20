@@ -44,6 +44,7 @@ Page({
   },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     this.init();
   },
 
@@ -79,7 +80,7 @@ Page({
         lg: m.l,
         r: m.r,
         lgZh: lgZh(m.l),
-        accent: meta.accent || '#514533',
+        accent: meta.accent || '#1E293B',
         hm: m.t.split('T')[1],
         local: decorate.localTime(m),
         tbd: m.tbd,
@@ -214,5 +215,12 @@ Page({
   },
   onStar: function () {
     wx.showToast({ title: '收藏 v1 上线', icon: 'none' });
+  },
+
+  onShareAppMessage: function () {
+    return {
+      title: '夜猫追球 · 五大联赛全季赛程与熬夜看点',
+      path: '/pages/schedule/schedule'
+    };
   }
 });

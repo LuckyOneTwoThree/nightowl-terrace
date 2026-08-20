@@ -97,25 +97,27 @@ App({
       wx.setStorageSync('settings', s);
     } catch (e) { }
 
+    this._appliedTabBarTheme = null;
     var targetTheme = this.getEffectiveTheme();
 
-    // 实时更新当前页面栈上的所有页面数据与顶栏
+    // 实时更新当前页面栈上的所有页面数据与状态锁
     if (typeof getCurrentPages === 'function') {
       try {
         var pages = getCurrentPages() || [];
+        var that = this;
         pages.forEach(function (p) {
-          if (p && p.setData) {
-            p.setData({ theme: targetTheme });
+          if (p) {
+            p._appliedNavTheme = null;
+            p._appliedBgTheme = null;
+            if (p.setData) {
+              p.setData({ theme: targetTheme });
+            }
           }
         });
         if (pages.length > 0) {
           this.applyTheme(pages[pages.length - 1]);
-        } else {
-          this.applyTheme(null);
         }
-      } catch (e) {
-        this.applyTheme(null);
-      }
+      } catch (e) { }
     } else {
       this.applyTheme(null);
     }
@@ -124,14 +126,20 @@ App({
   updateTabBar: function () {
     var theme = this.getEffectiveTheme();
     var isLight = theme === 'light';
+    var that = this;
 
     if (wx.setTabBarStyle) {
       wx.setTabBarStyle({
-        color: isLight ? '#64748B' : '#9AA5BB',
-        selectedColor: isLight ? '#D97706' : '#FFB224',
-        backgroundColor: isLight ? '#FFFFFF' : '#0B0E14',
+        color: isLight ? '#64748B' : '#94A3B8',
+        selectedColor: isLight ? '#D97706' : '#FFB800',
+        backgroundColor: isLight ? '#FFFFFF' : '#080B10',
         borderStyle: isLight ? 'white' : 'black',
-        fail: function () { }
+        success: function () {
+          that._appliedTabBarTheme = theme;
+        },
+        fail: function () {
+          that._appliedTabBarTheme = null;
+        }
       });
     }
   },
@@ -141,35 +149,49 @@ App({
     var isLight = theme === 'light';
 
     // 1. 同步当前页面实例的主题数据（若未变动则不调用 setData 避免触发重绘）
-    if (pageInstance && pageInstance.setData) {
-      if (!pageInstance.data || pageInstance.data.theme !== theme) {
-        pageInstance.setData({ theme: theme });
+    if (pageInstance) {
+      if (pageInstance.data && pageInstance.data.theme !== theme) {
+        if (pageInstance.setData) {
+          pageInstance.setData({ theme: theme });
+        }
+      } else if (!pageInstance.data) {
+        pageInstance.data = { theme: theme };
+      }
+
+      // 2. 原生顶栏（仅在该页面实例尚未应用该主题时设置一次，避免重复调用引起的原生微闪烁）
+      if (pageInstance._appliedNavTheme !== theme) {
+        if (wx.setNavigationBarColor) {
+          wx.setNavigationBarColor({
+            frontColor: isLight ? '#000000' : '#ffffff',
+            backgroundColor: isLight ? '#F4F5F7' : '#080B10',
+            animation: { duration: 0 },
+            success: function () {
+              pageInstance._appliedNavTheme = theme;
+            },
+            fail: function () { }
+          });
+        }
+      }
+
+      // 3. 原生背景与上下橡皮筋底色（仅在该页面实例尚未应用该主题时设置一次）
+      if (pageInstance._appliedBgTheme !== theme) {
+        if (wx.setBackgroundColor) {
+          wx.setBackgroundColor({
+            backgroundColor: isLight ? '#F4F5F7' : '#080B10',
+            backgroundColorTop: isLight ? '#F4F5F7' : '#080B10',
+            backgroundColorBottom: isLight ? '#F4F5F7' : '#080B10',
+            success: function () {
+              pageInstance._appliedBgTheme = theme;
+            },
+            fail: function () { }
+          });
+        }
       }
     }
 
-    // 2. 原生顶栏：必须始终确保当前活跃页面的原生导航栏与状态栏颜色准确
-    if (wx.setNavigationBarColor) {
-      wx.setNavigationBarColor({
-        frontColor: isLight ? '#000000' : '#ffffff',
-        backgroundColor: isLight ? '#F4F5F7' : '#0B0E14',
-        animation: { duration: 0 },
-        fail: function () { }
-      });
+    // 4. TabBar 样式更新（仅在 TabBar 尚未应用目标主题时更新）
+    if (this._appliedTabBarTheme !== theme) {
+      this.updateTabBar();
     }
-
-    // 3. 原生背景与上下橡皮筋底色：确保顶部下拉与底部上拉均与主题完全一致
-    if (wx.setBackgroundColor) {
-      wx.setBackgroundColor({
-        backgroundColor: isLight ? '#F4F5F7' : '#0B0E14',
-        backgroundColorTop: isLight ? '#F4F5F7' : '#0B0E14',
-        backgroundColorBottom: isLight ? '#F4F5F7' : '#0B0E14',
-        fail: function () { }
-      });
-    }
-
-    // 4. TabBar 样式更新：确保底部 TabBar 颜色始终精准
-    this.updateTabBar();
   }
 });
-
-

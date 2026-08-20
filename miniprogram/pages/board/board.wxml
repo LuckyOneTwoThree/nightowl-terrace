@@ -140,9 +140,9 @@
       </view>
       <view class="rk-info">
         <text class="rk-name hl text-amber">我 ({{myNick}})</text>
-        <text class="mono muted rk-s">{{curTab === 'season' ? '赛季累积分数' : curTab === 'guess' ? '本周预测记录' : '连续修仙记录'}}</text>
+        <text class="mono muted rk-s">{{mySub || (curTab === 'season' ? '赛季累积分数' : curTab === 'guess' ? '本周预测记录' : '连续修仙记录')}}</text>
       </view>
-      <text class="rk-h hl text-amber mono">{{curTab === 'season' ? myVal : curTab === 'owl' ? stats.hours + 'h' : '-'}}</text>
+      <text class="rk-h hl text-amber mono">{{myVal || (curTab === 'owl' ? stats.hours + 'h' : '-')}}</text>
     </view>
   </view>
 

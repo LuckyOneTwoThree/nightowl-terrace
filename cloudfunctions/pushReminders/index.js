@@ -85,8 +85,8 @@ exports.main = async () => {
             templateId: TMPL,
             page: 'pages/detail/detail?id=' + hit.id,
             data: {
-              // 字段名以实际申请到的模板为准，部署前对照后台模板配置
-              thing1: { value: (hit.h || '') + ' vs ' + (hit.a || '') },
+              // 字段名以实际申请到的模板为准，部署前对照后台模板配置（thing 字段微信硬限制 20 字符）
+              thing1: { value: String((hit.h || '') + ' vs ' + (hit.a || '')).slice(0, 20) },
               time2: { value: hit.t.replace('T', ' ') }
             }
           });
@@ -119,9 +119,9 @@ exports.main = async () => {
             templateId: TMPL_DL,
             page: 'pages/predict/predict',
             data: {
-              // 字段名以实际申请到的模板为准，部署前对照后台模板配置
+              // 字段名以实际申请到的模板为准，部署前对照后台模板配置（thing 字段微信硬限制 20 字符）
               thing1: { value: '盲评即将截止' },
-              thing2: { value: (pend.h || '') + ' vs ' + (pend.a || '') + ' 开球封卷' }
+              thing2: { value: String((pend.h || '') + ' vs ' + (pend.a || '') + ' 开球封卷').slice(0, 20) }
             }
           });
           dlSent++;

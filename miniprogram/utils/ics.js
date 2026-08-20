@@ -90,7 +90,7 @@ function share(events, fileName, cb) {
     success: function () {
       wx.shareFileMessage({
         filePath: path,
-        fileName: (fileName || '夜猫看台') + '.ics',
+        fileName: (fileName || '夜猫追球') + '.ics',
         success: function () { cb(true); },
         fail: function (err) { cb(false, err.errMsg || '分享取消'); }
       });

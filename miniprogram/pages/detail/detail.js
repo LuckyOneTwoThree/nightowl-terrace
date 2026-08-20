@@ -18,6 +18,7 @@ Page({
   },
 
   onLoad: function (q) {
+    getApp().applyTheme(this);
     var raw = data.getMatch(q.id);
     if (!raw) {
       wx.showToast({ title: '场次不存在', icon: 'none' });
@@ -192,7 +193,7 @@ Page({
   onShareAppMessage: function () {
     var m = this.data.m;
     return {
-      title: m ? (m.home.zh + ' vs ' + m.away.zh + ' · ' + m.md + ' ' + m.hm + ' 开球') : '夜猫看台',
+      title: m ? (m.home.zh + ' vs ' + m.away.zh + ' · ' + m.md + ' ' + m.hm + ' 开球') : '夜猫追球',
       path: '/pages/detail/detail?id=' + (m ? m.id : '')
     };
   },
@@ -211,7 +212,7 @@ Page({
     var desc = m.points.length ? m.points[0] : '夜猫指数 ' + m.indexText;
     ics.addCalendar(
       { t: this._raw.t, title: '⚽ ' + m.home.zh + ' vs ' + m.away.zh + ' · ' + m.lgZh, desc: desc, alarmMin: 30 },
-      '夜猫看台-' + m.home.id + m.away.id,
+      '夜猫追球-' + m.home.id + m.away.id,
       function (ok, msg) {
         wx.showToast({ title: msg || (ok ? '已加入日历' : '添加失败'), icon: ok ? 'success' : 'none' });
       }

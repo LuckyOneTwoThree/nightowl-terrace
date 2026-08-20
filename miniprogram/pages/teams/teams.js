@@ -15,6 +15,7 @@ Page({
   },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     var followed = getApp().getFollowed() || [];
     this.setData({
       draftFollowed: followed.slice(),

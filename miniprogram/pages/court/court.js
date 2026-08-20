@@ -8,23 +8,31 @@ Page({
     theme: data.getInitTheme(),
     open: null,        // 开庭中：最近一场 ★★★ 未赛场
     text: '',
-    count: '0/40',
+    count: 0,
     stats: { hit: 0, miss: 0, rate: '--' },
     archive: []
   },
 
   onLoad: function (q) {
+    getApp().applyTheme(this);
     this._focusId = q && q.id ? q.id : '';
     this.refresh();
   },
 
   onShow: function () {
     getApp().applyTheme(this);
-    this.refresh();
+    var boasts = wx.getStorageSync('boasts') || {};
+    var fp = Object.keys(boasts).length + '_' + (this._focusId || '');
+    if (this._lastFp !== fp) {
+      this._lastFp = fp;
+      this.refresh();
+    }
   },
 
   refresh: function () {
     var that = this;
+    var boasts = wx.getStorageSync('boasts') || {};
+    this._lastFp = Object.keys(boasts).length + '_' + (this._focusId || '');
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
@@ -75,10 +83,11 @@ Page({
     });
     archive.sort(function (a, b) { return b.ts - a.ts; }); // 按提交时间倒序（中文日期串不可比较）
 
+    var currentText = pick && boasts[pick.id] ? boasts[pick.id].text : '';
     this.setData({
       open: pick ? decorate.dec(pick, null, { followed: getApp().getFollowed() }) : null,
-      text: pick && boasts[pick.id] ? boasts[pick.id].text : '',
-      count: ((pick && boasts[pick.id] ? boasts[pick.id].text : '') || '').length + '/40',
+      text: currentText,
+      count: currentText.length,
       archive: archive,
       stats: {
         hit: hit, miss: miss,
@@ -89,7 +98,7 @@ Page({
 
   onInput: function (e) {
     var v = e.detail.value.slice(0, 40);
-    this.setData({ text: v, count: v.length + '/40' });
+    this.setData({ text: v, count: v.length });
   },
 
   submit: function () {
@@ -145,5 +154,14 @@ Page({
       wx.pageScrollTo({ scrollTop: 0, duration: 200 });
     }
     wx.showToast({ title: '已切换至该场对决', icon: 'none' });
+  },
+
+  onShareAppMessage: function () {
+    var open = this.data.open;
+    var title = open
+      ? '【德比法庭】' + open.home.zh + ' vs ' + open.away.zh + ' · 赛前立字为证，赛后开箱审判！'
+      : '【德比法庭】赛前狂言立字为证，赛后开箱审判！谁敢来立据？';
+    var path = '/pages/court/court' + (this._focusId ? '?id=' + this._focusId : '');
+    return { title: title, path: path };
   }
 });

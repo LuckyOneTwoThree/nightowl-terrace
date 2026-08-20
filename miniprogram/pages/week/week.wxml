@@ -1,6 +1,6 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 预算卡（_7：conic 进度环 + _16 调额入口） -->
-  <view class="budget card-low">
+  <!-- 睡眠预算仪表盘 -->
+  <view class="budget card-highest">
     <view class="b-left">
       <view class="ring" style="{{ringStyle}}">
         <view class="ring-inner">
@@ -11,15 +11,14 @@
     </view>
     <view class="b-right">
       <view class="b-head">
-        <text class="b-title">本周夜猫预算</text>
+        <view class="b-title-box">
+          <text class="b-title hl">本周夜猫预算</text>
+          <text class="mono muted b-sub-text">{{usedText}}h 计划 / {{budgetText}}h 额度</text>
+        </view>
         <view class="tune-btn" bindtap="openSheet">
           <view class="v-icon v-tune text-amber"></view>
           <text class="mono text-amber">调额</text>
         </view>
-      </view>
-      <view class="b-nums">
-        <text class="b-num-on hl text-amber">{{usedText}}h</text>
-        <text class="mono muted">已计划 / {{budgetText}}h 额度</text>
       </view>
       <view class="b-progress-bar">
         <view class="b-progress-fill" style="width: {{pctText}};"></view>

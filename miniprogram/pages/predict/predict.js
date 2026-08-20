@@ -32,6 +32,7 @@ Page({
   },
 
   onLoad: function (options) {
+    getApp().applyTheme(this);
     if (options && options.id) {
       this._targetId = options.id;
       this.setData({ targetId: options.id });

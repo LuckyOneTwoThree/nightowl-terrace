@@ -36,6 +36,7 @@ Page({
   },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     this.draw(true);
   },
 
@@ -216,6 +217,17 @@ Page({
         wx.showToast({ title: '已复制，去群里喊人', icon: 'none' });
       }
     });
+  },
+
+  onShareAppMessage: function () {
+    var b = this.data.back;
+    var title = (this.data.revealed && b)
+      ? '【盲盒开球】我抽到了 ' + b.home.zh + ' vs ' + b.away.zh + '（' + b.stars + '），你也来抽一场？'
+      : '今晚看哪场？来盲盒开球抽一场！特征翻转，开箱见真章';
+    return {
+      title: title,
+      path: '/pages/box/box'
+    };
   }
 });
 

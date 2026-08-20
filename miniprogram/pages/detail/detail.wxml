@@ -1,7 +1,7 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{m}}">
   <!-- 赛前 Hero（_1 pre-match）/ 已赛降级为比分版 -->
   <view class="hero {{m.finished ? 'card-low dim' : 'card-highest'}}">
-    <view class="accent-bar" style="background: {{m.finished ? '#514533' : ''}};"></view>
+    <view class="accent-bar" style="background: {{m.finished ? '#334155' : ''}};"></view>
     <view class="hero-head">
       <view class="hh-left">
         <view class="lg-chip" style="background: {{m.lgSolid}};">{{m.lgZh}}</view>

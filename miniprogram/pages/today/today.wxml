@@ -13,7 +13,7 @@
     </view>
   </view>
 
-  <!-- 有球态（_5） -->
+  <!-- 有球态（超级头牌看台） -->
   <block wx:if="{{hero}}">
     <view class="hero card-highest" data-id="{{hero.id}}" bindtap="goDetail">
       <view class="accent-bar"></view>
@@ -23,10 +23,14 @@
           <view class="stars-row">
             <text class="star-on mono">{{hero.stars}}</text>
           </view>
+          <view class="focal mono" wx:if="{{hero.focal}}">
+            <view class="dot-teal animate-pulse"></view>
+            <text>焦点战</text>
+          </view>
         </view>
-        <view class="focal mono" wx:if="{{hero.focal}}">
-          <view class="dot-teal animate-pulse"></view>
-          <text>焦点战</text>
+        <view class="poster-quick-btn" catchtap="onPoster">
+          <view class="v-icon v-trophy poster-quick-icon"></view>
+          <text class="mono">海报</text>
         </view>
       </view>
 
@@ -42,7 +46,7 @@
             <text class="cd mono text-glow">{{countdownText}}</text>
           </view>
           <text class="cd-sub mono muted">{{hero.dateHeader}}</text>
-          <text class="cd-sub mono muted" wx:if="{{!hero.tbd}}">当地 {{hero.local}}</text>
+          <text class="cd-sub mono muted" wx:if="{{!hero.tbd && hero.local}}">当地 {{hero.local}}</text>
         </view>
         <view class="side">
           <image class="crest-xl" src="{{hero.away.logo}}" mode="aspectFill" wx:if="{{hero.away.logo}}" />
@@ -51,45 +55,42 @@
         </view>
       </view>
 
-      <view class="bullets" wx:if="{{hero.points.length}}">
-        <view class="bullet" wx:for="{{hero.points}}" wx:key="*this">
-          <view class="b-dot"></view>
-          <text class="b-text">{{item}}</text>
+      <!-- 核心看点与夜猫指数 -->
+      <view class="hero-summary card-high">
+        <view class="summary-top">
+          <view class="chip chip-amber hero-roi">
+            <view class="v-icon v-bolt text-amber"></view>
+            <text class="hl">夜猫指数 {{hero.indexText}}</text>
+            <text class="mono muted hero-cost">· {{hero.tier}} 熬{{hero.cost}}h</text>
+          </view>
+          <view class="chip chip-teal" wx:if="{{hero.tv}}">{{hero.tv}}</view>
+        </view>
+
+        <!-- 看点精要 -->
+        <view class="bullets" wx:if="{{hero.points.length}}">
+          <view class="bullet" wx:for="{{hero.points}}" wx:key="*this">
+            <view class="b-dot"></view>
+            <text class="b-text">{{item}}</text>
+          </view>
+        </view>
+
+        <!-- 故事线联动胶囊 -->
+        <view class="hero-story-row" wx:if="{{hero.storyNames && hero.storyNames.length}}">
+          <view class="story-tag" wx:for="{{hero.storyNames}}" wx:key="*this"
+                data-id="{{hero.storyIds[index]}}" catchtap="onStoryTap">
+            <text class="mono text-teal">故事线: {{item}} ›</text>
+          </view>
         </view>
       </view>
-
-      <view class="hero-chips">
-        <view class="chip chip-amber">
-          <view class="v-icon v-bolt text-amber"></view>
-          <text>夜猫指数 {{hero.indexText}}</text>
-        </view>
-        <view class="chip chip-teal" wx:for="{{hero.storyNames}}" wx:key="*this"
-              data-id="{{hero.storyIds[index]}}" catchtap="onStoryTap">
-          <text>{{item}}</text>
-          <view class="v-icon v-chev text-teal"></view>
-        </view>
-        <view class="chip chip-ghost">{{hero.tier}} · 睡眠成本 {{hero.cost}}h</view>
-        <view class="chip chip-teal" wx:if="{{hero.tv}}">{{hero.tv}}</view>
-      </view>
     </view>
 
-    <!-- 冷知识（PM 7.7：推荐层 trivia 优先） -->
-    <view class="quote card-low" wx:if="{{hero.trivia}}">
+    <!-- 絮语 / 冷知识精选条 -->
+    <view class="quote card-low" wx:if="{{hero.trivia || quip}}">
       <view class="v-icon v-paw text-amber paw-s"></view>
-      <text class="quote-text"><text class="quote-strong">冷知识:</text>“{{hero.trivia}}”</text>
+      <text class="quote-text">
+        <text class="quote-strong">{{hero.trivia ? '冷知识' : '夜猫絮语'}}:</text>“{{hero.trivia || quip}}”
+      </text>
     </view>
-
-    <!-- 絮语条 -->
-    <view class="quote card-low">
-      <view class="v-icon v-paw text-amber paw-s"></view>
-      <text class="quote-text"><text class="quote-strong">夜猫絮语:</text>“{{quip}}”</text>
-    </view>
-
-    <!-- 海报按钮 -->
-    <button class="btn-amber floodlight-glow cta" bindtap="onPoster">
-      <view class="v-icon v-trophy"></view>
-      <text>生成观赛海报</text>
-    </button>
 
     <!-- 今日加餐 -->
     <block wx:if="{{extras.length}}">
@@ -132,8 +133,14 @@
       <view class="next-box" wx:if="{{nextFocal}}" data-id="{{nextFocal.id}}" bindtap="goDetail">
         <text class="mono next-label">距下一场焦点战</text>
         <view class="next-count score-m text-glow">
-          <text>{{nextFocal.cdD}}</text><text class="next-unit">天</text>
-          <text>{{nextFocal.cdH}}</text><text class="next-unit">小时</text>
+          <block wx:if="{{nextFocal.cdD > 0}}">
+            <text>{{nextFocal.cdD}}</text><text class="next-unit">天</text>
+            <text>{{nextFocal.cdH}}</text><text class="next-unit">小时</text>
+          </block>
+          <block wx:else>
+            <text>{{nextFocal.cdH}}</text><text class="next-unit">小时</text>
+            <text>{{nextFocal.cdM}}</text><text class="next-unit">分</text>
+          </block>
         </view>
         <view class="next-match">
           <text class="next-pair">{{nextFocal.home.zh}} vs {{nextFocal.away.zh}}</text>

@@ -7,6 +7,7 @@ Page({
     theme: data.getInitTheme(), m: null, slogan: '今晚哪场值得熬', sub: 'MIDNIGHT MATCH PREMIUM' },
 
   onLoad: function (q) {
+    getApp().applyTheme(this);
     var raw = data.getMatch(q.id);
     if (!raw) {
       wx.showToast({ title: '场次不存在', icon: 'none' });
@@ -99,7 +100,7 @@ Page({
     };
 
     // 底（与 app 全局 --bg 同源）
-    ctx.fillStyle = '#0B0E14';
+    ctx.fillStyle = '#080B10';
     ctx.fillRect(0, 0, W, H);
     // 顶部联赛彩条（联赛主题色 PM 7.6）
     var grad = ctx.createLinearGradient(0, 0, W, 0);

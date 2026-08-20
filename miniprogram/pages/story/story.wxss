@@ -22,21 +22,81 @@
 /* 时间轴 */
 .timeline { position: relative; padding-left: 8rpx; }
 .tl-line {
-  position: absolute; left: 62rpx; top: 24rpx; bottom: 24rpx; width: 4rpx;
-  border-radius: var(--r-full); background: linear-gradient(var(--secondary), rgba(81,69,51,.2));
+  position: absolute; left: 62rpx; top: 28rpx; bottom: 28rpx; width: 4rpx;
+  border-radius: var(--r-full);
+  background: linear-gradient(180deg, var(--secondary) 0%, rgba(0, 229, 190, 0.4) 40%, rgba(255, 255, 255, 0.12) 100%);
+  z-index: 1;
 }
-.node { position: relative; display: flex; gap: 24rpx; margin-bottom: 32rpx; }
+.node { position: relative; display: flex; gap: 24rpx; margin-bottom: 36rpx; z-index: 2; }
 .n-date {
-  position: relative; width: 128rpx; height: 128rpx; flex-shrink: 0;
-  border-radius: var(--r-full); background: var(--sc-high); border: 2rpx solid var(--outline-muted);
+  position: relative; width: 124rpx; height: 124rpx; flex-shrink: 0;
+  border-radius: var(--r-full);
+  background: var(--sc); /* 100% 实心底色，彻底遮挡背后贯穿的竖线 */
+  border: 3rpx solid var(--outline-muted);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.35);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rpx;
+  z-index: 3;
+  box-sizing: border-box;
 }
-.n-date.key { background: rgba(20,224,191,.12); border-color: rgba(20,224,191,.5); box-shadow: 0 0 20rpx rgba(20,224,191,.15); }
-.n-date.soon { border-color: rgba(255,178,36,.5); }
-.n-date.future { opacity: .6; }
+
+/* 焦点大战（实心深碧绿底 + 电光绿边框） */
+.n-date.key {
+  background: #122830;
+  border-color: var(--secondary);
+  box-shadow: 0 0 20rpx rgba(0, 229, 190, 0.25);
+}
+/* 即将开球（实心深琥珀底 + 电光金边框） */
+.n-date.soon {
+  background: #242014;
+  border-color: var(--primary-container);
+  box-shadow: 0 0 20rpx rgba(255, 184, 0, 0.25);
+}
+/* 已完赛（实心暗灰蓝底 + 青绿描边） */
+.n-date.done {
+  background: var(--sc-high);
+  border-color: rgba(0, 229, 190, 0.4);
+}
+/* 远期未赛（实心底色，仅降低文字对比度，圆环容器本身绝对不设半透明） */
+.n-date.future {
+  background: var(--sc-low);
+  border-color: var(--hairline);
+}
+.n-date.future .n-mon,
+.n-date.future .n-day {
+  opacity: .45;
+}
+
 .n-mon { font-size: 20rpx; color: var(--on-surface-variant); }
 .n-day { font-size: 32rpx; font-weight: 700; color: var(--on-surface); }
 .n-icon { position: absolute; right: 0; bottom: 0; width: 32rpx; height: 32rpx; }
+
+/* 浅色模式专属节点配色 */
+.theme-light .tl-line {
+  background: linear-gradient(180deg, var(--secondary) 0%, rgba(13, 148, 136, 0.4) 40%, rgba(0, 0, 0, 0.08) 100%) !important;
+}
+.theme-light .n-date {
+  background: #FFFFFF !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05) !important;
+}
+.theme-light .n-date.key {
+  background: #ECFDF5 !important;
+  border-color: #10B981 !important;
+  box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.15) !important;
+}
+.theme-light .n-date.soon {
+  background: #FFFBEB !important;
+  border-color: #F59E0B !important;
+  box-shadow: 0 4rpx 16rpx rgba(245, 158, 11, 0.15) !important;
+}
+.theme-light .n-date.done {
+  background: #FFFFFF !important;
+  border-color: rgba(13, 148, 136, 0.4) !important;
+}
+.theme-light .n-date.future {
+  background: #F8FAFC !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
 
 .n-card {
   position: relative; flex: 1; padding: 24rpx 28rpx; border-radius: var(--r-lg);

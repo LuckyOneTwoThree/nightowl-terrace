@@ -1,14 +1,14 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 顶栏（_9：互动玩法 + 赛季积分） -->
+  <!-- 顶栏（玩法大厅 + 赛季积分徽标） -->
   <view class="topbar">
     <text class="tb-title hl">玩法大厅</text>
-    <view class="chip chip-solid floodlight-glow" bindtap="goSeasonRank">
+    <view class="chip chip-solid floodlight-glow season-btn" bindtap="goSeasonRank">
       <view class="v-icon v-trophy text-amber"></view>
-      <text class="text-amber hl">赛季积分 {{seasonPts}} ›</text>
+      <text class="text-amber hl">赛季总榜 {{seasonPts}}分 ›</text>
     </view>
   </view>
 
-  <!-- 2x2 Bento 玩法卡（_9：两列宫格 + 内部光晕 + 矢量图标） -->
+  <!-- 2x2 Bento 玩法卡 -->
   <view class="grid">
     <view class="pcard {{item.colorClass}}" wx:for="{{cards}}" wx:key="id" data-id="{{item.id}}" bindtap="onCard">
       <view class="orb"></view>
@@ -25,9 +25,9 @@
     </view>
   </view>
 
-  <!-- 本周竞猜单（_9：盲评猜球 · commit-reveal） -->
+  <!-- 本周竞猜单（盲评猜球 · commit-reveal） -->
   <view class="sect sect-gap">
-    <text class="sect-title">本周竞猜单</text>
+    <text class="sect-title">本周竞猜速填</text>
     <view class="sect-line"></view>
     <text class="sect-more" bindtap="goRecords">我的记录 ›</text>
   </view>
@@ -43,14 +43,16 @@
 
     <view class="g-vs" data-id="{{item.id}}" bindtap="goDetail">
       <view class="g-side">
-        <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+        <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+        <view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
         <text class="g-name hl">{{item.home.zh}}</text>
       </view>
       <view class="g-vs-center">
         <text class="mono muted g-vs-txt">VS</text>
       </view>
       <view class="g-side">
-        <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+        <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+        <view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
         <text class="g-name hl">{{item.away.zh}}</text>
       </view>
     </view>
@@ -66,7 +68,7 @@
     </view>
     <view class="g-sealed card-high" wx:else>
       <view class="v-icon v-bolt text-teal"></view>
-      <text class="mono text-teal">选择已上锁 · 终场哨响自动开箱结算</text>
+      <text class="mono text-teal">已封存 · 终场哨响自动开箱结算</text>
     </view>
   </view>
 </view>

@@ -1,17 +1,23 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 顶部吸顶控制区（Sticky Header：视图切换 + 日期条 + 联赛/星级筛选） -->
+  <!-- 顶部吸顶控制区（Sticky Header：精简视图切换 + 日期条 + 联赛筛选） -->
   <view class="sticky-bar">
-    <!-- 视图切换（PM T7：日历视图 / 轮次视图） -->
-    <view class="vtoggle">
-      <view class="vt-btn {{viewMode === 'day' ? 'on' : ''}}" data-mode="day" bindtap="onSwitchView">
-        <text>日历视图</text>
+    <!-- 顶部工具条：左侧日历/轮次分段切换 + 右侧星级精选 -->
+    <view class="top-toolbar">
+      <view class="vtoggle">
+        <view class="vt-btn {{viewMode === 'day' ? 'on' : ''}}" data-mode="day" bindtap="onSwitchView">
+          <text>日历</text>
+        </view>
+        <view class="vt-btn {{viewMode === 'round' ? 'on' : ''}}" data-mode="round" bindtap="onSwitchView">
+          <text>轮次</text>
+        </view>
       </view>
-      <view class="vt-btn {{viewMode === 'round' ? 'on' : ''}}" data-mode="round" bindtap="onSwitchView">
-        <text>轮次视图</text>
+      <view class="star-filter-chip {{selStar ? 'on floodlight-glow' : ''}}" bindtap="onStarFilter">
+        <view class="v-icon v-star {{selStar ? 'text-amber' : ''}}"></view>
+        <text class="mono">{{starLabel}}</text>
       </view>
     </view>
 
-    <!-- 日期条（_4：横滑日选） -->
+    <!-- 日期条（横滑日选） -->
     <scroll-view scroll-x class="dstrip" enhanced show-scrollbar="{{false}}" scroll-into-view="{{dchipId}}" scroll-with-animation wx:if="{{viewMode === 'day'}}">
       <view
         wx:for="{{days}}" wx:key="day"
@@ -35,16 +41,13 @@
       </view>
     </scroll-view>
 
-    <!-- 联赛 + 星级筛选（_4 药丸；轮次视图下「全部」回落英超） -->
+    <!-- 联赛横滑筛选药丸 -->
     <scroll-view scroll-x class="pills" enhanced show-scrollbar="{{false}}">
       <view
         wx:for="{{leagues}}" wx:key="id"
         wx:if="{{viewMode === 'day' || item.id !== 'ALL'}}"
         class="fpill on-{{selLg === item.id ? item.id : 'none'}}"
         data-lg="{{item.id}}" bindtap="onPickLg">{{item.zh}}</view>
-      <view class="fpill star-pill on-{{selStar ? 'ALL' : 'none'}}" bindtap="onStarFilter">
-        <text>★ {{starLabel}}</text>
-      </view>
     </scroll-view>
   </view>
 

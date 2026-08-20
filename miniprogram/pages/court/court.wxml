@@ -1,20 +1,20 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 规则说明条（_8） -->
-  <view class="rule glass-panel">
+  <!-- 规则说明条（德比法庭 · 狂言对决） -->
+  <view class="rule glass-panel floodlight-glow">
     <view class="r-ic">
       <view class="v-icon v-gavel text-amber r-gavel"></view>
     </view>
     <view class="r-body">
-      <text class="hl hl-md">德比法庭 · 狂言录</text>
-      <text class="r-sub mono muted">赛前立字为证 · 赛后开箱审判</text>
+      <text class="hl hl-md text-amber">德比法庭 · 狂言对决录</text>
+      <text class="r-sub mono muted">赛前立字为证 · 赛后开箱审判 · 绝不抵赖</text>
     </view>
   </view>
 
-  <!-- 开庭中 -->
+  <!-- 开庭中焦点战 -->
   <view class="sect sect-gap">
-    <text class="sect-title">开庭对决</text>
+    <text class="sect-title">开庭焦点对决</text>
     <view class="sect-line"></view>
-    <view class="chip chip-amber focal-badge" wx:if="{{open}}">审理中</view>
+    <view class="chip chip-amber focal-badge" wx:if="{{open}}">开庭审理中</view>
   </view>
   
   <view class="card-highest open-card floodlight-glow" wx:if="{{open}}">
@@ -24,30 +24,34 @@
     </view>
     <view class="open-vs" bindtap="goDetail">
       <view class="ov-side">
-        <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" wx:if="{{open.home.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
+        <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" wx:if="{{open.home.logo}}" />
+        <view class="circle-xl crest-fb" wx:else style="background: {{open.home.bg}}; border-color: {{open.home.bd}};">{{open.home.id}}</view>
         <text class="ov-name hl">{{open.home.zh}}</text>
       </view>
       <view class="ov-mid">
-        <text class="mono muted ov-x">VS</text>
+        <view class="ov-x-pill">
+          <text class="mono text-amber">VS</text>
+        </view>
       </view>
       <view class="ov-side">
-        <image class="crest-xl" src="{{open.away.logo}}" mode="aspectFill" wx:if="{{open.away.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
+        <image class="crest-xl" src="{{open.away.logo}}" mode="aspectFill" wx:if="{{open.away.logo}}" />
+        <view class="circle-xl crest-fb" wx:else style="background: {{open.away.bg}}; border-color: {{open.away.bd}};">{{open.away.id}}</view>
         <text class="ov-name hl">{{open.away.zh}}</text>
       </view>
     </view>
     
     <view class="input-wrap card-high">
-      <input class="boast-input" maxlength="40" placeholder="写下你的赛前狂言 (限40字)..."
+      <input class="boast-input" maxlength="40" placeholder="押上尊严，立下你的赛前狂言..."
              placeholder-class="input-ph" value="{{text}}" bindinput="onInput" />
-      <text class="input-count mono muted">{{count}}</text>
+      <text class="input-count mono muted">{{count}}/40</text>
     </view>
     
-    <button class="btn-amber btn-submit" bindtap="submit">
+    <button class="btn-amber btn-submit floodlight-glow" bindtap="submit">
       <view class="v-icon v-gavel"></view>
-      <text>立字存证 · 提交狂言</text>
+      <text>立字存据 · 提交狂言</text>
     </button>
   </view>
-  <view class="card-low empty" wx:else><text class="mono muted">暂无开庭中的焦点大战</text></view>
+  <view class="card-low empty" wx:else><text class="mono muted">本轮暂无正在开庭的焦点大战</text></view>
 
   <!-- 赛季统计双卡（_8） -->
   <view class="duo">

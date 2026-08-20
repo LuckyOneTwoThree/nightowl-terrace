@@ -79,7 +79,7 @@ function main() {
 
   if (args.help || (!args.id && !args.file && !args['list-pending'])) {
     console.log(`
-夜猫看台 · 比分补录与更新工具
+夜猫追球 · 比分补录与更新工具
 用法：
   1. 单场录入比分：
      node tools/update_score.js --id=<比赛ID> --score=<主队-客队>

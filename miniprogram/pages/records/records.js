@@ -20,6 +20,10 @@ Page({
   data: {
     theme: data.getInitTheme(), groups: [], empty: false },
 
+  onLoad: function () {
+    getApp().applyTheme(this);
+  },
+
   onShow: function () {
     getApp().applyTheme(this); this.refresh(); },
 
@@ -57,19 +61,21 @@ Page({
       });
     });
     Object.keys(boasts).forEach(function (mid) {
-      var b = boasts[mid];
+      var b = boasts[mid], m = data.getMatch(mid);
+      var lbl = m ? labelOf(m.t.split('T')[0]) : (b.md || '焦点对决');
       rows.push({
         key: 'boast-' + mid, mid: mid,
-        label: b.md, sort: b.ts || 0, type: 'boast',
+        label: lbl, sort: b.ts || 0, type: 'boast',
         names: b.names, sub: b.text,
         finished: b.result != null, hit: b.result === 'hit', pts: 0
       });
     });
     Object.keys(checkins).forEach(function (mid) {
-      var c = checkins[mid];
+      var c = checkins[mid], m = data.getMatch(mid);
+      var lbl = m ? labelOf(m.t.split('T')[0]) : (c.md || '深夜修仙');
       rows.push({
         key: 'ci-' + mid, mid: mid,
-        label: c.md, sort: c.ts || 0, type: 'checkin',
+        label: lbl, sort: c.ts || 0, type: 'checkin',
         names: c.names, sub: '夜猫打卡', cost: c.cost,
         finished: true, hit: true, pts: 0
       });

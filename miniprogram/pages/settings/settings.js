@@ -44,6 +44,7 @@ Page({
   },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     this.apply(load());
   },
 
@@ -206,13 +207,14 @@ Page({
   },
 
   logout: function () {
+    var that = this;
     wx.showModal({
       title: '清除本地记录',
       content: '本地体验版无需登录。将清除预测、狂言、打卡、关注与偏好，确定？',
       confirmColor: '#FFB4AB',
       success: function (r) {
         if (!r.confirm) return;
-        ['predictions', 'boasts', 'checkins', 'settings', 'nickname', 'onboarded', 'followedTeams', 'weekSuggest', '_cloudDown']
+        ['predictions', 'boasts', 'checkins', 'settings', 'nickname', 'onboarded', 'followedTeams', 'weekSuggest', '_cloudDown', 'cached_scores']
           .forEach(function (k) { wx.removeStorageSync(k); });
         // 透支结算标记 settled_* 逐键清理
         var info = wx.getStorageInfoSync();
@@ -226,6 +228,7 @@ Page({
         app._appliedNavTheme = null;
         app._appliedTabBarTheme = null;
         app.applyTheme();
+        that.apply(load());
         wx.showToast({ title: '已清除', icon: 'none' });
       }
     });

@@ -6,6 +6,7 @@ Page({
     theme: data.getInitTheme(), groups: [], picked: 0 },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     var followed = getApp().getFollowed();
     var teams = data.getTeams();
     var groups = data.LEAGUES.filter(function (l) { return l.id !== 'SCG'; }).map(function (l) {

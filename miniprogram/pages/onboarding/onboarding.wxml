@@ -37,7 +37,7 @@
         <text class="bar-num mono hl"><text class="text-amber text-glow n">{{picked}}</text> 支</text>
       </view>
       <button class="btn-amber done-btn floodlight-glow" bindtap="finish">
-        <text>开启看台</text>
+        <text>开启追球之旅</text>
         <view class="v-icon v-chev"></view>
       </button>
     </view>

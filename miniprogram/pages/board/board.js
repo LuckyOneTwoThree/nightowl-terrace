@@ -37,6 +37,7 @@ Page({
   },
 
   onLoad: function (options) {
+    getApp().applyTheme(this);
     if (options && options.tab) {
       this.setData({ curTab: options.tab });
     }
@@ -329,7 +330,7 @@ Page({
     } else {
       title = Number(s.hours) > 0
         ? ('【夜猫修仙榜】本周我已修仙 ' + s.hours + ' 小时，连熬 ' + s.streak + ' 周！今晚谁陪我看球？')
-        : '【夜猫修仙榜】今晚哪场值得熬？夜猫看台群友修仙肝度榜打卡！';
+        : '【夜猫修仙榜】今晚哪场值得熬？夜猫追球群友修仙肝度榜打卡！';
     }
 
     return {
@@ -348,22 +349,22 @@ Page({
       // 1. 🏆 赛季总榜专属战报
       if (uStats.seasonTotal > 0) {
         var rankInfo = (this.data.myRankNo && this.data.myRankNo !== '-') ? ('，全网排位第 ' + this.data.myRankNo + ' 名') : '';
-        text = '【夜猫看台 · 赛季风云榜】本赛季我累计预言 ' + uStats.seasonTotal + ' 场，命中 ' + uStats.seasonHit + ' 场（命中率 ' + uStats.seasonRate + '%），斩获 ' + uStats.seasonPts + ' 积分' + rankInfo + '！谁能在群里超越我？';
+        text = '【夜猫追球 · 赛季风云榜】本赛季我累计预言 ' + uStats.seasonTotal + ' 场，命中 ' + uStats.seasonHit + ' 场（命中率 ' + uStats.seasonRate + '%），斩获 ' + uStats.seasonPts + ' 积分' + rankInfo + '！谁能在群里超越我？';
       } else {
-        text = '【夜猫看台 · 赛季风云榜】2026/27 赛季五大联赛神预测已全面打响！群友谁是第一预言家？快来微信群一较高下！';
+        text = '【夜猫追球 · 赛季风云榜】2026/27 赛季五大联赛神预测已全面打响！群友谁是第一预言家？快来微信群一较高下！';
       }
     } else if (tab === 'guess') {
       // 2. 🔮 盲评周榜专属战报
       if (uStats.weekTotal > 0) {
         var rankInfo = (this.data.myRankNo && this.data.myRankNo !== '-') ? ('，当前周榜第 ' + this.data.myRankNo + ' 名') : '';
-        text = '【夜猫看台 · 盲评周榜】本周焦点大战我已盲评 ' + uStats.weekTotal + ' 场，命中 ' + uStats.weekHit + ' 场（命中率 ' + uStats.weekRate + '%），斩获 ' + uStats.weekPts + ' 周积分' + rankInfo + '！谁来破我的预言？';
+        text = '【夜猫追球 · 盲评周榜】本周焦点大战我已盲评 ' + uStats.weekTotal + ' 场，命中 ' + uStats.weekHit + ' 场（命中率 ' + uStats.weekRate + '%），斩获 ' + uStats.weekPts + ' 周积分' + rankInfo + '！谁来破我的预言？';
       } else {
-        text = '【夜猫看台 · 盲评周榜】本周五大联赛焦点大战开启盲评！3秒选比分、比拼命中率，快来看看谁是本周预言帝！';
+        text = '【夜猫追球 · 盲评周榜】本周五大联赛焦点大战开启盲评！3秒选比分、比拼命中率，快来看看谁是本周预言帝！';
       }
     } else {
       // 3. 🌙 夜猫修仙榜专属战报
       var worst = this.data.worst ? '，最狠一夜 ' + this.data.worst.names + '（' + this.data.worst.cost + 'h）' : '';
-      text = '【夜猫看台 · 修仙肝度榜】本周我修仙 ' + s.n + ' 场 / ' + s.hours + 'h，连续 ' + s.streak + ' 周，击败了 ' + s.pct + '% 的球迷' + worst + '。今晚哪场值得熬？';
+      text = '【夜猫追球 · 修仙肝度榜】本周我修仙 ' + s.n + ' 场 / ' + s.hours + 'h，连续 ' + s.streak + ' 周，击败了 ' + s.pct + '% 的球迷' + worst + '。今晚哪场值得熬？';
     }
 
     wx.setClipboardData({

@@ -98,7 +98,7 @@ function dec(m, ev, opts) {
   return {
     id: m.id,
     lg: m.l, lgZh: lgZh(m.l), lgEn: m.l === 'PL' ? 'Premier League' : m.l === 'PD' ? 'La Liga' : m.l === 'SA' ? 'Serie A' : m.l === 'BL' ? 'Bundesliga' : m.l === 'FL' ? 'Ligue 1' : m.l,
-    lgSolid: meta.solid || '#514533', lgAccent: meta.accent || '#514533',
+    lgSolid: meta.solid || '#334155', lgAccent: meta.accent || '#1E293B',
     home: { id: h.id, zh: h.zh, logo: h.logo, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
     away: { id: a.id, zh: a.zh, logo: a.logo, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },
     hm: f.hm, md: (f.d.getMonth() + 1) + '月' + f.d.getDate() + '日', ms: (f.d.getMonth() + 1) + '/' + f.d.getDate(),

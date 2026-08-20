@@ -30,8 +30,8 @@ function decorate(entry) {
   return {
     id: m.id,
     lgZh: lgZh(m.l),
-    lgSolid: meta.solid || '#514533',
-    lgAccent: meta.accent || '#514533',
+    lgSolid: meta.solid || '#334155',
+    lgAccent: meta.accent || '#1E293B',
     home: { id: h.id, zh: h.zh, color: h.color, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35), logo: h.logo },
     away: { id: a.id, zh: a.zh, color: a.color, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35), logo: a.logo },
     hm: f.hm,
@@ -73,6 +73,7 @@ Page({
 
   onLoad: function () {
     this._timer = null;
+    getApp().applyTheme(this);
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
     this._lastTodayStr = engine.nightOf(new Date());
     this.refresh();
@@ -175,6 +176,7 @@ Page({
         var c = engine.countdown(engine.ts(focal.m.t), Date.now());
         d.cdD = c.d;
         d.cdH = c.h;
+        d.cdM = c.m;
         return d;
       })() : null,
       replays: rp,
@@ -244,7 +246,7 @@ Page({
     return {
       title: hero
         ? '今晚熬不熬？' + hero.home.zh + ' vs ' + hero.away.zh + '（' + hero.stars + ' · 熬' + hero.cost + 'h）'
-        : '夜猫看台 · 3 秒回答今晚该熬哪一场',
+        : '夜猫追球 · 3 秒回答今晚该熬哪一场',
       path: '/pages/today/today'
     };
   }

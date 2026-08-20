@@ -22,6 +22,7 @@ Page({
   },
 
   onLoad: function (q) {
+    getApp().applyTheme(this);
     var s = data.getAllStorylines().filter(function (x) { return x.id === q.id; })[0];
     if (!s) {
       wx.showToast({ title: '故事线不存在', icon: 'none' });
@@ -96,8 +97,16 @@ Page({
   share: function () {
     var s = this.data.s;
     wx.setClipboardData({
-      data: '【夜猫看台 · 故事线】' + s.name + '：' + s.desc + '。一起追剧 →',
+      data: '【夜猫追球 · 故事线】' + s.name + '：' + s.desc + '。一起追剧 →',
       success: function () { wx.showToast({ title: '已复制分享文案', icon: 'none' }); }
     });
+  },
+
+  onShareAppMessage: function () {
+    var s = this.data.s;
+    return {
+      title: s ? ('【夜猫追球 · 故事线】' + s.name + ' · ' + s.desc) : '夜猫追球 · 故事线连续剧',
+      path: '/pages/story/story' + (s ? '?id=' + s.id : '')
+    };
   }
 });

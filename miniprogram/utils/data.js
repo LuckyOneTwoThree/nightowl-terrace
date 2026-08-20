@@ -140,6 +140,7 @@ module.exports = {
   getRecMap: function () { return recMap(); },
   getQuip: function (dateStr) {
     // 按日期取模轮换，保证同一天全群看到同一句
+    dateStr = dateStr || engine.nightOf(Date.now());
     var seed = dateStr.split('-').reduce(function (s, p) { return s + Number(p); }, 0);
     return quips[seed % quips.length];
   },

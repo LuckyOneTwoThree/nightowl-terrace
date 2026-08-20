@@ -25,6 +25,7 @@ Page({
   },
 
   onLoad: function () {
+    getApp().applyTheme(this);
     this._lastPredsStr = JSON.stringify(wx.getStorageSync('predictions') || {});
     this._lastDayStr = engine.nightOf(Date.now()); // 跨天指纹（二轮 P2-3）
     this.refresh();

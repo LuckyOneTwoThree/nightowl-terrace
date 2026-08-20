@@ -1,4 +1,4 @@
 {
-  "desc": "夜猫看台",
+  "desc": "夜猫追球",
   "rules": [{ "action": "allow", "page": "*" }]
 }

@@ -24,7 +24,7 @@
 .wide { letter-spacing: 6rpx; }
 
 /* Hero（超级头牌看台） */
-.hero { position: relative; margin: 24rpx 32rpx; padding: 32rpx; overflow: hidden; border-radius: var(--r-xl); border: 1rpx solid var(--sc-variant); }
+.hero { position: relative; margin: 24rpx 32rpx; padding: 32rpx; overflow: hidden; border-radius: var(--r-xl); border: 1rpx solid var(--outline-muted); }
 .accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); }
 .hero-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24rpx; padding-left: 8rpx; }
 .hh-left { display: flex; align-items: center; gap: 14rpx; }

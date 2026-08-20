@@ -33,7 +33,7 @@
   <view class="timeline">
     <view class="tl-line"></view>
     <view class="node {{item.state}}" wx:for="{{nodes}}" wx:key="id">
-      <view class="n-date {{item.state === 'done' && item.isKey ? 'key' : ''}} {{item.state}}">
+      <view class="n-date {{item.isKey ? 'key' : ''}} {{item.state}}">
         <text class="mono n-mon">{{item.mon}}</text>
         <text class="mono hl n-day">{{item.day}}</text>
         <view class="v-icon v-check text-teal n-icon" wx:if="{{item.state === 'done'}}"></view>
