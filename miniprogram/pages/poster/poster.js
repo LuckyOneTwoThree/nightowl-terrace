@@ -47,7 +47,7 @@ Page({
     var that = this;
     var m = this.data.m;
     if (!m || !this._ctx) return;
-    // 队徽为包内本地资源（images/crests/），createImage 直接加载后绘制，失败回退三字码
+    // 队徽：云存储 fileID 经 downloadFile 转临时路径（或过渡期本地包路径），失败回退三字码
     this._loadLogos(function (homeImg, awayImg) {
       that._paint(homeImg, awayImg);
       if (cb) cb();
@@ -57,13 +57,28 @@ Page({
   _loadLogos: function (cb) {
     var that = this;
     var m = this.data.m;
-    var load = function (team) {
-      if (!team || !team.logo) return Promise.resolve(null);
+    // cloud:// fileID 需先经云存储下载转本地临时路径（createImage 不识别 fileID）；
+    // 本地包路径直接 createImage，两条链路失败均回退三字码
+    var toImg = function (path) {
       return new Promise(function (resolve) {
         var img = that._canvas.createImage();
         img.onload = function () { resolve(img); };
         img.onerror = function () { resolve(null); };
-        img.src = team.logo; // 本地包内路径（images/crests/），无网络依赖
+        img.src = path;
+      });
+    };
+    var load = function (team) {
+      if (!team || !team.logo) return Promise.resolve(null);
+      if (String(team.logo).indexOf('cloud://') !== 0) {
+        return toImg(team.logo); // 本地包内路径（过渡期兜底）
+      }
+      return new Promise(function (resolve) {
+        if (!wx.cloud || !wx.cloud.downloadFile) return resolve(null);
+        wx.cloud.downloadFile({
+          fileID: team.logo,
+          success: function (r) { toImg(r.tempFilePath || '').then(resolve); },
+          fail: function () { resolve(null); }
+        });
       });
     };
     Promise.all([load(m.home), load(m.away)]).then(function (r) { cb(r[0], r[1]); });
