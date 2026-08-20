@@ -21,14 +21,24 @@ function load() {
   return out;
 }
 
+// 真实发版号读取：体验版/正式版返回实际上传的版本号；开发工具返回空时回退「开发版」
+function appVersion() {
+  try {
+    var v = (wx.getAccountInfoSync().miniProgram || {}).version || '';
+    if (v) return 'v' + v;
+  } catch (e) { /* 低版本基础库无此 API */ }
+  return '开发版';
+}
+
 Page({
   data: {
     theme: data.getInitTheme(),
     s: null,
     starText: '★★',
     themeModeText: '🌙 经典夜猫暗夜模式',
-    version: 'v0.2.0 (M2 高保真版)',
+    version: appVersion(),
     source: '内置种子数据',
+    cloudState: 'unknown', // unknown | ok | down：云端连接健康度
     showNickModal: false,
     inputNick: ''
   },
@@ -39,6 +49,7 @@ Page({
 
   onShow: function () {
     this.apply(load());
+    this.probeCloud(false); // 静默探测云端健康度，进入页面即显示真实状态
   },
 
   apply: function (s) {
@@ -126,16 +137,22 @@ Page({
     }
   },
 
-  // 云端重连：清除降级标记后立即试拉一次榜单（云环境开通后手动恢复云链路）
-  reconnectCloud: function () {
-    cloud.reset();
+  // 云端健康探测：真实拉一次 readBoard 判定连接状态（区别于闩锁标记的乐观可用）
+  probeCloud: function (manual) {
     var that = this;
+    cloud.reset(); // 清除降级闩锁后重试（断网 10 分钟自动复位的手动加速版）
     cloud.readBoard('owl').then(function () {
-      wx.showToast({ title: '云端已连接', icon: 'none' });
-      that.setData({ source: '云端数据' });
+      that.setData({ cloudState: 'ok', source: '云端数据' });
+      if (manual) wx.showToast({ title: '云端已连接', icon: 'none' });
     }).catch(function () {
-      wx.showToast({ title: '云端不可用 · 保持本地', icon: 'none' });
+      that.setData({ cloudState: 'down' });
+      if (manual) wx.showToast({ title: '云端不可用 · 保持本地', icon: 'none' });
     });
+  },
+
+  reconnectCloud: function () {
+    this.setData({ cloudState: 'unknown' });
+    this.probeCloud(true);
   },
 
   editNick: function () {
