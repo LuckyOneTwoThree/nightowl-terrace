@@ -2,3 +2,10 @@ node_modules/
 .DS_Store
 project.private.config.json
 miniprogram_npm/
+
+# 队徽打包工具链（产物已进 miniprogram/images/crests/，源图与依赖不入库）
+tools/node_modules/
+tools/package.json
+tools/package-lock.json
+tools/crests_src/
+tools/crests_webp_test/

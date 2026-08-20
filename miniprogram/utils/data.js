@@ -43,7 +43,7 @@ function tint(hex, a) {
 
 var teamMap = {};
 teams.forEach(function (t) {
-  t.logo = crest.getUrl(t.id, t.league);
+  t.logo = crest.getUrl(t.id);
   teamMap[t.id] = t;
 });
 

@@ -44,8 +44,33 @@ Page({
   },
 
   draw: function (cb) {
+    var that = this;
     var m = this.data.m;
     if (!m || !this._ctx) return;
+    // 队徽为包内本地资源（images/crests/），createImage 直接加载后绘制，失败回退三字码
+    this._loadLogos(function (homeImg, awayImg) {
+      that._paint(homeImg, awayImg);
+      if (cb) cb();
+    });
+  },
+
+  _loadLogos: function (cb) {
+    var that = this;
+    var m = this.data.m;
+    var load = function (team) {
+      if (!team || !team.logo) return Promise.resolve(null);
+      return new Promise(function (resolve) {
+        var img = that._canvas.createImage();
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { resolve(null); };
+        img.src = team.logo; // 本地包内路径（images/crests/），无网络依赖
+      });
+    };
+    Promise.all([load(m.home), load(m.away)]).then(function (r) { cb(r[0], r[1]); });
+  },
+
+  _paint: function (homeImg, awayImg) {
+    var m = this.data.m;
     var ctx = this._ctx, W = 1080, H = 1920;
     var mono = function (s, x, y, size, color, align, weight) {
       ctx.font = (weight || '500') + ' ' + size + 'px "SF Mono", Menlo, monospace';
@@ -70,81 +95,109 @@ Page({
     ctx.fillRect(0, 0, W, 36);
 
     // 联赛章 + 标语
-    mono(m.lgEn.toUpperCase(), W / 2, 216, 66, '#E0E2EA');
-    body(this.data.slogan, W / 2, 384, 120, '#FFD79E', 'center', '700');
-    mono(this.data.sub, W / 2, 498, 54, '#9F8E79');
+    mono(m.lgEn.toUpperCase(), W / 2, 150, 58, '#E0E2EA');
+    body(this.data.slogan, W / 2, 300, 100, '#FFD79E', 'center', '700');
+    mono(this.data.sub, W / 2, 402, 46, '#9F8E79');
 
-    // 球队圆标 + VS
-    var cy = H * .40;
-    [m.home, m.away].forEach(function (t, i) {
-      var cx = i === 0 ? W * .26 : W * .74;
-      ctx.beginPath(); ctx.arc(cx, cy, 174, 0, Math.PI * 2);
-      ctx.fillStyle = t.bg || '#181C21'; ctx.fill();
-      ctx.lineWidth = 6; ctx.strokeStyle = t.bd || 'rgba(159,142,121,.15)'; ctx.stroke();
-      mono(t.id, cx, cy + 6, 90, '#E0E2EA', 'center', '700');
-      body(t.zh, cx, cy + 276, 72, '#E0E2EA', 'center', '600');
+    // 球队圆标 + VS（本地队徽等比缩放绘制，未收录回退三字码）
+    var cy = 630, R = 174;
+    [[m.home, homeImg, W * .25], [m.away, awayImg, W * .75]].forEach(function (t) {
+      var team = t[0], img = t[1], cx = t[2];
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.fillStyle = team.bg || '#181C21'; ctx.fill();
+      if (img) {
+        // 队徽非正方形（如 ARS 139×181），等比缩放至圆内 90% 居中，圆形裁剪防溢出
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
+        var box = R * 2 * 0.9;
+        var s = Math.min(box / img.width, box / img.height);
+        ctx.drawImage(img, cx - img.width * s / 2, cy - img.height * s / 2, img.width * s, img.height * s);
+        ctx.restore();
+      } else {
+        mono(team.id, cx, cy + 6, 84, '#E0E2EA', 'center', '700');
+      }
+      ctx.lineWidth = 6; ctx.strokeStyle = team.bd || 'rgba(159,142,121,.15)'; ctx.stroke();
+      body(team.zh, cx, cy + 244, 68, '#E0E2EA', 'center', '600');
     });
-    body('VS', W / 2, cy - 24, 108, 'rgba(49,53,59,.9)', 'center', '700');
+    body('VS', W / 2, cy + 6, 100, 'rgba(214,196,173,.4)', 'center', '700');
 
     // 时间面板（北京时间大字 + 当地时间小字，PM 7.1）
-    var py = H * .60;
+    var py = 1000, ph = 400, px = 130, pw = W - 260, pr = 40;
     ctx.fillStyle = 'rgba(16,20,25,.7)';
-    var pw = W - 288, px = 144, ph = 630, pr = 48;
     ctx.beginPath();
     ctx.moveTo(px + pr, py); ctx.arcTo(px + pw, py, px + pw, py + ph, pr);
     ctx.arcTo(px + pw, py + ph, px, py + ph, pr);
     ctx.arcTo(px, py + ph, px, py, pr); ctx.arcTo(px, py, px + pw, py, pr);
     ctx.fill();
     ctx.strokeStyle = 'rgba(159,142,121,.12)'; ctx.lineWidth = 3; ctx.stroke();
-    body(m.dateHeader, W / 2, py + 96, 56, '#D6C4AD');
-    mono(m.hm, W / 2, py + 240, 192, '#E0E2EA', 'center', '700');
-    mono('北京时间', W / 2, py + 360, 42, '#9F8E79');
-    if (m.local && !m.tbd) mono('当地 ' + m.local, W / 2, py + 420, 42, '#9F8E79');
-    // 分隔线
-    ctx.beginPath(); ctx.moveTo(W / 2 - 90, py + 480); ctx.lineTo(W / 2 + 90, py + 480);
-    ctx.strokeStyle = 'rgba(159,142,121,.2)'; ctx.lineWidth = 3; ctx.stroke();
-    // 星级
-    body('★★★☆☆'.slice(0, m.star), W / 2, py + 546, 72, '#FFB224');
-    mono('夜猫指数 ' + m.indexText, W / 2, py + ph + 120, 66, '#FFD79E');
+    body(m.dateHeader, W / 2, py + 66, 52, '#D6C4AD');
+    mono(m.hm, W / 2, py + 190, 150, '#E0E2EA', 'center', '700');
+    mono('北京时间' + (m.local && !m.tbd ? ' · 当地 ' + m.local : ''), W / 2, py + 300, 38, '#9F8E79');
 
-    // 三条看点（PM 7.6）
-    var ly = H - 560;
-    (m.points.length ? m.points.slice(0, 3) : [m.lgZh + ' 焦点战', '熬夜成本 ' + m.cost + 'h', m.stars + ' 级之夜']).forEach(function (p, i) {
-      ctx.beginPath(); ctx.arc(px + 30, ly + i * 78, 15, 0, Math.PI * 2);
+    // 分隔线 + 星级 + 夜猫指数
+    ctx.beginPath(); ctx.moveTo(W / 2 - 90, 1440); ctx.lineTo(W / 2 + 90, 1440);
+    ctx.strokeStyle = 'rgba(159,142,121,.2)'; ctx.lineWidth = 3; ctx.stroke();
+    body('★★★☆☆'.slice(0, m.star), W / 2, 1486, 66, '#FFB224');
+    mono('夜猫指数 ' + m.indexText, W / 2, 1554, 60, '#FFD79E');
+
+    // 三条看点（PM 7.6）：长文案先缩字号、仍超宽则截断，保证不越过右边界
+    var pts = m.points.length ? m.points.slice(0, 3) : [m.lgZh + ' 焦点战', '熬夜成本 ' + m.cost + 'h', m.stars + ' 级之夜'];
+    var py2 = 1640, tx = px + 72, maxW = W - tx - 60;
+    var fitText = function (s) {
+      var size = 54;
+      ctx.font = '400 ' + size + 'px "PingFang SC", sans-serif';
+      while (size > 42 && ctx.measureText(s).width > maxW) {
+        size -= 2;
+        ctx.font = '400 ' + size + 'px "PingFang SC", sans-serif';
+      }
+      if (ctx.measureText(s).width > maxW) {
+        while (s.length > 4 && ctx.measureText(s + '…').width > maxW) s = s.slice(0, -1);
+        s += '…';
+      }
+      return { s: s, size: size };
+    };
+    pts.forEach(function (p, i) {
+      var y = py2 + i * 62, f = fitText(p);
+      ctx.beginPath(); ctx.arc(px + 24, y, 13, 0, Math.PI * 2);
       ctx.fillStyle = '#44E2CD'; ctx.fill();
-      body(p, px + 84, ly + i * 78, 60, '#D6C4AD', 'left');
+      body(f.s, tx, y, f.size, '#D6C4AD', 'left');
     });
 
     // 品牌位（PM 7.6）
-    mono('夜猫看台 · NIGHT OWL TERRACE', W / 2, H - 120, 54, '#514533');
-
-    if (cb) cb();
+    mono('夜猫看台 · NIGHT OWL TERRACE', W / 2, 1872, 50, 'rgba(159,142,121,.6)');
   },
 
   save: function () {
     var that = this;
+    if (this._saving) return;
+    this._saving = true;
+    wx.showLoading({ title: '正在生成海报', mask: true });
+    var done = function () { that._saving = false; wx.hideLoading(); };
+    var run = function () {
+      that.draw(function () { that.export(done); });
+    };
     if (!this._canvas) {
       this.initCanvas(function () {
-        that.draw(function () { that.export(); });
+        if (!that._canvas) { done(); wx.showToast({ title: '画布初始化失败', icon: 'none' }); return; }
+        run();
       });
       return;
     }
-    this.draw(function () { that.export(); });
+    run();
   },
 
-  export: function () {
+  // 注意：对 type=2d canvas 只传 canvas 节点，默认导出整个画布（1080×1920 原生分辨率）。
+  // 显式传 width/height 时部分基础库按 CSS 尺寸解释，会造成截取错位、内容拉伸错乱。
+  export: function (done) {
     var that = this;
     wx.canvasToTempFilePath({
       canvas: this._canvas,
-      width: 1080,
-      height: 1920,
-      destWidth: 1080,
-      destHeight: 1920,
       success: function (res) {
         wx.saveImageToPhotosAlbum({
           filePath: res.tempFilePath,
-          success: function () { wx.showToast({ title: '已保存到相册' }); },
+          success: function () { done(); wx.showToast({ title: '已保存到相册' }); },
           fail: function (err) {
+            done();
             if (/auth/.test(err.errMsg || '')) {
               wx.showModal({
                 title: '需要相册权限',
@@ -158,7 +211,7 @@ Page({
           }
         });
       },
-      fail: function () { wx.showToast({ title: '导出失败', icon: 'none' }); }
+      fail: function () { done(); wx.showToast({ title: '导出失败', icon: 'none' }); }
     });
   },
 
