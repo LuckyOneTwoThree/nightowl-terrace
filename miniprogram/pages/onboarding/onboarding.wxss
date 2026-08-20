@@ -3,7 +3,7 @@
 /* 光晕 */
 .glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
 .glow-amber { top: -200rpx; right: -200rpx; background: rgba(255,178,36,.1); }
-.glow-teal { bottom: -200rpx; left: -200rpx; background: rgba(68,226,205,.08); }
+.glow-teal { bottom: -200rpx; left: -200rpx; background: rgba(20,224,191,.08); }
 
 /* 头部 */
 .head { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8rpx; padding-top: 16rpx; }

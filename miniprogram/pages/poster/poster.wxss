@@ -100,7 +100,7 @@
   border-radius: var(--r-full);
   background: var(--secondary);
   flex-shrink: 0;
-  box-shadow: 0 0 6rpx rgba(68,226,205,.6);
+  box-shadow: 0 0 6rpx rgba(20,224,191,.6);
 }
 .p-pt-text { color: var(--on-surface-variant); font-size: 20rpx; line-height: 28rpx; }
 

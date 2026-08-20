@@ -2,6 +2,8 @@
 
 .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28rpx; }
 .tb-title { font-size: 40rpx; font-weight: 700; color: var(--on-surface); }
+.season-btn { transition: transform .15s ease; }
+.season-btn:active { transform: scale(0.96); }
 
 /* 2x2 Bento 玩法卡 (CSS Grid 确保双列对齐) */
 .grid {
@@ -37,7 +39,7 @@
   display: flex; align-items: center; justify-content: center;
 }
 .c-amber .p-icon-box { background: rgba(255,178,36,.12); color: #FFB224; border: 1rpx solid rgba(255,178,36,.3); }
-.c-teal .p-icon-box { background: rgba(68,226,205,.12); color: #44E2CD; border: 1rpx solid rgba(68,226,205,.3); }
+.c-teal .p-icon-box { background: rgba(20,224,191,.12); color: var(--secondary); border: 1rpx solid rgba(20,224,191,.3); }
 .c-red .p-icon-box { background: rgba(255,180,171,.12); color: #FFB4AB; border: 1rpx solid rgba(255,180,171,.3); }
 .c-violet .p-icon-box { background: rgba(206,181,255,.12); color: #CEB5FF; border: 1rpx solid rgba(206,181,255,.3); }
 .p-icon-v { width: 38rpx; height: 38rpx; }
@@ -74,5 +76,5 @@
 .g-sealed {
   display: flex; align-items: center; justify-content: center; gap: 12rpx;
   padding: 20rpx 24rpx; border-radius: var(--r-md); font-size: 24rpx;
-  border: 1rpx solid rgba(68,226,205,.25);
+  border: 1rpx solid rgba(20,224,191,.25);
 }

@@ -6,51 +6,67 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(16, 20, 25, 0.95);
+  background: var(--bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1rpx solid var(--outline-muted);
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.25);
 }
 
-/* 视图切换（日历 / 轮次） */
-.vtoggle { display: flex; gap: 12rpx; padding: 16rpx 32rpx 6rpx; }
+/* 顶部工具条：视图分段 + 星级筛选 */
+.top-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16rpx 32rpx 8rpx; gap: 16rpx;
+}
+.vtoggle { display: flex; gap: 10rpx; }
 .vt-btn {
-  flex: 0 0 auto; padding: 10rpx 28rpx; border-radius: var(--r-full);
+  padding: 8rpx 24rpx; border-radius: var(--r-full);
   background: var(--surface-2); border: 1rpx solid var(--hairline);
-  color: var(--on-surface-variant); font-size: 24rpx;
+  color: var(--on-surface-variant); font-size: 24rpx; font-weight: 500;
   transition: all .15s ease;
 }
-.vt-btn:active { background: var(--sc-high); }
+.vt-btn:active { background: var(--sc-high); transform: scale(0.97); }
 .vt-btn.on {
-  background: rgba(255,178,36,.12); border-color: rgba(255,178,36,.45);
+  background: rgba(255,178,36,.14); border-color: rgba(255,178,36,.45);
+  color: var(--primary-container); font-weight: 700;
+}
+
+.star-filter-chip {
+  display: inline-flex; align-items: center; gap: 8rpx;
+  padding: 8rpx 22rpx; border-radius: var(--r-full);
+  background: var(--surface-2); border: 1rpx solid var(--hairline);
+  color: var(--on-surface-variant); font-size: 22rpx; font-weight: 600;
+  transition: all .15s ease;
+}
+.star-filter-chip:active { transform: scale(0.96); }
+.star-filter-chip.on {
+  background: rgba(255,178,36,.14); border-color: rgba(255,178,36,.45);
   color: var(--primary-container); font-weight: 700;
 }
 
 /* 日期条 */
-.dstrip { white-space: nowrap; padding: 14rpx 32rpx 10rpx; width: 100%; box-sizing: border-box; }
+.dstrip { white-space: nowrap; padding: 10rpx 32rpx 8rpx; width: 100%; box-sizing: border-box; }
 .dchip {
-  position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 6rpx;
-  width: 136rpx; padding: 18rpx 0; margin-right: 16rpx;
+  position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4rpx;
+  width: 128rpx; padding: 14rpx 0; margin-right: 14rpx;
   border-radius: var(--r-lg); background: var(--sc-low); border: 1rpx solid var(--outline-muted);
   transition: all .2s ease;
 }
-.dchip-dot { position: absolute; top: 10rpx; right: 12rpx; width: 10rpx; height: 10rpx; }
+.dchip-dot { position: absolute; top: 8rpx; right: 10rpx; width: 8rpx; height: 8rpx; }
 .dchip-wd { font-size: 22rpx; color: var(--on-surface-variant); font-weight: 500; }
-.dchip-md { font-size: 26rpx; font-weight: 600; }
-.dchip-count { font-size: 20rpx; }
+.dchip-md { font-size: 26rpx; font-weight: 700; }
+.dchip-count { font-size: 19rpx; }
 .dchip.on {
   background: var(--primary-container); border-color: transparent;
-  box-shadow: 0 4rpx 24rpx rgba(255,178,36,.3);
+  box-shadow: 0 4rpx 20rpx rgba(255,178,36,.3);
 }
 .dchip.on .dchip-wd, .dchip.on .dchip-md, .dchip.on .dchip-count {
   color: var(--on-primary); font-weight: 700;
 }
 
 /* 联赛药丸 */
-.pills { display: flex; white-space: nowrap; padding: 8rpx 32rpx 18rpx; width: 100%; box-sizing: border-box; }
-.pills .fpill { display: inline-flex; margin-right: 16rpx; }
-.star-pill { font-weight: 600; }
+.pills { display: flex; white-space: nowrap; padding: 6rpx 32rpx 14rpx; width: 100%; box-sizing: border-box; }
+.pills .fpill { display: inline-flex; margin-right: 14rpx; }
 
 
 /* 分组 */

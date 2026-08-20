@@ -29,7 +29,7 @@
 
 /* 打卡卡 */
 .live { position: relative; overflow: hidden; margin-bottom: 24rpx; padding: 28rpx 32rpx; border-radius: var(--r-xl); }
-.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(68,226,205,.5); }
+.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(20,224,191,.5); }
 .accent-bar.gray { background: var(--outline-muted); box-shadow: none; }
 .live-status { display: flex; align-items: center; gap: 12rpx; margin-bottom: 24rpx; }
 .live-status .mono { font-size: 22rpx; }
@@ -62,9 +62,13 @@
 .rk-info { flex: 1; display: flex; flex-direction: column; gap: 4rpx; }
 .rk-name { font-size: 28rpx; color: var(--on-surface); }
 .rk-s { font-size: 20rpx; }
-.rk-h { font-size: 30rpx; }
-
-.user-row { margin: 12rpx; border-radius: var(--r-lg); border: 1rpx solid rgba(255,178,36,.35); }
+.user-row {
+  margin: 14rpx; padding: 22rpx 28rpx;
+  border-radius: var(--r-lg);
+  background: rgba(255, 178, 36, 0.08);
+  border: 1rpx solid rgba(255, 178, 36, 0.45);
+  box-shadow: 0 0 16rpx rgba(255, 178, 36, 0.15);
+}
 .user-rank { color: var(--primary-container); font-size: 32rpx; }
 .user-avatar { background: var(--primary-container); color: var(--on-primary); }
 

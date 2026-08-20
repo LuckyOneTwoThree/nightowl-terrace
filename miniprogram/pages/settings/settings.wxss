@@ -101,6 +101,6 @@
 /* 云端状态行：呼吸灯点 + 三态配色（ok 青碧 / down 错误红 / unknown 中性） */
 .cloud-state { gap: 10rpx; }
 .cs-dot { width: 14rpx; height: 14rpx; border-radius: var(--r-full); }
-.cs-ok { background: var(--secondary); box-shadow: 0 0 10rpx rgba(68,226,205,.6); }
+.cs-ok { background: var(--secondary); box-shadow: 0 0 10rpx rgba(20,224,191,.6); }
 .cs-down { background: var(--error); box-shadow: 0 0 10rpx rgba(255,180,171,.5); }
 .cs-unknown { background: var(--on-surface-variant); opacity: .5; }

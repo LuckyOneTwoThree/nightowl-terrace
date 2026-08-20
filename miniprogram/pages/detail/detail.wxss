@@ -3,7 +3,7 @@
 /* Hero */
 .hero { position: relative; padding: 32rpx; overflow: hidden; margin-bottom: 12rpx; border-radius: var(--r-xl); }
 .hero.dim { opacity: .92; }
-.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(68,226,205,.5); }
+.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(20,224,191,.5); }
 .hero-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28rpx; padding-left: 12rpx; }
 .hh-left { display: flex; align-items: center; gap: 16rpx; }
 .stars-row { display: flex; align-items: center; gap: 4rpx; }
@@ -52,8 +52,8 @@
   border: 1rpx solid rgba(255,178,36,.3);
 }
 .sealed-box {
-  border-color: rgba(68,226,205,.4);
-  background: rgba(68,226,205,.05);
+  border-color: rgba(20,224,191,.4);
+  background: rgba(20,224,191,.05);
 }
 .pb-head {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx;

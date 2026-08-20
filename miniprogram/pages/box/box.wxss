@@ -370,13 +370,13 @@
 }
 
 .teal-btn {
-  border: 1rpx solid rgba(68,226,205,.45);
+  border: 1rpx solid rgba(20,224,191,.45);
   color: var(--secondary);
-  background: rgba(68,226,205,.1);
+  background: rgba(20,224,191,.1);
 }
 
 .teal-btn:active {
-  background: rgba(68,226,205,.2);
+  background: rgba(20,224,191,.2);
 }
 
 /* 浅色主题适配 */
