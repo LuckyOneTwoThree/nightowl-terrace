@@ -116,25 +116,32 @@ Page({
     wx.showToast({ title: '门槛: ' + txt, icon: 'none' });
   },
 
-  onKickoff: function (e) { this.save({ remindKickoff: e.detail.value }); },
+  // 订阅授权统一入口（二轮 P2-5：kickoff 此前只存偏好不请求授权，接线补齐）
+  requestSub: function (tmplId) {
+    if (!tmplId || !wx.requestSubscribeMessage) {
+      wx.showToast({ title: '提醒模板待配置，已记录偏好', icon: 'none' });
+      return;
+    }
+    wx.requestSubscribeMessage({
+      tmplIds: [tmplId],
+      success: function (res) {
+        var status = res[tmplId] === 'accept' ? 'accept' : 'reject';
+        cloud.saveSubscription(tmplId, status);
+      },
+      fail: function () { /* 用户拒绝或环境不支持：开关仅记录偏好 */ }
+    });
+  },
+
+  onKickoff: function (e) {
+    this.save({ remindKickoff: e.detail.value });
+    if (e.detail.value) this.requestSub(cloud.TMPL.kickoff);
+  },
 
   onDeadline: function (e) {
     var on = e.detail.value;
     this.save({ remindDeadline: on });
     // 模板 ID 已配置时发起订阅授权并落库 subscriptions（pushReminders 扫描 status:'accept'）
-    if (on && cloud.TMPL.deadline && wx.requestSubscribeMessage) {
-      var tmplId = cloud.TMPL.deadline;
-      wx.requestSubscribeMessage({
-        tmplIds: [tmplId],
-        success: function (res) {
-          var status = res[tmplId] === 'accept' ? 'accept' : 'reject';
-          cloud.saveSubscription(tmplId, status);
-        },
-        fail: function () { /* 用户拒绝或环境不支持：开关仅记录偏好 */ }
-      });
-    } else if (on) {
-      wx.showToast({ title: '提醒模板待配置，已记录偏好', icon: 'none' });
-    }
+    if (on) this.requestSub(cloud.TMPL.deadline);
   },
 
   // 云端健康探测：真实拉一次 readBoard 判定连接状态（区别于闩锁标记的乐观可用）
