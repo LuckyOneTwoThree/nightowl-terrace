@@ -38,7 +38,8 @@ Page({
   onShow: function () {
     getApp().applyTheme(this);
     var curFollowed = JSON.stringify(getApp().getFollowed());
-    if (this._lastFollowed !== curFollowed) {
+    var curFollowedLeagues = JSON.stringify(getApp().getFollowedLeagues());
+    if (this._lastFollowed !== curFollowed || this._lastFollowedLeagues !== curFollowedLeagues) {
       this.init();
     }
   },
@@ -50,16 +51,18 @@ Page({
 
   init: function () {
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
+    this._lastFollowedLeagues = JSON.stringify(getApp().getFollowedLeagues());
     // 按照北京时间自然日展示赛程（bjDateStr 纯 UTC 算术，设备时区无关）
     var todayStr = engine.bjDateStr(Date.now());
 
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
-    // 关注球队参与星级评定（PM 7.4：关注球队提至最高 ★★，赛程页同步生效）
-    var followed = getApp().getFollowed();
+    // 关注球队与关注联赛参与星级评定
+    var followed = getApp().getFollowed() || [];
+    var followedLeagues = getApp().getFollowedLeagues() || data.TOP_LEAGUE_IDS;
 
-    // 按北京时间自然日分组
+    // 按照北京时间自然日分组
     var byDay = {};
     var groups = [];
     var byRound = {}; // lg -> { r: [cards] }（轮次视图）
@@ -72,8 +75,16 @@ Page({
       var h = data.getTeam(m.h);
       var a = data.getTeam(m.a);
       var meta = data.LEAGUE_META[m.l] || {};
-      var ev = engine.evaluate(m, recMap, rivs, sls, followed);
+      var ev = engine.evaluate(m, recMap, rivs, sls, followed, followedLeagues);
       var sc = m.sc ? m.sc.split('-') : null;
+      var hm = m.t.split('T')[1];
+      var hmText = Number(hm.split(':')[0]) < 6 ? (hm + ' 次晨') : hm;
+      var scH = sc ? Number(sc[0]) : null;
+      var scA = sc ? Number(sc[1]) : null;
+      var isFin = engine.isFinished(m);
+      var homeWin = isFin && scH !== null && scA !== null && scH > scA;
+      var awayWin = isFin && scH !== null && scA !== null && scA > scH;
+
       var card = {
         id: m.id,
         t: m.t,
@@ -81,16 +92,20 @@ Page({
         r: m.r,
         lgZh: lgZh(m.l),
         accent: meta.accent || '#1E293B',
-        hm: m.t.split('T')[1],
+        hm: hm,
+        hmText: hmText,
         local: decorate.localTime(m),
         tbd: m.tbd,
         st: m.st,
-        finished: engine.isFinished(m),
+        finished: isFin,
         scH: sc ? sc[0] : '-',
         scA: sc ? sc[1] : '-',
+        homeWin: homeWin,
+        awayWin: awayWin,
         star: ev.star,
         stars: '★★★'.slice(0, ev.star),
-        followed: followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0, // 主队角标（PM 7.4）
+        followed: followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0, // 主队高亮
+        isLeagueFollowed: followedLeagues.indexOf(m.l) >= 0,
         home: { zh: h.zh, id: h.id, logo: h.logo, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
         away: { zh: a.zh, id: a.id, logo: a.logo, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) }
       };
@@ -109,14 +124,24 @@ Page({
     var selDay = todayStr;
     if (!byDay[selDay]) selDay = (groups.filter(function (g) { return g.day >= todayStr; })[0] || groups[0] || {}).day || '';
 
+    // 联赛筛选栏：关注联赛排在最前
+    var allLgs = data.LEAGUES.slice();
+    allLgs.sort(function (a, b) {
+      var af = followedLeagues.indexOf(a.id) >= 0 ? 1 : 0;
+      var bf = followedLeagues.indexOf(b.id) >= 0 ? 1 : 0;
+      return bf - af;
+    });
+
     // 全量分组留在内存（约 280 日 / 1752 场），仅按需 setData 渲染窗口（从选中日起展示 7 天）
     this._groups = groups;
     this._byRound = byRound;
     this.setData({
+      todayStr: todayStr,
+      isViewingToday: selDay === todayStr,
       days: days,
       selDay: selDay,
       dchipId: 'dchip-' + selDay,
-      leagues: [{ id: 'ALL', zh: '全部' }].concat(data.LEAGUES),
+      leagues: [{ id: 'ALL', zh: '全部' }].concat(allLgs),
       viewGroups: this.windowOf(selDay)
     });
   },
@@ -139,6 +164,7 @@ Page({
     this.setData({
       selDay: d,
       dchipId: 'dchip-' + d,
+      isViewingToday: d === this.data.todayStr,
       viewGroups: this.windowOf(d)
     });
     // 切换日期后重置页面滚动高度至顶部，使所选日期置顶显示
@@ -213,8 +239,52 @@ Page({
   goDetail: function (e) {
     wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
   },
-  onStar: function () {
-    wx.showToast({ title: '收藏 v1 上线', icon: 'none' });
+  onGoToday: function () {
+    var todayStr = this.data.todayStr;
+    if (!todayStr) return;
+    this.setData({
+      selDay: todayStr,
+      dchipId: 'dchip-' + todayStr,
+      isViewingToday: true,
+      viewGroups: this.windowOf(todayStr)
+    });
+    if (wx.pageScrollTo) {
+      wx.pageScrollTo({ scrollTop: 0, duration: 150 });
+    }
+  },
+  onCalendarAdd: function (e) {
+    var id = e.currentTarget.dataset.id;
+    var match = data.getMatch(id);
+    if (!match) return;
+    if (match.tbd || !match.t) {
+      wx.showToast({ title: '开球时间待定，暂无法加入日历', icon: 'none' });
+      return;
+    }
+    var h = data.getTeam(match.h) || { zh: match.h };
+    var a = data.getTeam(match.a) || { zh: match.a };
+    var startTs = Math.floor(engine.ts(match.t) / 1000);
+    
+    if (wx.addPhoneCalendar) {
+      wx.addPhoneCalendar({
+        title: '⚽️ ' + h.zh + ' vs ' + a.zh + ' (' + lgZh(match.l) + ')',
+        startTime: startTs,
+        endTime: startTs + 7200,
+        alarmOffset: 1800,
+        notes: '夜猫追球 · 开球时间 ' + match.t.split('T')[1],
+        success: function () {
+          wx.showToast({ title: '已添加到日历', icon: 'success' });
+        },
+        fail: function (err) {
+          if (err && err.errMsg && err.errMsg.indexOf('cancel') >= 0) return;
+          wx.showToast({ title: '添加日历失败', icon: 'none' });
+        }
+      });
+    } else {
+      wx.showToast({ title: '微信版本暂不支持', icon: 'none' });
+    }
+  },
+  onStar: function (e) {
+    this.onCalendarAdd(e);
   },
 
   onShareAppMessage: function () {

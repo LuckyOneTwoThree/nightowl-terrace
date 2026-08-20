@@ -9,19 +9,73 @@ Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
     theme: data.getInitTheme(),
+    activeTab: 'leagues', // 'leagues' | 'teams'
+    leagueList: [],
+    pickedLeaguesCount: 5,
     groups: [],
     draftFollowed: [],
     pickedCount: 0
   },
 
-  onLoad: function () {
+  onLoad: function (query) {
     getApp().applyTheme(this);
+    var targetTab = (query && query.tab === 'teams') ? 'teams' : 'leagues';
     var followed = getApp().getFollowed() || [];
+    var followedLeagues = getApp().getFollowedLeagues() || data.TOP_LEAGUE_IDS;
+
+    // 初始化联赛草稿列表
+    var leagueList = data.TOP_LEAGUE_IDS.map(function (lid) {
+      var info = data.LEAGUE_INFO[lid] || {};
+      var meta = data.LEAGUE_META[lid] || {};
+      return {
+        id: lid,
+        zh: info.zh || lid,
+        en: info.en || '',
+        tagline: info.tagline || '',
+        desc: info.desc || '',
+        solid: meta.solid || '#7C3AED',
+        accent: meta.accent || '#38003C',
+        on: followedLeagues.indexOf(lid) >= 0
+      };
+    });
+
+    var pickedLeaguesCount = leagueList.filter(function (l) { return l.on; }).length;
+
     this.setData({
+      activeTab: targetTab,
+      leagueList: leagueList,
+      pickedLeaguesCount: pickedLeaguesCount,
       draftFollowed: followed.slice(),
       pickedCount: followed.length
     });
+
     this.buildGroups(followed);
+  },
+
+  switchTab: function (e) {
+    var tab = e.currentTarget.dataset.tab;
+    if (tab && tab !== this.data.activeTab) {
+      this.setData({ activeTab: tab });
+      if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    }
+  },
+
+  toggleLeagueItem: function (e) {
+    var id = e.currentTarget.dataset.id;
+    var list = this.data.leagueList.map(function (l) {
+      if (l.id === id) l.on = !l.on;
+      return l;
+    });
+    var picked = list.filter(function (l) { return l.on; }).length;
+    this.setData({
+      leagueList: list,
+      pickedLeaguesCount: picked
+    });
+    // 联动重建球队分组展开状态
+    this.buildGroups(this.data.draftFollowed);
+    // 即时同步至全局与 Storage
+    this._persist();
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
   },
 
   buildGroups: function (draftList) {
@@ -30,7 +84,12 @@ Page({
       prevExpanded[g.id] = g.expanded;
     });
 
-    var groups = ['PL', 'PD', 'SA', 'BL', 'FL'].map(function (lg, idx) {
+    var followedLidSet = {};
+    this.data.leagueList.forEach(function (l) {
+      if (l.on) followedLidSet[l.id] = true;
+    });
+
+    var groups = data.TOP_LEAGUE_IDS.map(function (lg, idx) {
       var allTeams = data.getTeams().filter(function (t) { return t.league === lg; });
       var selectedCount = 0;
       var teams = allTeams.map(function (t) {
@@ -49,13 +108,16 @@ Page({
       });
 
       var meta = data.LEAGUE_META[lg] || {};
+      var isLeagueFollowed = !!followedLidSet[lg];
       return {
         id: lg,
         zh: lgZh(lg),
         accent: meta.accent || '#FFB224',
+        solid: meta.solid || '#7C3AED',
         teams: teams,
         selectedCount: selectedCount,
-        expanded: prevExpanded[lg] !== undefined ? prevExpanded[lg] : (idx === 0)
+        isLeagueFollowed: isLeagueFollowed,
+        expanded: prevExpanded[lg] !== undefined ? prevExpanded[lg] : (isLeagueFollowed || idx === 0)
       };
     });
 
@@ -82,13 +144,29 @@ Page({
     }
     this.setData({ draftFollowed: draft, pickedCount: draft.length });
     this.buildGroups(draft);
+    // 即时同步至全局与 Storage，确保无需点保存/返回即生效
+    this._persist();
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+  },
+
+  _persist: function () {
+    var app = getApp();
+    if (!app) return;
+    var pickedLids = (this.data.leagueList || []).filter(function (l) { return l.on; }).map(function (l) { return l.id; });
+    if (!pickedLids.length) pickedLids = data.TOP_LEAGUE_IDS.slice();
+    app.setFollowedLeagues(pickedLids);
+    app.setFollowed(this.data.draftFollowed || []);
+  },
+
+  onUnload: function () {
+    this._persist();
   },
 
   save: function () {
-    getApp().setFollowed(this.data.draftFollowed);
-    wx.showToast({ title: '关注已更新', icon: 'success' });
+    this._persist();
+    wx.showToast({ title: '关注偏好已保存', icon: 'success' });
     setTimeout(function () {
       wx.navigateBack();
-    }, 400);
+    }, 300);
   }
 });

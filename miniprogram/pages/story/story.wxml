@@ -1,22 +1,26 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{s}}">
-  <!-- Hero 头部（_17） -->
-  <view class="hero glass-panel">
+  <!-- 动态环境微光 -->
+  <view class="glow glow-teal"></view>
+
+  <!-- ==================== 1. 史诗故事线 Hero 头部 ==================== -->
+  <view class="hero card-highest floodlight-glow">
     <view class="hero-top">
-      <text class="hl hl-lg story-title">{{s.name}}</text>
+      <view class="ht-left">
+        <text class="hl hl-lg story-title">{{s.name}}</text>
+        <view class="hero-mid">
+          <view class="lg-chip" style="background: var(--sc-high); color: var(--on-surface);">{{leagueZh || typeZh}}</view>
+          <text class="mono muted">{{seasonText}}</text>
+        </view>
+      </view>
       <view class="chip chip-teal st-{{s.status}}">
         <view class="dot-teal animate-pulse" wx:if="{{s.status === 'active'}}"></view>
         <text>{{statusZh}}</text>
       </view>
     </view>
     
-    <view class="hero-mid">
-      <view class="lg-chip" style="background: var(--sc-high); color: var(--on-surface);">{{leagueZh || typeZh}}</view>
-      <text class="mono muted">{{seasonText}}</text>
-    </view>
-    
     <view class="ava-row" wx:if="{{avatars.length}}">
       <block wx:for="{{avatars}}" wx:key="id">
-        <image class="crest-xl" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" />
+        <image class="crest-xl ava-img" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" />
         <view class="ava circle-xl crest-fb" wx:else style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
       </block>
     </view>
@@ -24,9 +28,9 @@
     <text class="hero-desc">{{s.desc}}</text>
   </view>
 
-  <!-- 时间轴（_17） -->
+  <!-- ==================== 2. 战役时间轴 ==================== -->
   <view class="sect sect-gap">
-    <text class="sect-title">战役时间线</text>
+    <text class="sect-title">战役时间线 ({{nodes.length}})</text>
     <view class="sect-line"></view>
   </view>
   
@@ -49,7 +53,8 @@
         
         <view class="n-vs">
           <view class="nv-side">
-            <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+            <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+            <view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
             <text class="nv-name hl">{{item.home.zh}}</text>
           </view>
           
@@ -65,7 +70,8 @@
           </view>
           
           <view class="nv-side">
-            <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+            <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+            <view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
             <text class="nv-name hl">{{item.away.zh}}</text>
           </view>
         </view>
@@ -77,7 +83,7 @@
     </view>
   </view>
 
-  <!-- 相关故事线 -->
+  <!-- ==================== 3. 相关故事线 ==================== -->
   <block wx:if="{{related.length}}">
     <view class="sect sect-gap">
       <text class="sect-title">同盟连载</text>

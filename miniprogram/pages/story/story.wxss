@@ -1,26 +1,31 @@
-.page { padding: 24rpx 32rpx 160rpx; min-height: 100vh; }
+.page { padding: 24rpx 32rpx 160rpx; min-height: 100vh; box-sizing: border-box; }
+
+/* 动态微光 */
+.glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
+.glow-teal { top: -200rpx; right: -200rpx; background: rgba(20,224,191,.08); }
 
 /* hero */
 .hero {
-  position: relative; overflow: hidden; border-radius: var(--r-xl); padding: 32rpx;
-  background: linear-gradient(160deg, rgba(20,224,191,.08), transparent 55%), var(--sc-low);
-  border: 1rpx solid rgba(20,224,191,.25);
+  position: relative; z-index: 1; overflow: hidden; border-radius: var(--r-xl, 28rpx); padding: 32rpx;
+  background: linear-gradient(160deg, rgba(20,224,191,.09), transparent 55%), var(--sc-low);
+  border: 1rpx solid rgba(20,224,191,.3);
 }
 .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16rpx; }
-.story-title { font-size: 40rpx; font-weight: 700; color: var(--on-surface); }
+.ht-left { display: flex; flex-direction: column; gap: 8rpx; }
+.story-title { font-size: 38rpx; font-weight: 800; color: var(--on-surface); line-height: 50rpx; }
 .st-active { border-color: rgba(20,224,191,.4); color: var(--secondary); }
 .st-done, .st-draft { border-color: var(--outline-muted); color: var(--on-surface-variant); }
 
-.hero-mid { display: flex; align-items: center; gap: 16rpx; margin-top: 16rpx; }
-.ava-row { display: flex; margin-top: 24rpx; }
-.ava { margin-right: -16rpx; border: 3rpx solid var(--sc-low); font-size: 24rpx; }
-.ava:last-child { margin-right: 0; }
+.hero-mid { display: flex; align-items: center; gap: 12rpx; margin-top: 4rpx; }
+.ava-row { display: flex; align-items: center; gap: 12rpx; margin-top: 24rpx; }
+.ava-img { width: 72rpx; height: 72rpx; }
+.ava { width: 72rpx; height: 72rpx; font-size: 24rpx; }
 .hero-desc { display: block; margin-top: 20rpx; color: var(--on-surface-variant); font-size: 26rpx; line-height: 40rpx; }
 
-.sect-gap { margin: 48rpx 0 24rpx; }
+.sect-gap { margin: 44rpx 0 24rpx; }
 
 /* 时间轴 */
-.timeline { position: relative; padding-left: 8rpx; }
+.timeline { position: relative; z-index: 1; padding-left: 8rpx; }
 .tl-line {
   position: absolute; left: 62rpx; top: 28rpx; bottom: 28rpx; width: 4rpx;
   border-radius: var(--r-full);
@@ -31,7 +36,7 @@
 .n-date {
   position: relative; width: 124rpx; height: 124rpx; flex-shrink: 0;
   border-radius: var(--r-full);
-  background: var(--sc); /* 100% 实心底色，彻底遮挡背后贯穿的竖线 */
+  background: var(--sc);
   border: 3rpx solid var(--outline-muted);
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.35);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rpx;
@@ -39,24 +44,24 @@
   box-sizing: border-box;
 }
 
-/* 焦点大战（实心深碧绿底 + 电光绿边框） */
+/* 焦点大战 */
 .n-date.key {
   background: #122830;
   border-color: var(--secondary);
   box-shadow: 0 0 20rpx rgba(0, 229, 190, 0.25);
 }
-/* 即将开球（实心深琥珀底 + 电光金边框） */
+/* 即将开球 */
 .n-date.soon {
   background: #242014;
   border-color: var(--primary-container);
   box-shadow: 0 0 20rpx rgba(255, 184, 0, 0.25);
 }
-/* 已完赛（实心暗灰蓝底 + 青绿描边） */
+/* 已完赛 */
 .n-date.done {
   background: var(--sc-high);
   border-color: rgba(0, 229, 190, 0.4);
 }
-/* 远期未赛（实心底色，仅降低文字对比度，圆环容器本身绝对不设半透明） */
+/* 远期未赛 */
 .n-date.future {
   background: var(--sc-low);
   border-color: var(--hairline);
@@ -99,7 +104,7 @@
 }
 
 .n-card {
-  position: relative; flex: 1; padding: 24rpx 28rpx; border-radius: var(--r-lg);
+  position: relative; flex: 1; padding: 24rpx 28rpx; border-radius: var(--r-xl, 28rpx);
   background: var(--sc-low); border: 1rpx solid var(--hairline);
 }
 .n-card.iskey {
@@ -115,17 +120,17 @@
 
 .n-vs { display: flex; align-items: center; justify-content: space-between; }
 .nv-side { width: 140rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
-.nv-name { font-size: 24rpx; text-align: center; color: var(--on-surface); max-width: 140rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nv-name { font-size: 24rpx; font-weight: 700; text-align: center; color: var(--on-surface); max-width: 140rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nv-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
 .nv-score { font-size: 36rpx; font-weight: 700; color: var(--secondary); white-space: nowrap; }
 .nv-time { font-size: 32rpx; font-weight: 700; white-space: nowrap; }
 .nv-status { font-size: 20rpx; }
-.tl-end { padding: 32rpx 24rpx; text-align: center; font-size: 24rpx; border-radius: var(--r-lg); }
+.tl-end { padding: 32rpx 24rpx; text-align: center; font-size: 24rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline); }
 
 /* 相关故事线 */
-.rel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20rpx; }
-.rel { width: 100%; box-sizing: border-box; padding: 24rpx; display: flex; flex-direction: column; gap: 8rpx; border-radius: var(--r-lg); }
-.rel-name { font-size: 28rpx; font-weight: 600; color: var(--on-surface); }
+.rel-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20rpx; }
+.rel { width: 100%; box-sizing: border-box; padding: 24rpx; display: flex; flex-direction: column; gap: 8rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline); }
+.rel-name { font-size: 28rpx; font-weight: 700; color: var(--on-surface); }
 .rel-desc { color: var(--on-surface-variant); font-size: 22rpx; line-height: 32rpx; }
 
 /* FAB */

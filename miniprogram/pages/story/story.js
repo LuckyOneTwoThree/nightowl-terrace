@@ -26,7 +26,11 @@ Page({
     var s = data.getAllStorylines().filter(function (x) { return x.id === q.id; })[0];
     if (!s) {
       wx.showToast({ title: '故事线不存在', icon: 'none' });
-      setTimeout(function () { wx.navigateBack(); }, 800);
+      setTimeout(function () {
+        // 冷启动单页栈时 navigateBack 静默失败 → 白屏卡死，改跳今日页（三轮 P1-8）
+        if (getCurrentPages().length <= 1) wx.switchTab({ url: '/pages/today/today' });
+        else wx.navigateBack();
+      }, 800);
       return;
     }
 

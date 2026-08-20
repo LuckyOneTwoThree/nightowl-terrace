@@ -1,168 +1,308 @@
-.page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; box-sizing: border-box; }
+.page { padding: 24rpx 32rpx 80rpx; min-height: 100vh; box-sizing: border-box; }
 
-/* 用户信息卡 */
-.profile {
-  display: flex; align-items: center; gap: 24rpx; padding: 28rpx 32rpx;
-  position: relative; border-radius: var(--r-xl);
+/* 动态光晕 */
+.glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
+.glow-amber { top: -200rpx; right: -200rpx; }
+.glow-teal { bottom: -200rpx; left: -200rpx; background: rgba(20,224,191,.08); }
+
+/* ==================== 1. 全景一体化黑金球迷通票 (VIP MATCH PASS) ==================== */
+.vip-pass {
+  position: relative;
+  border-radius: var(--r-xl, 28rpx);
+  border: 1rpx solid rgba(255,178,36,.3);
+  background: linear-gradient(145deg, rgba(255,178,36,.09) 0%, rgba(30,41,59,.75) 50%, rgba(15,23,42,.95) 100%);
+  backdrop-filter: blur(24rpx);
+  box-shadow: 0 10rpx 36rpx rgba(0,0,0,.45), 0 0 24rpx rgba(255,178,36,.08);
+  overflow: hidden;
+  transition: all .2s ease;
 }
-.profile:active { background: var(--sc-high); }
-.avatar-wrap { position: relative; }
-.avatar-box {
-  width: 120rpx; height: 120rpx; font-size: 36rpx;
-  background: var(--sc-high); border: 2rpx solid rgba(255,178,36,.4);
-  box-shadow: 0 0 20rpx rgba(255,178,36,.2);
-  display: flex; align-items: center; justify-content: center;
+.theme-light .vip-pass {
+  border-radius: var(--r-xl, 28rpx);
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%);
+  border-color: rgba(217,119,6,.35);
+  box-shadow: 0 10rpx 36rpx rgba(217,119,6,.12);
 }
-.brand-avatar-icon { width: 60rpx; height: 60rpx; }
-.dot-pos { position: absolute; right: 4rpx; bottom: 4rpx; width: 18rpx; height: 18rpx; }
 
-.prof-mid { flex: 1; display: flex; flex-direction: column; gap: 8rpx; }
-.nick-row { display: flex; align-items: center; gap: 14rpx; }
-.nick-text { font-size: 36rpx; font-weight: 700; color: var(--on-surface); }
-.lv-chip { padding: 2rpx 14rpx; font-size: 20rpx; }
-.sign-text { font-size: 22rpx; }
-.edit-btn { padding: 12rpx; }
-
-/* 3列数据看板 */
-.stats-grid { display: flex; gap: 16rpx; margin-top: 24rpx; }
-.stat-card {
-  flex: 1; padding: 24rpx 16rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6rpx;
-  border-radius: var(--r-lg); position: relative; overflow: hidden;
-}
-.glow-top-gold { border-top: 4rpx solid var(--primary-container); }
-.glow-top-teal { border-top: 4rpx solid var(--secondary); }
-.stat-num { line-height: 48rpx; }
-.stat-lbl { font-size: 22rpx; }
-
-.sect-gap { margin: 44rpx 0 20rpx; }
-
-/* ---------- 关注主队：微标芯片展示区 ---------- */
-.followed-box { width: 100%; margin-bottom: 24rpx; }
-.followed-list { display: flex; flex-wrap: wrap; gap: 14rpx; }
-
-.f-card {
-  display: inline-flex; align-items: center; gap: 12rpx;
-  padding: 10rpx 20rpx 10rpx 12rpx; border-radius: var(--r-full);
-  border: 1rpx solid rgba(255,178,36,.35); background: rgba(255,178,36,.06);
-  transition: all .15s ease;
-}
-.f-card:active { transform: scale(0.97); background: rgba(255,178,36,.12); }
-.f-ava { font-size: 18rpx; flex-shrink: 0; }
-.f-name { font-size: 26rpx; line-height: 32rpx; color: var(--on-surface); font-weight: 600; }
-.f-lg { font-size: 20rpx; line-height: 24rpx; }
-
-.expand-btn {
-  display: flex; align-items: center; justify-content: center;
-  padding: 14rpx 0 0; font-size: 22rpx; opacity: .8;
-  transition: opacity .15s ease;
-}
-.expand-btn:active { opacity: 1; color: var(--primary-container); }
-
-/* 未关注任何球队时的空态引导卡片 */
-.f-empty {
+/* 票券顶部 */
+.pass-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 28rpx 32rpx; border-radius: var(--r-xl);
-  border: 1rpx dashed var(--line-strong); background: var(--sc-low);
+  padding: 22rpx 28rpx 16rpx;
+  border-bottom: 1rpx solid rgba(255,255,255,.05);
+}
+.theme-light .pass-head { border-bottom-color: rgba(0,0,0,.04); }
+.ph-brand { display: flex; align-items: center; gap: 10rpx; }
+.ph-brand-ic { width: 26rpx; height: 26rpx; }
+.ph-brand-txt { font-size: 20rpx; letter-spacing: 2rpx; color: var(--outline); font-weight: 700; }
+.pass-lv-chip { padding: 4rpx 16rpx; font-size: 20rpx; display: flex; align-items: center; gap: 8rpx; }
+.pass-online-dot { width: 14rpx; height: 14rpx; border-radius: 50%; }
+
+/* 票券中部 */
+.pass-body {
+  display: flex; align-items: center; gap: 24rpx;
+  padding: 22rpx 28rpx 20rpx;
   transition: background .15s ease;
 }
-.f-empty:active { background: var(--sc-high); }
-.fe-left { display: flex; align-items: center; gap: 20rpx; flex: 1; }
-.fe-icon-wrap {
-  width: 72rpx; height: 72rpx; border-radius: var(--r-full);
-  background: rgba(255,178,36,.1); display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+.pass-body:active { background: rgba(255,255,255,.03); }
+.pass-avatar-wrap { position: relative; flex-shrink: 0; }
+.pass-avatar {
+  width: 124rpx; height: 124rpx;
+  background: var(--sc-high); border: 2rpx solid rgba(255,178,36,.5);
+  box-shadow: 0 0 28rpx rgba(255,178,36,.25);
+  display: flex; align-items: center; justify-content: center;
 }
-.fe-paw { width: 36rpx; height: 36rpx; }
-.fe-content { display: flex; flex-direction: column; gap: 4rpx; }
-.fe-title { font-size: 28rpx; color: var(--on-surface); }
-.fe-sub { font-size: 20rpx; line-height: 28rpx; }
-.fe-btn { font-size: 24rpx; padding: 12rpx 24rpx; flex-shrink: 0; margin-left: 16rpx; }
+.pass-avatar-ic { width: 64rpx; height: 64rpx; }
 
-/* ---------- 本周主队赛程：独立对决卡片列表 ---------- */
-.ts-count { font-size: 24rpx; }
-.team-sched-list { display: flex; flex-direction: column; gap: 16rpx; }
+.pass-info { flex: 1; display: flex; flex-direction: column; gap: 8rpx; min-width: 0; }
+.pass-nick-row { display: flex; align-items: center; justify-content: space-between; }
+.pass-nick { font-size: 36rpx; font-weight: 800; color: var(--on-surface); }
+.pass-edit-ic { width: 34rpx; height: 34rpx; opacity: .8; }
 
-.ts-card {
-  padding: 22rpx 28rpx; border-radius: var(--r-xl);
-  border: 1rpx solid var(--hairline); transition: all .15s ease;
+/* 主队微标印章 */
+.pass-stamps-row { display: flex; align-items: center; gap: 10rpx; flex-wrap: wrap; margin: 2rpx 0; }
+.p-stamp {
+  display: inline-flex; align-items: center; gap: 8rpx;
+  padding: 4rpx 14rpx 4rpx 6rpx; border-radius: var(--r-full);
+  border: 1rpx solid rgba(255,178,36,.3); background: rgba(255,178,36,.08);
 }
-.ts-card:active { transform: scale(0.98); background: var(--sc-high); border-color: rgba(255,178,36,.4); }
+.p-stamp:active { transform: scale(0.96); }
+.stamp-logo, .stamp-fb { width: 28rpx; height: 28rpx; font-size: 14rpx; border-radius: 50%; flex-shrink: 0; }
+.stamp-zh { font-size: 22rpx; color: var(--on-surface); font-weight: 600; }
+.stamp-more { font-size: 20rpx; }
+
+.pass-stamps-empty {
+  font-size: 22rpx; color: var(--primary-container); font-weight: 600;
+  padding: 4rpx 0;
+}
+
+.pass-mid-row { display: flex; align-items: center; }
+.pass-mid-txt { font-size: 20rpx; color: var(--on-surface-variant); }
+
+/* 票券虚线撕口分割线 */
+.pass-tear-line {
+  position: relative; display: flex; align-items: center; height: 28rpx;
+}
+.pass-notch {
+  position: absolute; width: 24rpx; height: 24rpx; border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 0 6rpx rgba(0,0,0,.6);
+}
+.notch-left { left: -12rpx; }
+.notch-right { right: -12rpx; }
+.pass-dash { flex: 1; margin: 0 24rpx; border-top: 2rpx dashed rgba(255,178,36,.3); }
+.theme-light .pass-dash { border-top-color: rgba(217,119,6,.3); }
+
+/* 票券底部核心战绩通栏 */
+.pass-stats-strip {
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 16rpx 20rpx 22rpx;
+  background: rgba(0,0,0,.18);
+}
+.theme-light .pass-stats-strip { background: rgba(217,119,6,.06); }
+.p-stat-col {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rpx;
+  transition: transform .15s ease;
+}
+.p-stat-col:active { transform: scale(0.96); }
+.p-stat-val { font-weight: 800; line-height: 44rpx; }
+.p-stat-lbl { font-size: 20rpx; }
+.p-stat-divider { width: 1rpx; height: 42rpx; background: rgba(255,255,255,.08); }
+.theme-light .p-stat-divider { background: rgba(0,0,0,.06); }
+
+/* 区域通用标题 */
+.sect-gap { margin: 40rpx 0 18rpx; }
+.sect-head-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8rpx; }
+.sect-right-acts { display: flex; align-items: center; gap: 14rpx; }
+.all-sched-link { font-size: 22rpx; font-weight: 700; }
+.cal-export-chip { font-size: 20rpx; padding: 6rpx 18rpx; display: flex; align-items: center; gap: 6rpx; border-radius: var(--r-full); }
+.cal-export-chip .v-icon { width: 22rpx; height: 22rpx; }
+
+/* ==================== 2. 观赛偏好 (单排横向滑动查看) ==================== */
+.pref-panel {
+  position: relative; z-index: 1;
+  margin-top: 24rpx; padding: 28rpx 28rpx 28rpx;
+  border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline);
+  display: flex; flex-direction: column; gap: 16rpx;
+}
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ph-left { display: flex; align-items: center; gap: 10rpx; }
+.ph-icon { width: 32rpx; height: 32rpx; }
+.ph-title { font-size: 28rpx; color: var(--on-surface); font-weight: 700; }
+.ph-btn { font-size: 22rpx; font-weight: 600; }
+
+.pref-sub-sect { display: flex; flex-direction: column; gap: 8rpx; width: 100%; }
+.pss-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rpx; }
+.pss-lbl { font-size: 22rpx; letter-spacing: 1rpx; font-weight: 700; color: var(--on-surface-variant); }
+.pss-tip { font-size: 20rpx; color: var(--on-surface-variant); opacity: 0.6; }
+
+/* 微信原生 scroll-view 容器与内部 track 轨道，彻底解决原生滚动裁剪与对齐错位 */
+.pref-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.pref-scroll.league-scroll { height: 72rpx; }
+.pref-scroll.team-scroll { height: 80rpx; }
+
+.pref-track {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  padding: 0 4rpx;
+  box-sizing: border-box;
+}
+
+/* 关注联赛胶囊 */
+.l-cap {
+  flex-shrink: 0; height: 56rpx; box-sizing: border-box;
+  display: inline-flex; align-items: center; gap: 12rpx;
+  padding: 0 22rpx 0 14rpx; border-radius: 28rpx;
+  border: 1rpx solid var(--hairline);
+  margin-right: 16rpx;
+  transition: all .15s ease;
+}
+.l-cap:active { transform: scale(0.97); border-color: rgba(255,178,36,.4); }
+.l-cap-bar { width: 6rpx; height: 24rpx; border-radius: 3rpx; flex-shrink: 0; }
+.l-cap-zh { font-size: 24rpx; color: var(--on-surface); font-weight: 700; line-height: 1; }
+.l-cap-en { font-size: 20rpx; color: var(--on-surface-variant); opacity: 0.65; line-height: 1; margin-left: 2rpx; }
+
+.panel-divider { height: 1rpx; background: var(--outline-muted); margin: 4rpx 0; opacity: 0.5; }
+
+/* 信仰主队胶囊 */
+.t-badge {
+  flex-shrink: 0; height: 64rpx; box-sizing: border-box;
+  display: inline-flex; align-items: center; gap: 12rpx;
+  padding: 0 22rpx 0 10rpx; border-radius: 32rpx;
+  border: 1rpx solid var(--hairline);
+  margin-right: 16rpx;
+  transition: all .15s ease;
+}
+.t-badge:active { transform: scale(0.97); border-color: rgba(255,178,36,.4); }
+.tb-ava { width: 44rpx; height: 44rpx; border-radius: 50%; flex-shrink: 0; }
+.circle-sm.tb-ava { font-size: 18rpx; line-height: 44rpx; text-align: center; }
+.tb-name { font-size: 24rpx; color: var(--on-surface); font-weight: 700; line-height: 1; }
+.tb-lg { font-size: 20rpx; color: var(--on-surface-variant); opacity: 0.65; line-height: 1; margin-left: 4rpx; }
+
+/* ＋ 管理 / ＋ 增选 胶囊 */
+.pref-add-btn {
+  flex-shrink: 0; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 24rpx; border-radius: var(--r-full);
+  border: 1rpx dashed rgba(255,178,36,.45);
+  font-size: 22rpx; color: var(--primary-container); font-weight: 600;
+  background: rgba(255,178,36,.06);
+}
+.pref-add-btn.league-btn { height: 56rpx; border-radius: 28rpx; }
+.pref-add-btn.team-btn { height: 64rpx; border-radius: 32rpx; }
+.pref-add-btn:active { background: rgba(255,178,36,.14); transform: scale(0.97); }
+
+.pref-empty {
+  padding: 20rpx 24rpx; border-radius: var(--r-md);
+  border: 1rpx dashed var(--hairline); font-size: 22rpx; text-align: center;
+}
+.pref-empty:active { background: var(--sc-high); }
+
+/* ==================== 3. 主队赛程 (单个精炼概览模块) ==================== */
+.sched-summary-card {
+  position: relative; z-index: 1;
+  border-radius: var(--r-xl, 28rpx);
+  border: 1rpx solid rgba(255,178,36,.3);
+  overflow: hidden;
+  transition: all .15s ease;
+}
+.sched-summary-card:active { border-color: rgba(255,178,36,.5); }
+
+.ssc-main {
+  padding: 24rpx 28rpx 18rpx;
+  transition: background 0.15s ease;
+}
+.ssc-main:active { background: var(--sc-high); }
 
 .ts-head {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 18rpx;
+  margin-bottom: 16rpx; gap: 12rpx; white-space: nowrap;
 }
-.ts-meta { display: flex; align-items: center; gap: 12rpx; }
-.ts-date { font-size: 22rpx; }
-.ts-lg-chip { font-size: 20rpx; padding: 2rpx 10rpx; }
-.ts-cost-chip { font-size: 20rpx; padding: 2rpx 12rpx; gap: 6rpx; }
-.ts-cost-chip .v-icon { width: 20rpx; height: 20rpx; }
+.ts-meta { display: flex; align-items: center; gap: 10rpx; flex-shrink: 0; white-space: nowrap; }
+.ts-date { font-size: 22rpx; white-space: nowrap; }
+.ts-lg-chip { font-size: 20rpx; padding: 2rpx 12rpx; border-radius: var(--r-full); flex-shrink: 0; white-space: nowrap; }
+.ts-cd-chip { font-size: 20rpx; padding: 4rpx 14rpx; display: flex; align-items: center; gap: 8rpx; border-radius: var(--r-full); flex-shrink: 0; white-space: nowrap; }
 
 .ts-vs {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 8rpx 0;
+  padding: 8rpx 0 12rpx;
 }
 .ts-side {
   display: flex; flex-direction: column; align-items: center; gap: 10rpx;
   width: 180rpx; flex-shrink: 0;
 }
 .ts-name {
-  font-size: 26rpx; color: var(--on-surface); text-align: center;
+  font-size: 26rpx; font-weight: 700; color: var(--on-surface); text-align: center;
   max-width: 180rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .ts-mid {
   flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4rpx;
 }
-.ts-time { font-size: 36rpx; font-weight: 700; }
+.ts-time { font-size: 36rpx; font-weight: 800; }
 .ts-vs-label { font-size: 20rpx; letter-spacing: 2rpx; }
 .ts-score { font-size: 38rpx; font-weight: 800; }
 .ts-status { font-size: 20rpx; }
 
+/* 模块底部跳转条 */
+.ssc-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20rpx 28rpx;
+  background: rgba(255, 178, 36, 0.08);
+  border-top: 1rpx solid rgba(255, 178, 36, 0.18);
+  transition: background 0.15s ease;
+}
+.ssc-footer:active { background: rgba(255, 178, 36, 0.18); }
+.ssc-foot-left { display: flex; align-items: center; gap: 10rpx; }
+.ssc-cal-ic { width: 24rpx; height: 24rpx; }
+.ssc-total-text { font-size: 22rpx; }
+.ssc-foot-right { display: flex; align-items: center; gap: 6rpx; font-size: 22rpx; font-weight: 700; }
+.ssc-arrow { font-size: 26rpx; line-height: 1; }
+
 .ts-empty {
+  position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: center; gap: 14rpx;
-  padding: 36rpx 28rpx; border-radius: var(--r-xl);
+  padding: 36rpx 28rpx; border-radius: var(--r-xl, 28rpx);
   border: 1rpx dashed var(--hairline);
 }
 .ts-empty-ic { width: 32rpx; height: 32rpx; }
 .ts-empty text { font-size: 24rpx; }
 
-.expand-match-btn {
-  display: flex; align-items: center; justify-content: center;
-  padding: 20rpx 0; border-radius: var(--r-xl);
-  border: 1rpx dashed var(--hairline); transition: all .15s ease;
-  margin-top: 4rpx;
+/* ==================== 5. 玩法与设置 2x2 现代功能罗盘 ==================== */
+.grid-menu {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18rpx;
 }
-.expand-match-btn:active { background: var(--sc-high); transform: scale(0.98); }
-.expand-match-btn text { font-size: 24rpx; font-weight: 600; }
-
-/* 快捷菜单 */
-.menu { padding: 4rpx 0; overflow: hidden; border-radius: var(--r-xl); }
-.menu-row {
+.gm-card {
+  padding: 26rpx 24rpx 24rpx; border-radius: var(--r-xl);
+  border: 1rpx solid var(--hairline);
+  display: flex; flex-direction: column; gap: 10rpx;
+  transition: all .2s ease; position: relative; overflow: hidden;
+}
+.gm-card:active {
+  transform: scale(0.97); background: var(--sc-high);
+  border-color: rgba(255,178,36,.35);
+}
+.gm-top {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 26rpx 28rpx; border-bottom: 1rpx solid var(--outline-muted);
-  transition: all .15s ease;
+  margin-bottom: 8rpx;
 }
-.menu-row:last-child { border-bottom: none; }
-.menu-row:active { background: var(--sc-high); transform: scale(0.99); }
-.mr-left { display: flex; align-items: center; gap: 20rpx; }
-.menu-icon-box {
-  width: 64rpx; height: 64rpx; border-radius: var(--r-md);
+.gm-icon-box {
+  width: 68rpx; height: 68rpx; border-radius: var(--r-lg);
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
 }
-.menu-icon-box .v-icon { width: 34rpx; height: 34rpx; }
+.gm-icon-box .v-icon { width: 34rpx; height: 34rpx; }
+.gm-arrow { width: 28rpx; height: 28rpx; opacity: .6; }
+.gm-title { font-size: 28rpx; font-weight: 700; color: var(--on-surface); }
+.gm-sub { font-size: 20rpx; color: var(--on-surface-variant); line-height: 28rpx; }
+
 .ic-amber { background: rgba(255,178,36,.12); border: 1rpx solid rgba(255,178,36,.3); }
-.ic-teal { background: rgba(20,224,191,.12); border: 1rpx solid rgba(20,224,191,.3); }
-.ic-gold { background: rgba(255,215,158,.12); border: 1rpx solid rgba(255,215,158,.3); }
+.ic-teal  { background: rgba(20,224,191,.12); border: 1rpx solid rgba(20,224,191,.3); }
+.ic-gold  { background: rgba(255,215,158,.12); border: 1rpx solid rgba(255,215,158,.3); }
 .ic-muted { background: var(--sc-high); border: 1rpx solid var(--outline-muted); }
-
-.mr-title { font-size: 28rpx; color: var(--on-surface); font-weight: 600; }
-
-/* 我的关注 · 本周赛程行 */
-.mw-mid { display: flex; flex-direction: column; gap: 4rpx; }
-.mw-sub { font-size: 22rpx; }
-
-.id-row { display: flex; align-items: center; margin-top: 2rpx; }
 
 .ver { display: block; text-align: center; margin: 48rpx auto 16rpx; font-size: 20rpx; color: var(--on-surface-variant); opacity: .6; }
 

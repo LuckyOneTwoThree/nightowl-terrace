@@ -1,11 +1,21 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 顶栏标题 -->
+  <!-- 动态环境微光 -->
+  <view class="glow glow-amber"></view>
+  <view class="glow glow-teal"></view>
+
+  <!-- ==================== 1. 顶栏天梯标题 ==================== -->
   <view class="hero-head">
-    <text class="hero-title hl">夜猫风云榜</text>
-    <view class="v-icon v-trophy text-amber hero-moon"></view>
+    <view class="hh-title-wrap">
+      <text class="hero-title hl">夜猫风云榜</text>
+      <text class="mono muted hh-sub">NIGHTOWL ARENA LADDER</text>
+    </view>
+    <view class="chip chip-amber hl board-top-tag">
+      <view class="v-icon v-trophy text-amber"></view>
+      <text>{{curTab === 'season' ? '赛季争霸' : curTab === 'guess' ? '本周预言' : '深夜修仙'}}</text>
+    </view>
   </view>
 
-  <!-- 榜单 Tab 切换（赛季总榜 / 盲评周榜 / 夜猫修仙榜） -->
+  <!-- ==================== 2. 榜单 Tab 切换器 ==================== -->
   <view class="board-tabs">
     <view class="btab {{curTab === item.id ? 'active floodlight-glow' : ''}}"
           wx:for="{{tabList}}" wx:key="id"
@@ -15,12 +25,12 @@
   </view>
   
   <!-- 修仙打卡专属统计（仅在夜猫榜展示） -->
-  <view class="stat glass-panel" wx:if="{{curTab === 'owl'}}">
-    <text class="mono muted stat-sub">本周我的修仙统计</text>
+  <view class="stat card-highest floodlight-glow" wx:if="{{curTab === 'owl'}}">
+    <text class="mono muted stat-sub">本周我的修仙战报</text>
     <view class="stat-row">
       <view class="stat-item">
         <text class="stat-num hl text-amber score-sm">{{stats.n}}</text>
-        <text class="mono muted stat-u">场已看</text>
+        <text class="mono muted stat-u">场已熬</text>
       </view>
       <view class="stat-div"></view>
       <view class="stat-item">
@@ -36,17 +46,33 @@
   </view>
 
   <!-- 赛季积分专属统计（仅在赛季总榜展示） -->
-  <view class="stat glass-panel" wx:if="{{curTab === 'season'}}">
-    <text class="mono muted stat-sub">2026/27 赛季预测战绩</text>
+  <view class="stat card-highest floodlight-glow" wx:if="{{curTab === 'season'}}">
+    <text class="mono muted stat-sub">2026/27 赛季预言战绩总览</text>
     <view class="stat-row">
       <view class="stat-item">
         <text class="stat-num hl text-amber score-sm">{{myVal || '0 分'}}</text>
-        <text class="mono muted stat-u">累计总积分</text>
+        <text class="mono muted stat-u">我的赛季总分</text>
       </view>
       <view class="stat-div"></view>
       <view class="stat-item">
         <text class="stat-num hl text-teal score-sm">冷门×2</text>
-        <text class="mono muted stat-u">积分倍增规则</text>
+        <text class="mono muted stat-u">翻倍加成规则</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 盲评周榜专属统计 -->
+  <view class="stat card-highest floodlight-glow" wx:if="{{curTab === 'guess'}}">
+    <text class="mono muted stat-sub">本周盲评速战总览</text>
+    <view class="stat-row">
+      <view class="stat-item">
+        <text class="stat-num hl text-amber score-sm">{{myVal || '0 分'}}</text>
+        <text class="mono muted stat-u">本周已获积分</text>
+      </view>
+      <view class="stat-div"></view>
+      <view class="stat-item">
+        <text class="stat-num hl text-teal score-sm">赛后开箱</text>
+        <text class="mono muted stat-u">命中自动结算</text>
       </view>
     </view>
   </view>
@@ -108,22 +134,27 @@
     </view>
   </block>
 
-  <!-- 榜单行展示 -->
+  <!-- ==================== 3. 榜单行展示 ==================== -->
   <view class="sect sect-gap">
-    <text class="sect-title">{{curTab === 'season' ? '赛季总积分 Top 50' : curTab === 'guess' ? '本周盲评榜' : '本周修仙肝度榜'}}</text>
+    <view class="sect-head-row">
+      <text class="sect-title">{{curTab === 'season' ? '赛季总积分榜 Top 50' : curTab === 'guess' ? '本周盲评风云榜' : '本周修仙肝度榜'}}</text>
+      <text class="chip chip-teal demo-chip" wx:if="{{ranks.length}}">● 实时天梯</text>
+    </view>
     <view class="sect-line"></view>
-    <text class="chip chip-ghost demo-chip" wx:if="{{!rankDemo && ranks.length}}">实时榜单</text>
   </view>
 
   <view class="rank-card card-low">
-    <!-- 空榜引导：真实数据为空时不再回退演示数据 -->
+    <!-- 空榜引导 -->
     <view class="rank-empty" wx:if="{{!ranks.length}}">
-      <view class="v-icon v-moon rank-empty-icon"></view>
-      <text class="rank-empty-title hl">榜上暂无夜猫</text>
-      <text class="rank-empty-sub mono muted">{{curTab === 'season' ? '封存预言 · 结算后赛季积分自动上榜' : curTab === 'guess' ? '本周盲评第一人，虚位以待' : '看球打卡 · 做本周熬得最狠的夜猫'}}</text>
+      <view class="v-icon v-moon rank-empty-icon text-amber"></view>
+      <text class="rank-empty-title hl">天梯虚位以待</text>
+      <text class="rank-empty-sub mono muted">{{curTab === 'season' ? '封存预言 · 结算后赛季积分自动登榜' : curTab === 'guess' ? '本周盲评第一人，虚位以待' : '看球打卡 · 做本周熬得最狠的夜猫'}}</text>
     </view>
-    <view class="rank-row" wx:for="{{ranks}}" wx:key="rank">
-      <text class="rk-no rank-{{item.rank}} hl">{{item.rank}}</text>
+
+    <view class="rank-row {{item.rank <= 3 ? 'podium-' + item.rank : ''}}" wx:for="{{ranks}}" wx:key="rank">
+      <view class="rk-no-wrap">
+        <text class="rk-no rank-{{item.rank}} hl">{{item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : item.rank === 3 ? '🥉' : item.rank}}</text>
+      </view>
       <view class="circle-sm rk-avatar">{{item.name[0]}}</view>
       <view class="rk-info">
         <text class="rk-name hl">{{item.name}}</text>
@@ -146,7 +177,7 @@
     </view>
   </view>
 
-  <!-- 微信好友 / 群友互动面板 -->
+  <!-- ==================== 4. 微信群友 PK 互动面板 ==================== -->
   <view class="group-pk-card card-highest floodlight-glow">
     <view class="gpk-head">
       <view class="v-icon v-gift text-amber"></view>
@@ -156,20 +187,20 @@
     <view class="gpk-acts">
       <button class="btn-amber gpk-btn" open-type="share">
         <view class="v-icon v-paw"></view>
-        <text>分享榜单至微信群</text>
+        <text>分享榜单至群</text>
       </button>
       <button class="btn-teal-ghost gpk-btn" bindtap="share">
         <view class="v-icon v-bolt text-teal"></view>
-        <text>复制战报文本</text>
+        <text>复制专属战报</text>
       </button>
     </view>
   </view>
 
-  <!-- 周报卡片（_2） -->
+  <!-- 周报卡片 -->
   <view class="report card-low" wx:if="{{worst}}">
     <view class="rp-head">
       <view class="v-icon v-fire text-error rp-ic"></view>
-      <text class="hl">本周修仙记录</text>
+      <text class="hl">本周极限修仙记录</text>
     </view>
     <view class="rp-worst">
       <text class="rp-worst-text mono">最狠一夜: {{worst.names}} · 耗费 {{worst.cost}}h</text>

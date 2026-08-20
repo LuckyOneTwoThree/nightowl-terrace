@@ -11,13 +11,17 @@ Page({
     var raw = data.getMatch(q.id);
     if (!raw) {
       wx.showToast({ title: '场次不存在', icon: 'none' });
-      setTimeout(function () { wx.navigateBack(); }, 800);
+      setTimeout(function () {
+        // 冷启动单页栈时 navigateBack 静默失败 → 白屏卡死，改跳今日页（三轮 P1-8）
+        if (getCurrentPages().length <= 1) wx.switchTab({ url: '/pages/today/today' });
+        else wx.navigateBack();
+      }, 800);
       return;
     }
     var m = decorate.dec(raw, null, { followed: getApp().getFollowed() });
     // 标语沿用口径（适配今天/今天凌晨/明天/明晨）
-    var slogan = (m.dayLabel === '今天' || m.dayLabel === '今天凌晨') ? '今晚哪场值得熬'
-      : (m.dayLabel === '明天' || m.dayLabel === '明晨') ? '明晚哪场值得熬'
+    var slogan = (m.dayLabel === '今天' || m.dayLabel === '今天凌晨' || m.dayLabel === '明晨') ? '今晚哪场值得熬'
+      : (m.dayLabel === '明天') ? '明晚哪场值得熬'
       : '焦点大战值得熬';
 
     this.setData({
@@ -33,21 +37,22 @@ Page({
     var that = this;
     wx.createSelectorQuery().select('#poster').fields({ node: true, size: true })
       .exec(function (res) {
-        if (!res || !res[0]) return;
+        // 失败也必须回调（三轮 P1-7）：否则 save() 的 loading 永挂、按钮永久失效
+        if (!res || !res[0]) { cb(new Error('canvas node not found')); return; }
         var canvas = res[0].node;
         // 固定导出分辨率（与设备无关）；CSS 负责视觉缩放预览
         canvas.width = 1080;
         canvas.height = 1920;
         that._canvas = canvas;
         that._ctx = canvas.getContext('2d');
-        cb();
+        cb(null);
       });
   },
 
   draw: function (cb) {
     var that = this;
     var m = this.data.m;
-    if (!m || !this._ctx) return;
+    if (!m || !this._ctx) { if (cb) cb(); return; } // 异常也回调，防调用方挂起
     // 队徽：云存储 fileID 经 downloadFile 转临时路径（或过渡期本地包路径），失败回退三字码
     this._loadLogos(function (homeImg, awayImg) {
       that._paint(homeImg, awayImg);
@@ -82,7 +87,16 @@ Page({
         });
       });
     };
-    Promise.all([load(m.home), load(m.away)]).then(function (r) { cb(r[0], r[1]); });
+    // 10s 超时兜底（三轮 P1-7）：个别机型 createImage onload/onerror 均不触发，
+    // 无兜底会让 Promise.all 永久挂起、loading 不消失
+    var settled = false;
+    var finish = function (h, a) {
+      if (settled) return;
+      settled = true;
+      cb(h || null, a || null);
+    };
+    Promise.all([load(m.home), load(m.away)]).then(function (r) { finish(r[0], r[1]); });
+    setTimeout(function () { finish(null, null); }, 10000);
   },
 
   _paint: function (homeImg, awayImg) {
@@ -193,8 +207,8 @@ Page({
       that.draw(function () { that.export(done); });
     };
     if (!this._canvas) {
-      this.initCanvas(function () {
-        if (!that._canvas) { done(); wx.showToast({ title: '画布初始化失败', icon: 'none' }); return; }
+      this.initCanvas(function (err) {
+        if (err || !that._canvas) { done(); wx.showToast({ title: '画布初始化失败', icon: 'none' }); return; }
         run();
       });
       return;

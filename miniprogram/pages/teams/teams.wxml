@@ -3,57 +3,104 @@
   <view class="glow glow-amber"></view>
   <view class="glow glow-teal"></view>
 
-  <!-- 头部说明卡 -->
-  <view class="head-card card-low">
-    <view class="hc-top">
-      <view class="v-icon v-paw text-amber hc-icon"></view>
-      <text class="hl hc-title">关注支持的主队</text>
+  <!-- 顶部两段式切换 Tab -->
+  <view class="seg-tabs glass-panel">
+    <view class="seg-tab {{activeTab === 'leagues' ? 'active floodlight-glow' : ''}}"
+          data-tab="leagues" bindtap="switchTab">
+      <view class="v-icon v-soccer text-amber tab-ic" wx:if="{{activeTab === 'leagues'}}"></view>
+      <text class="hl">关注联赛 ({{pickedLeaguesCount}})</text>
     </view>
-    <text class="mono muted hc-sub">已关注主队将在「今日推荐」与「赛程日历」中优先提级置顶，并支持一键导出赛程提醒。</text>
+    <view class="seg-tab {{activeTab === 'teams' ? 'active floodlight-glow' : ''}}"
+          data-tab="teams" bindtap="switchTab">
+      <view class="v-icon v-paw text-amber tab-ic" wx:if="{{activeTab === 'teams'}}"></view>
+      <text class="hl">信仰主队 ({{pickedCount}})</text>
+    </view>
   </view>
 
-  <!-- 联赛折叠下拉手风琴列表 -->
-  <view class="accordion-list">
-    <view class="accordion-group card-low" wx:for="{{groups}}" wx:key="id">
-      <!-- 折叠标题栏 -->
-      <view class="accordion-header" data-id="{{item.id}}" bindtap="toggleAccordion">
-        <view class="ah-left">
-          <view class="lg-chip" style="background: {{item.accent}};">{{item.id}}</view>
-          <text class="hl ah-title">{{item.zh}}</text>
-          <view class="chip chip-amber ah-badge" wx:if="{{item.selectedCount > 0}}">已选 {{item.selectedCount}} 队</view>
+  <!-- ==================== TAB 1: 关注联赛 ==================== -->
+  <block wx:if="{{activeTab === 'leagues'}}">
+    <view class="head-card card-low">
+      <view class="hc-top">
+        <view class="v-icon v-soccer text-amber hc-icon"></view>
+        <text class="hl hc-title">定制常看联赛圈层</text>
+      </view>
+      <text class="mono muted hc-sub">圈定关注的联赛，推荐算法将优先推荐该联赛焦点战，并在赛程中前置聚焦。</text>
+    </view>
+
+    <view class="leagues-manage-list">
+      <view class="m-lg-card card-low {{item.on ? 'on floodlight-glow' : ''}}"
+            wx:for="{{leagueList}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleLeagueItem">
+        <view class="m-lg-bar" style="background: {{item.solid}};"></view>
+        <view class="m-lg-info">
+          <view class="m-lg-name-row">
+            <text class="hl m-lg-title">{{item.zh}}</text>
+            <text class="mono muted m-lg-en">{{item.en}}</text>
+          </view>
+          <text class="mono m-lg-tagline">{{item.tagline}}</text>
+          <text class="mono muted m-lg-desc">{{item.desc}}</text>
         </view>
-        <view class="ah-right">
-          <text class="mono muted ah-total">共 {{item.teams.length}} 队</text>
-          <text class="accordion-arrow mono {{item.expanded ? 'expanded' : ''}}">▾</text>
+        <view class="m-lg-check {{item.on ? 'checked' : ''}}">
+          <view class="v-icon v-check text-amber m-lg-check-ic" wx:if="{{item.on}}"></view>
         </view>
       </view>
+    </view>
+  </block>
 
-      <!-- 下拉展开后的球队气泡网格 -->
-      <view class="accordion-body" wx:if="{{item.expanded}}">
-        <view class="teams-grid">
-          <view
-            class="t-chip card-high {{t.on ? 'on floodlight-glow' : ''}}"
-            wx:for="{{item.teams}}" wx:for-item="t" wx:key="id"
-            data-id="{{t.id}}" bindtap="toggleTeam">
-            <image class="crest-sm t-ava" src="{{t.logo}}" mode="aspectFill" wx:if="{{t.logo}}" /><view class="circle-sm t-ava crest-fb" wx:else style="background: {{t.bg}}; border-color: {{t.bd}};">{{t.id}}</view>
-            <text class="t-name hl">{{t.zh}}</text>
-            <view class="v-icon v-check text-amber t-check" wx:if="{{t.on}}"></view>
+  <!-- ==================== TAB 2: 信仰主队 ==================== -->
+  <block wx:if="{{activeTab === 'teams'}}">
+    <view class="head-card card-low">
+      <view class="hc-top">
+        <view class="v-icon v-paw text-amber hc-icon"></view>
+        <text class="hl hc-title">关注支持的信仰主队</text>
+      </view>
+      <text class="mono muted hc-sub">主队比赛将在「今日推荐」与「本周计划」中获得最高优先级（+25分），并支持一键导出赛程提醒。</text>
+    </view>
+
+    <!-- 联赛折叠下拉手风琴列表 -->
+    <view class="accordion-list">
+      <view class="accordion-group card-low" wx:for="{{groups}}" wx:key="id">
+        <!-- 折叠标题栏 -->
+        <view class="accordion-header" data-id="{{item.id}}" bindtap="toggleAccordion">
+          <view class="ah-left">
+            <view class="lg-chip" style="background: {{item.solid}};">{{item.id}}</view>
+            <text class="hl ah-title">{{item.zh}}</text>
+            <view class="chip chip-ghost mono ah-lg-tag" wx:if="{{item.isLeagueFollowed}}">关注联赛</view>
+            <view class="chip chip-amber ah-badge" wx:if="{{item.selectedCount > 0}}">已选 {{item.selectedCount}} 队</view>
+          </view>
+          <view class="ah-right">
+            <text class="mono muted ah-total">共 {{item.teams.length}} 队</text>
+            <text class="accordion-arrow mono {{item.expanded ? 'expanded' : ''}}">▾</text>
+          </view>
+        </view>
+
+        <!-- 下拉展开后的球队气泡网格 -->
+        <view class="accordion-body" wx:if="{{item.expanded}}">
+          <view class="teams-grid">
+            <view
+              class="t-chip card-high {{t.on ? 'on floodlight-glow' : ''}}"
+              wx:for="{{item.teams}}" wx:for-item="t" wx:key="id"
+              data-id="{{t.id}}" bindtap="toggleTeam">
+              <image class="crest-sm t-ava" src="{{t.logo}}" mode="aspectFill" wx:if="{{t.logo}}" />
+              <view class="circle-sm t-ava crest-fb" wx:else style="background: {{t.bg}}; border-color: {{t.bd}};">{{t.id}}</view>
+              <text class="t-name hl">{{t.zh}}</text>
+              <view class="v-icon v-check text-amber t-check" wx:if="{{t.on}}"></view>
+            </view>
           </view>
         </view>
       </view>
     </view>
-  </view>
+  </block>
 
   <!-- 底部固定保存栏 -->
   <view class="bottom-bar glass-panel">
     <view class="bar-content">
       <view class="count-col">
-        <text class="mono muted count-lbl">已选主队</text>
-        <text class="count-val mono hl"><text class="text-amber text-glow n">{{pickedCount}}</text> 支</text>
+        <text class="mono muted count-lbl">当前关注</text>
+        <text class="count-val mono hl"><text class="text-amber text-glow n">{{pickedLeaguesCount}}</text> 联赛 · <text class="text-amber text-glow n">{{pickedCount}}</text> 队</text>
       </view>
       <button class="btn-amber floodlight-glow save-btn" bindtap="save">
         <view class="v-icon v-check save-ic"></view>
-        <text class="save-txt">保存关注设置</text>
+        <text class="save-txt">保存关注偏好</text>
       </button>
     </view>
   </view>

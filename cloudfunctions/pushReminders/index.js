@@ -67,6 +67,18 @@ exports.main = async () => {
 
     let sent = 0, skipped = 0;
 
+    // 授权核销（三轮 P1-10）：微信一次性订阅=一次授权只能推一条，发送成功后
+    // 标记 consumed 防止后续触发反复对已耗尽授权发送（静默失败+浪费调用）；
+    // 43101（用户已拒收）也核销——该授权已不可用
+    async function consume(sub, reason) {
+      if (!sub || !sub._id) return;
+      try {
+        await db.collection('subscriptions').doc(sub._id).update({
+          data: { status: 'consumed', usedTs: Date.now(), usedReason: reason || 'sent' }
+        });
+      } catch (e) { /* 核销失败不影响主流程 */ }
+    }
+
     // ── 开球提醒（模板未配置则跳过该段，不影响截止提醒） ──
     if (TMPL && upcoming.length) {
       for (const u of users) {
@@ -91,8 +103,10 @@ exports.main = async () => {
             }
           });
           sent++;
+          await consume(sub, 'kickoff_sent'); // 一次性授权已消耗，核销
         } catch (e) {
           skipped++; // 用户拒绝过/授权过期/频控，静默跳过
+          if (String((e && e.errCode) || '') === '43101') await consume(sub, 'rejected_43101');
         }
       }
     }
@@ -125,8 +139,10 @@ exports.main = async () => {
             }
           });
           dlSent++;
+          await consume(sub, 'deadline_sent'); // 一次性授权已消耗，核销
         } catch (e) {
           dlSkipped++;
+          if (String((e && e.errCode) || '') === '43101') await consume(sub, 'rejected_43101');
         }
       }
     }

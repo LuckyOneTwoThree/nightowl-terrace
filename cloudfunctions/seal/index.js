@@ -34,6 +34,16 @@ async function findExisting(db, coll, uid, m) {
   return res.data.length ? res.data[0] : null;
 }
 
+// 场次校验（三轮 P0-2）：返回 { ok, kickTs }
+// - 场次必须存在于 fixtures（挡住对不存在场次打卡/立据）
+// - checkin/boast 窗口：开球前 6h ~ 开球后 36h（赛前立 flag + 看完补打两语义，
+//   封死遍历历史/未来场次刷夜猫榜；tbd 占位时间双方相同，无法区分，窗口判据已尽力）
+async function fixtureCheck(db, mId) {
+  const fix = await db.collection('fixtures').where({ id: mId }).limit(1).get();
+  if (!fix.data.length) return { ok: false, reason: 'match not found' };
+  return { ok: true, kickTs: bjTs(fix.data[0].t) };
+}
+
 exports.main = async (event) => {
   const db = cloud.database();
   const wxCtx = cloud.getWXContext();
@@ -76,6 +86,12 @@ exports.main = async (event) => {
     if (action === 'checkin') {
       const c = { m: event.m, gid: event.gid || 'default', nick: event.nick || '夜猫' };
       if (!c.m || event.cost == null) return { ok: false, error: 'bad payload' };
+      // 场次存在 + 打卡窗口校验（三轮 P0-2：封死对未来/不存在场次批量打卡刷榜）
+      const fk = await fixtureCheck(db, c.m);
+      if (!fk.ok) return { ok: false, error: fk.reason };
+      if (!isNaN(fk.kickTs) && (now < fk.kickTs - 6 * 3600000 || now > fk.kickTs + 36 * 3600000)) {
+        return { ok: false, error: 'checkin window: 开球前6小时至后36小时' };
+      }
       const dup = await findExisting(db, 'checkins', uid, c.m);
       if (dup) return { ok: true, dup: true, id: dup._id };
       const doc = Object.assign({}, c, {
@@ -91,6 +107,13 @@ exports.main = async (event) => {
     if (action === 'boast') {
       const b = { m: event.m, gid: event.gid || 'default', nick: event.nick || '夜猫' };
       if (!b.m || !event.text) return { ok: false, error: 'bad payload' };
+      // 场次存在校验（三轮 P0-2：狂言须挂在真实场次上；窗口从宽——开球后仍可立据
+      // 「翻车存档」是产品语义，但未来场次与不存在场次一律拒绝）
+      const fb = await fixtureCheck(db, b.m);
+      if (!fb.ok) return { ok: false, error: fb.reason };
+      if (!isNaN(fb.kickTs) && now < fb.kickTs - 6 * 3600000) {
+        return { ok: false, error: 'boast window: 距开球超过6小时，暂不可立据' };
+      }
       const doc = Object.assign({}, b, {
         text: String(event.text).slice(0, 40), md: event.md || '', names: event.names || '',
         result: null, uid, sealTs: now, ts: now
@@ -112,6 +135,7 @@ exports.main = async (event) => {
       const patch = { uid, nick: event.nick || '夜猫', updatedTs: now };
       if (event.budget != null) patch.budget = Number(event.budget);
       if (Array.isArray(event.followed)) patch.followed = event.followed;
+      if (Array.isArray(event.followedLeagues)) patch.followedLeagues = event.followedLeagues;
       const exist = await db.collection('users').where({ uid }).limit(1).get();
       if (exist.data.length) {
         await db.collection('users').doc(exist.data[0]._id).update({ data: patch });

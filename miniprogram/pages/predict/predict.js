@@ -26,17 +26,35 @@ Page({
     sealedAll: false
   },
 
-  onShow: function () {
-    getApp().applyTheme(this);
-    this.refreshCards();
-  },
-
   onLoad: function (options) {
     getApp().applyTheme(this);
     if (options && options.id) {
       this._targetId = options.id;
       this.setData({ targetId: options.id });
     }
+    this.buildLeaguePills();
+  },
+
+  buildLeaguePills: function () {
+    var followed = getApp().getFollowedLeagues() || data.TOP_LEAGUE_IDS;
+    var pills = [{ id: 'ALL', zh: '本周精选' }];
+    data.LEAGUES.forEach(function (l) {
+      if (followed.indexOf(l.id) >= 0) {
+        pills.push({ id: l.id, zh: l.zh });
+      }
+    });
+    data.LEAGUES.forEach(function (l) {
+      if (followed.indexOf(l.id) < 0) {
+        pills.push({ id: l.id, zh: l.zh });
+      }
+    });
+    this.setData({ leaguePills: pills });
+  },
+
+  onShow: function () {
+    getApp().applyTheme(this);
+    this.buildLeaguePills();
+    this.refreshCards();
   },
 
   /**
@@ -199,6 +217,8 @@ Page({
     preds[target.id] = p;
     wx.setStorageSync('predictions', preds);
 
+    // 三态消费（三轮 P1-3）：rejected 时回滚本地封存并如实提示
+    var that = this;
     cloud.addPrediction({
       m: target.id,
       pick: p.pick,
@@ -207,6 +227,14 @@ Page({
       salt: p.salt,
       hash: p.hash,
       ts: p.ts
+    }).then(function (sealed) {
+      if (sealed === 'rejected') {
+        var preds2 = wx.getStorageSync('predictions') || {};
+        delete preds2[target.id];
+        wx.setStorageSync('predictions', preds2);
+        wx.showToast({ title: '已开球，封存被拒', icon: 'none' });
+        that.refreshCards();
+      }
     });
 
     if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
@@ -244,7 +272,22 @@ Page({
     this.setData({ cards: cards });
     this.recount();
 
-    sealedCloud.forEach(function (s) { cloud.addPrediction(s); });
+    // 三态消费（三轮 P1-3）：rejected=云端明确拒绝（开球后/哈希不符），回滚本地封存
+    var that = this;
+    var rejected = [];
+    sealedCloud.forEach(function (s) {
+      cloud.addPrediction(s).then(function (sealed) {
+        if (sealed !== 'rejected') return;
+        rejected.push(s.m);
+        var p2 = wx.getStorageSync('predictions') || {};
+        delete p2[s.m];
+        wx.setStorageSync('predictions', p2);
+        if (rejected.length === sealedCloud.length || rejected.length % 3 === 1) {
+          // 拒绝即时刷新一次视图；全部返回后再刷一次保证最终一致
+          that.refreshCards();
+        }
+      });
+    });
     if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
     wx.showToast({ title: '已封存 · 开球后开箱', icon: 'success' });
   },

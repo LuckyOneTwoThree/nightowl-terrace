@@ -1,21 +1,25 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 筛选药丸（_14） -->
+  <!-- 动态环境微光 -->
+  <view class="glow glow-violet"></view>
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 顶部筛选药丸 ==================== -->
   <scroll-view class="pills" scroll-x enable-flex show-scrollbar="{{false}}">
     <view class="bpill {{item.on ? 'on floodlight-glow' : ''}}" wx:for="{{pills}}" wx:key="key"
           data-i="{{index}}" bindtap="toggle">{{item.label}}</view>
   </scroll-view>
 
-  <!-- 来源提示：今晚无赛事时提示抽选自近期焦点 -->
+  <!-- 来源提示 -->
   <view class="pool-tag mono muted" wx:if="{{front && !front.isTonight}}">
     <view class="v-icon v-cal text-amber"></view>
-    <text>今晚暂无赛事 · 已为你抽选近期焦点战</text>
+    <text>今晚暂无焦点赛事 · 已为你智能抽选近期大战</text>
   </view>
 
-  <!-- 3D 翻转神秘卡片（_14） -->
+  <!-- ==================== 2. 3D 翻转神秘卡片 ==================== -->
   <view class="mystery-wrap {{shuffling ? 'shuffling' : ''}}" bindtap="flip" wx:if="{{front}}">
     <view class="flip-inner {{revealed ? 'flipped' : ''}}">
       <!-- 正面：盲盒特征 -->
-      <view class="face face-front glass-panel">
+      <view class="face face-front card-highest floodlight-glow">
         <view class="face-glow"></view>
         <view class="cost-chip card-high">
           <view class="v-icon v-moon text-amber"></view>
@@ -33,7 +37,7 @@
         </view>
         
         <view class="stars-row">
-          <text class="s-on text-amber">{{front.stars}}</text>
+          <text class="s-on text-amber mono">{{front.stars}}</text>
           <text class="mono muted s-txt">起评</text>
         </view>
         
@@ -44,10 +48,10 @@
       </view>
 
       <!-- 反面：揭晓对阵 -->
-      <view class="face face-back">
+      <view class="face face-back card-highest floodlight-glow">
         <view class="bb-strip">
           <text class="mono lg-chip" style="background: {{back.lgSolid || 'var(--sc-high)'}};">{{back.lgZh || back.lgEn}}</text>
-          <text class="s-on text-amber">{{back.stars}}</text>
+          <text class="s-on text-amber mono">{{back.stars}}</text>
         </view>
         <view class="bb-date">
           <text class="hl match-time">周{{back.wd}} {{back.hm}}</text>
@@ -79,7 +83,7 @@
     <view class="bpill on floodlight-glow" bindtap="resetPills">清除筛选再抽</view>
   </view>
 
-  <!-- 操作区 -->
+  <!-- ==================== 3. 底部操作区 ==================== -->
   <view class="acts" wx:if="{{front}}">
     <!-- 正面未揭晓：主行为【翻开盲盒】，辅助操作【换个特征】 -->
     <block wx:if="{{!revealed}}">
@@ -90,7 +94,7 @@
       <view class="duo-btn-single">
         <button class="sub-btn ghost-btn feat-btn" bindtap="redraw">
           <view class="v-icon v-gift"></view>
-          <text>换个特征抽</text>
+          <text>换个特征抽 ↻</text>
         </button>
       </view>
     </block>
@@ -104,7 +108,7 @@
       <view class="duo-btn">
         <button class="sub-btn ghost-btn" bindtap="redraw">
           <view class="v-icon v-gift"></view>
-          <text>换一场再抽</text>
+          <text>换一场再抽 ↻</text>
         </button>
         <button class="sub-btn teal-btn" bindtap="callFriends">
           <view class="v-icon v-paw text-teal"></view>

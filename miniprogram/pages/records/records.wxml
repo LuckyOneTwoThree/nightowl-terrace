@@ -1,5 +1,40 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 日期分组（_6） -->
+  <!-- 动态环境微光 -->
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 顶部战绩战报罗盘 ==================== -->
+  <view class="compass-hero card-highest floodlight-glow">
+    <view class="ch-head">
+      <view class="v-icon v-trophy text-amber ch-ic"></view>
+      <text class="hl ch-title">我的深夜战绩档案</text>
+    </view>
+    <view class="ch-grid">
+      <view class="ch-item">
+        <text class="mono muted ch-lbl">累计预言</text>
+        <text class="hl ch-val">{{stats.total}}<text class="ch-unit">场</text></text>
+      </view>
+      <view class="ch-div"></view>
+      <view class="ch-item">
+        <text class="mono muted ch-lbl">历史命中率</text>
+        <text class="hl ch-val text-teal">{{stats.rate}}</text>
+      </view>
+      <view class="ch-div"></view>
+      <view class="ch-item">
+        <text class="mono muted ch-lbl">斩获积分</text>
+        <text class="hl ch-val text-amber">+{{stats.pts}}<text class="ch-unit">分</text></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ==================== 2. 分类筛选 Tab ==================== -->
+  <scroll-view class="filter-pills" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="fpill {{filterTab === item.id ? 'active floodlight-glow' : ''}}"
+          wx:for="{{filterTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="onFilterTab">
+      {{item.zh}}
+    </view>
+  </scroll-view>
+
+  <!-- ==================== 3. 日期分组列表 ==================== -->
   <block wx:for="{{groups}}" wx:key="label" wx:for-item="g">
     <view class="g-title mono muted">
       <view class="g-dot-gold"></view>
@@ -42,7 +77,7 @@
               <view class="v-icon v-gavel text-amber r-icon"></view>
               <text class="r-name hl">{{r.names}}</text>
               <view class="chip {{r.finished ? (r.hit ? 'chip-teal' : 'chip-error') : 'chip-amber'}} r-chip">
-                {{r.finished ? (r.hit ? '应验' : '打脸') : '待审判'}}
+                {{r.finished ? (r.hit ? '✓ 应验' : '✕ 打脸') : '待审判'}}
               </view>
             </view>
             <view class="b-quote-box card-high {{r.finished && !r.hit ? 'strike' : ''}}">
@@ -66,7 +101,7 @@
     </view>
   </block>
 
-  <!-- 空态（_6） -->
+  <!-- 空态 -->
   <view class="empty card-low" wx:if="{{empty}}">
     <view class="v-icon v-paw text-amber e-mascot"></view>
     <text class="hl hl-md empty-title">还没有深夜战绩，今晚启程？</text>

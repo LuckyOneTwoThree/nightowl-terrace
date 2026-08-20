@@ -1,7 +1,11 @@
-.page { padding: 24rpx 32rpx 64rpx; display: flex; flex-direction: column; gap: 20rpx; min-height: 100vh; }
+.page { padding: 24rpx 32rpx 80rpx; display: flex; flex-direction: column; gap: 20rpx; min-height: 100vh; box-sizing: border-box; }
 
-.g-label { letter-spacing: 2rpx; font-size: 22rpx; margin: 16rpx 0 4rpx 8rpx; }
-.group { border-radius: var(--r-xl); overflow: hidden; }
+/* 动态微光 */
+.glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
+.glow-amber { top: -200rpx; right: -200rpx; background: rgba(255,178,36,.08); }
+
+.g-label { position: relative; z-index: 1; letter-spacing: 2rpx; font-size: 22rpx; margin: 16rpx 0 4rpx 8rpx; }
+.group { position: relative; z-index: 1; border-radius: var(--r-xl, 28rpx); overflow: hidden; border: 1rpx solid var(--hairline); }
 
 .setting-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -9,7 +13,7 @@
 }
 .setting-row:last-child { border-bottom: none; }
 .g-left { display: flex; flex-direction: column; gap: 4rpx; }
-.g-main { font-size: 28rpx; color: var(--on-surface); }
+.g-main { font-size: 28rpx; font-weight: 700; color: var(--on-surface); }
 .g-sub { font-size: 22rpx; }
 .g-arrow { display: flex; align-items: center; gap: 12rpx; }
 .g-val { font-size: 26rpx; }
@@ -18,15 +22,15 @@
 
 /* 步进器 */
 .stepper {
-  display: flex; align-items: center; border-radius: var(--r-md); overflow: hidden;
+  display: flex; align-items: center; border-radius: var(--r-full); overflow: hidden;
   border: 1rpx solid var(--line-strong); background: var(--sc-high);
 }
 .st-btn {
   width: 76rpx; height: 68rpx; display: flex; align-items: center; justify-content: center;
-  font-size: 34rpx; color: var(--on-surface);
+  font-size: 34rpx; color: var(--on-surface); font-weight: 700;
 }
 .st-btn:active { background: rgba(255,178,36,.2); }
-.st-val { width: 104rpx; text-align: center; font-size: 28rpx; font-weight: 700; }
+.st-val { width: 104rpx; text-align: center; font-size: 28rpx; font-weight: 800; }
 
 /* 主题卡片组（3列网格自适应） */
 .theme-section { padding: 28rpx 32rpx; }
@@ -35,7 +39,7 @@
 .theme-card {
   flex: 1; min-width: 0; position: relative;
   background: var(--sc-high); border: 2rpx solid var(--hairline);
-  border-radius: var(--r-lg); padding: 24rpx 12rpx;
+  border-radius: var(--r-xl, 28rpx); padding: 24rpx 12rpx;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   transition: all .2s ease;
 }
@@ -53,7 +57,7 @@
 .tc-light { background: rgba(255, 255, 255, 0.9); }
 .tc-auto { background: linear-gradient(135deg, rgba(0,0,0,0.5) 50%, rgba(255,255,255,0.9) 50%); }
 .tc-icon { font-size: 32rpx; }
-.tc-name { font-size: 26rpx; color: var(--on-surface); margin-bottom: 4rpx; white-space: nowrap; }
+.tc-name { font-size: 26rpx; font-weight: 700; color: var(--on-surface); margin-bottom: 4rpx; white-space: nowrap; }
 .tc-desc { font-size: 20rpx; white-space: nowrap; }
 .tc-badge {
   position: absolute; right: 8rpx; top: 8rpx;
@@ -62,23 +66,22 @@
 }
 .tc-badge .v-icon { width: 18rpx; height: 18rpx; }
 
-
-
 .logout {
+  position: relative; z-index: 1;
   margin-top: 40rpx; padding: 24rpx 0; text-align: center;
-  border: 1rpx solid rgba(255,180,171,.3); border-radius: var(--r-xl);
+  border: 1rpx solid rgba(255,180,171,.3); border-radius: var(--r-xl, 28rpx);
   color: var(--error); font-size: 26rpx;
   background: rgba(255,180,171,.06);
 }
 
-/* _13 居中绰号弹窗 */
+/* 居中绰号弹窗 */
 .modal-mask {
   position: fixed; left: 0; right: 0; top: 0; bottom: 0; z-index: 1000;
   background: rgba(0,0,0,.75); backdrop-filter: blur(12px);
   display: flex; align-items: center; justify-content: center; padding: 48rpx;
 }
 .nick-modal {
-  width: 100%; max-width: 620rpx; padding: 44rpx 36rpx; border-radius: var(--r-xl);
+  width: 100%; max-width: 620rpx; padding: 44rpx 36rpx; border-radius: var(--r-xl, 28rpx);
   display: flex; flex-direction: column; align-items: center; gap: 16rpx;
   background: var(--sc-high); border: 1rpx solid rgba(255,178,36,.4);
   box-shadow: 0 24rpx 64rpx rgba(0,0,0,.8);
@@ -96,9 +99,9 @@
 .nick-modal-in { flex: 1; height: 72rpx; font-size: 30rpx; color: var(--on-surface); padding-right: 12rpx; }
 .rand-chip { font-size: 22rpx; padding: 10rpx 20rpx; border-radius: var(--r-full); }
 .modal-btns { width: 100%; display: flex; gap: 20rpx; }
-.m-btn { flex: 1; font-size: 28rpx; padding: 22rpx 0; border-radius: var(--r-lg); }
+.m-btn { flex: 1; font-size: 28rpx; padding: 22rpx 0; border-radius: var(--r-full); }
 
-/* 云端状态行：呼吸灯点 + 三态配色（ok 青碧 / down 错误红 / unknown 中性） */
+/* 云端状态行 */
 .cloud-state { gap: 10rpx; }
 .cs-dot { width: 14rpx; height: 14rpx; border-radius: var(--r-full); }
 .cs-ok { background: var(--secondary); box-shadow: 0 0 10rpx rgba(20,224,191,.6); }

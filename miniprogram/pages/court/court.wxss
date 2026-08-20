@@ -1,37 +1,62 @@
-.page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; }
+.page { padding: 24rpx 32rpx 80rpx; min-height: 100vh; box-sizing: border-box; }
+
+/* 动态微光 */
+.glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
+.glow-red { top: -200rpx; right: -200rpx; background: rgba(255,180,171,.08); }
+.glow-amber { bottom: -200rpx; left: -200rpx; background: rgba(255,178,36,.06); }
 
 /* 规则条 */
 .rule {
+  position: relative; z-index: 1;
   display: flex; gap: 20rpx; align-items: center; padding: 28rpx 32rpx;
-  border-radius: var(--r-xl);
+  border-radius: var(--r-xl, 28rpx); border: 1rpx solid rgba(255,178,36,.3);
+  background: linear-gradient(145deg, rgba(255,178,36,.09) 0%, rgba(30,41,59,.75) 50%, rgba(15,23,42,.95) 100%);
+  margin-bottom: 28rpx;
 }
 .r-ic {
-  width: 80rpx; height: 80rpx; border-radius: var(--r-md);
-  background: var(--sc-high); border: 1rpx solid rgba(255,178,36,.3);
-  display: flex; align-items: center; justify-content: center;
+  width: 84rpx; height: 84rpx; border-radius: var(--r-lg);
+  background: rgba(255,178,36,.12); border: 1rpx solid rgba(255,178,36,.3);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .r-gavel { width: 44rpx; height: 44rpx; }
-.r-body { display: flex; flex-direction: column; gap: 4rpx; }
-.r-sub { font-size: 22rpx; }
+.r-body { display: flex; flex-direction: column; gap: 4rpx; flex: 1; }
+.r-tag-row { display: flex; align-items: center; gap: 10rpx; }
+.r-tag { font-size: 20rpx; letter-spacing: 2rpx; font-weight: 700; }
+.r-badge { font-size: 18rpx; padding: 0 10rpx; }
+.r-title { font-size: 32rpx; font-weight: 800; line-height: 44rpx; }
+.r-sub { font-size: 20rpx; }
 
-.sect-gap { margin: 40rpx 0 20rpx; }
-.sect-mt { margin: 48rpx 0 20rpx; }
-.focal-badge { font-size: 20rpx; padding: 2rpx 16rpx; }
+.sect-gap { margin: 36rpx 0 20rpx; }
+.sect-mt { margin: 44rpx 0 20rpx; }
+.sect-head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.focal-badge { font-size: 20rpx; padding: 4rpx 16rpx; }
 
 /* 开庭中卡片 */
-.open-card { padding: 32rpx; border-radius: var(--r-xl); }
-.open-meta { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20rpx; border-bottom: 1rpx solid var(--outline-muted); }
-.open-vs { display: flex; align-items: center; justify-content: space-between; padding: 28rpx 0; }
+.open-card {
+  position: relative; z-index: 1;
+  padding: 32rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid rgba(255,178,36,.3);
+}
+.open-meta { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20rpx; border-bottom: 1rpx solid var(--hairline); }
+.om-left { display: flex; align-items: center; gap: 12rpx; }
+.om-lg { font-size: 24rpx; color: var(--on-surface); }
+.om-time { font-size: 22rpx; }
+
+.open-vs { display: flex; align-items: center; justify-content: space-between; padding: 28rpx 0 20rpx; }
 .ov-side { width: 160rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
-.ov-name { font-size: 28rpx; color: var(--on-surface); text-align: center; max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ov-name { font-size: 28rpx; font-weight: 700; color: var(--on-surface); text-align: center; max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ov-mid { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; }
 .ov-x-pill {
   background: rgba(255,178,36,.12); border: 1rpx solid rgba(255,178,36,.35);
-  border-radius: var(--r-full); padding: 8rpx 24rpx; font-size: 26rpx; font-weight: 700;
+  border-radius: var(--r-full); padding: 8rpx 28rpx; font-size: 28rpx; font-weight: 800;
 }
 
+/* 快捷态度气泡 */
+.quick-tags { display: flex; gap: 12rpx; flex-wrap: wrap; margin-bottom: 16rpx; }
+.q-tag { font-size: 20rpx; padding: 6rpx 16rpx; border-radius: var(--r-full); }
+.q-tag:active { background: rgba(255,178,36,.15); color: var(--primary-container); border-color: rgba(255,178,36,.4); }
+
 .input-wrap {
-  position: relative; margin-top: 14rpx; border-radius: var(--r-lg);
+  position: relative; border-radius: var(--r-lg);
   display: flex; align-items: center; padding: 0 24rpx; height: 96rpx;
   background: var(--sc-high); border: 1rpx solid var(--line-strong);
   box-sizing: border-box;
@@ -41,37 +66,56 @@
   box-sizing: border-box; padding: 0; min-height: 96rpx; line-height: 96rpx;
 }
 .input-ph { color: var(--on-surface-variant); opacity: .6; font-size: 26rpx; }
-.input-count { font-size: 24rpx; flex-shrink: 0; margin-left: 16rpx; }
+.input-count { font-size: 22rpx; flex-shrink: 0; margin-left: 16rpx; }
 
 .btn-submit {
   width: 100% !important; margin-top: 24rpx; height: 96rpx;
   display: flex !important; align-items: center; justify-content: center; gap: 14rpx;
-  white-space: nowrap; font-size: 32rpx; border-radius: var(--r-xl);
+  white-space: nowrap; font-size: 32rpx; font-weight: 700; border-radius: var(--r-full);
   box-sizing: border-box; padding: 0 !important;
 }
 .btn-submit .v-icon { width: 36rpx; height: 36rpx; flex-shrink: 0; }
 
-.empty { padding: 48rpx 32rpx; text-align: center; font-size: 24rpx; border-radius: var(--r-lg); }
+.empty { padding: 48rpx 32rpx; text-align: center; font-size: 24rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline); }
 
 /* 统计双卡 */
-.duo { display: flex; gap: 20rpx; margin-top: 24rpx; }
+.duo { position: relative; z-index: 1; display: flex; gap: 20rpx; margin-top: 28rpx; }
 .duo-card {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx;
-  padding: 28rpx 20rpx; border-radius: var(--r-xl); position: relative; overflow: hidden;
+  padding: 28rpx 20rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline); position: relative; overflow: hidden;
 }
-.teal-glow { border-top: 4rpx solid var(--secondary); }
-.red-glow { border-top: 4rpx solid var(--error); }
+.teal-glow { border-top: 6rpx solid var(--secondary); }
+.red-glow { border-top: 6rpx solid var(--error); }
 .d-head { display: flex; align-items: center; gap: 10rpx; }
 .d-icon { width: 28rpx; height: 28rpx; }
-.d-title { font-size: 28rpx; color: var(--on-surface); }
-.d-score { line-height: 56rpx; margin: 4rpx 0; }
-.d-lbl { font-size: 22rpx; }
-.d-chip { margin-top: 8rpx; font-size: 20rpx; padding: 4rpx 16rpx; }
+.d-title { font-size: 28rpx; font-weight: 700; color: var(--on-surface); }
+.d-score { line-height: 56rpx; margin: 4rpx 0; font-size: 40rpx; }
+.d-lbl { font-size: 20rpx; }
+.d-chip { margin-top: 8rpx; font-size: 20rpx; padding: 4rpx 16rpx; border-radius: var(--r-full); }
+
+/* 分类筛选药丸 */
+.filter-pills {
+  position: relative; z-index: 1;
+  display: flex; gap: 14rpx; white-space: nowrap; margin: 20rpx 0 24rpx;
+}
+.fpill {
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+  padding: 10rpx 28rpx; border-radius: var(--r-full);
+  background: var(--sc-low); border: 1rpx solid var(--outline-muted);
+  color: var(--on-surface-variant); font-size: 24rpx; transition: all .2s ease;
+  white-space: nowrap; margin-right: 14rpx;
+}
+.fpill.active {
+  background: var(--primary-container); border-color: transparent;
+  color: var(--on-primary); font-weight: 700;
+}
 
 /* 存档 */
-.arch { margin-bottom: 20rpx; padding: 28rpx; border-radius: var(--r-xl); }
+.arch-list { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 20rpx; }
+.arch { padding: 28rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline); }
 .a-head { display: flex; align-items: center; justify-content: space-between; gap: 12rpx; font-size: 22rpx; }
-.a-teams { font-size: 24rpx; color: var(--on-surface); font-weight: 600; }
+.a-md { font-size: 20rpx; }
+.a-teams { font-size: 26rpx; color: var(--on-surface); font-weight: 700; }
 .a-quote {
   margin-top: 18rpx; padding: 16rpx 20rpx; border-left: 6rpx solid var(--secondary);
   background: var(--sc-high); border-radius: 0 var(--r-md) var(--r-md) 0;
@@ -81,12 +125,12 @@
 .a-quote.strike .a-text { text-decoration: line-through; color: var(--on-surface-variant); }
 
 .a-foot {
-  margin-top: 18rpx; padding: 14rpx 20rpx; border-radius: var(--r-md);
+  margin-top: 18rpx; padding: 14rpx 20rpx; border-radius: var(--r-lg);
   display: flex; align-items: center; justify-content: space-between; font-size: 22rpx;
 }
 .a-foot-done {
   margin-top: 14rpx; display: flex; align-items: center; justify-content: space-between;
   font-size: 22rpx;
 }
-.a-link { font-size: 22rpx; opacity: .9; }
+.a-link { font-size: 22rpx; font-weight: 600; }
 

@@ -6,15 +6,88 @@
 .glow-teal { bottom: -200rpx; left: -200rpx; background: rgba(20,224,191,.08); }
 
 /* 头部 */
-.head { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8rpx; padding-top: 16rpx; }
-.skip-btn { align-self: flex-end; font-size: 22rpx; padding: 6rpx 20rpx; }
-.onb-title { font-size: 44rpx; font-weight: 700; color: var(--on-surface); margin-top: 8rpx; }
-.head-sub { font-size: 24rpx; line-height: 36rpx; }
+.head { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10rpx; padding-top: 12rpx; }
+.head-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4rpx; }
+.step-pill { font-size: 20rpx; padding: 4rpx 16rpx; }
+.back-btn { font-size: 22rpx; padding: 6rpx 20rpx; }
+.skip-btn { font-size: 22rpx; padding: 6rpx 20rpx; }
+.onb-title { font-size: 42rpx; font-weight: 700; color: var(--on-surface); margin-top: 4rpx; }
+.head-sub { font-size: 24rpx; line-height: 36rpx; color: var(--on-surface-variant); }
 
-/* 分组 */
+/* 快捷操作栏 */
+.quick-row {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 32rpx; margin-bottom: 20rpx;
+}
+.quick-hint { font-size: 22rpx; color: var(--outline); }
+.quick-toggle-btn { font-size: 20rpx; padding: 6rpx 18rpx; }
+
+/* 联赛卡片网格（Step 1） */
+.league-grid {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 20rpx;
+}
+.lg-card {
+  position: relative;
+  display: flex; align-items: center; gap: 24rpx;
+  padding: 24rpx 28rpx;
+  border-radius: var(--r-xl);
+  border: 1rpx solid var(--outline-muted);
+  transition: all .25s ease;
+  overflow: hidden;
+}
+.lg-card.on {
+  border-color: rgba(255,178,36,.55);
+  background: rgba(255,178,36,.08);
+}
+.theme-light .lg-card.on {
+  border-color: rgba(217,119,6,.6);
+  background: rgba(254,243,199,.6);
+}
+.lg-color-bar {
+  width: 8rpx; height: 72rpx; border-radius: 4rpx; flex-shrink: 0;
+}
+.lg-info {
+  flex: 1; display: flex; flex-direction: column; gap: 6rpx; min-width: 0;
+}
+.lg-name-row {
+  display: flex; align-items: baseline; gap: 14rpx;
+}
+.lg-title {
+  font-size: 32rpx; font-weight: 700; color: var(--on-surface);
+}
+.lg-en {
+  font-size: 22rpx; color: var(--outline);
+}
+.lg-tagline {
+  font-size: 24rpx; color: var(--primary-container); font-weight: 600;
+}
+.lg-desc {
+  font-size: 20rpx; color: var(--on-surface-variant);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lg-check-box {
+  width: 44rpx; height: 44rpx; border-radius: 50%;
+  border: 2rpx solid var(--outline-muted);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s ease;
+}
+.lg-check-box.checked {
+  border-color: var(--primary); background: rgba(255,178,36,.2);
+}
+.lg-check-ic {
+  width: 28rpx; height: 28rpx;
+}
+
+/* 球队分组（Step 2） */
 .groups { position: relative; z-index: 1; margin-top: 36rpx; display: flex; flex-direction: column; gap: 36rpx; }
-.g-head { display: flex; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
-.g-ic { width: 36rpx; height: 36rpx; }
+.g-head { display: flex; align-items: center; gap: 14rpx; margin-bottom: 16rpx; }
+.lg-tag-solid {
+  font-size: 20rpx; font-weight: 700; color: #fff;
+  padding: 4rpx 14rpx; border-radius: 8rpx;
+}
+.g-count { font-size: 22rpx; margin-left: 4rpx; }
 .chips { display: flex; flex-wrap: wrap; gap: 16rpx; }
 
 .tchip {
@@ -26,6 +99,9 @@
 .tchip.on {
   border-color: rgba(255,178,36,.6); background: rgba(255,178,36,.12);
   color: var(--primary-container);
+}
+.theme-light .tchip.on {
+  border-color: rgba(217,119,6,.6); background: rgba(254,243,199,.7);
 }
 .t-ava { font-size: 18rpx; flex-shrink: 0; }
 .t-name { font-size: 26rpx; }
@@ -46,5 +122,5 @@
 .bar-num .n { font-size: 38rpx; font-weight: 700; margin-right: 4rpx; }
 .done-btn {
   display: flex; align-items: center; gap: 8rpx;
-  padding: 24rpx 56rpx; border-radius: var(--r-xl); font-size: 30rpx;
+  padding: 22rpx 48rpx; border-radius: var(--r-xl); font-size: 28rpx;
 }

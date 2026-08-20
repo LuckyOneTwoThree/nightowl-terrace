@@ -32,16 +32,24 @@ function available() {
   return !down && !!wx.cloud;
 }
 
-/** 调云函数；失败标记降级并 reject（调用方自行回退） */
+/**
+ * 调云函数；失败标记降级并 reject（调用方自行回退）
+ * 闩锁口径（三轮 P2）：仅「基础设施失败」（callFunction 本身 reject）才闩锁 10 分钟；
+ * 业务拒绝（云函数正常返回 ok:false）说明云链路是通的，闩锁会误伤读链路
+ */
 function call(name, payload) {
   if (!available()) return Promise.reject(new Error('cloud unavailable'));
+  var bizErr = null;
   return wx.cloud.callFunction({ name: name, data: payload }).then(function (r) {
     markUp();
     var res = r && r.result;
-    if (res && res.ok === false) throw new Error(res.error || 'cloud fn error');
+    if (res && res.ok === false) {
+      bizErr = new Error(res.error || 'cloud fn error');
+      throw bizErr;
+    }
     return res;
   }).catch(function (err) {
-    markDown();
+    if (err !== bizErr) markDown(); // 业务拒绝不闩锁，仅网络/部署层失败才降级
     throw err;
   });
 }
@@ -153,7 +161,8 @@ function syncUser(settings) {
     action: 'user',
     nick: settings.nick || myNick(),
     budget: settings.budget,
-    followed: settings.followed || undefined
+    followed: settings.followed || undefined,
+    followedLeagues: settings.followedLeagues || undefined
   });
 }
 

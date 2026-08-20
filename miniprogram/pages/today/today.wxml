@@ -23,7 +23,10 @@
           <view class="stars-row">
             <text class="star-on mono">{{hero.stars}}</text>
           </view>
-          <view class="focal mono" wx:if="{{hero.focal}}">
+          <view class="followed-badge mono" wx:if="{{hero.isFollowed}}">
+            <text class="text-amber">🌟 主队出战</text>
+          </view>
+          <view class="focal mono" wx:elif="{{hero.focal}}">
             <view class="dot-teal animate-pulse"></view>
             <text>焦点战</text>
           </view>
@@ -36,7 +39,7 @@
 
       <view class="vs">
         <view class="side">
-          <image class="crest-xl" src="{{hero.home.logo}}" mode="aspectFill" wx:if="{{hero.home.logo}}" />
+          <image class="crest-xl" src="{{hero.home.logo}}" mode="aspectFit" wx:if="{{hero.home.logo}}" />
           <view class="circle-xl crest-fb" wx:else style="background: {{hero.home.bg}}; border-color: {{hero.home.bd}};">{{hero.home.id}}</view>
           <text class="side-name">{{hero.home.zh}}</text>
         </view>
@@ -49,7 +52,7 @@
           <text class="cd-sub mono muted" wx:if="{{!hero.tbd && hero.local}}">当地 {{hero.local}}</text>
         </view>
         <view class="side">
-          <image class="crest-xl" src="{{hero.away.logo}}" mode="aspectFill" wx:if="{{hero.away.logo}}" />
+          <image class="crest-xl" src="{{hero.away.logo}}" mode="aspectFit" wx:if="{{hero.away.logo}}" />
           <view class="circle-xl crest-fb" wx:else style="background: {{hero.away.bg}}; border-color: {{hero.away.bd}};">{{hero.away.id}}</view>
           <text class="side-name">{{hero.away.zh}}</text>
         </view>
@@ -106,12 +109,12 @@
           </view>
           <view class="t-row">
             <text class="t-name">{{item.home.zh}}</text>
-            <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+            <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFit" wx:if="{{item.home.logo}}" />
             <view class="circle-sm crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
           </view>
           <view class="t-row">
             <text class="t-name dim2">{{item.away.zh}}</text>
-            <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+            <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFit" wx:if="{{item.away.logo}}" />
             <view class="circle-sm crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
           </view>
           <view class="extra-foot mono">
@@ -161,10 +164,10 @@
       <view class="rp-teams">
         <text class="rp-name">{{item.pair}}</text>
         <view class="rp-crests">
-          <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFill" wx:if="{{item.homeLogo}}" />
+          <image class="crest-sm" src="{{item.homeLogo}}" mode="aspectFit" wx:if="{{item.homeLogo}}" />
           <view class="circle-sm crest-fb" wx:else style="background: {{item.homeBg}}; border-color: {{item.homeBd}};">{{item.homeCode}}</view>
           <text class="mono muted vs-txt">vs</text>
-          <image class="crest-sm" src="{{item.awayLogo}}" mode="aspectFill" wx:if="{{item.awayLogo}}" />
+          <image class="crest-sm" src="{{item.awayLogo}}" mode="aspectFit" wx:if="{{item.awayLogo}}" />
           <view class="circle-sm crest-fb" wx:else style="background: {{item.awayBg}}; border-color: {{item.awayBd}};">{{item.awayCode}}</view>
         </view>
       </view>
@@ -186,10 +189,10 @@
       <view class="tmr-div"></view>
       <view class="tmr-teams">
         <text class="t-name">{{item.home.zh}}</text>
-        <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+        <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFit" wx:if="{{item.home.logo}}" />
         <view class="circle-sm crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
         <text class="mono muted vs-txt">vs</text>
-        <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+        <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFit" wx:if="{{item.away.logo}}" />
         <view class="circle-sm crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
         <text class="t-name">{{item.away.zh}}</text>
       </view>
@@ -210,10 +213,10 @@
       <view class="tmr-div"></view>
       <view class="tmr-teams">
         <text class="t-name">{{item.home.zh}}</text>
-        <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+        <image class="crest-sm" src="{{item.home.logo}}" mode="aspectFit" wx:if="{{item.home.logo}}" />
         <view class="circle-sm crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
         <text class="mono muted vs-txt">vs</text>
-        <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+        <image class="crest-sm" src="{{item.away.logo}}" mode="aspectFit" wx:if="{{item.away.logo}}" />
         <view class="circle-sm crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
         <text class="t-name">{{item.away.zh}}</text>
       </view>

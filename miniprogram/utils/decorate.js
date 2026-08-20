@@ -85,10 +85,12 @@ function dpart(t) {
 /**
  * @param m   赛程层记录
  * @param ev  engine.evaluate 输出（可空，内部自动补算）
- * @param opts {followed:[]}
+ * @param opts {followed:[], followedLeagues:[]}
  */
 function dec(m, ev, opts) {
-  ev = ev || engine.evaluate(m, data.getRecMap(), data.getRivalries(), data.getStorylines(), (opts && opts.followed) || []);
+  var followed = (opts && opts.followed) || (typeof getApp === 'function' && getApp() && getApp().getFollowed ? getApp().getFollowed() : []);
+  var followedLeagues = (opts && opts.followedLeagues) || (typeof getApp === 'function' && getApp() && getApp().getFollowedLeagues ? getApp().getFollowedLeagues() : ['PL', 'PD', 'SA', 'BL', 'FL']);
+  ev = ev || engine.evaluate(m, data.getRecMap(), data.getRivalries(), data.getStorylines(), followed, followedLeagues);
   var h = data.getTeam(m.h);
   var a = data.getTeam(m.a);
   var meta = data.LEAGUE_META[m.l] || {};
@@ -109,6 +111,8 @@ function dec(m, ev, opts) {
     tbd: !!m.tbd, st: m.st, finished: engine.isFinished(m),
     scH: sc ? sc[0] : '-', scA: sc ? sc[1] : '-', scText: m.sc || '',
     star: ev.star, stars: '★★★'.slice(0, ev.star),
+    isFollowed: !!ev.isFollowed,
+    isLeagueFollowed: !!ev.isLeagueFollowed,
     points: ev.rec ? (ev.rec.points || []) : [],
     trivia: ev.rec ? ev.rec.trivia : null,
     indexText: engine.owlIndex(ev, m).toFixed(1),

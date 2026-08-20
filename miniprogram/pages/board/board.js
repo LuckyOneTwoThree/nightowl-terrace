@@ -130,6 +130,10 @@ Page({
   fetchRanks: function () {
     var that = this;
     var tab = this.data.curTab;
+    // 竞态守卫（三轮 P2-15）：快速切 Tab 时慢响应会覆盖当前 tab 数据，
+    // 每次请求带序号，setData 前校验仍是最新请求才生效
+    var seq = (this._reqSeq = (this._reqSeq || 0) + 1);
+    var isStale = function () { return that._reqSeq !== seq; };
     var myNick = (wx.getStorageSync('settings') || {}).nick || wx.getStorageSync('nickname') || '夜猫子';
     var uStats = this.getUserStats();
     var s = this.data.stats || {};
@@ -142,6 +146,7 @@ Page({
 
       cloud.readBoard('season')
         .then(function (res) {
+          if (isStale()) return; // 过期响应丢弃（三轮 P2-15）
           var list = (res && res.list) || [];
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
@@ -158,6 +163,7 @@ Page({
           });
         })
         .catch(function () {
+          if (isStale()) return; // 过期响应丢弃
           // 云不可用/空榜：显示空态引导（上线期不再回退演示数据）
           that.setData({
             ranks: [],
@@ -177,6 +183,7 @@ Page({
       var week = engine.weekStartBJ(Date.now()).str;
       cloud.readBoard('guess', 'default', week)
         .then(function (res) {
+          if (isStale()) return; // 过期响应丢弃（三轮 P2-15）
           var list = (res && res.list) || [];
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
@@ -194,6 +201,7 @@ Page({
           });
         })
         .catch(function () {
+          if (isStale()) return; // 过期响应丢弃
           // 云不可用/空榜：显示空态引导
           that.setData({
             ranks: [],
@@ -210,6 +218,7 @@ Page({
 
       cloud.readBoard('owl')
         .then(function (res) {
+          if (isStale()) return; // 过期响应丢弃（三轮 P2-15）
           var list = (res && res.list) || [];
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
@@ -226,6 +235,7 @@ Page({
           });
         })
         .catch(function () {
+          if (isStale()) return; // 过期响应丢弃
           // 云不可用/空榜：显示空态引导
           that.setData({
             ranks: [],

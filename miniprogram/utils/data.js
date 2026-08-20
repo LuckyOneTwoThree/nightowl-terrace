@@ -22,6 +22,17 @@ var LEAGUES = [
   { id: 'SCG', zh: '超级杯' }
 ];
 
+var TOP_LEAGUE_IDS = ['PL', 'PD', 'SA', 'BL', 'FL'];
+
+var LEAGUE_INFO = {
+  PL:  { id: 'PL', zh: '英超', en: 'Premier League', solid: '#7C3AED', accent: '#38003C', tagline: '世界第一联赛 · 对抗激烈', desc: '争冠争四白热化，顶级名帅豪门齐聚' },
+  PD:  { id: 'PD', zh: '西甲', en: 'La Liga',         solid: '#EE8707', accent: '#EE8707', tagline: '豪门争雄 · 艺术足球', desc: '世纪德比巅峰碰撞，技术流华丽盛宴' },
+  SA:  { id: 'SA', zh: '意甲', en: 'Serie A',         solid: '#1E88C7', accent: '#155E9C', tagline: '战术博弈 · 群雄并起', desc: '链式防守与战术美学，格局扑朔迷离' },
+  BL:  { id: 'BL', zh: '德甲', en: 'Bundesliga',      solid: '#E5322D', accent: '#C8102E', tagline: '进球狂潮 · 激情狂热', desc: '大开大合进攻风暴，球场氛围极度震撼' },
+  FL:  { id: 'FL', zh: '法甲', en: 'Ligue 1',         solid: '#10B981', accent: '#0B7A55', tagline: '青春风暴 · 天赋对决', desc: '速度灵动与新星摇篮，豪强争霸' },
+  SCG: { id: 'SCG', zh: '超级杯', en: 'Super Cup',    solid: '#F5C518', accent: '#B8860B', tagline: '赛季揭幕 · 王者决战', desc: '各大联赛超级杯前哨战' }
+};
+
 // 联赛视觉元数据（对齐 Stitch _4/_5：实心章 / 左色条 / 筛选药丸暗底）
 var LEAGUE_META = {
   PL:  { solid: '#7C3AED', accent: '#38003C' },
@@ -130,6 +141,8 @@ function syncScores() {
 module.exports = {
   LEAGUES: LEAGUES,
   LEAGUE_META: LEAGUE_META,
+  LEAGUE_INFO: LEAGUE_INFO,
+  TOP_LEAGUE_IDS: TOP_LEAGUE_IDS,
   tint: tint,
   getMatch: getMatch,
   getTeams: function () { return teams; },

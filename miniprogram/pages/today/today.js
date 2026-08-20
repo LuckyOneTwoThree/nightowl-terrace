@@ -51,6 +51,7 @@ function decorate(entry) {
     tier: engine.tierOf(m).label,
     cost: engine.tierOf(m).cost,
     focal: entry.ev.star >= 3,
+    isFollowed: !!entry.ev.isFollowed,
     storyNames: entry.ev.stories.map(function (s) { return s.name; }),
     storyIds: entry.ev.storyIds
   };
@@ -75,27 +76,19 @@ Page({
     this._timer = null;
     getApp().applyTheme(this);
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
+    this._lastFollowedLeagues = JSON.stringify(getApp().getFollowedLeagues());
     this._lastTodayStr = engine.nightOf(new Date());
     this.refresh();
   },
 
   onShow: function () {
     getApp().applyTheme(this);
-    // 首次进入引导选主队（_15）
+    // 首次进入引导选联赛与主队
     if (!wx.getStorageSync('onboarded')) {
       wx.navigateTo({ url: '/pages/onboarding/onboarding' });
       return;
     }
-    // 仅在关注球队变化或跨天时才重新执行全量计算，切 Tab 保持平滑无闪烁
-    var curFollowed = JSON.stringify(getApp().getFollowed());
-    var curTodayStr = engine.nightOf(new Date());
-    if (this._lastFollowed !== curFollowed || this._lastTodayStr !== curTodayStr) {
-      this._lastFollowed = curFollowed;
-      this._lastTodayStr = curTodayStr;
-      this.refresh();
-    } else if (this.data.hero && this._heroTime && !this._timer) {
-      this.startCountdown(this._heroTime);
-    }
+    this.refresh();
   },
 
   onHide: function () {
@@ -122,19 +115,20 @@ Page({
 
     var app = getApp();
     var followed = app.getFollowed();
+    var followedLeagues = app.getFollowedLeagues();
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
 
-    var pick = engine.pickToday(data.matchesOfDay(todayStr), recMap, rivs, sls, followed);
-    var tmrPick = engine.pickToday(data.matchesOfDay(tmrStr), recMap, rivs, sls, followed);
-    var focal = engine.nextFocal(data.matchesAll(), recMap, rivs, sls, followed, Date.now());
+    var pick = engine.pickToday(data.matchesOfDay(todayStr), recMap, rivs, sls, followed, followedLeagues);
+    var tmrPick = engine.pickToday(data.matchesOfDay(tmrStr), recMap, rivs, sls, followed, followedLeagues);
+    var focal = engine.nextFocal(data.matchesAll(), recMap, rivs, sls, followed, Date.now(), followedLeagues);
 
-    // tbd 场次（开球时间未公布）：不进今晚之选/背包，但今日页以「时间待定」列出（关注球队优先）
+    // tbd 场次（开球时间未公布）：不进今晚之选/背包，但今日页以「时间待定」列出（关注球队与关注联赛优先）
     var tbdList = data.matchesOfDay(todayStr).filter(function (m) {
       return m.tbd && m.st === 'sched';
     }).map(function (m) {
-      var ev = engine.evaluate(m, recMap, rivs, sls, followed);
+      var ev = engine.evaluate(m, recMap, rivs, sls, followed, followedLeagues);
       var cared = followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0;
       return { d: decorate({ m: m, ev: ev }), cared: cared };
     }).sort(function (x, y) { return y.cared - x.cared; })

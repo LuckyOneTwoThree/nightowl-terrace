@@ -11,6 +11,7 @@ Page({
   data: {
     theme: data.getInitTheme(),
     nickname: '',
+    followedLeagues: [],
     followedTeams: [],
     followedIds: [],
     myWeek: [],
@@ -34,23 +35,16 @@ Page({
 
   onShow: function () {
     getApp().applyTheme(this);
-    var followed = getApp().getFollowed() || [];
-    var preds = wx.getStorageSync('predictions') || {};
-    var checkins = wx.getStorageSync('checkins') || {};
-    var settings = wx.getStorageSync('settings') || {};
-    var fp = JSON.stringify({ f: followed, p: Object.keys(preds).length, c: Object.keys(checkins).length, s: settings.nick });
-    if (this._lastFp !== fp) {
-      this._lastFp = fp;
-      this.refresh();
-    }
+    this.refresh();
   },
 
   refresh: function () {
     var settings = wx.getStorageSync('settings') || {};
     var followed = getApp().getFollowed() || [];
+    var rawLeagues = getApp().getFollowedLeagues() || data.TOP_LEAGUE_IDS;
     var preds = wx.getStorageSync('predictions') || {};
     var checkins = wx.getStorageSync('checkins') || {};
-    this._lastFp = JSON.stringify({ f: followed, p: Object.keys(preds).length, c: Object.keys(checkins).length, s: settings.nick });
+    this._lastFp = JSON.stringify({ f: followed, fl: rawLeagues, p: Object.keys(preds).length, c: Object.keys(checkins).length, s: settings.nick });
     var nickname = settings.nick || wx.getStorageSync('nickname');
     if (!nickname) {
       nickname = '夜猫_' + Math.floor(1000 + Math.random() * 9000);
@@ -65,19 +59,38 @@ Page({
     var mins = 0;
     Object.keys(checkins).forEach(function (k) { mins += (checkins[k].cost || 0) * 60; });
     var hours = (Math.round(mins / 6) / 10) + 'h';
-    var hit = 0, total = 0;
-    // 命中率统一走 settlePred 判据（含封存校验/开球后作废/比分加分，与 records/board/云端一致）
+    // 有效预测统一入口（三轮 P1-4）：封存校验 + 开球后作废，一处判据两处消费，
+    // 修复命中率与赛季积分口径双标（作废封存不再计入积分）
     var recMap = data.getRecMap();
     var rivs = data.getRivalries();
     var sls = data.getStorylines();
+    var validPreds = [];
     Object.keys(preds).forEach(function (mid) {
       var p = preds[mid];
       var m = data.getMatch(mid);
       if (!m || !p || !crypt.verify(p)) return;
       var kickTs = engine.ts(m.t);
       if (p.ts && !isNaN(kickTs) && p.ts > kickTs + 60000) return; // 开球后封存作废
-      var r = engine.settlePred(p, m, recMap);
-      if (r) { total++; if (r.hit) hit++; }
+      validPreds.push({ p: p, m: m });
+    });
+    var hit = 0, total = 0, seasonPts = 0;
+    validPreds.forEach(function (v) {
+      var r = engine.settlePred(v.p, v.m, recMap);
+      if (r) { total++; seasonPts += r.pts; if (r.hit) hit++; }
+    });
+
+    // 已关注联赛完整信息列表
+    var followedLeagues = rawLeagues.map(function (lid) {
+      var info = data.LEAGUE_INFO[lid] || {};
+      var meta = data.LEAGUE_META[lid] || {};
+      return {
+        id: lid,
+        zh: info.zh || lid,
+        en: info.en || '',
+        solid: meta.solid || '#7C3AED',
+        accent: meta.accent || '#38003C',
+        tagline: info.tagline || ''
+      };
     });
 
     // 已关注球队完整信息列表（外层仅展示已关注）
@@ -95,10 +108,11 @@ Page({
       };
     });
 
-    // 我的关注 · 本周主队赛程（PM 7.4 聚合视图，北京自然日口径）
+    // 我的关注 · 主队赛程列表（未来 14 天内主队所有赛事）
     var start = engine.bjDateStr(Date.now());
-    var end = engine.bjDateStr(Date.now() + 7 * 86400000);
+    var end = engine.bjDateStr(Date.now() + 14 * 86400000);
     var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+    var nowTs = Date.now();
     var myWeek = data.matchesAll().filter(function (m) {
       var d = m.t.split('T')[0];
       return d >= start && d <= end && (followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0);
@@ -107,8 +121,19 @@ Page({
       var dd = new Date(f[0].replace(/-/g, '/') + ' 00:00:00');
       var h = data.getTeam(m.h);
       var a = data.getTeam(m.a);
-      var ev = engine.evaluate(m, recMap, rivs, sls, followed);
+      var ev = engine.evaluate(m, recMap, rivs, sls, followed, rawLeagues);
       var tier = engine.tierOf(m);
+      var matchTs = engine.ts(m.t);
+      var countdownText = '';
+      if (m.st === 'done') {
+        countdownText = '已完赛';
+      } else if (matchTs <= nowTs) {
+        countdownText = '正在进行';
+      } else {
+        var cd = engine.countdown(matchTs, nowTs);
+        countdownText = cd.d > 0 ? ('距开球 ' + cd.d + '天' + cd.h + 'h') : ('距开球 ' + cd.h + '小时' + cd.m + '分');
+      }
+
       return {
         id: m.id,
         l: m.l,
@@ -126,28 +151,24 @@ Page({
         stars: '★★★'.slice(0, ev.star),
         tierLabel: tier.label,
         cost: tier.cost,
-        tbd: !!m.tbd
+        tbd: !!m.tbd,
+        cdText: countdownText
       };
-    }).slice(0, 8);
-
-    // 本地赛季积分
-    var seasonPts = 0;
-    Object.keys(preds).forEach(function (midKey) {
-      var p = preds[midKey], mm = data.getMatch(midKey);
-      if (!mm || !p || !crypt.verify(p)) return;
-      var r = engine.settlePred(p, mm, recMap);
-      if (r) seasonPts += r.pts;
     });
 
     var hoursNum = parseFloat(hours) || 0;
     var levelZh = hoursNum >= 10 ? 'Lv.5 修仙宗师' : hoursNum >= 5 ? 'Lv.4 资深夜猫' : 'Lv.3 夜猫子';
     var mid = settings.mid || 'MID-' + Math.abs(nickname.split('').reduce(function(a,b){return (a<<5)-a+b.charCodeAt(0);},0)).toString(16).toUpperCase().slice(0, 6);
 
+    var primaryGlow = followedTeams.length > 0 ? followedTeams[0].color : '#FFB800';
+
     this.setData({
       nickname: nickname,
       mid: mid,
       levelZh: levelZh,
       seasonPts: seasonPts,
+      primaryGlow: primaryGlow,
+      followedLeagues: followedLeagues,
       followedTeams: followedTeams,
       followedIds: followed,
       myWeek: myWeek,
@@ -155,8 +176,47 @@ Page({
     });
   },
 
+  toggleExpandMatches: function () {
+    this.setData({ expandMatches: !this.data.expandMatches });
+  },
+
+  goManagePreferences: function (e) {
+    var tab = (e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.tab) || 'leagues';
+    wx.navigateTo({ url: '/pages/teams/teams?tab=' + tab });
+  },
+
+  goManageLeagues: function () {
+    wx.navigateTo({ url: '/pages/teams/teams?tab=leagues' });
+  },
+
   goManageTeams: function () {
-    wx.navigateTo({ url: '/pages/teams/teams' });
+    wx.navigateTo({ url: '/pages/teams/teams?tab=teams' });
+  },
+
+  goAllSchedule: function () {
+    wx.switchTab({ url: '/pages/schedule/schedule' });
+  },
+
+  onExportMyWeekCal: function () {
+    var raws = (this.data.myWeek || []).filter(function (m) { return !m.tbd && m.st === 'sched'; });
+    if (!raws.length) {
+      wx.showToast({ title: '本周暂无可导出的未赛赛程', icon: 'none' });
+      return;
+    }
+    var ics = require('../../utils/ics.js');
+    var events = raws.map(function (m) {
+      var rawMatch = data.getMatch(m.id);
+      var timeStr = rawMatch ? rawMatch.t : (engine.bjDateStr(Date.now()) + 'T' + m.hm);
+      return {
+        t: timeStr,
+        title: '⚽ ' + m.home.zh + ' vs ' + m.away.zh + ' · ' + m.lgZh,
+        desc: '熬夜 ' + m.cost + 'h · 夜猫追球专属主队提醒',
+        alarmMin: 30
+      };
+    });
+    ics.share(events, '夜猫追球-主队本周赛程', function (ok, msg) {
+      wx.showToast({ title: ok ? '已导出 ' + events.length + ' 场主队赛程' : (msg || '导出已取消'), icon: 'none' });
+    });
   },
 
   onRemoveFollow: function (e) {
@@ -185,14 +245,6 @@ Page({
       settings: '/pages/settings/settings'
     };
     if (urls[id]) wx.navigateTo({ url: urls[id] });
-  },
-
-  toggleExpandTeams: function () {
-    this.setData({ expandTeams: !this.data.expandTeams });
-  },
-
-  toggleExpandMatches: function () {
-    this.setData({ expandMatches: !this.data.expandMatches });
   },
 
   goMatch: function (e) {

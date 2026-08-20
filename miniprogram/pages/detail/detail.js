@@ -22,7 +22,11 @@ Page({
     var raw = data.getMatch(q.id);
     if (!raw) {
       wx.showToast({ title: '场次不存在', icon: 'none' });
-      setTimeout(function () { wx.navigateBack(); }, 800);
+      setTimeout(function () {
+        // 冷启动单页栈时 navigateBack 静默失败 → 白屏卡死，改跳今日页（三轮 P1-8）
+        if (getCurrentPages().length <= 1) wx.switchTab({ url: '/pages/today/today' });
+        else wx.navigateBack();
+      }, 800);
       return;
     }
     this._raw = raw;
@@ -55,6 +59,12 @@ Page({
     if (!this._raw) return;
     var preds = wx.getStorageSync('predictions') || {};
     var p = preds[this._raw.id];
+    // tbd 场次时间未定（占位 t 不可信）：隐藏盲评面板（三轮 P1-5）
+    // 1191/1753 场为 tbd，占位时间参与截止判定会造成「真实提前→赛后可封存」的作弊面
+    if (this._raw.tbd) {
+      this.setData({ myPred: null });
+      return;
+    }
     var isClosed = this._ts <= Date.now();
 
     if (p) {
@@ -139,6 +149,10 @@ Page({
   onSealSingle: function () {
     var raw = this._raw;
     if (!raw) return;
+    if (raw.tbd) { // 双保险（三轮 P1-5）：tbd 时间未定不可封存
+      wx.showToast({ title: '开球时间未定，暂不可预测', icon: 'none' });
+      return;
+    }
     if (!this.data.inputPick) {
       wx.showToast({ title: '请先选择主胜/平局/客胜', icon: 'none' });
       return;
@@ -160,6 +174,8 @@ Page({
     preds[raw.id] = p;
     wx.setStorageSync('predictions', preds);
 
+    // 三态消费（三轮 P1-3）：rejected 时回滚本地封存并如实提示
+    var that = this;
     cloud.addPrediction({
       m: raw.id,
       pick: p.pick,
@@ -168,6 +184,14 @@ Page({
       salt: p.salt,
       hash: p.hash,
       ts: p.ts
+    }).then(function (sealed) {
+      if (sealed === 'rejected') {
+        var preds2 = wx.getStorageSync('predictions') || {};
+        delete preds2[raw.id];
+        wx.setStorageSync('predictions', preds2);
+        wx.showToast({ title: '已开球，封存被拒', icon: 'none' });
+        that.checkPred();
+      }
     });
 
     if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });

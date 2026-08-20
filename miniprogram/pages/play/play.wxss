@@ -1,41 +1,77 @@
-.page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; box-sizing: border-box; }
+.page { padding: 24rpx 32rpx 80rpx; min-height: 100vh; box-sizing: border-box; }
 
-.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28rpx; }
-.tb-title { font-size: 40rpx; font-weight: 700; color: var(--on-surface); }
-.season-btn { transition: transform .15s ease; }
-.season-btn:active { transform: scale(0.96); }
+/* 动态光晕 */
+.glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
+.glow-amber { top: -200rpx; right: -200rpx; background: rgba(255,178,36,.08); }
+.glow-teal { bottom: -200rpx; left: -200rpx; background: rgba(20,224,191,.06); }
 
-/* 2x2 Bento 玩法卡 (CSS Grid 确保双列对齐) */
+/* ==================== 1. 竞技场荣誉天梯卡 (Arena Hero) ==================== */
+.arena-hero {
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 28rpx 32rpx; border-radius: var(--r-xl, 28rpx);
+  border: 1rpx solid rgba(255,178,36,.3);
+  background: linear-gradient(145deg, rgba(255,178,36,.09) 0%, rgba(30,41,59,.75) 50%, rgba(15,23,42,.95) 100%);
+  backdrop-filter: blur(24rpx);
+  box-shadow: 0 10rpx 36rpx rgba(0,0,0,.45), 0 0 24rpx rgba(255,178,36,.08);
+  margin-bottom: 32rpx; transition: all .2s ease;
+}
+.arena-hero:active { transform: scale(0.99); background: var(--sc-high); }
+.theme-light .arena-hero {
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%);
+  border-color: rgba(217,119,6,.35);
+  box-shadow: 0 10rpx 36rpx rgba(217,119,6,.12);
+}
+
+.ah-left { display: flex; flex-direction: column; gap: 6rpx; }
+.ah-badge-row { display: flex; align-items: center; gap: 8rpx; }
+.ah-trophy-ic { width: 28rpx; height: 28rpx; }
+.ah-tag { font-size: 20rpx; letter-spacing: 2rpx; font-weight: 700; }
+.ah-title { font-size: 36rpx; font-weight: 800; color: var(--on-surface); line-height: 48rpx; }
+.ah-sub { font-size: 20rpx; color: var(--on-surface-variant); }
+
+.ah-right { display: flex; align-items: center; gap: 14rpx; }
+.ah-score-box {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2rpx;
+  background: rgba(0,0,0,.25); padding: 12rpx 20rpx; border-radius: var(--r-lg);
+  border: 1rpx solid rgba(255,178,36,.2);
+}
+.theme-light .ah-score-box { background: rgba(217,119,6,.08); border-color: rgba(217,119,6,.25); }
+.ah-lbl { font-size: 18rpx; }
+.ah-pts { font-size: 38rpx; font-weight: 800; line-height: 44rpx; }
+.ah-unit { font-size: 22rpx; margin-left: 2rpx; }
+.ah-sub-stats { font-size: 18rpx; display: flex; gap: 6rpx; }
+.ah-arrow { width: 30rpx; height: 30rpx; opacity: .7; }
+
+/* ==================== 2. 2x2 Bento 玩法矩阵 ==================== */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
-  margin-bottom: 36rpx;
-  width: 100%;
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx; margin-bottom: 36rpx; width: 100%;
 }
 .pcard {
   position: relative; overflow: hidden;
-  height: 250rpx; padding: 24rpx; box-sizing: border-box;
-  background: var(--sc-low); border-radius: var(--r-xl);
+  height: 256rpx; padding: 24rpx; box-sizing: border-box;
+  background: var(--sc-low); border-radius: var(--r-xl, 28rpx);
   border: 1rpx solid var(--hairline);
   display: flex; flex-direction: column; justify-content: space-between;
   transition: transform .15s ease, border-color .15s ease;
 }
-.pcard:active { transform: scale(0.98); background: var(--sc-high); }
+.pcard:active { transform: scale(0.98); background: var(--sc-high); border-color: rgba(255,178,36,.35); }
 
 .orb {
   position: absolute; top: -30rpx; right: -30rpx;
-  width: 130rpx; height: 130rpx; border-radius: var(--r-full);
-  filter: blur(32rpx); opacity: .25; pointer-events: none;
+  width: 140rpx; height: 140rpx; border-radius: var(--r-full);
+  filter: blur(36rpx); opacity: .25; pointer-events: none;
 }
 .c-amber .orb { background: var(--primary-container); }
 .c-teal .orb { background: var(--secondary); }
 .c-red .orb { background: var(--error); }
-.c-violet .orb { background: #CEB5FF; }
+.c-violet .orb { background: #A78BFA; }
 
 .p-top { display: flex; justify-content: space-between; align-items: center; }
 .p-icon-box {
-  width: 72rpx; height: 72rpx; border-radius: var(--r-md);
+  width: 72rpx; height: 72rpx; border-radius: var(--r-lg);
   display: flex; align-items: center; justify-content: center;
 }
 .c-amber .p-icon-box { background: rgba(255,178,36,.12); color: #FFB224; border: 1rpx solid rgba(255,178,36,.3); }
@@ -43,27 +79,39 @@
 .c-red .p-icon-box { background: rgba(255,180,171,.12); color: #FFB4AB; border: 1rpx solid rgba(255,180,171,.3); }
 .c-violet .p-icon-box { background: rgba(206,181,255,.12); color: #CEB5FF; border: 1rpx solid rgba(206,181,255,.3); }
 .p-icon-v { width: 38rpx; height: 38rpx; }
-.p-arrow { width: 28rpx; height: 28rpx; }
+.p-badge { font-size: 18rpx; padding: 2rpx 12rpx; }
 
 .p-bottom { display: flex; flex-direction: column; gap: 4rpx; }
 .p-name { font-size: 32rpx; font-weight: 700; color: var(--on-surface); line-height: 42rpx; }
-.p-sub { font-size: 22rpx; color: var(--on-surface-variant); line-height: 30rpx; }
+.p-sub { font-size: 20rpx; color: var(--on-surface-variant); line-height: 28rpx; }
 
-.sect-gap { margin: 44rpx 0 20rpx; }
+.sect-gap { margin: 40rpx 0 20rpx; }
+.sect-head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.sect-more { font-size: 22rpx; font-weight: 600; }
 
-/* 竞猜单 */
-.guess { padding: 24rpx 28rpx; margin-bottom: 20rpx; border-radius: var(--r-xl); }
-.g-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12rpx; }
-.g-label { font-size: 22rpx; }
-.g-badge { font-size: 20rpx; padding: 4rpx 16rpx; }
+/* ==================== 3. 竞猜单列表 ==================== */
+.guess-list { display: flex; flex-direction: column; gap: 20rpx; }
+.guess {
+  padding: 24rpx 28rpx; border-radius: var(--r-xl, 28rpx);
+  border: 1rpx solid var(--hairline); transition: all .15s ease;
+}
+.g-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14rpx; }
+.gh-left { display: flex; align-items: center; gap: 10rpx; flex-wrap: wrap; }
+.g-lg-bar { width: 6rpx; height: 26rpx; border-radius: 3rpx; flex-shrink: 0; }
+.g-lg-txt { font-size: 24rpx; color: var(--on-surface); }
+.g-time { font-size: 20rpx; }
+.g-star-chip { font-size: 18rpx; padding: 0 10rpx; }
+.g-derby-chip { font-size: 18rpx; padding: 0 10rpx; }
+.g-badge { font-size: 20rpx; padding: 4rpx 16rpx; gap: 6rpx; }
+.g-badge .v-icon { width: 22rpx; height: 22rpx; }
 
-.g-vs { display: flex; align-items: center; justify-content: space-between; padding: 20rpx 0 24rpx; }
+.g-vs { display: flex; align-items: center; justify-content: space-between; padding: 16rpx 0 20rpx; }
 .g-side { display: flex; flex-direction: column; align-items: center; gap: 10rpx; width: 160rpx; flex-shrink: 0; }
 .g-name { font-size: 28rpx; font-weight: 700; color: var(--on-surface); text-align: center; max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .g-vs-center { flex: 1; display: flex; align-items: center; justify-content: center; min-width: 0; }
-.g-vs-txt { font-size: 24rpx; letter-spacing: 2rpx; }
+.g-vs-txt { font-size: 26rpx; letter-spacing: 2rpx; }
 
-.g-opts { display: flex; gap: 16rpx; margin-top: 8rpx; }
+.g-opts { display: flex; gap: 16rpx; margin-top: 4rpx; }
 .g-opt {
   flex: 1; text-align: center; padding: 18rpx 0;
   border: 1rpx solid var(--outline-muted); border-radius: var(--r-full);
@@ -75,6 +123,56 @@
 
 .g-sealed {
   display: flex; align-items: center; justify-content: center; gap: 12rpx;
-  padding: 20rpx 24rpx; border-radius: var(--r-md); font-size: 24rpx;
-  border: 1rpx solid rgba(20,224,191,.25);
+  padding: 18rpx 24rpx; border-radius: var(--r-lg); font-size: 22rpx;
+  border: 1rpx solid rgba(20,224,191,.25); background: rgba(20,224,191,.06);
 }
+.g-sealed .v-icon { width: 28rpx; height: 28rpx; }
+
+/* ==================== 4. 盲盒速摇微互动卡片 ==================== */
+.lucky-box {
+  padding: 24rpx 28rpx; border-radius: var(--r-xl, 28rpx);
+  border: 1rpx solid var(--hairline); transition: all .2s ease;
+  background: var(--sc-low);
+}
+.lb-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 20rpx;
+}
+.lb-icon-wrap {
+  width: 76rpx; height: 76rpx; border-radius: var(--r-lg);
+  background: rgba(255,178,36,.12); border: 1rpx solid rgba(255,178,36,.3);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.lb-ic { width: 40rpx; height: 40rpx; }
+.lb-text-col { flex: 1; display: flex; flex-direction: column; gap: 4rpx; min-width: 0; }
+.lb-title { font-size: 28rpx; font-weight: 700; color: var(--on-surface); }
+.lb-desc { font-size: 20rpx; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.lb-draw-btn {
+  height: 72rpx; line-height: 72rpx; padding: 0 28rpx !important;
+  font-size: 24rpx; border-radius: var(--r-full); flex-shrink: 0;
+  margin: 0 !important; width: auto !important;
+}
+.lb-draw-btn.drawing { opacity: .7; transform: scale(0.96); }
+
+/* 抽取结果 */
+.lb-result { display: flex; flex-direction: column; gap: 16rpx; }
+.lbr-head { display: flex; align-items: center; justify-content: space-between; }
+.lbr-meta { display: flex; align-items: center; gap: 10rpx; flex-wrap: wrap; }
+.lbr-lg { font-size: 24rpx; color: var(--on-surface); }
+.lbr-time { font-size: 20rpx; }
+.lbr-tier { font-size: 18rpx; padding: 0 10rpx; }
+.lbr-redraw { font-size: 20rpx; padding: 4rpx 16rpx; }
+
+.lbr-body {
+  padding: 16rpx 20rpx; border-radius: var(--r-lg);
+  background: var(--sc-high); border: 1rpx solid rgba(255,178,36,.2);
+  display: flex; flex-direction: column; gap: 10rpx;
+  transition: background .15s ease;
+}
+.lbr-body:active { background: var(--sc-highest); }
+.lbr-teams { display: flex; align-items: center; justify-content: center; gap: 16rpx; }
+.lbr-team-name { font-size: 28rpx; }
+.lbr-vs { font-size: 22rpx; letter-spacing: 2rpx; }
+.lbr-reason-row { display: flex; align-items: center; justify-content: space-between; }
+.lbr-reason { font-size: 20rpx; font-weight: 600; }
+.lbr-go { font-size: 20rpx; font-weight: 600; }

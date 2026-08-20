@@ -1,14 +1,34 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 顶栏（玩法大厅 + 赛季积分徽标） -->
-  <view class="topbar">
-    <text class="tb-title hl">玩法大厅</text>
-    <view class="chip chip-solid floodlight-glow season-btn" bindtap="goSeasonRank">
-      <view class="v-icon v-trophy text-amber"></view>
-      <text class="text-amber hl">赛季总榜 {{seasonPts}}分 ›</text>
+  <!-- 动态环境光晕 -->
+  <view class="glow glow-amber"></view>
+  <view class="glow glow-teal"></view>
+
+  <!-- ==================== 1. 竞技场荣誉天梯卡 (Arena Hero) ==================== -->
+  <view class="arena-hero card-highest floodlight-glow" bindtap="goSeasonRank">
+    <view class="ah-left">
+      <view class="ah-badge-row">
+        <view class="v-icon v-trophy text-amber ah-trophy-ic"></view>
+        <text class="mono hl ah-tag text-amber">NIGHTOWL ARENA</text>
+      </view>
+      <text class="hl ah-title">夜猫竞技大厅</text>
+      <text class="mono muted ah-sub">“盲评定乾坤 · 狂言见真章”</text>
+    </view>
+
+    <view class="ah-right">
+      <view class="ah-score-box">
+        <text class="mono muted ah-lbl">赛季积分</text>
+        <text class="hl text-amber ah-pts">{{seasonPts}}<text class="ah-unit">分</text></text>
+        <view class="ah-sub-stats mono muted">
+          <text>胜率 {{hitRate}}</text>
+          <text>·</text>
+          <text>封存 {{sealedCount}}场</text>
+        </view>
+      </view>
+      <view class="v-icon v-chev text-muted ah-arrow"></view>
     </view>
   </view>
 
-  <!-- 2x2 Bento 玩法卡 -->
+  <!-- ==================== 2. 2x2 Bento 核心玩法矩阵 ==================== -->
   <view class="grid">
     <view class="pcard {{item.colorClass}}" wx:for="{{cards}}" wx:key="id" data-id="{{item.id}}" bindtap="onCard">
       <view class="orb"></view>
@@ -16,7 +36,7 @@
         <view class="p-icon-box">
           <view class="v-icon {{item.iconClass}} p-icon-v"></view>
         </view>
-        <view class="v-icon v-chev text-muted p-arrow"></view>
+        <view class="chip chip-ghost mono p-badge">{{item.badge}}</view>
       </view>
       <view class="p-bottom">
         <text class="p-name hl">{{item.name}}</text>
@@ -25,50 +45,110 @@
     </view>
   </view>
 
-  <!-- 本周竞猜单（盲评猜球 · commit-reveal） -->
+  <!-- ==================== 3. 本周竞猜单（盲评猜球 · commit-reveal） ==================== -->
   <view class="sect sect-gap">
-    <text class="sect-title">本周竞猜速填</text>
+    <view class="sect-head-row">
+      <text class="sect-title">本周焦点盲评 {{guesses.length ? '(' + guesses.length + ')' : ''}}</text>
+      <text class="mono text-amber sect-more" bindtap="goRecords">我的预测记录 ›</text>
+    </view>
     <view class="sect-line"></view>
-    <text class="sect-more" bindtap="goRecords">我的记录 ›</text>
   </view>
-  
-  <view class="guess card-low" wx:for="{{guesses}}" wx:key="id">
-    <view class="g-head">
-      <text class="mono muted g-label">{{item.label}}</text>
-      <view class="chip chip-teal g-badge" wx:if="{{item.pick}}">
-        <view class="v-icon v-check text-teal"></view>
-        <text>已封存</text>
+
+  <view class="guess-list">
+    <view class="guess card-low" wx:for="{{guesses}}" wx:key="id">
+      <view class="g-head">
+        <view class="gh-left">
+          <view class="g-lg-bar" style="background: {{item.solid}};"></view>
+          <text class="hl g-lg-txt">{{item.lgZh}}</text>
+          <text class="mono muted g-time">{{item.timeText}}</text>
+          <view class="chip chip-amber g-star-chip" wx:if="{{item.star >= 3}}">{{item.stars}}</view>
+          <view class="chip chip-red g-derby-chip" wx:if="{{item.isDerby}}">🔥 德比</view>
+        </view>
+        <view class="chip chip-teal g-badge" wx:if="{{item.pick}}">
+          <view class="v-icon v-check text-teal"></view>
+          <text>已哈希封存</text>
+        </view>
       </view>
+
+      <view class="g-vs" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="g-side">
+          <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+          <view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+          <text class="g-name hl">{{item.home.zh}}</text>
+        </view>
+        <view class="g-vs-center">
+          <text class="mono muted g-vs-txt">VS</text>
+        </view>
+        <view class="g-side">
+          <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+          <view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+          <text class="g-name hl">{{item.away.zh}}</text>
+        </view>
+      </view>
+
+      <!-- 1X2 盲评选项卡 -->
+      <view class="g-opts" wx:if="{{!item.pick}}">
+        <view
+          class="g-opt {{item.pick === op.key ? 'opt-on floodlight-glow' : ''}}"
+          wx:for="{{options}}" wx:for-item="op" wx:key="key"
+          data-id="{{item.id}}" data-key="{{op.key}}" catchtap="onPick">
+          <text class="mono hl">{{op.zh}}</text>
+        </view>
+      </view>
+      <view class="g-sealed card-high" wx:else>
+        <view class="v-icon v-bolt text-teal"></view>
+        <text class="mono text-teal">已加盐封存 · 终场哨响自动开箱计分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ==================== 4. 今日盲盒速摇微互动 (Lucky Match Box Drawer) ==================== -->
+  <view class="sect sect-gap">
+    <text class="sect-title">盲盒速摇 · 今晚看哪场</text>
+    <view class="sect-line"></view>
+  </view>
+
+  <view class="lucky-box card-low">
+    <view class="lb-inner" wx:if="{{!boxMatch}}">
+      <view class="lb-icon-wrap">
+        <view class="v-icon v-gift text-amber lb-ic animate-pulse"></view>
+      </view>
+      <view class="lb-text-col">
+        <text class="hl lb-title">纠结今晚熬哪场？</text>
+        <text class="mono muted lb-desc">基于夜猫指数与观赛偏好，极速抽取焦点对决</text>
+      </view>
+      <button class="btn-amber lb-draw-btn {{isDrawing ? 'drawing' : ''}}" bindtap="onDrawBox">
+        <text class="hl">🎲 {{isDrawing ? '翻转中...' : '翻转盲盒'}}</text>
+      </button>
     </view>
 
-    <view class="g-vs" data-id="{{item.id}}" bindtap="goDetail">
-      <view class="g-side">
-        <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
-        <view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
-        <text class="g-name hl">{{item.home.zh}}</text>
+    <!-- 抽取结果展示卡 -->
+    <view class="lb-result" wx:else>
+      <view class="lbr-head">
+        <view class="lbr-meta">
+          <view class="g-lg-bar" style="background: {{boxMatch.solid}};"></view>
+          <text class="hl lbr-lg">{{boxMatch.lgZh}}</text>
+          <text class="mono muted lbr-time">{{boxMatch.timeText}}</text>
+          <view class="chip chip-amber lbr-tier">{{boxMatch.tierLabel}} · {{boxMatch.cost}}h</view>
+        </view>
+        <view class="chip chip-ghost mono lbr-redraw" bindtap="onDrawBox">
+          <text>再抽一次 ↻</text>
+        </view>
       </view>
-      <view class="g-vs-center">
-        <text class="mono muted g-vs-txt">VS</text>
-      </view>
-      <view class="g-side">
-        <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
-        <view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
-        <text class="g-name hl">{{item.away.zh}}</text>
-      </view>
-    </view>
 
-    <!-- 1X2 预测胶囊 -->
-    <view class="g-opts" wx:if="{{!item.pick}}">
-      <view
-        class="g-opt {{item.pick === op.key ? 'opt-on floodlight-glow' : ''}}"
-        wx:for="{{options}}" wx:for-item="op" wx:key="key"
-        data-id="{{item.id}}" data-key="{{op.key}}" catchtap="onPick">
-        <text class="mono hl">{{op.zh}}</text>
+      <view class="lbr-body" bindtap="goDetail">
+        <view class="lbr-teams">
+          <image class="crest-sm" src="{{boxMatch.home.logo}}" mode="aspectFill" wx:if="{{boxMatch.home.logo}}" />
+          <text class="hl lbr-team-name">{{boxMatch.home.zh}}</text>
+          <text class="mono muted lbr-vs">VS</text>
+          <text class="hl lbr-team-name">{{boxMatch.away.zh}}</text>
+          <image class="crest-sm" src="{{boxMatch.away.logo}}" mode="aspectFill" wx:if="{{boxMatch.away.logo}}" />
+        </view>
+        <view class="lbr-reason-row">
+          <text class="mono text-amber lbr-reason">{{boxMatch.reason}}</text>
+          <text class="mono text-amber lbr-go">查看对决详情 ›</text>
+        </view>
       </view>
-    </view>
-    <view class="g-sealed card-high" wx:else>
-      <view class="v-icon v-bolt text-teal"></view>
-      <text class="mono text-teal">已封存 · 终场哨响自动开箱结算</text>
     </view>
   </view>
 </view>

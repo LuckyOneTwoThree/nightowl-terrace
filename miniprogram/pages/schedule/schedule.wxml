@@ -60,7 +60,7 @@
         <view class="g-line"></view>
       </view>
       <view
-        class="match card-low"
+        class="match card-low {{mt.followed ? 'followed-card' : ''}}"
         wx:for="{{item.matches}}" wx:for-item="mt" wx:key="id"
         wx:if="{{(selLg === 'ALL' || mt.lg === selLg) && (!selStar || mt.star >= selStar)}}"
         data-id="{{mt.id}}" bindtap="goDetail">
@@ -69,28 +69,28 @@
           <view class="m-top">
             <view class="m-top-left">
               <text class="mono m-lg-name">{{mt.lgZh}}</text>
-              <view class="chip chip-amber m-status-chip" wx:if="{{mt.followed}}">关注</view>
+              <view class="chip chip-amber m-status-chip m-followed-chip" wx:if="{{mt.followed}}">🌟 主队</view>
               <view class="chip chip-teal m-status-chip" wx:if="{{mt.finished}}">完场</view>
               <view class="chip chip-ghost m-status-chip" wx:elif="{{mt.tbd}}">时间待定</view>
             </view>
             <view class="m-top-right mono">
               <text class="muted local-txt" wx:if="{{!mt.tbd}}">当地 {{mt.local}}</text>
-              <text class="m-hm text-amber">{{mt.hm}}</text>
+              <text class="m-hm text-amber">{{mt.hmText}}</text>
             </view>
           </view>
           
           <view class="t-row">
-            <text class="t-name">{{mt.home.zh}}</text>
+            <text class="t-name {{mt.homeWin ? 't-win' : ''}}">{{mt.home.zh}}</text>
             <view class="m-team-info">
-              <image class="crest-sm" src="{{mt.home.logo}}" mode="aspectFill" wx:if="{{mt.home.logo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
-              <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scH : '-'}}</text>
+              <image class="crest-sm" src="{{mt.home.logo}}" mode="aspectFit" wx:if="{{mt.home.logo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{mt.home.bg}}; border-color: {{mt.home.bd}};">{{mt.home.id}}</view>
+              <text class="score mono {{mt.homeWin ? 'score-win' : (mt.finished ? 'ft' : 'dim')}}">{{mt.finished ? mt.scH : '-'}}</text>
             </view>
           </view>
           <view class="t-row">
-            <text class="t-name dim2">{{mt.away.zh}}</text>
+            <text class="t-name dim2 {{mt.awayWin ? 't-win' : ''}}">{{mt.away.zh}}</text>
             <view class="m-team-info">
-              <image class="crest-sm" src="{{mt.away.logo}}" mode="aspectFill" wx:if="{{mt.away.logo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
-              <text class="score mono {{mt.finished ? 'ft' : 'dim'}}">{{mt.finished ? mt.scA : '-'}}</text>
+              <image class="crest-sm" src="{{mt.away.logo}}" mode="aspectFit" wx:if="{{mt.away.logo}}" /><view class="circle-sm crest-fb" wx:else style="background: {{mt.away.bg}}; border-color: {{mt.away.bd}};">{{mt.away.id}}</view>
+              <text class="score mono {{mt.awayWin ? 'score-win' : (mt.finished ? 'ft' : 'dim')}}">{{mt.finished ? mt.scA : '-'}}</text>
             </view>
           </view>
         </view>
@@ -99,7 +99,7 @@
           <view class="stars-col">
             <text class="star-gold mono">{{mt.stars}}</text>
           </view>
-          <view class="st-btn" data-id="{{mt.id}}" catchtap="onStar">
+          <view class="st-btn" data-id="{{mt.id}}" catchtap="onCalendarAdd" hover-class="st-btn-active">
             <view class="v-icon v-cal st-icon"></view>
           </view>
         </view>
@@ -111,6 +111,12 @@
     </view>
 
     <view class="foot mono muted">— 全季 1,752 场 · 实时精准更新 —</view>
+  </view>
+
+  <!-- 快速回到今天悬浮按钮 (FAB) -->
+  <view class="today-fab floodlight-glow" wx:if="{{viewMode === 'day' && !isViewingToday}}" bindtap="onGoToday">
+    <view class="v-icon v-cal fab-icon"></view>
+    <text class="mono">回到今天</text>
   </view>
 </view>
 

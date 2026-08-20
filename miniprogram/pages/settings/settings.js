@@ -214,7 +214,7 @@ Page({
       confirmColor: '#FFB4AB',
       success: function (r) {
         if (!r.confirm) return;
-        ['predictions', 'boasts', 'checkins', 'settings', 'nickname', 'onboarded', 'followedTeams', 'weekSuggest', '_cloudDown', 'cached_scores']
+        ['predictions', 'boasts', 'checkins', 'settings', 'nickname', 'onboarded', 'followedTeams', 'followedLeagues', 'weekSuggest', '_cloudDown', 'cached_scores']
           .forEach(function (k) { wx.removeStorageSync(k); });
         // 透支结算标记 settled_* 逐键清理
         var info = wx.getStorageInfoSync();
@@ -224,6 +224,7 @@ Page({
         // 同步复位全局缓存：否则 getFollowed 等仍持旧值直到重启小程序
         var app = getApp();
         app.setFollowed([]);
+        app.setFollowedLeagues(['PL', 'PD', 'SA', 'BL', 'FL']);
         app.globalData.themeMode = null;
         app._appliedNavTheme = null;
         app._appliedTabBarTheme = null;

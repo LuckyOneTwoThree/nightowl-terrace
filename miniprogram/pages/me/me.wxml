@@ -1,184 +1,261 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- VIP 球迷护照卡片 -->
-  <view class="profile card-highest floodlight-glow" bindtap="onEditNick">
-    <view class="avatar-wrap">
-      <view class="circle-xl avatar-box text-amber">
-        <view class="v-icon v-paw brand-avatar-icon text-amber"></view>
+  <!-- 动态环境氛围光晕 -->
+  <view class="glow glow-amber" style="background: {{primaryGlow ? primaryGlow : 'rgba(255,178,36,.1)'}}; opacity: 0.12;"></view>
+  <view class="glow glow-teal"></view>
+
+  <!-- ==================== 1. 全景一体化黑金球迷通票 (VIP MATCH PASS) ==================== -->
+  <view class="vip-pass card-highest floodlight-glow">
+    <!-- 票券顶部：金属烙印与段位 -->
+    <view class="pass-head">
+      <view class="ph-brand">
+        <view class="v-icon v-soccer text-amber ph-brand-ic"></view>
+        <text class="mono ph-brand-txt">NIGHTOWL MATCH PASS · 观赛通票</text>
       </view>
-      <view class="dot-teal dot-pos animate-pulse"></view>
+      <view class="chip chip-amber pass-lv-chip">
+        <view class="dot-teal pass-online-dot animate-pulse"></view>
+        <text>{{levelZh}}</text>
+      </view>
     </view>
-    <view class="prof-mid">
-      <view class="nick-row">
-        <text class="hl nick-text">{{nickname}}</text>
-        <view class="chip chip-amber lv-chip">{{levelZh}}</view>
+
+    <!-- 票券中部：身份与主队印章 -->
+    <view class="pass-body" bindtap="onEditNick">
+      <view class="pass-avatar-wrap">
+        <view class="circle-xl pass-avatar text-amber">
+          <view class="v-icon v-paw pass-avatar-ic text-amber"></view>
+        </view>
       </view>
-      <view class="id-row">
-        <text class="mono muted sign-text">{{mid}} · “看球是生活的解药”</text>
+      <view class="pass-info">
+        <view class="pass-nick-row">
+          <text class="hl pass-nick">{{nickname}}</text>
+          <view class="v-icon v-tune text-amber pass-edit-ic"></view>
+        </view>
+
+        <!-- 主队微标印章行 -->
+        <view class="pass-stamps-row" wx:if="{{followedTeams.length}}">
+          <view class="p-stamp card-low" wx:for="{{followedTeams}}" wx:key="id" wx:if="{{index < 3}}" catchtap="goManageTeams">
+            <image class="crest-xs stamp-logo" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" />
+            <view class="circle-xs stamp-fb" wx:else style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
+            <text class="stamp-zh hl">{{item.zh}}</text>
+          </view>
+          <text class="mono muted stamp-more" wx:if="{{followedTeams.length > 3}}" catchtap="goManageTeams">+{{followedTeams.length - 3}}</text>
+        </view>
+        <view class="pass-stamps-empty mono muted" wx:else catchtap="goManageTeams">
+          <text>+ 点击添加信仰主队印章</text>
+        </view>
+
+        <view class="pass-mid-row">
+          <text class="mono muted pass-mid-txt">{{mid}} · “看球是生活的解药”</text>
+        </view>
       </view>
     </view>
-    <view class="edit-btn">
-      <view class="v-icon v-tune text-amber"></view>
+
+    <!-- 票券虚线撕口分割线 -->
+    <view class="pass-tear-line">
+      <view class="pass-notch notch-left"></view>
+      <view class="pass-dash"></view>
+      <view class="pass-notch notch-right"></view>
+    </view>
+
+    <!-- 票券底部：一体化核心战绩通栏 -->
+    <view class="pass-stats-strip">
+      <view class="p-stat-col">
+        <text class="p-stat-val hl text-amber score-sm">{{stats.hours}}</text>
+        <text class="mono muted p-stat-lbl">累计修仙</text>
+      </view>
+      <view class="p-stat-divider"></view>
+      <view class="p-stat-col">
+        <text class="p-stat-val hl text-teal score-sm">{{stats.hit}}</text>
+        <text class="mono muted p-stat-lbl">预测胜率</text>
+      </view>
+      <view class="p-stat-divider"></view>
+      <view class="p-stat-col" bindtap="onMenu" data-id="preds">
+        <text class="p-stat-val hl text-amber score-sm">{{seasonPts}}分</text>
+        <text class="mono muted p-stat-lbl">赛季总积分 ›</text>
+      </view>
     </view>
   </view>
 
-  <!-- 3列核心战绩数据看板 -->
-  <view class="stats-grid">
-    <view class="stat-card card-low glow-top-gold">
-      <text class="stat-num hl text-amber score-sm">{{stats.hours}}</text>
-      <text class="mono muted stat-lbl">累计修仙</text>
+  <!-- ==================== 2. 观赛偏好 (单排横向滑动查看) ==================== -->
+  <view class="pref-panel card-low">
+    <view class="panel-head">
+      <view class="ph-left">
+        <view class="v-icon v-soccer text-amber ph-icon"></view>
+        <text class="hl ph-title">我的观赛偏好</text>
+      </view>
+      <text class="mono text-amber ph-btn" bindtap="goManagePreferences" data-tab="leagues">全部偏好 ›</text>
     </view>
-    <view class="stat-card card-low glow-top-teal">
-      <text class="stat-num hl text-teal score-sm">{{stats.hit}}</text>
-      <text class="mono muted stat-lbl">预测胜率</text>
-    </view>
-    <view class="stat-card card-low glow-top-gold" bindtap="onMenu" data-id="preds">
-      <text class="stat-num hl text-amber score-sm">{{seasonPts}}分</text>
-      <text class="mono muted stat-lbl">赛季总积分</text>
-    </view>
-  </view>
 
-  <!-- 关注主队（已关注列表 + 管理入口） -->
-  <view class="sect sect-gap">
-    <text class="sect-title">我的主队 {{followedTeams.length ? '(' + followedTeams.length + ')' : ''}}</text>
-    <view class="sect-line"></view>
-    <text class="sect-more" bindtap="goManageTeams">管理主队 ›</text>
-  </view>
-
-  <!-- 状态 A：已有关注球队（精美主队微标芯片列表） -->
-  <view class="followed-box" wx:if="{{followedTeams.length}}">
-    <view class="followed-list">
-      <view class="f-card card-low" wx:for="{{followedTeams}}" wx:key="id" wx:if="{{expandTeams || index < 6}}" bindtap="goManageTeams">
-        <image class="crest-sm f-ava" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" />
-        <view class="circle-sm f-ava crest-fb" wx:else style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
-        <text class="f-name hl">{{item.zh}}</text>
-        <text class="f-lg mono muted">{{item.lgZh}}</text>
+    <!-- 关注联赛（单排横滑） -->
+    <view class="pref-sub-sect">
+      <view class="pss-head">
+        <text class="mono muted pss-lbl">关注联赛 ({{followedLeagues.length}})</text>
+        <text class="mono muted pss-tip">横滑查看更多</text>
+      </view>
+      <scroll-view class="pref-scroll league-scroll" scroll-x enable-flex show-scrollbar="{{false}}" wx:if="{{followedLeagues.length}}">
+        <view class="pref-track">
+          <view class="l-cap card-high" wx:for="{{followedLeagues}}" wx:key="id" bindtap="goManagePreferences" data-tab="leagues">
+            <view class="l-cap-bar" style="background: {{item.solid}};"></view>
+            <text class="hl l-cap-zh">{{item.zh}}</text>
+            <text class="mono muted l-cap-en">{{item.id}}</text>
+          </view>
+          <view class="pref-add-btn league-btn card-high mono muted" bindtap="goManageLeagues">
+            <text>＋ 管理</text>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="pref-empty mono muted" wx:else bindtap="goManagePreferences" data-tab="leagues">
+        <text>尚未圈定关注联赛 · 点击快速选择 ›</text>
       </view>
     </view>
-    <!-- 主队超过 6 支时展示展开/收起按钮 -->
-    <view class="expand-btn mono muted" wx:if="{{followedTeams.length > 6}}" bindtap="toggleExpandTeams">
-      <text>{{expandTeams ? '收起部分主队 ∧' : '展开全部主队 (' + followedTeams.length + ') ∨'}}</text>
+
+    <view class="panel-divider"></view>
+
+    <!-- 信仰主队（单排横滑） -->
+    <view class="pref-sub-sect">
+      <view class="pss-head">
+        <text class="mono muted pss-lbl">信仰主队 ({{followedTeams.length}})</text>
+        <text class="mono muted pss-tip">横滑查看更多</text>
+      </view>
+      <scroll-view class="pref-scroll team-scroll" scroll-x enable-flex show-scrollbar="{{false}}" wx:if="{{followedTeams.length}}">
+        <view class="pref-track">
+          <view class="t-badge card-high" wx:for="{{followedTeams}}" wx:key="id" bindtap="goManagePreferences" data-tab="teams">
+            <image class="crest-sm tb-ava" src="{{item.logo}}" mode="aspectFill" wx:if="{{item.logo}}" />
+            <view class="circle-sm tb-ava crest-fb" wx:else style="background: {{item.bg}}; border-color: {{item.bd}};">{{item.id}}</view>
+            <text class="tb-name hl">{{item.zh}}</text>
+            <text class="tb-lg mono muted">{{item.lgZh}}</text>
+          </view>
+          <view class="pref-add-btn team-btn card-high mono muted" bindtap="goManageTeams">
+            <text>＋ 增选</text>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="pref-empty mono muted" wx:else bindtap="goManagePreferences" data-tab="teams">
+        <text>尚未挑选信仰主队 · 挑选主队享专属排程 ›</text>
+      </view>
     </view>
   </view>
 
-  <!-- 状态 B：未关注任何球队的空态提示 -->
-  <view class="f-empty card-low" wx:else bindtap="goManageTeams">
-    <view class="fe-left">
-      <view class="fe-icon-wrap">
-        <view class="v-icon v-paw text-amber fe-paw"></view>
-      </view>
-      <view class="fe-content">
-        <text class="fe-title hl">尚未挑选你的信仰主队</text>
-        <text class="fe-sub mono muted">关注主队，赛程自动提级并推送专属开赛提醒</text>
-      </view>
-    </view>
-    <view class="chip chip-amber floodlight-glow fe-btn">
-      <text class="hl">+ 挑选主队</text>
-    </view>
-  </view>
-
-  <!-- 我的关注 · 本周主队赛程（独立精美赛程对决卡，默认展示前2场并支持折叠展开） -->
+  <!-- ==================== 3. 主队赛程 (单个精炼概览模块) ==================== -->
   <block wx:if="{{followedTeams.length}}">
     <view class="sect sect-gap">
-      <text class="sect-title">本周主队赛程</text>
+      <view class="sect-head-row">
+        <text class="sect-title">主队下一场</text>
+        <view class="chip chip-ghost mono cal-export-chip" wx:if="{{myWeek.length}}" bindtap="onExportMyWeekCal">
+          <view class="v-icon v-cal text-amber"></view>
+          <text>导出日历</text>
+        </view>
+      </view>
       <view class="sect-line"></view>
-      <text class="mono muted ts-count" wx:if="{{myWeek.length}}">{{myWeek.length}} 场</text>
     </view>
 
-    <view class="team-sched-list" wx:if="{{myWeek.length}}">
-      <view class="ts-card card-low" wx:for="{{myWeek}}" wx:key="id" wx:if="{{expandMatches || index < 2}}" data-id="{{item.id}}" bindtap="goMatch">
+    <!-- 单个极简赛程模块卡片 -->
+    <view class="sched-summary-card card-low floodlight-glow" wx:if="{{myWeek.length}}">
+      <view class="ssc-main" data-id="{{myWeek[0].id}}" bindtap="goMatch">
         <view class="ts-head">
           <view class="ts-meta">
-            <text class="mono muted ts-date">{{item.md}} {{item.wd}} {{item.tbd ? '时间待定' : item.hm}}</text>
-            <view class="chip chip-ghost ts-lg-chip">{{item.lgZh}}</view>
+            <view class="chip chip-solid ts-lg-chip">{{myWeek[0].lgZh}}</view>
+            <text class="mono muted ts-date">{{myWeek[0].md}} {{myWeek[0].wd}} {{myWeek[0].tbd ? '待定' : myWeek[0].hm}}</text>
           </view>
-          <view class="chip chip-amber ts-cost-chip" wx:if="{{item.cost >= 2.5}}">
-            <view class="v-icon v-moon text-amber"></view>
-            <text class="mono">{{item.tierLabel}} · {{item.cost}}h</text>
+          <view class="chip chip-teal ts-cd-chip" wx:if="{{myWeek[0].cdText}}">
+            <view class="dot-teal animate-pulse" wx:if="{{!myWeek[0].finished}}"></view>
+            <text class="mono">{{myWeek[0].cdText}}</text>
           </view>
         </view>
 
         <view class="ts-vs">
           <view class="ts-side">
-            <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
-            <view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
-            <text class="ts-name hl">{{item.home.zh}}</text>
+            <image class="crest-md" src="{{myWeek[0].home.logo}}" mode="aspectFill" wx:if="{{myWeek[0].home.logo}}" />
+            <view class="circle-md crest-fb" wx:else style="background: {{myWeek[0].home.bg}}; border-color: {{myWeek[0].home.bd}};">{{myWeek[0].home.id}}</view>
+            <text class="ts-name hl">{{myWeek[0].home.zh}}</text>
           </view>
 
           <view class="ts-mid">
-            <block wx:if="{{item.finished}}">
-              <text class="ts-score hl text-glow">{{item.scH}} - {{item.scA}}</text>
+            <block wx:if="{{myWeek[0].finished}}">
+              <text class="ts-score hl text-glow">{{myWeek[0].scH}} - {{myWeek[0].scA}}</text>
               <text class="mono muted ts-status">已完赛</text>
             </block>
             <block wx:else>
-              <text class="ts-time mono hl text-amber">{{item.tbd ? 'TBD' : item.hm}}</text>
+              <text class="ts-time mono hl text-amber">{{myWeek[0].tbd ? 'TBD' : myWeek[0].hm}}</text>
               <text class="mono muted ts-vs-label">VS</text>
             </block>
           </view>
 
           <view class="ts-side">
-            <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
-            <view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
-            <text class="ts-name hl">{{item.away.zh}}</text>
+            <image class="crest-md" src="{{myWeek[0].away.logo}}" mode="aspectFill" wx:if="{{myWeek[0].away.logo}}" />
+            <view class="circle-md crest-fb" wx:else style="background: {{myWeek[0].away.bg}}; border-color: {{myWeek[0].away.bd}};">{{myWeek[0].away.id}}</view>
+            <text class="ts-name hl">{{myWeek[0].away.zh}}</text>
           </view>
         </view>
       </view>
 
-      <!-- 赛程超过 2 场时展示展开/收起按钮 -->
-      <view class="expand-match-btn card-low" wx:if="{{myWeek.length > 2}}" bindtap="toggleExpandMatches">
-        <text class="mono hl text-amber">{{expandMatches ? '收起部分赛程 ∧' : '展开本周全部 ' + myWeek.length + ' 场主队赛程 ∨'}}</text>
+      <!-- 底部跳转进入全部赛程独立列表页 -->
+      <view class="ssc-footer" bindtap="goAllSchedule">
+        <view class="ssc-foot-left">
+          <view class="v-icon v-cal text-amber ssc-cal-ic"></view>
+          <text class="mono muted ssc-total-text">主队近期共 <text class="text-amber hl">{{myWeek.length}}</text> 场赛事</text>
+        </view>
+        <view class="ssc-foot-right mono text-amber">
+          <text class="hl">查看全部赛程列表</text>
+          <text class="ssc-arrow">›</text>
+        </view>
       </view>
     </view>
 
-    <view class="ts-empty card-low" wx:else>
+    <view class="ts-empty card-low" wx:else bindtap="goAllSchedule">
       <view class="v-icon v-cal text-muted ts-empty-ic"></view>
-      <text class="mono muted">本周主队暂无赛事 · 静待下一轮焦点战</text>
+      <text class="mono muted">近两周主队暂无赛事 · 点击查看全部完整赛程 ›</text>
     </view>
   </block>
 
-  <!-- 快捷功能入口列表 -->
+  <!-- ==================== 5. 玩法与设置 2x2 现代功能罗盘 ==================== -->
   <view class="sect sect-gap">
-    <text class="sect-title">快捷入口</text>
+    <text class="sect-title">玩法与设置</text>
     <view class="sect-line"></view>
   </view>
-  <view class="menu card-low">
-    <view class="menu-row" data-id="preds" bindtap="onMenu">
-      <view class="mr-left">
-        <view class="menu-icon-box ic-amber">
+
+  <view class="grid-menu">
+    <view class="gm-card card-low" data-id="preds" bindtap="onMenu">
+      <view class="gm-top">
+        <view class="gm-icon-box ic-amber">
           <view class="v-icon v-soccer text-amber"></view>
         </view>
-        <text class="mr-title hl">我的预测记录</text>
+        <view class="v-icon v-chev text-muted gm-arrow"></view>
       </view>
-      <view class="v-icon v-chev text-muted"></view>
+      <text class="hl gm-title">我的预测记录</text>
+      <text class="mono muted gm-sub">{{stats.preds ? stats.preds + '场已参与' : '胜负盲评与赛果'}}</text>
     </view>
 
-    <view class="menu-row" data-id="boasts" bindtap="onMenu">
-      <view class="mr-left">
-        <view class="menu-icon-box ic-teal">
+    <view class="gm-card card-low" data-id="boasts" bindtap="onMenu">
+      <view class="gm-top">
+        <view class="gm-icon-box ic-teal">
           <view class="v-icon v-gavel text-teal"></view>
         </view>
-        <text class="mr-title hl">德比法庭 · 狂言存档</text>
+        <view class="v-icon v-chev text-muted gm-arrow"></view>
       </view>
-      <view class="v-icon v-chev text-muted"></view>
+      <text class="hl gm-title">德比法庭狂言</text>
+      <text class="mono muted gm-sub">嘴炮存档与应验判定</text>
     </view>
 
-    <view class="menu-row" data-id="checkins" bindtap="onMenu">
-      <view class="mr-left">
-        <view class="menu-icon-box ic-gold">
+    <view class="gm-card card-low" data-id="checkins" bindtap="onMenu">
+      <view class="gm-top">
+        <view class="gm-icon-box ic-gold">
           <view class="v-icon v-moon text-amber"></view>
         </view>
-        <text class="mr-title hl">夜猫修仙风云榜</text>
+        <view class="v-icon v-chev text-muted gm-arrow"></view>
       </view>
-      <view class="v-icon v-chev text-muted"></view>
+      <text class="hl gm-title">夜猫修仙风云榜</text>
+      <text class="mono muted gm-sub">深夜打卡与圈子榜单</text>
     </view>
 
-    <view class="menu-row" data-id="settings" bindtap="onMenu">
-      <view class="mr-left">
-        <view class="menu-icon-box ic-muted">
+    <view class="gm-card card-low" data-id="settings" bindtap="onMenu">
+      <view class="gm-top">
+        <view class="gm-icon-box ic-muted">
           <view class="v-icon v-tune text-muted"></view>
         </view>
-        <text class="mr-title hl">偏好与提醒设置</text>
+        <view class="v-icon v-chev text-muted gm-arrow"></view>
       </view>
-      <view class="v-icon v-chev text-muted"></view>
+      <text class="hl gm-title">偏好与设置</text>
+      <text class="mono muted gm-sub">预算额度与开球提醒</text>
     </view>
   </view>
 

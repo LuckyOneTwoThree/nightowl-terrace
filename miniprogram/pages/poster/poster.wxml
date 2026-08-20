@@ -1,16 +1,18 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{m}}">
-  <!-- 9:16 海报预览（_10） -->
+  <!-- 动态环境微光 -->
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 海报预览卡片 (9:16 沉浸比例) ==================== -->
   <view class="poster card-highest floodlight-glow">
     <view class="p-inner">
-      <view class="p-bar" style="background: linear-gradient(90deg, {{m.lgAccent}}, #00FF85, #E90052);"></view>
-
+      <view class="p-bar" style="background: linear-gradient(90deg, {{m.lgAccent || '#38003C'}} 0%, #00FF85 50%, #E90052 100%);"></view>
+      
       <view class="p-head">
-        <view class="p-lg chip chip-ghost">
-          <view class="v-icon v-soccer text-teal"></view>
-          <text>{{m.lgEn}}</text>
+        <view class="p-lg mono muted">
+          <text>{{m.lgZh || m.lgEn}} · 焦点巡礼</text>
         </view>
         <view class="p-slogan-row">
-          <view class="v-icon v-paw text-amber p-mascot"></view>
+          <view class="v-icon v-bolt text-amber p-mascot"></view>
           <view class="p-slogan-col">
             <text class="p-title hl">{{slogan}}</text>
             <text class="p-sub mono muted">{{sub}}</text>
@@ -20,54 +22,52 @@
 
       <view class="p-vs">
         <view class="p-side">
-          <image class="crest-xl" src="{{m.home.logo}}" mode="aspectFit" wx:if="{{m.home.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+          <image class="crest-lg" src="{{m.home.logo}}" mode="aspectFill" wx:if="{{m.home.logo}}" />
+          <view class="circle-lg crest-fb" wx:else style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
           <text class="p-name hl">{{m.home.zh}}</text>
         </view>
         <view class="p-mid">
-          <text class="p-x mono muted">VS</text>
+          <text class="p-x mono muted hl">VS</text>
         </view>
         <view class="p-side">
-          <image class="crest-xl" src="{{m.away.logo}}" mode="aspectFit" wx:if="{{m.away.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+          <image class="crest-lg" src="{{m.away.logo}}" mode="aspectFill" wx:if="{{m.away.logo}}" />
+          <view class="circle-lg crest-fb" wx:else style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
           <text class="p-name hl">{{m.away.zh}}</text>
         </view>
       </view>
 
-      <view class="p-time card-low">
-        <text class="mono muted p-day">{{m.dateHeader}}</text>
-        <text class="p-hm score-m hl text-amber text-glow">{{m.hm}}</text>
+      <view class="p-time card-high">
+        <text class="p-day mono muted">{{m.dateHeader}}</text>
+        <text class="p-hm mono hl text-amber score-m">{{m.hm}}</text>
         <view class="p-stars-row">
           <text class="star-on text-amber mono">{{m.stars}}</text>
         </view>
-        <view class="chip chip-amber p-idx">
-          <view class="v-icon v-bolt text-amber"></view>
-          <text class="mono">夜猫指数 {{m.indexText}}</text>
-        </view>
+        <view class="chip chip-amber p-idx mono">夜猫指数 {{m.indexText}} · {{m.tierLabel}}</view>
       </view>
 
-      <view class="p-points card-low">
-        <view class="p-pt" wx:for="{{m.points.length ? m.points : ['本轮焦点大战', '熬夜成本 ' + m.cost + 'h']}}" wx:key="*this">
+      <view class="p-points card-low" wx:if="{{m.points.length}}">
+        <view class="p-pt" wx:for="{{m.points}}" wx:key="*this">
           <view class="p-dot2"></view>
           <text class="p-pt-text">{{item}}</text>
         </view>
       </view>
 
-      <view class="p-foot mono muted">夜猫追球 · NIGHT OWL MATCH</view>
+      <text class="p-foot mono muted">夜猫追球 · NIGHT OWL MATCH</text>
     </view>
   </view>
 
-  <!-- 离屏画布（保存用） -->
+  <!-- 离屏 Canvas (1080×1920 导出) -->
   <canvas type="2d" id="poster" class="p-canvas"></canvas>
 
-  <!-- 操作 -->
+  <!-- ==================== 2. 底部操作区 ==================== -->
   <view class="poster-acts">
     <button class="btn-amber poster-btn floodlight-glow" bindtap="save">
-      <view class="v-icon v-gift"></view>
-      <text>保存高清海报</text>
+      <view class="v-icon v-download"></view>
+      <text>保存到相册</text>
     </button>
-    <button class="btn-teal-ghost poster-btn p-share" bindtap="share">
+    <button class="btn-teal-ghost poster-btn" bindtap="share">
       <view class="v-icon v-paw text-teal"></view>
-      <text>分享给球友</text>
+      <text>复制战报进群</text>
     </button>
   </view>
 </view>
-

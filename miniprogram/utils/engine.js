@@ -180,10 +180,12 @@ function isKeyNode(match, storylines) {
  * @param rivalries 焦点对阵表
  * @param storylines 故事线层
  * @param followed 关注球队 id 数组
- * @return {star, base, stories, keyNode, bonuses:[]}
+ * @param followedLeagues 关注联赛 id 数组（可选）
+ * @return {star, base, stories, keyNode, isFollowed, isLeagueFollowed, bonuses:[]}
  */
-function evaluate(match, recMap, rivalries, storylines, followed) {
+function evaluate(match, recMap, rivalries, storylines, followed, followedLeagues) {
   followed = followed || [];
+  followedLeagues = Array.isArray(followedLeagues) ? followedLeagues : (typeof getApp === 'function' && getApp() && getApp().getFollowedLeagues ? getApp().getFollowedLeagues() : ['PL', 'PD', 'SA', 'BL', 'FL']);
   var rec = recMap && recMap[match.id];
   var stories = storylinesOf(match, storylines);
   var keyNode = isKeyNode(match, storylines);
@@ -198,13 +200,25 @@ function evaluate(match, recMap, rivalries, storylines, followed) {
 
   var star = base;
   if (keyNode && star < 3) { star = 3; bonuses.push('故事线关键节点'); }
-  if (followed.indexOf(match.h) >= 0 || followed.indexOf(match.a) >= 0) {
-    if (star < 2) { star = 2; bonuses.push('关注球队'); }
+  
+  var isFollowed = (followed.indexOf(match.h) >= 0 || followed.indexOf(match.a) >= 0);
+  if (isFollowed) {
+    if (star < 2) star = 2;
+    else if (star < 3) star = 3; // 主队出战自动升至最高或关键星级
+    bonuses.push('关注主队');
+  }
+
+  var isLeagueFollowed = (followedLeagues.indexOf(match.l) >= 0);
+  if (isLeagueFollowed && followedLeagues.length < 5 && !isFollowed) {
+    bonuses.push('关注联赛');
   }
 
   return {
     star: star,
     base: base,
+    isFollowed: isFollowed,
+    isLeagueFollowed: isLeagueFollowed,
+    followedLeaguesCount: followedLeagues.length,
     stories: stories,
     storyIds: stories.map(function (s) { return s.id; }),
     keyNode: keyNode,
@@ -215,7 +229,7 @@ function evaluate(match, recMap, rivalries, storylines, followed) {
 }
 
 // ---------- 夜猫指数 ----------
-// W = star×10 + 故事线加成(0/5/10)；指数 = W ÷ (1 + 睡眠成本)
+// W = star×10 + 故事线加成(0/5/10) + 主队加成(25) + 关注联赛加成(8)；指数 = W ÷ (1 + 睡眠成本)
 
 function storyBonus(ev) {
   if (ev.keyNode) return 10;
@@ -223,29 +237,56 @@ function storyBonus(ev) {
   return 0;
 }
 
+function followedBonus(ev) {
+  return ev.isFollowed ? 25 : 0; // 主队核心权重加成，确保背包规划优先排入
+}
+
+function leagueBonus(ev) {
+  // 当用户圈定了特定关注联赛（非全选 5 个）时，属于关注联赛的场次获得看点加分
+  return (ev.isLeagueFollowed && ev.followedLeaguesCount < 5) ? 8 : 0;
+}
+
 function owlIndex(ev, match) {
-  var w = ev.star * 10 + storyBonus(ev);
+  var w = ev.star * 10 + storyBonus(ev) + followedBonus(ev) + leagueBonus(ev);
   return w / (1 + tierOf(match).cost);
 }
 
 // ---------- 今晚之选 ----------
-// 当日最高星级为 Hero；并列→睡眠成本低者优先；仍并列→故事线节点优先；其余 ★★ 以上进今日加餐
+// 当日主队出战绝对优先；其次关注联赛高星级焦点战；并列→睡眠成本低者优先；仍并列→故事线节点优先；其余 ★★ 以上进今日加餐
 
-function pickToday(matches, recMap, rivalries, storylines, followed) {
+function pickToday(matches, recMap, rivalries, storylines, followed, followedLeagues) {
   var evs = matches
     // tbd 场次时间未定，不担任今晚之选（今日页仍会以「时间待定」列出）
     .filter(function (m) { return m.st === 'sched' && !m.tbd; })
     .map(function (m) {
-      var ev = evaluate(m, recMap, rivalries, storylines, followed);
+      var ev = evaluate(m, recMap, rivalries, storylines, followed, followedLeagues);
       return { m: m, ev: ev, index: owlIndex(ev, m) };
     });
 
   evs.sort(function (x, y) {
+    // 1. 主队出战绝对最高优先级
+    if (y.ev.isFollowed !== x.ev.isFollowed) return (y.ev.isFollowed ? 1 : 0) - (x.ev.isFollowed ? 1 : 0);
+
+    // 2. 关注联赛优先级：同星级或差距在1星以内时优先关注联赛；全欧极重磅(★★★)仍可跨联赛入选
+    var lPriorityX = (x.ev.isLeagueFollowed ? 1 : 0);
+    var lPriorityY = (y.ev.isLeagueFollowed ? 1 : 0);
+    if (lPriorityY !== lPriorityX) {
+      if (y.ev.isLeagueFollowed && y.ev.star >= 2 && x.ev.star <= 2) return 1;
+      if (x.ev.isLeagueFollowed && x.ev.star >= 2 && y.ev.star <= 2) return -1;
+    }
+
+    // 3. 星级降序
     if (y.ev.star !== x.ev.star) return y.ev.star - x.ev.star;
+
+    // 4. 睡眠成本低者优先
     var cx = tierOf(x.m).cost, cy = tierOf(y.m).cost;
     if (cx !== cy) return cx - cy;
+
+    // 5. 故事线加成
     var sx = storyBonus(x.ev), sy = storyBonus(y.ev);
     if (sy !== sx) return sy - sx;
+
+    // 6. 最终综合指数
     return y.index - x.index;
   });
 
@@ -289,18 +330,47 @@ function knapsack(entries, budgetHours) {
   return chosen;
 }
 
-function planWeek(matches, recMap, rivalries, storylines, followed, budget) {
+function planWeek(matches, recMap, rivalries, storylines, followed, budget, followedLeagues) {
   budget = budget || 4.0;
   var evs = matches
     // tbd 场次开球时间未定，成本档不可信，不进背包规划
     .filter(function (m) { return m.st === 'sched' && !m.tbd; })
     .map(function (m) {
-      var ev = evaluate(m, recMap, rivalries, storylines, followed);
+      var ev = evaluate(m, recMap, rivalries, storylines, followed, followedLeagues);
       return { m: m, ev: ev, index: owlIndex(ev, m) };
     })
     .sort(function (a, b) { return b.index - a.index; });
 
-  var best = knapsack(evs, budget);
+  // 1. 分离：主队比赛、关注联赛中立比赛、其他中立比赛
+  var followedEvs = evs.filter(function (e) { return e.ev.isFollowed; });
+  var followedLeagueNeutralEvs = evs.filter(function (e) { return !e.ev.isFollowed && e.ev.isLeagueFollowed; });
+  var otherNeutralEvs = evs.filter(function (e) { return !e.ev.isFollowed && !e.ev.isLeagueFollowed; });
+
+  var best = [];
+  var curBudget = budget;
+
+  // 2. 主队比赛优先入选（在预算内必保）
+  followedEvs.forEach(function (e) {
+    var cost = tierOf(e.m).cost;
+    if (cost <= curBudget) {
+      best.push(e);
+      curBudget -= cost;
+    }
+  });
+
+  // 3. 剩余预算优先通过背包算法填充「关注联赛」的高价值比赛
+  if (curBudget > 0 && followedLeagueNeutralEvs.length > 0) {
+    var filledLeague = knapsack(followedLeagueNeutralEvs, curBudget);
+    best = best.concat(filledLeague);
+    filledLeague.forEach(function (e) { curBudget -= tierOf(e.m).cost; });
+  }
+
+  // 4. 若仍有剩余预算，再从「其他联赛」中挑选最高星级跨联赛焦点战填补
+  if (curBudget > 0 && otherNeutralEvs.length > 0) {
+    var filledOther = knapsack(otherNeutralEvs, curBudget);
+    best = best.concat(filledOther);
+  }
+
   var bestIds = {};
   best.forEach(function (e) { bestIds[e.m.id] = true; });
   var alt = evs.filter(function (e) { return !bestIds[e.m.id]; }).slice(0, 3);
@@ -312,17 +382,25 @@ function planWeek(matches, recMap, rivalries, storylines, followed, budget) {
 
 // ---------- 雷区预警 ----------
 // 睡眠成本 ≥ S3 且 星级 ≤ ★ 且 不属于任何故事线节点
+// 或 非关注联赛 且 凌晨 S2+ 档 且 星级 ≤ ★
 
-function minefield(matches, recMap, rivalries, storylines, followed) {
+function minefield(matches, recMap, rivalries, storylines, followed, followedLeagues) {
   return matches
     // tbd 场次开球时间未定，S 档不可信，不进雷区
     .filter(function (m) { return m.st === 'sched' && !m.tbd; })
-    .map(function (m) { return { m: m, ev: evaluate(m, recMap, rivalries, storylines, followed) }; })
+    .map(function (m) { return { m: m, ev: evaluate(m, recMap, rivalries, storylines, followed, followedLeagues) }; })
     .filter(function (e) {
-      return tierOf(e.m).cost >= 3.5 && e.ev.star <= 1 && e.ev.storyIds.length === 0;
+      var cost = tierOf(e.m).cost;
+      if (cost >= 3.5 && e.ev.star <= 1 && e.ev.storyIds.length === 0) return true;
+      if (!e.ev.isLeagueFollowed && cost >= 2.5 && e.ev.star <= 1 && e.ev.storyIds.length === 0) return true;
+      return false;
     })
     .map(function (e) {
-      e.reason = '凌晨 ' + tierOf(e.m).label + ' 档，看点有限，建议睡觉';
+      if (!e.ev.isLeagueFollowed) {
+        e.reason = '非关注联赛 · ' + tierOf(e.m).label + ' 档看点有限，建议睡觉养生';
+      } else {
+        e.reason = '凌晨 ' + tierOf(e.m).label + ' 档，看点有限，建议睡觉';
+      }
       return e;
     });
 }
@@ -350,17 +428,20 @@ function replays(matches, recMap, limit) {
 
 // ---------- 下一场焦点战（无球日降级用） ----------
 
-function nextFocal(matches, recMap, rivalries, storylines, followed, nowTs) {
+function nextFocal(matches, recMap, rivalries, storylines, followed, nowTs, followedLeagues) {
   var future = matches
     .filter(function (m) {
       // tbd 占位时间不可信，不作为焦点战倒计时目标
       return m.st === 'sched' && !m.tbd && ts(m.t) > nowTs;
     })
     .map(function (m) {
-      var ev = evaluate(m, recMap, rivalries, storylines, followed);
+      var ev = evaluate(m, recMap, rivalries, storylines, followed, followedLeagues);
       return { m: m, ev: ev };
     })
     .sort(function (a, b) {
+      if (b.ev.isLeagueFollowed !== a.ev.isLeagueFollowed && b.ev.star === a.ev.star) {
+        return (b.ev.isLeagueFollowed ? 1 : 0) - (a.ev.isLeagueFollowed ? 1 : 0);
+      }
       if (b.ev.star !== a.ev.star) return b.ev.star - a.ev.star;
       return ts(a.m.t) - ts(b.m.t);
     });

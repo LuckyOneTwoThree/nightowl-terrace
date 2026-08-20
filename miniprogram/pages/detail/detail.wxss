@@ -1,17 +1,24 @@
-.page { padding: 24rpx 32rpx 64rpx; min-height: 100vh; }
+.page { padding: 24rpx 32rpx 80rpx; min-height: 100vh; box-sizing: border-box; }
+
+/* 动态光晕 */
+.glow { position: fixed; width: 600rpx; height: 600rpx; border-radius: var(--r-full); filter: blur(160rpx); pointer-events: none; z-index: 0; }
+.glow-amber { top: -200rpx; right: -200rpx; background: rgba(255,178,36,.08); }
 
 /* Hero */
-.hero { position: relative; padding: 32rpx; overflow: hidden; margin-bottom: 12rpx; border-radius: var(--r-xl); }
+.hero {
+  position: relative; z-index: 1; padding: 32rpx; overflow: hidden; margin-bottom: 24rpx;
+  border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline);
+}
 .hero.dim { opacity: .92; }
-.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; background: var(--secondary); box-shadow: 0 0 12rpx rgba(20,224,191,.5); }
+.accent-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 8rpx; box-shadow: 0 0 12rpx rgba(20,224,191,.5); }
 .hero-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28rpx; padding-left: 12rpx; }
 .hh-left { display: flex; align-items: center; gap: 16rpx; }
 .stars-row { display: flex; align-items: center; gap: 4rpx; }
-.star-on { color: var(--primary-container); font-size: 28rpx; }
+.star-on { font-size: 28rpx; }
 
 .vs { display: flex; align-items: center; justify-content: space-between; padding: 10rpx 0 36rpx; }
 .side { width: 160rpx; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 14rpx; }
-.side-name { font-size: 28rpx; font-weight: 600; text-align: center; color: var(--on-surface); max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-name { font-size: 28rpx; font-weight: 700; text-align: center; color: var(--on-surface); max-width: 160rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mid { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 12rpx; padding: 0 8rpx; }
 .match-time { font-size: 34rpx; color: var(--on-surface); font-weight: 700; white-space: nowrap; }
 .cd-pill {
@@ -32,15 +39,16 @@
 
 /* 看点 */
 .sect-gap { margin: 40rpx 0 20rpx; }
-.points { padding: 24rpx 28rpx; display: flex; flex-direction: column; gap: 16rpx; border-radius: var(--r-lg); }
+.points { padding: 24rpx 28rpx; display: flex; flex-direction: column; gap: 16rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline); }
 .point { display: flex; gap: 14rpx; align-items: flex-start; }
 .p-dot { width: 8rpx; height: 8rpx; border-radius: var(--r-full); background: var(--primary-container); margin-top: 14rpx; flex-shrink: 0; box-shadow: 0 0 6rpx rgba(255,178,36,.6); }
 .p-text { color: var(--on-surface-variant); font-size: 26rpx; line-height: 38rpx; font-family: var(--font-body); }
 
 /* 絮语 */
 .quote {
-  display: flex; align-items: flex-start; gap: 16rpx;
+  display: flex; align-items: flex-start; gap: 16rpx; border-radius: var(--r-xl, 28rpx);
   margin-top: 24rpx; padding: 22rpx 26rpx; border-left: 6rpx solid var(--primary-container);
+  border-top: 1rpx solid var(--hairline); border-right: 1rpx solid var(--hairline); border-bottom: 1rpx solid var(--hairline);
 }
 .paw-s { width: 30rpx; height: 30rpx; margin-top: 4rpx; }
 .q-text { font-size: 26rpx; font-style: italic; line-height: 38rpx; color: var(--on-surface-variant); }
@@ -48,7 +56,7 @@
 
 /* 单场盲评预测卡片 */
 .pred-box {
-  margin-top: 28rpx; padding: 24rpx 28rpx; border-radius: var(--r-xl);
+  margin-top: 28rpx; padding: 24rpx 28rpx; border-radius: var(--r-xl, 28rpx);
   border: 1rpx solid rgba(255,178,36,.3);
 }
 .sealed-box {
@@ -64,7 +72,7 @@
 .pb-sub { font-size: 22rpx; }
 .pb-opts { display: flex; gap: 14rpx; }
 .pb-opt {
-  flex: 1; text-align: center; padding: 18rpx 0; border-radius: var(--r-md);
+  flex: 1; text-align: center; padding: 18rpx 0; border-radius: var(--r-full);
   background: var(--sc-high); border: 1rpx solid var(--outline-muted);
   color: var(--on-surface-variant); font-size: 26rpx; transition: all .15s ease;
   white-space: nowrap;
@@ -89,7 +97,7 @@
   display: inline-flex; align-items: center; justify-content: center;
   padding: 12rpx 28rpx !important; border-radius: var(--r-full);
   font-size: 24rpx; font-weight: 700; height: 64rpx; line-height: 64rpx;
-  width: auto !important;
+  width: auto !important; margin: 0 !important;
 }
 .pb-body {
   display: flex; flex-direction: column; gap: 6rpx;
@@ -101,7 +109,7 @@
 .acts { display: flex; gap: 16rpx; margin-top: 32rpx; }
 .act {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx;
-  padding: 22rpx 0; border-radius: var(--r-lg);
+  padding: 22rpx 0; border-radius: var(--r-xl, 28rpx);
   font-size: 24rpx; transition: transform .15s ease;
 }
 .act:active { transform: scale(0.98); }
@@ -115,14 +123,12 @@
 }
 .act-sub:active { background: var(--sc-high); }
 
-
-
 /* 信息 bento 3宫格 */
 .bento { display: flex; gap: 16rpx; margin-top: 28rpx; }
 .b-card {
   flex: 1; position: relative; overflow: hidden;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10rpx;
-  padding: 24rpx 12rpx; border-radius: var(--r-lg);
+  padding: 24rpx 12rpx; border-radius: var(--r-xl, 28rpx); border: 1rpx solid var(--hairline);
 }
 .b-head-row { display: flex; align-items: center; gap: 8rpx; }
 .b-label { font-size: 20rpx; }
@@ -131,8 +137,9 @@
 
 /* 已赛结算条 */
 .verdict {
-  margin-top: 28rpx; padding: 24rpx 32rpx; border-radius: var(--r-lg);
+  margin-top: 28rpx; padding: 24rpx 32rpx; border-radius: var(--r-xl, 28rpx);
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16rpx;
+  border: 1rpx solid var(--hairline);
 }
 .v-item { display: flex; align-items: center; gap: 8rpx; font-size: 24rpx; }
 .v-ok { font-weight: 700; margin-left: 4rpx; }

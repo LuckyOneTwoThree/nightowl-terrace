@@ -41,7 +41,9 @@ files.forEach(f => {
   
   // 微信云数据库导入标准：Line-delimited JSON (JSON Lines / NDJSON)
   const lines = data.map(item => {
-    const doc = Object.assign({}, item);
+    // 纯字符串元素（如 quips 短句数组）须包成文档对象：
+    // Object.assign({}, '字符串') 会把字符下标当键，导出 {"0":"熬","1":"夜"...} 坏数据（三轮 P1-6）
+    const doc = typeof item === 'string' ? { text: item } : Object.assign({}, item);
     if (doc.id && !doc._id) {
       doc._id = String(doc.id);
     } else if (doc.m && !doc._id) {

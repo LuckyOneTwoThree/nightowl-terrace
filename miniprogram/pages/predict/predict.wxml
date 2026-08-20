@@ -1,10 +1,13 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 顶部公告面板（_11 高质感双层金框） -->
+  <!-- 动态环境光晕 -->
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 顶部预言家奖池公告卡 ==================== -->
   <view class="deadline card-highest floodlight-glow">
     <view class="dl-main">
       <view class="dl-left">
         <view class="dot-amber animate-pulse"></view>
-        <text class="dl-title hl text-amber">夜猫盲评 · 赛前预言家</text>
+        <text class="dl-title hl text-amber">盲评预言家 · 奖池工作台</text>
       </view>
       <view class="chip chip-amber dl-chip">
         <view class="v-icon v-fire text-amber"></view>
@@ -12,11 +15,11 @@
       </view>
     </view>
     <view class="dl-sub-row">
-      <text class="mono dl-sub">任意比赛开球前均可独立预测 · 终场哨响自动开箱</text>
+      <text class="mono dl-sub">任意比赛开球前均可独立预测 · 赛后自动开箱结算</text>
     </view>
   </view>
 
-  <!-- 联赛切换筛选药丸 -->
+  <!-- ==================== 2. 联赛切换筛选药丸 ==================== -->
   <scroll-view class="league-pills" scroll-x enable-flex show-scrollbar="{{false}}">
     <view class="lpill {{curLeague === item.id ? 'active floodlight-glow' : ''}}"
           wx:for="{{leaguePills}}" wx:key="id"
@@ -25,7 +28,7 @@
     </view>
   </scroll-view>
 
-  <!-- 规则 chips（3列均匀自适应） -->
+  <!-- ==================== 3. 规则 chips ==================== -->
   <view class="rules">
     <view class="chip chip-ghost rule-chip">
       <view class="v-icon v-check text-teal"></view>
@@ -35,25 +38,27 @@
       <view class="v-icon v-bolt text-amber"></view>
       <text>精确比分 +2</text>
     </view>
-    <view class="chip chip-error rule-chip">
+    <view class="chip chip-red rule-chip">
       <view class="v-icon v-fire text-error"></view>
-      <text>冷门翻倍</text>
+      <text>冷门双倍</text>
     </view>
   </view>
 
-  <!-- 竞猜卡列表 -->
+  <!-- ==================== 4. 竞猜卡列表 ==================== -->
   <view class="cards">
     <view class="gcard card-low {{item.pick ? 'picked' : ''}} {{item.isTarget ? 'target-focused' : ''}}" wx:for="{{cards}}" wx:key="id">
-      <view class="g-bar" style="background: {{item.lgAccent}};"></view>
+      <view class="g-bar" style="background: {{item.lgAccent || 'var(--secondary)'}};"></view>
       <view class="g-top">
         <view class="g-meta">
-          <text class="mono muted">{{item.md}} {{item.hm}} · {{item.lgZh}}</text>
+          <text class="mono hl g-time-txt">{{item.md}} {{item.hm}}</text>
+          <text class="mono muted">·</text>
+          <text class="hl g-lg-name">{{item.lgZh}}</text>
           <view class="chip chip-amber target-chip" wx:if="{{item.isTarget}}">
             <view class="v-icon v-bolt text-amber"></view>
-            <text>指定预测场次</text>
+            <text>目标场次</text>
           </view>
         </view>
-        <view class="chip chip-error upset-chip" wx:if="{{item.upset}}">
+        <view class="chip chip-red upset-chip" wx:if="{{item.upset}}">
           <view class="v-icon v-fire text-error"></view>
           <text>冷门狂热</text>
         </view>
@@ -61,19 +66,21 @@
 
       <view class="g-vs">
         <view class="g-side">
-          <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
+          <image class="crest-md" src="{{item.home.logo}}" mode="aspectFill" wx:if="{{item.home.logo}}" />
+          <view class="circle-md crest-fb" wx:else style="background: {{item.home.bg}}; border-color: {{item.home.bd}};">{{item.home.id}}</view>
           <text class="g-name hl">{{item.home.zh}}</text>
         </view>
         <text class="mono muted g-vs-txt">VS</text>
         <view class="g-side">
-          <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" /><view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
+          <image class="crest-md" src="{{item.away.logo}}" mode="aspectFill" wx:if="{{item.away.logo}}" />
+          <view class="circle-md crest-fb" wx:else style="background: {{item.away.bg}}; border-color: {{item.away.bd}};">{{item.away.id}}</view>
           <text class="g-name hl">{{item.away.zh}}</text>
         </view>
       </view>
 
       <view class="g-sealed card-high" wx:if="{{item.closed}}">
         <view class="v-icon v-bolt text-error"></view>
-        <text class="mono text-error">已开球 · 本场竞猜截止</text>
+        <text class="mono text-error">已开球 · 本场盲评已截止</text>
       </view>
 
       <block wx:elif="{{!item.sealed}}">
@@ -108,19 +115,18 @@
       </block>
       <view class="g-sealed card-high" wx:else>
         <view class="v-icon v-bolt text-teal"></view>
-        <text class="mono text-teal">已封存上锁 · 预测: {{item.pick === 'h' ? '主胜' : item.pick === 'd' ? '平局' : '客胜'}}{{item.scoreH !== '' ? ' (' + item.scoreH + '-' + item.scoreA + ')' : ''}}</text>
+        <text class="mono text-teal">已加盐封存 · 预言: {{item.pick === 'h' ? '主胜' : item.pick === 'd' ? '平局' : '客胜'}}{{item.scoreH !== '' ? ' (' + item.scoreH + '-' + item.scoreA + ')' : ''}}</text>
       </view>
     </view>
   </view>
 
   <view class="to-records mono muted" bindtap="goRecords">
-    <text>查看我的历史预测档案</text>
-    <view class="v-icon v-chev text-muted"></view>
+    <text>查看我的历史预测档案 ›</text>
   </view>
 
   <view class="spacer"></view>
 
-  <!-- 底部封存栏（_11 fixed bar） -->
+  <!-- ==================== 5. 底部固定封存栏 ==================== -->
   <view class="sealbar glass-panel">
     <view class="sb-info">
       <text class="mono muted">已选待封存: <text class="text-amber hl">{{pickedCount}}</text> 场</text>

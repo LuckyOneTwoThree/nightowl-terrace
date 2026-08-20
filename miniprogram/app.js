@@ -35,6 +35,7 @@ App({
   },
   globalData: {
     followedTeams: null,
+    followedLeagues: null,
     themeMode: null
   },
   getFollowed: function () {
@@ -55,8 +56,45 @@ App({
     // 云端 users.followed best-effort 同步（二轮 P2-5：onboarding/teams/me 页改关注后
     // 主队推送不再停留旧值；失败静默，下次 settings 页 apply 会再同步）
     try {
-      cloud.syncUser({ followed: ids });
+      cloud.syncUser({ followed: ids, followedLeagues: this.getFollowedLeagues() });
     } catch (e) { /* 忽略 */ }
+  },
+  getFollowedLeagues: function () {
+    if (this.globalData.followedLeagues === null) {
+      try {
+        var stored = wx.getStorageSync('followedLeagues');
+        if (Array.isArray(stored) && stored.length > 0) {
+          this.globalData.followedLeagues = stored;
+        } else {
+          // 向后兼容：若已有关注主队，基于关注主队反推其联赛集合；否则默认全选五大联赛
+          var followedTeams = this.getFollowed();
+          if (Array.isArray(followedTeams) && followedTeams.length > 0) {
+            var dataUtil = require('./utils/data.js');
+            var set = {};
+            followedTeams.forEach(function (id) {
+              var t = dataUtil.getTeam(id);
+              if (t && t.league) set[t.league] = true;
+            });
+            var derived = Object.keys(set);
+            this.globalData.followedLeagues = derived.length > 0 ? derived : ['PL', 'PD', 'SA', 'BL', 'FL'];
+          } else {
+            this.globalData.followedLeagues = ['PL', 'PD', 'SA', 'BL', 'FL'];
+          }
+        }
+      } catch (e) {
+        this.globalData.followedLeagues = ['PL', 'PD', 'SA', 'BL', 'FL'];
+      }
+    }
+    return this.globalData.followedLeagues;
+  },
+  setFollowedLeagues: function (leagues) {
+    this.globalData.followedLeagues = leagues;
+    try {
+      wx.setStorageSync('followedLeagues', leagues);
+    } catch (e) { }
+    try {
+      cloud.syncUser({ followedLeagues: leagues, followed: this.getFollowed() });
+    } catch (e) { }
   },
 
   // 原生系统级样式缓存状态

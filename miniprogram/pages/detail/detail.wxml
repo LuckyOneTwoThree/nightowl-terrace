@@ -1,24 +1,28 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{m}}">
-  <!-- 赛前 Hero（_1 pre-match）/ 已赛降级为比分版 -->
-  <view class="hero {{m.finished ? 'card-low dim' : 'card-highest'}}">
-    <view class="accent-bar" style="background: {{m.finished ? '#334155' : ''}};"></view>
+  <!-- 环境微光 -->
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 比赛对决沉浸式 Header (Match Hero) ==================== -->
+  <view class="hero {{m.finished ? 'card-low dim' : 'card-highest floodlight-glow'}}">
+    <view class="accent-bar" style="background: {{m.finished ? '#334155' : m.lgSolid || 'var(--secondary)'}};"></view>
     <view class="hero-head">
       <view class="hh-left">
         <view class="lg-chip" style="background: {{m.lgSolid}};">{{m.lgZh}}</view>
-        <view class="stars-row">
-          <text class="star-on mono">{{m.stars}}</text>
+        <view class="stars-row" wx:if="{{m.stars}}">
+          <text class="star-on mono text-amber">{{m.stars}}</text>
         </view>
       </view>
       <view class="chip chip-ghost" wx:if="{{m.finished}}">全场结束</view>
       <view class="focal mono" wx:elif="{{m.star >= 3}}">
         <view class="dot-teal animate-pulse"></view>
-        <text>焦点战</text>
+        <text>焦点决战</text>
       </view>
     </view>
 
     <view class="vs">
       <view class="side">
-        <image class="crest-xl" src="{{m.home.logo}}" mode="aspectFill" wx:if="{{m.home.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
+        <image class="crest-xl" src="{{m.home.logo}}" mode="aspectFill" wx:if="{{m.home.logo}}" />
+        <view class="circle-xl crest-fb" wx:else style="background: {{m.home.bg}}; border-color: {{m.home.bd}};">{{m.home.id}}</view>
         <text class="side-name hl">{{m.home.zh}}</text>
       </view>
       <view class="mid">
@@ -36,7 +40,8 @@
         </block>
       </view>
       <view class="side">
-        <image class="crest-xl" src="{{m.away.logo}}" mode="aspectFill" wx:if="{{m.away.logo}}" /><view class="circle-xl crest-fb" wx:else style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
+        <image class="crest-xl" src="{{m.away.logo}}" mode="aspectFill" wx:if="{{m.away.logo}}" />
+        <view class="circle-xl crest-fb" wx:else style="background: {{m.away.bg}}; border-color: {{m.away.bd}};">{{m.away.id}}</view>
         <text class="side-name hl">{{m.away.zh}}</text>
       </view>
     </view>
@@ -51,13 +56,13 @@
         <text>{{item}}</text>
         <view class="v-icon v-chev text-teal"></view>
       </view>
-      <view class="chip chip-ghost" wx:if="{{m.rivalry}}">{{m.rivalry}}</view>
+      <view class="chip chip-red" wx:if="{{m.rivalry}}">🔥 {{m.rivalry}}</view>
     </view>
   </view>
 
-  <!-- 本场看点 -->
+  <!-- ==================== 2. 本场战术看点与夜猫絮语 ==================== -->
   <block wx:if="{{m.points.length}}">
-    <view class="sect sect-gap"><text class="sect-title">本场看点</text><view class="sect-line"></view></view>
+    <view class="sect sect-gap"><text class="sect-title">战术看点与深夜锦囊</text><view class="sect-line"></view></view>
     <view class="card-low points">
       <view class="point" wx:for="{{m.points}}" wx:key="*this">
         <view class="p-dot"></view>
@@ -66,23 +71,27 @@
     </view>
   </block>
 
-  <!-- 夜猫絮语 -->
-  <view class="quote card-low">
+  <!-- 夜猫絮语金句 -->
+  <view class="quote card-low" wx:if="{{quip}}">
     <view class="v-icon v-paw text-amber paw-s"></view>
     <text class="q-text"><text class="quote-strong">夜猫絮语:</text>“{{quip}}”</text>
   </view>
 
-  <!-- 本场单场盲评预测卡片 -->
-  <block wx:if="{{!m.finished}}">
+  <!-- ==================== 3. 本场单场盲评预测卡片 ==================== -->
+  <!-- tbd 场次时间未定，myPred 为 null 时整段隐藏（三轮 P1-5） -->
+  <block wx:if="{{!m.finished && myPred}}">
     <!-- 已封存状态 -->
     <view class="card-low pred-box sealed-box" wx:if="{{myPred && myPred.sealed}}">
       <view class="pb-head">
-        <view class="v-icon v-bolt text-teal"></view>
-        <text class="hl text-teal">已封存本场预测</text>
+        <view class="pb-title-row">
+          <view class="v-icon v-bolt text-teal"></view>
+          <text class="hl text-teal">已封存本场预言</text>
+        </view>
+        <view class="chip chip-teal">加盐哈希上锁</view>
       </view>
       <view class="pb-body">
         <text class="pb-result hl text-amber">我的预测: {{myPred.pickZh}}{{myPred.scoreH !== '' ? ' (' + myPred.scoreH + '-' + myPred.scoreA + ')' : ''}}</text>
-        <text class="mono muted pb-tip">终场哨响自动开箱 · 命中得积分</text>
+        <text class="mono muted pb-tip">终场哨响自动开箱结算 · 命中自动累入赛季总榜</text>
       </view>
     </view>
 
@@ -91,7 +100,7 @@
       <view class="pb-head">
         <view class="pb-title-row">
           <view class="v-icon v-fire text-amber"></view>
-          <text class="hl">单场预言 · 猜这场</text>
+          <text class="hl">单场预言 · 押上尊严</text>
         </view>
         <text class="mono muted pb-sub">猜中 +3分 · 精确比分 +2分</text>
       </view>
@@ -110,23 +119,23 @@
 
       <view class="pb-score-row" wx:if="{{inputPick}}">
         <view class="pb-score-in">
-          <text class="mono muted">比分:</text>
+          <text class="mono muted">精确比分:</text>
           <input class="pb-in mono hl" type="number" value="{{inputScoreH}}" data-side="h" bindinput="onInputScore" placeholder="-" />
           <text class="mono muted">:</text>
           <input class="pb-in mono hl" type="number" value="{{inputScoreA}}" data-side="a" bindinput="onInputScore" placeholder="-" />
         </view>
         <button class="btn-amber pb-seal-btn floodlight-glow" bindtap="onSealSingle">
-          <text>封存预测</text>
+          <text>安全封存</text>
         </button>
       </view>
     </view>
   </block>
 
-  <!-- 行按钮：参与预测 / 留句狂言 / 生成海报 -->
+  <!-- ==================== 4. 底部三联快捷操作岛 ==================== -->
   <view class="acts" wx:if="{{!m.finished}}">
     <view class="act act-main floodlight-glow" bindtap="goPredict">
       <view class="v-icon v-soccer"></view>
-      <text class="hl">{{myPred && myPred.sealed ? '更多盲评' : '盲评单'}}</text>
+      <text class="hl">{{myPred && myPred.sealed ? '全部盲评单' : '去盲评大厅'}}</text>
     </view>
     <view class="act act-sub" bindtap="goCourt">
       <view class="v-icon v-gavel text-amber"></view>
@@ -138,7 +147,7 @@
     </view>
   </view>
 
-  <!-- 信息 bento 3宫格：熬夜成本 / 当地时间 / 直播平台 -->
+  <!-- ==================== 5. 信息 Bento 3 宫格 ==================== -->
   <view class="bento">
     <view class="b-card card-low">
       <view class="b-head-row">
@@ -163,7 +172,7 @@
     </view>
   </view>
 
-  <!-- 已赛：法庭结算条 -->
+  <!-- ==================== 6. 已赛：法庭结算条 ==================== -->
   <view class="verdict card-low" wx:if="{{m.finished}}">
     <view class="v-item">
       <view class="v-icon v-check text-teal"></view>

@@ -1,46 +1,106 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 光晕氛围（_15） -->
+  <!-- 光晕氛围 -->
   <view class="glow glow-amber"></view>
   <view class="glow glow-teal"></view>
 
-  <!-- 头部 -->
-  <view class="head">
-    <view class="skip-btn chip chip-ghost mono" bindtap="skip">跳过 ›</view>
-    <text class="hl hl-lg onb-title">选几支关注的主队</text>
-    <text class="mono muted head-sub">为你量身定制赛程日历与熬夜推荐，随时可在“我的”更改</text>
-  </view>
-
-  <!-- 联赛分组 -->
-  <view class="groups">
-    <view class="group" wx:for="{{groups}}" wx:key="id" wx:for-item="g" wx:for-index="gi">
-      <view class="g-head">
-        <view class="v-icon v-soccer text-amber g-ic"></view>
-        <text class="hl hl-md">{{g.zh}}</text>
+  <!-- ==================== STEP 1: 关注联赛 ==================== -->
+  <block wx:if="{{step === 1}}">
+    <view class="head">
+      <view class="head-top-row">
+        <view class="chip chip-amber mono step-pill">步骤 1 / 2 · 关注联赛</view>
+        <view class="skip-btn chip chip-ghost mono" bindtap="skip">跳过 ›</view>
       </view>
-      <view class="chips">
-        <view class="tchip card-low {{t.on ? 'on floodlight-glow' : ''}}"
-              wx:for="{{g.teams}}" wx:key="id" wx:for-item="t" wx:for-index="ti"
-              data-g="{{gi}}" data-t="{{ti}}" bindtap="toggle">
-          <image class="crest-sm t-ava" src="{{t.logo}}" mode="aspectFill" wx:if="{{t.logo}}" /><view class="t-ava circle-sm crest-fb" wx:else style="background: {{t.bg}}; border-color: {{t.bd}};">{{t.id}}</view>
-          <text class="t-name hl">{{t.zh}}</text>
-          <view class="v-icon v-check text-amber t-check" wx:if="{{t.on}}"></view>
+      <text class="hl hl-lg onb-title">你平时关注哪些联赛？</text>
+      <text class="mono muted head-sub">为你过滤无关赛程，定制个性化熬夜指南。随时可在“我的”更改</text>
+    </view>
+
+    <!-- 快捷操作与提示 -->
+    <view class="quick-row">
+      <text class="mono muted quick-hint">欧洲顶级五大联赛（多选）</text>
+      <view class="chip chip-ghost mono quick-toggle-btn" bindtap="toggleAllLeagues">
+        <text>{{allSelectedLeagues ? '清空' : '全选五大联赛'}}</text>
+      </view>
+    </view>
+
+    <!-- 联赛大卡片网格 -->
+    <view class="league-grid">
+      <view class="lg-card card-low {{item.on ? 'on floodlight-glow' : ''}}"
+            wx:for="{{leagueList}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleLeague">
+        <view class="lg-color-bar" style="background: {{item.solid}};"></view>
+        <view class="lg-info">
+          <view class="lg-name-row">
+            <text class="hl lg-title">{{item.zh}}</text>
+            <text class="mono muted lg-en">{{item.en}}</text>
+          </view>
+          <text class="mono lg-tagline">{{item.tagline}}</text>
+          <text class="mono muted lg-desc">{{item.desc}}</text>
+        </view>
+        <view class="lg-check-box {{item.on ? 'checked' : ''}}">
+          <view class="v-icon v-check text-amber lg-check-ic" wx:if="{{item.on}}"></view>
         </view>
       </view>
     </view>
-  </view>
 
-  <!-- 底部操作栏（_15） -->
-  <view class="bar glass-panel">
-    <view class="bar-main">
-      <view class="bar-count">
-        <text class="mono muted bar-label">已选主队</text>
-        <text class="bar-num mono hl"><text class="text-amber text-glow n">{{picked}}</text> 支</text>
+    <!-- 底部操作栏（Step 1） -->
+    <view class="bar glass-panel">
+      <view class="bar-main">
+        <view class="bar-count">
+          <text class="mono muted bar-label">已选联赛</text>
+          <text class="bar-num mono hl"><text class="text-amber text-glow n">{{pickedLeaguesCount}}</text> / 5</text>
+        </view>
+        <button class="btn-amber done-btn floodlight-glow" bindtap="goStep2">
+          <text>下一步：挑选主队</text>
+          <view class="v-icon v-chev"></view>
+        </button>
       </view>
-      <button class="btn-amber done-btn floodlight-glow" bindtap="finish">
-        <text>开启追球之旅</text>
-        <view class="v-icon v-chev"></view>
-      </button>
     </view>
-  </view>
+  </block>
+
+  <!-- ==================== STEP 2: 挑选信仰主队 ==================== -->
+  <block wx:if="{{step === 2}}">
+    <view class="head">
+      <view class="head-top-row">
+        <view class="back-btn chip chip-ghost mono" bindtap="goStep1">‹ 重选联赛</view>
+        <view class="skip-btn chip chip-ghost mono" bindtap="skip">跳过 ›</view>
+      </view>
+      <text class="hl hl-lg onb-title">挑选你的信仰主队</text>
+      <text class="mono muted head-sub">已呈现已选联赛的全部球队，主队比赛优先排入每周熬夜计划</text>
+    </view>
+
+    <!-- 联赛球队分组 -->
+    <view class="groups">
+      <view class="group" wx:for="{{groups}}" wx:key="id" wx:for-item="g" wx:for-index="gi">
+        <view class="g-head">
+          <view class="lg-tag-solid" style="background: {{g.solid}};">{{g.id}}</view>
+          <text class="hl hl-md">{{g.zh}}</text>
+          <text class="mono muted g-count">{{g.teams.length}} 队</text>
+        </view>
+        <view class="chips">
+          <view class="tchip card-low {{t.on ? 'on floodlight-glow' : ''}}"
+                wx:for="{{g.teams}}" wx:key="id" wx:for-item="t" wx:for-index="ti"
+                data-g="{{gi}}" data-t="{{ti}}" bindtap="toggleTeam">
+            <image class="crest-sm t-ava" src="{{t.logo}}" mode="aspectFill" wx:if="{{t.logo}}" />
+            <view class="t-ava circle-sm crest-fb" wx:else style="background: {{t.bg}}; border-color: {{t.bd}};">{{t.id}}</view>
+            <text class="t-name hl">{{t.zh}}</text>
+            <view class="v-icon v-check text-amber t-check" wx:if="{{t.on}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作栏（Step 2） -->
+    <view class="bar glass-panel">
+      <view class="bar-main">
+        <view class="bar-count">
+          <text class="mono muted bar-label">已选主队</text>
+          <text class="bar-num mono hl"><text class="text-amber text-glow n">{{pickedTeamsCount}}</text> 支</text>
+        </view>
+        <button class="btn-amber done-btn floodlight-glow" bindtap="finish">
+          <text>开启追球之旅</text>
+          <view class="v-icon v-chev"></view>
+        </button>
+      </view>
+    </view>
+  </block>
 </view>
 

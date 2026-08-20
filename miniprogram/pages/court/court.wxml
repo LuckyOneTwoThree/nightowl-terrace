@@ -1,27 +1,42 @@
 <view class="page {{theme === 'light' ? 'theme-light' : ''}}">
-  <!-- 规则说明条（德比法庭 · 狂言对决） -->
-  <view class="rule glass-panel floodlight-glow">
+  <!-- 动态环境微光 -->
+  <view class="glow glow-red"></view>
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 法庭威严 Header ==================== -->
+  <view class="rule card-highest floodlight-glow">
     <view class="r-ic">
       <view class="v-icon v-gavel text-amber r-gavel"></view>
     </view>
     <view class="r-body">
-      <text class="hl hl-md text-amber">德比法庭 · 狂言对决录</text>
-      <text class="r-sub mono muted">赛前立字为证 · 赛后开箱审判 · 绝不抵赖</text>
+      <view class="r-tag-row">
+        <text class="mono hl r-tag text-amber">DERBY COURT</text>
+        <view class="chip chip-amber r-badge">立字为证</view>
+      </view>
+      <text class="hl hl-md text-amber r-title">德比法庭 · 狂言对决录</text>
+      <text class="r-sub mono muted">“赛前押上尊严 · 终场落槌审判 · 绝不抵赖”</text>
     </view>
   </view>
 
-  <!-- 开庭中焦点战 -->
+  <!-- ==================== 2. 开庭焦点对决 ==================== -->
   <view class="sect sect-gap">
-    <text class="sect-title">开庭焦点对决</text>
+    <view class="sect-head-row">
+      <text class="sect-title">开庭焦点大战</text>
+      <view class="chip chip-red focal-badge" wx:if="{{open}}">⚡ 审理中</view>
+    </view>
     <view class="sect-line"></view>
-    <view class="chip chip-amber focal-badge" wx:if="{{open}}">开庭审理中</view>
   </view>
   
   <view class="card-highest open-card floodlight-glow" wx:if="{{open}}">
     <view class="open-meta">
-      <view class="chip chip-solid">{{open.md}} {{open.hm}}</view>
-      <text class="mono muted">{{open.lgZh}}</text>
+      <view class="om-left">
+        <view class="g-lg-bar" style="background: {{open.lgSolid || 'var(--secondary)'}};"></view>
+        <text class="hl om-lg">{{open.lgZh}}</text>
+        <text class="mono muted om-time">{{open.md}} {{open.hm}}</text>
+      </view>
+      <view class="chip chip-amber" wx:if="{{open.stars}}">{{open.stars}}</view>
     </view>
+
     <view class="open-vs" bindtap="goDetail">
       <view class="ov-side">
         <image class="crest-xl" src="{{open.home.logo}}" mode="aspectFill" wx:if="{{open.home.logo}}" />
@@ -29,7 +44,7 @@
         <text class="ov-name hl">{{open.home.zh}}</text>
       </view>
       <view class="ov-mid">
-        <view class="ov-x-pill">
+        <view class="ov-x-pill floodlight-glow">
           <text class="mono text-amber">VS</text>
         </view>
       </view>
@@ -40,6 +55,13 @@
       </view>
     </view>
     
+    <!-- 快捷态度气泡 -->
+    <view class="quick-tags">
+      <view class="chip chip-ghost mono q-tag" wx:for="{{quickTags}}" wx:key="*this" data-tag="{{item}}" bindtap="onQuickTag">
+        <text>{{item}}</text>
+      </view>
+    </view>
+
     <view class="input-wrap card-high">
       <input class="boast-input" maxlength="40" placeholder="押上尊严，立下你的赛前狂言..."
              placeholder-class="input-ph" value="{{text}}" bindinput="onInput" />
@@ -48,12 +70,12 @@
     
     <button class="btn-amber btn-submit floodlight-glow" bindtap="submit">
       <view class="v-icon v-gavel"></view>
-      <text>立字存据 · 提交狂言</text>
+      <text>落槌存据 · 提交狂言</text>
     </button>
   </view>
   <view class="card-low empty" wx:else><text class="mono muted">本轮暂无正在开庭的焦点大战</text></view>
 
-  <!-- 赛季统计双卡（_8） -->
+  <!-- ==================== 3. 赛季法庭战绩双卡 ==================== -->
   <view class="duo">
     <view class="duo-card card-low teal-glow">
       <view class="d-head">
@@ -61,8 +83,8 @@
         <text class="d-title hl">最准之口</text>
       </view>
       <text class="d-score score-m text-teal hl">{{stats.hit}}</text>
-      <text class="mono muted d-lbl">应验场次</text>
-      <view class="chip chip-teal d-chip">命中率 {{stats.rate}}</view>
+      <text class="mono muted d-lbl">应验封神</text>
+      <view class="chip chip-teal d-chip">胜率 {{stats.rate}}</view>
     </view>
     
     <view class="duo-card card-low red-glow">
@@ -71,44 +93,58 @@
         <text class="d-title hl">最铁嘴皮</text>
       </view>
       <text class="d-score score-m text-error hl">{{stats.miss}}</text>
-      <text class="mono muted d-lbl">翻车打脸</text>
-      <view class="chip chip-error d-chip">打脸 {{stats.miss}} 次</view>
+      <text class="mono muted d-lbl">打脸翻车</text>
+      <view class="chip chip-error d-chip">翻车 {{stats.miss}} 次</view>
     </view>
   </view>
 
-  <!-- 狂言存档 -->
+  <!-- ==================== 4. 判例存档列表 ==================== -->
   <view class="sect sect-mt">
-    <text class="sect-title">法庭判例存档</text>
+    <view class="sect-head-row">
+      <text class="sect-title">法庭判例存档 ({{archive.length}})</text>
+    </view>
     <view class="sect-line"></view>
   </view>
+
+  <!-- 分类筛选 Tab -->
+  <scroll-view class="filter-pills" scroll-x enable-flex show-scrollbar="{{false}}" wx:if="{{archive.length}}">
+    <view class="fpill {{filterTab === item.id ? 'active floodlight-glow' : ''}}"
+          wx:for="{{filterTabs}}" wx:key="id" data-id="{{item.id}}" bindtap="onFilterTab">
+      {{item.zh}}
+    </view>
+  </scroll-view>
   
-  <view class="card-low empty" wx:if="{{!archive.length}}"><text class="mono muted">暂无狂言记录，去上方为本轮大战立据！</text></view>
+  <view class="card-low empty" wx:if="{{!displayArchive.length}}">
+    <text class="mono muted">暂无匹配的狂言记录，去上方为本轮大战立据！</text>
+  </view>
   
-  <view class="arch card-low" wx:for="{{archive}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapArchive">
-    <view class="a-head">
-      <text class="mono muted">{{item.md}}</text>
-      <text class="mono flex1 a-teams hl">{{item.names}}</text>
-      <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-error' : 'chip-amber'}}">
-        {{item.result === 'hit' ? '应验' : item.result === 'miss' ? '打脸翻车' : '开庭审理中'}}
+  <view class="arch-list" wx:else>
+    <view class="arch card-low" wx:for="{{displayArchive}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapArchive">
+      <view class="a-head">
+        <text class="mono muted a-md">{{item.md}}</text>
+        <text class="mono flex1 a-teams hl">{{item.names}}</text>
+        <view class="chip {{item.result === 'hit' ? 'chip-teal' : item.result === 'miss' ? 'chip-error' : 'chip-amber'}}">
+          {{item.result === 'hit' ? '✓ 应验' : item.result === 'miss' ? '✕ 翻车' : '审理中'}}
+        </view>
       </view>
-    </view>
-    <view class="a-quote {{item.result === 'miss' ? 'strike' : ''}}">
-      <text class="a-text">“{{item.text}}”</text>
-    </view>
-    <view class="a-foot card-high" wx:if="{{item.finished && !item.result}}">
-      <text class="mono muted">终场比分 {{item.sc}} · 请法官自判：</text>
-      <view class="a-actions">
-        <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" catchtap="judge">应验</view>
-        <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" catchtap="judge">翻车</view>
+      <view class="a-quote {{item.result === 'miss' ? 'strike' : ''}}">
+        <text class="a-text">“{{item.text}}”</text>
       </view>
-    </view>
-    <view class="a-foot-done" wx:elif="{{item.finished}}">
-      <text class="mono muted">完赛比分 {{item.sc}}</text>
-      <view class="a-link mono text-amber">对决详情 ›</view>
-    </view>
-    <view class="a-foot-done" wx:else>
-      <text class="mono muted">赛前狂言已立据</text>
-      <view class="a-link mono text-amber">对决详情 ›</view>
+      <view class="a-foot card-high" wx:if="{{item.finished && !item.result}}">
+        <text class="mono muted">终场比分 {{item.sc}} · 请法官自判：</text>
+        <view class="a-actions">
+          <view class="chip chip-teal" data-id="{{item.id}}" data-r="hit" catchtap="judge">应验</view>
+          <view class="chip chip-error" data-id="{{item.id}}" data-r="miss" catchtap="judge">翻车</view>
+        </view>
+      </view>
+      <view class="a-foot-done" wx:elif="{{item.finished}}">
+        <text class="mono muted">完赛比分 {{item.sc}}</text>
+        <view class="a-link mono text-amber">对决详情 ›</view>
+      </view>
+      <view class="a-foot-done" wx:else>
+        <text class="mono muted">赛前狂言已立据</text>
+        <view class="a-link mono text-amber">对决详情 ›</view>
+      </view>
     </view>
   </view>
 </view>

@@ -41,7 +41,7 @@ const ALIAS = {
   espanyol: 'ESP', rcdespanyol: 'ESP', deportivolacoruna: 'DEP', deportivo: 'DEP',
   levante: 'LEV', levanteud: 'LEV', malaga: 'MAL', malagacf: 'MAL', osasuna: 'OSA',
   caosasuna: 'OSA', rayovallecano: 'RAY', racingsantander: 'RAC', realsociedad: 'RSO',
-  sevilla: 'SEV', sevilla: 'SEV', valencia: 'VAL', valenciacf: 'VAL',
+  sevilla: 'SEV', valencia: 'VAL', valenciacf: 'VAL',
   villarreal: 'VIL', villarrealcf: 'VIL', getafe: 'GET', getafecf: 'GET', alaves: 'ALA', deportivoalaves: 'ALA',
 
   // ── 意甲（SA）──
@@ -110,14 +110,23 @@ function getRecentDateRange() {
   return `${sStr}-${eStr}`;
 }
 
+// manual 补录分支的管理员白名单：填入开发者 openid 后生效（获取方式：开发者工具
+// 「云开发 → 用户管理」，或先放行一次 seal 的 console 日志 wxCtx.OPENID）
+// 空数组 = 拒绝所有人（安全默认态，比「任何人可改比分」好；填入后即可用）
+const ADMIN_OPENIDS = [];
+
 exports.main = async (event) => {
   const db = cloud.database();
   const _ = db.command;
   const summary = { synced: 0, updated: [], settled: null };
 
   try {
-    // 1. 手动单场/批量补录处理分支
+    // 1. 手动单场/批量补录处理分支（仅管理员：可篡改任意比分并联动结算，必须鉴权）
     if (event && event.manual) {
+      const wxCtx = cloud.getWXContext();
+      if (!wxCtx.OPENID || ADMIN_OPENIDS.indexOf(wxCtx.OPENID) < 0) {
+        return { ok: false, error: 'forbidden: admin only' };
+      }
       const items = Array.isArray(event.manual) ? event.manual : [event.manual];
       for (const item of items) {
         if (item.id && /^\d+-\d+$/.test(item.score)) {

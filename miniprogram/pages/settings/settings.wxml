@@ -1,104 +1,119 @@
-<view class="page {{theme === 'light' ? 'theme-light' : ''}}" wx:if="{{s}}">
-  <!-- 偏好（_12） -->
-  <text class="g-label mono muted">熬夜偏好设置</text>
+<view class="page {{theme === 'light' ? 'theme-light' : ''}}">
+  <!-- 动态环境微光 -->
+  <view class="glow glow-amber"></view>
+
+  <!-- ==================== 1. 身份与排位 ==================== -->
+  <text class="mono muted g-label">身份与天梯档案</text>
   <view class="group card-low">
-    <view class="setting-row">
+    <view class="setting-row" bindtap="editNick">
       <view class="g-left">
-        <text class="g-main hl">默认每周熬夜额度</text>
-        <text class="mono muted g-sub">推荐 2.0h – 6.0h / 周</text>
+        <text class="hl g-main">圈内绰号</text>
+        <text class="mono muted g-sub">夜猫风云榜与法庭对决展示名称</text>
       </view>
-      <view class="stepper card-high">
-        <view class="st-btn" bindtap="minus"><text class="mono hl">−</text></view>
-        <text class="st-val mono hl text-amber">{{budgetText}}h</text>
-        <view class="st-btn" bindtap="plus"><text class="mono hl">＋</text></view>
+      <view class="g-arrow">
+        <text class="hl text-amber g-val">{{s.nick || '夜猫子'}}</text>
+        <view class="v-icon v-chev muted"></view>
       </view>
     </view>
-    <view class="setting-row" bindtap="cycleStar">
-      <text class="g-main hl">默认焦点星级门槛</text>
+    
+    <view class="setting-row" bindtap="copyId">
+      <view class="g-left">
+        <text class="hl g-main">夜猫专属哈希通行证</text>
+        <text class="mono muted g-sub">本地设备唯一安全凭证 · 点击复制</text>
+      </view>
       <view class="g-arrow">
-        <text class="st-star hl text-amber">{{starText}} 以上</text>
-        <view class="v-icon v-chev text-muted"></view>
+        <text class="mono g-id">{{s.mid}}</text>
+        <view class="v-icon v-copy text-amber" style="width: 28rpx; height: 28rpx;"></view>
       </view>
     </view>
   </view>
 
-  <!-- 提醒 -->
-  <text class="g-label mono muted">消息与提醒</text>
+  <!-- ==================== 2. 追球偏好 ==================== -->
+  <text class="mono muted g-label">推荐与睡眠预算</text>
   <view class="group card-low">
     <view class="setting-row">
       <view class="g-left">
-        <text class="g-main hl">开赛提醒</text>
-        <text class="mono muted g-sub">焦点大战开球前 15 分钟</text>
+        <text class="hl g-main">每周睡眠预算上限</text>
+        <text class="mono muted g-sub">0-1 背包智能排程的睡眠消耗上限</text>
+      </view>
+      <view class="stepper">
+        <view class="st-btn mono" bindtap="minus">-</view>
+        <text class="mono hl text-amber st-val">{{budgetText}}h</text>
+        <view class="st-btn mono" bindtap="plus">+</view>
+      </view>
+    </view>
+    
+    <view class="setting-row" bindtap="cycleStar">
+      <view class="g-left">
+        <text class="hl g-main">焦点推荐星级门槛</text>
+        <text class="mono muted g-sub">低于此星级的比赛不在首页重点突显</text>
+      </view>
+      <view class="g-arrow">
+        <text class="text-amber mono hl st-star">{{starText}}</text>
+        <view class="v-icon v-chev muted"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ==================== 3. 消息提醒 ==================== -->
+  <text class="mono muted g-label">开球与封存提醒</text>
+  <view class="group card-low">
+    <view class="setting-row">
+      <view class="g-left">
+        <text class="hl g-main">开球前 15 分钟提醒</text>
+        <text class="mono muted g-sub">已规划赛事开球前接收微信服务通知</text>
       </view>
       <switch checked="{{s.remindKickoff}}" color="#FFB224" bindchange="onKickoff" />
     </view>
+    
     <view class="setting-row">
       <view class="g-left">
-        <text class="g-main hl">预测截止提醒</text>
-        <text class="mono muted g-sub">不错过每周封神榜封存窗口</text>
+        <text class="hl g-main">预言封存倒计时提醒</text>
+        <text class="mono muted g-sub">每晚 22:30 提醒封存未预测的焦点战</text>
       </view>
       <switch checked="{{s.remindDeadline}}" color="#FFB224" bindchange="onDeadline" />
     </view>
   </view>
 
-  <!-- 账号 -->
-  <text class="g-label mono muted">身份档案</text>
-  <view class="group card-low">
-    <view class="setting-row" bindtap="editNick">
-      <text class="g-main hl">圈内绰号</text>
-      <view class="g-arrow">
-        <text class="g-val hl text-amber">{{s.nick || '未设置'}}</text>
-        <view class="v-icon v-chev text-muted"></view>
-      </view>
-    </view>
-    <view class="setting-row">
-      <text class="g-main hl">Midnight ID</text>
-      <view class="g-arrow" bindtap="copyId">
-        <text class="mono g-id">{{s.mid}}</text>
-        <view class="chip chip-solid mono">复制</view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 外观与主题 -->
-  <text class="g-label mono muted">外观与主题模式</text>
+  <!-- ==================== 4. 外观模式 ==================== -->
+  <text class="mono muted g-label">视觉与外观</text>
   <view class="group card-low theme-section">
     <view class="theme-head">
-      <view class="g-left">
-        <text class="g-main hl">主题外观模式</text>
-        <text class="mono muted g-sub">随心切换暗夜、晨曦或跟随系统</text>
-      </view>
+      <text class="hl g-main">主题模式选择</text>
     </view>
     
     <view class="theme-grid">
-      <view class="theme-card {{s.theme === 'dark' ? 'on floodlight-glow' : ''}}" data-mode="dark" bindtap="selectTheme">
+      <!-- 暗夜深色 -->
+      <view class="theme-card {{s.theme === 'dark' || !s.theme ? 'on floodlight-glow' : ''}}" data-mode="dark" bindtap="selectTheme">
         <view class="tc-icon-wrap tc-dark">
-          <text class="tc-icon">🌙</text>
+          <view class="v-icon v-moon text-amber"></view>
         </view>
-        <text class="tc-name hl">经典暗夜</text>
-        <text class="tc-desc mono muted">深邃夜猫</text>
-        <view class="tc-badge" wx:if="{{s.theme === 'dark'}}">
+        <text class="tc-name hl">暗夜模式</text>
+        <text class="mono muted tc-desc">经典黑金</text>
+        <view class="tc-badge" wx:if="{{s.theme === 'dark' || !s.theme}}">
           <view class="v-icon v-check text-amber"></view>
         </view>
       </view>
 
+      <!-- 晨曦浅色 -->
       <view class="theme-card {{s.theme === 'light' ? 'on floodlight-glow' : ''}}" data-mode="light" bindtap="selectTheme">
         <view class="tc-icon-wrap tc-light">
-          <text class="tc-icon">☀️</text>
+          <view class="v-icon v-sun text-amber"></view>
         </view>
-        <text class="tc-name hl">清爽晨曦</text>
-        <text class="tc-desc mono muted">白昼明朗</text>
+        <text class="tc-name hl">晨曦模式</text>
+        <text class="mono muted tc-desc">清爽白昼</text>
         <view class="tc-badge" wx:if="{{s.theme === 'light'}}">
           <view class="v-icon v-check text-amber"></view>
         </view>
       </view>
 
+      <!-- 跟随系统 -->
       <view class="theme-card {{s.theme === 'auto' ? 'on floodlight-glow' : ''}}" data-mode="auto" bindtap="selectTheme">
         <view class="tc-icon-wrap tc-auto">
-          <text class="tc-icon">⚙️</text>
+          <view class="v-icon v-gear text-amber"></view>
         </view>
         <text class="tc-name hl">跟随系统</text>
-        <text class="tc-desc mono muted">自动切换</text>
+        <text class="mono muted tc-desc">自动感应</text>
         <view class="tc-badge" wx:if="{{s.theme === 'auto'}}">
           <view class="v-icon v-check text-amber"></view>
         </view>
@@ -106,45 +121,44 @@
     </view>
   </view>
 
-  <!-- 关于 -->
-  <text class="g-label mono muted">关于与版本</text>
+  <!-- ==================== 5. 关于与云端 ==================== -->
+  <text class="mono muted g-label">系统与云端同步</text>
   <view class="group card-low">
+    <view class="setting-row" bindtap="reconnectCloud">
+      <view class="g-left">
+        <text class="hl g-main">云端同步服务</text>
+        <text class="mono muted g-sub">{{cloudState === 'ok' ? '微信云开发实时已连接' : cloudState === 'down' ? '当前处于离线模式 · 点击重试' : '正在探测连接状态...'}}</text>
+      </view>
+      <view class="g-arrow cloud-state">
+        <view class="cs-dot cs-{{cloudState}}"></view>
+        <text class="mono muted g-val">{{cloudState === 'ok' ? '已连接' : cloudState === 'down' ? '离线' : '探测中'}}</text>
+      </view>
+    </view>
+    
     <view class="setting-row">
-      <text class="g-main hl">当前版本</text>
+      <view class="g-left">
+        <text class="hl g-main">小程序版本</text>
+        <text class="mono muted g-sub">2026/27 赛季全新架构</text>
+      </view>
       <text class="mono muted g-val">{{version}}</text>
     </view>
-    <view class="setting-row">
-      <text class="g-main hl">赛程数据源</text>
-      <text class="mono muted g-val">{{source}}</text>
-    </view>
-    <view class="setting-row" bindtap="reconnectCloud">
-      <text class="g-main hl">云端状态</text>
-      <view class="g-arrow cloud-state">
-        <view class="cs-dot {{cloudState === 'ok' ? 'cs-ok animate-pulse' : cloudState === 'down' ? 'cs-down' : 'cs-unknown'}}"></view>
-        <text class="mono muted g-val">{{cloudState === 'ok' ? '已连接 · 榜单实时同步' : cloudState === 'down' ? '不可用 · 重试' : '检测中…'}}</text>
-      </view>
-    </view>
   </view>
 
-  <view class="logout" bindtap="logout">
-    <text class="mono">清除本地数据并重置</text>
-  </view>
+  <!-- 重置本地 -->
+  <view class="logout mono" bindtap="logout">清除本地所有战绩与偏好缓存</view>
 
-  <!-- _13 圈内绰号居中弹窗 Modal -->
-  <view class="modal-mask" wx:if="{{showNickModal}}" bindtap="cancelNick">
-    <view class="nick-modal card-highest floodlight-glow" catchtap="preventD">
+  <!-- 昵称修改弹窗 -->
+  <view class="modal-mask" wx:if="{{showNickModal}}" catchtap="cancelNick" catchtouchmove="preventD">
+    <view class="nick-modal card-high floodlight-glow" catchtap="preventD">
       <view class="modal-head">
         <view class="v-icon v-paw text-amber modal-icon"></view>
-        <text class="hl hl-md modal-title">修改圈内绰号</text>
+        <text class="modal-title hl">修改圈内绰号</text>
       </view>
-      <text class="modal-desc mono muted">绰号将在修仙榜、德比法庭与海报中展示</text>
-
-      <view class="modal-input-row card-high">
-        <input class="nick-modal-in hl" value="{{inputNick}}" maxlength="12"
-               placeholder="输入圈内绰号..." bindinput="onNickInput" />
-        <view class="chip chip-amber rand-chip" catchtap="randomNick">
-          <text class="mono">🎲 随机</text>
-        </view>
+      <text class="mono muted modal-desc">此绰号将在全网天梯榜和法庭辩护中高亮展示</text>
+      
+      <view class="modal-input-row">
+        <input class="nick-modal-in" value="{{inputNick}}" placeholder="输入你的看球绰号" maxlength="12" bindinput="onNickInput" />
+        <view class="chip chip-amber rand-chip hl" bindtap="randomNick">🎲 摇一个</view>
       </view>
 
       <view class="modal-btns">
