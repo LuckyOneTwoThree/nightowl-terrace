@@ -44,7 +44,12 @@
         "value": "data/[^/]*\\.json$"
       }
     ],
-    "include": []
+    "include": [
+      {
+        "type": "folder",
+        "value": "images"
+      }
+    ]
   },
   "editorSetting": {}
 }

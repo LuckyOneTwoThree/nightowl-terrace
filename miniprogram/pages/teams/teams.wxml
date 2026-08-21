@@ -27,6 +27,15 @@
       <text class="mono muted hc-sub">圈定关注的联赛，推荐算法将优先推荐该联赛焦点战，并在赛程中前置聚焦。</text>
     </view>
 
+    <!-- 联赛快捷操作栏 -->
+    <view class="quick-bar">
+      <text class="mono muted quick-hint">欧洲顶级联赛 · 已选 {{pickedLeaguesCount}}/5</text>
+      <view class="quick-btns">
+        <view class="chip chip-amber mono quick-chip" bindtap="selectAllLeagues" wx:if="{{pickedLeaguesCount < 5}}">全选联赛</view>
+        <view class="chip chip-ghost mono quick-chip" bindtap="clearAllLeagues" wx:if="{{pickedLeaguesCount > 0}}">清空选择</view>
+      </view>
+    </view>
+
     <view class="leagues-manage-list">
       <view class="m-lg-card card-low {{item.on ? 'on floodlight-glow' : ''}}"
             wx:for="{{leagueList}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleLeagueItem">
@@ -56,6 +65,16 @@
       <text class="mono muted hc-sub">主队比赛将在「今日推荐」与「本周计划」中获得最高优先级（+25分），并支持一键导出赛程提醒。</text>
     </view>
 
+    <!-- 全局主队快捷操作栏 -->
+    <view class="quick-bar">
+      <text class="mono muted quick-hint">已选 {{pickedCount}} 支信仰主队</text>
+      <view class="quick-btns">
+        <view class="chip chip-amber mono quick-chip" bindtap="selectGiantTeams">⭐ 选传统豪门</view>
+        <view class="chip chip-ghost mono quick-chip" bindtap="clearAllTeams" wx:if="{{pickedCount > 0}}">清空主队</view>
+        <view class="chip chip-ghost mono quick-chip" bindtap="toggleExpandAll">{{allExpanded ? '全部折叠' : '全部展开'}}</view>
+      </view>
+    </view>
+
     <!-- 联赛折叠下拉手风琴列表 -->
     <view class="accordion-list">
       <view class="accordion-group card-low" wx:for="{{groups}}" wx:key="id">
@@ -68,7 +87,9 @@
             <view class="chip chip-amber ah-badge" wx:if="{{item.selectedCount > 0}}">已选 {{item.selectedCount}} 队</view>
           </view>
           <view class="ah-right">
-            <text class="mono muted ah-total">共 {{item.teams.length}} 队</text>
+            <view class="chip chip-ghost mono g-quick-action" catchtap="toggleLeagueAllTeams" data-id="{{item.id}}">
+              {{item.selectedCount === item.teams.length ? '清空本联赛' : '全选本联赛'}}
+            </view>
             <text class="accordion-arrow mono {{item.expanded ? 'expanded' : ''}}">▾</text>
           </view>
         </view>

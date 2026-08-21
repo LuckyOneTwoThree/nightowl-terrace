@@ -45,6 +45,22 @@
 .hc-title { font-size: 34rpx; color: var(--on-surface); }
 .hc-sub { font-size: 22rpx; line-height: 34rpx; }
 
+/* 快捷操作栏 */
+.quick-bar {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20rpx; padding: 0 4rpx;
+}
+.quick-hint { font-size: 22rpx; }
+.quick-btns { display: flex; align-items: center; gap: 12rpx; }
+.quick-chip {
+  font-size: 20rpx; padding: 6rpx 18rpx; border-radius: var(--r-full);
+}
+.g-quick-action {
+  font-size: 18rpx; padding: 4rpx 14rpx; border-radius: var(--r-full);
+  color: var(--on-surface-variant);
+}
+
 /* 联赛管理列表 */
 .leagues-manage-list {
   position: relative; z-index: 1;

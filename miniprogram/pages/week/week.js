@@ -2,6 +2,7 @@ var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 var ics = require('../../utils/ics.js');
 var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -54,11 +55,29 @@ Page({
     this._lastMinStar = settings.minStar || 1;
     this._lastTodayStr = engine.nightOf(new Date());
     this.refresh();
+
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.refresh();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
   },
 
   onShow: function () {
     getApp().applyTheme(this);
     this.refresh();
+  },
+
+  onPullDownRefresh: function () {
+    var that = this;
+    data.pullRefresh(function () { that.refresh(); });
+  },
+
+  onUnload: function () {
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
+    }
   },
 
   onTabChange: function (e) {
@@ -417,7 +436,7 @@ Page({
 
   onMatch: function (e) {
     if (e.currentTarget.dataset.id) {
-      wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
+      router.navTo('/pages/detail/detail?id=' + e.currentTarget.dataset.id);
     }
   },
 

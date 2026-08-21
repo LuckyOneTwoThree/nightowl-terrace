@@ -4,6 +4,7 @@ var decorate = require('../../utils/decorate.js');
 var ics = require('../../utils/ics.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 Page({
   data: {
@@ -29,6 +30,7 @@ Page({
       }, 800);
       return;
     }
+    this._matchId = q.id;
     this._raw = raw;
     this._ts = engine.ts(raw.t);
     var m = decorate.dec(raw, null, { followed: getApp().getFollowed() });
@@ -36,6 +38,24 @@ Page({
       m: m,
       quip: m.trivia || data.getQuip(raw.t.split('T')[0])
     });
+
+    var that = this;
+    this._onScoresUpdated = function () {
+      if (!that._matchId) return;
+      var updated = data.getMatch(that._matchId);
+      if (updated) {
+        that._raw = updated;
+        that._ts = engine.ts(updated.t);
+        var decM = decorate.dec(updated, null, { followed: getApp().getFollowed() });
+        that.setData({
+          m: decM,
+          quip: decM.trivia || data.getQuip(updated.t.split('T')[0])
+        });
+        that.checkPred();
+      }
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
+
     this.startTimer();
   },
 
@@ -53,6 +73,10 @@ Page({
 
   onUnload: function () {
     this.stopTimer();
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
+    }
   },
 
   checkPred: function () {
@@ -149,7 +173,9 @@ Page({
     else if (c.d > 0) text = '距开球 ' + c.d + '天' + c.h + '小时';
     else if (c.h > 0) text = '距开球 ' + c.h + '小时' + c.m + '分';
     else text = '距开球 ' + c.m + '分' + c.s + '秒';
-    this.setData({ countdownText: text });
+    if (this.data.countdownText !== text) {
+      this.setData({ countdownText: text });
+    }
   },
 
   onSelectPick: function (e) {
@@ -224,16 +250,16 @@ Page({
 
   goPredict: function () {
     var id = this.data.m ? this.data.m.id : '';
-    wx.navigateTo({ url: '/pages/predict/predict' + (id ? '?id=' + id : '') });
+    router.navTo('/pages/predict/predict' + (id ? '?id=' + id : ''));
   },
 
   goCourt: function () {
     var id = this.data.m ? this.data.m.id : '';
-    wx.navigateTo({ url: '/pages/court/court' + (id ? '?id=' + id : '') });
+    router.navTo('/pages/court/court' + (id ? '?id=' + id : ''));
   },
 
   goPoster: function () {
-    wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.m.id });
+    router.navTo('/pages/poster/poster?id=' + this.data.m.id);
   },
 
   // 群分享：直达本 场次详情（含盲评/狂言入口）
@@ -246,7 +272,7 @@ Page({
   },
 
   goStory: function (e) {
-    wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
+    router.navTo('/pages/story/story?id=' + e.currentTarget.dataset.id);
   },
 
   // 添加到日历：优先写入微信系统日历，失败时降级导出 ICS 文件

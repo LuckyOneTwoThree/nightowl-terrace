@@ -26,15 +26,17 @@
 /* 票券顶部 */
 .pass-head {
   display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: nowrap; gap: 12rpx;
   padding: 22rpx 28rpx 16rpx;
   border-bottom: 1rpx solid rgba(255,255,255,.05);
 }
 .theme-light .pass-head { border-bottom-color: rgba(0,0,0,.04); }
-.ph-brand { display: flex; align-items: center; gap: 10rpx; }
-.ph-brand-ic { width: 26rpx; height: 26rpx; }
-.ph-brand-txt { font-size: 20rpx; letter-spacing: 2rpx; color: var(--outline); font-weight: 700; }
-.pass-lv-chip { padding: 4rpx 16rpx; font-size: 20rpx; display: flex; align-items: center; gap: 8rpx; }
-.pass-online-dot { width: 14rpx; height: 14rpx; border-radius: 50%; }
+.ph-brand { display: flex; align-items: center; gap: 8rpx; flex: 1; min-width: 0; }
+.ph-brand-ic { width: 26rpx; height: 26rpx; flex-shrink: 0; }
+.ph-brand-txt { font-size: 20rpx; letter-spacing: 1rpx; color: var(--outline); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pass-lv-chip { padding: 4rpx 16rpx; font-size: 20rpx; display: inline-flex; align-items: center; gap: 8rpx; flex-shrink: 0; white-space: nowrap; }
+.pass-online-dot { width: 14rpx; height: 14rpx; border-radius: 50%; flex-shrink: 0; }
+.lv-arrow { flex-shrink: 0; }
 
 /* 票券中部 */
 .pass-body {

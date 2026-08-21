@@ -23,6 +23,14 @@
       <text class="hl">{{item.zh}}</text>
     </view>
   </view>
+
+  <!-- 动态规则透视条 (Rule Strip) -->
+  <view class="board-rule-strip card-low">
+    <view class="v-icon {{curTab === 'season' ? 'v-trophy text-amber' : curTab === 'guess' ? 'v-bolt text-teal' : 'v-moon text-amber'}} rule-strip-ic"></view>
+    <text class="mono muted rule-strip-txt" wx:if="{{curTab === 'season'}}">全季 1,752 场预测积分滚雪球累计 · 争夺赛季预言之神</text>
+    <text class="mono muted rule-strip-txt" wx:elif="{{curTab === 'guess'}}">统计本周所有场次预测积分 · 每周一 00:00 开启新周冲刺</text>
+    <text class="mono muted rule-strip-txt" wx:else>统计本周深夜场次看球成本 · 评选最狠一夜硬核老猫</text>
+  </view>
   
   <!-- 修仙打卡专属统计（仅在夜猫榜展示） -->
   <view class="stat card-highest floodlight-glow" wx:if="{{curTab === 'owl'}}">
@@ -47,7 +55,7 @@
 
   <!-- 赛季积分专属统计（仅在赛季总榜展示） -->
   <view class="stat card-highest floodlight-glow" wx:if="{{curTab === 'season'}}">
-    <text class="mono muted stat-sub">2026/27 赛季预言战绩总览</text>
+    <text class="mono muted stat-sub">2026/27 赛季预言战绩总览 (全季通算)</text>
     <view class="stat-row">
       <view class="stat-item">
         <text class="stat-num hl text-amber score-sm">{{myVal || '0 分'}}</text>
@@ -55,15 +63,20 @@
       </view>
       <view class="stat-div"></view>
       <view class="stat-item">
-        <text class="stat-num hl text-teal score-sm">冷门×2</text>
-        <text class="mono muted stat-u">翻倍加成规则</text>
+        <text class="stat-num hl text-teal score-sm">{{mySeasonRateText || '0%'}}</text>
+        <text class="mono muted stat-u">赛季命中率</text>
+      </view>
+      <view class="stat-div"></view>
+      <view class="stat-item">
+        <text class="stat-num hl text-amber score-sm">{{mySeasonHitText || '0 场'}}</text>
+        <text class="mono muted stat-u">已猜中场次</text>
       </view>
     </view>
   </view>
 
   <!-- 盲评周榜专属统计 -->
   <view class="stat card-highest floodlight-glow" wx:if="{{curTab === 'guess'}}">
-    <text class="mono muted stat-sub">本周盲评速战总览</text>
+    <text class="mono muted stat-sub">本周预测战绩总览 (当周所有场次)</text>
     <view class="stat-row">
       <view class="stat-item">
         <text class="stat-num hl text-amber score-sm">{{myVal || '0 分'}}</text>
@@ -71,8 +84,13 @@
       </view>
       <view class="stat-div"></view>
       <view class="stat-item">
-        <text class="stat-num hl text-teal score-sm">赛后开箱</text>
-        <text class="mono muted stat-u">命中自动结算</text>
+        <text class="stat-num hl text-teal score-sm">{{myWeekRateText || '0%'}}</text>
+        <text class="mono muted stat-u">本周命中率</text>
+      </view>
+      <view class="stat-div"></view>
+      <view class="stat-item">
+        <text class="stat-num hl text-amber score-sm">{{myWeekHitText || '0 场'}}</text>
+        <text class="mono muted stat-u">本周猜中场次</text>
       </view>
     </view>
   </view>

@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "赛程"
+  "navigationBarTitleText": "赛程",
+  "enablePullDownRefresh": true
 }

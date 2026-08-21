@@ -3,6 +3,7 @@ var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 Page({
   _targetId: null,
@@ -293,7 +294,7 @@ Page({
   },
 
   goRecords: function () {
-    wx.navigateTo({ url: '/pages/records/records' });
+    router.navTo('/pages/records/records');
   },
 
   // 群分享：带目标场次直达盲评单

@@ -3,6 +3,7 @@ var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 // 榜单数据一律来自云端 readBoard 聚合；云不可用或空榜时显示空态引导（上线期已移除演示数据）
 
@@ -41,11 +42,28 @@ Page({
     if (options && options.tab) {
       this.setData({ curTab: options.tab });
     }
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.refresh();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
   },
 
   onShow: function () {
     getApp().applyTheme(this);
     this.refresh();
+  },
+
+  onPullDownRefresh: function () {
+    var that = this;
+    data.pullRefresh(function () { that.refresh(); });
+  },
+
+  onUnload: function () {
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
+    }
   },
 
   onSwitchTab: function (e) {
@@ -159,7 +177,9 @@ Page({
             rankDemo: false,
             myRankNo: myIdx >= 0 ? String(myIdx + 1) : '-',
             myVal: uStats.seasonPts + ' 分',
-            mySub: mySubText
+            mySub: mySubText,
+            mySeasonRateText: uStats.seasonRate + '%',
+            mySeasonHitText: uStats.seasonHit + ' 场'
           });
         })
         .catch(function () {
@@ -170,7 +190,9 @@ Page({
             rankDemo: false,
             myRankNo: '-',
             myVal: uStats.seasonPts + ' 分',
-            mySub: mySubText
+            mySub: mySubText,
+            mySeasonRateText: uStats.seasonRate + '%',
+            mySeasonHitText: uStats.seasonHit + ' 场'
           });
         });
 
@@ -197,7 +219,9 @@ Page({
             rankDemo: false,
             myRankNo: myIdx >= 0 ? String(myIdx + 1) : '-',
             myVal: uStats.weekPts + ' 分',
-            mySub: mySubGuess
+            mySub: mySubGuess,
+            myWeekRateText: uStats.weekRate + '%',
+            myWeekHitText: uStats.weekHit + ' 场'
           });
         })
         .catch(function () {
@@ -208,7 +232,9 @@ Page({
             rankDemo: false,
             myRankNo: '-',
             myVal: uStats.weekPts + ' 分',
-            mySub: mySubGuess
+            mySub: mySubGuess,
+            myWeekRateText: uStats.weekRate + '%',
+            myWeekHitText: uStats.weekHit + ' 场'
           });
         });
 
@@ -320,7 +346,7 @@ Page({
 
   goDetail: function (e) {
     var id = e.currentTarget.dataset.id;
-    if (id) wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    if (id) router.navTo('/pages/detail/detail?id=' + id);
   },
 
   onShareAppMessage: function () {

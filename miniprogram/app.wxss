@@ -122,6 +122,15 @@ page {
   color: var(--on-surface);
   min-height: 100vh;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 硬件加速与渲染合成：防滑动掉帧与微闪烁 */
+.glow, .floodlight-glow, .vip-pass, .card-highest, .sticky-bar, .bottom-sheet, .center-modal {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .theme-light .page, .theme-light.page {

@@ -103,26 +103,42 @@ exports.main = async (event) => {
       return { ok: true, id: added._id, sealTs: now };
     }
 
-    // ── 德比法庭狂言（同场覆盖语义，与本地 storage 一致） ──
+    // ── 德比法庭狂言（支持赛前下战书立据与同人同场次安全覆盖更新） ──
     if (action === 'boast') {
       const b = { m: event.m, gid: event.gid || 'default', nick: event.nick || '夜猫' };
       if (!b.m || !event.text) return { ok: false, error: 'bad payload' };
-      // 场次存在校验（三轮 P0-2：狂言须挂在真实场次上；窗口从宽——开球后仍可立据
-      // 「翻车存档」是产品语义，但未来场次与不存在场次一律拒绝）
+      // 场次存在校验：狂言须挂在真实场次上
       const fb = await fixtureCheck(db, b.m);
       if (!fb.ok) return { ok: false, error: fb.reason };
-      if (!isNaN(fb.kickTs) && now < fb.kickTs - 6 * 3600000) {
-        return { ok: false, error: 'boast window: 距开球超过6小时，暂不可立据' };
-      }
+
       const doc = Object.assign({}, b, {
-        text: String(event.text).slice(0, 40), md: event.md || '', names: event.names || '',
-        camp: event.camp || 'neutral', likes: 0, flags: 0, milks: 0,
-        result: null, uid, sealTs: now, ts: now
+        text: String(event.text).slice(0, 40),
+        md: event.md || '',
+        names: event.names || '',
+        camp: event.camp || 'neutral',
+        likes: 0,
+        flags: 0,
+        milks: 0,
+        result: null,
+        uid,
+        sealTs: now,
+        ts: now
       });
       const dup = await findExisting(db, 'boasts', uid, b.m);
       if (dup) {
-        // 防刷屏与篡改：同人同场次仅可立字存据一次，落槌无悔不可修改
-        return { ok: false, error: 'boast sealed: 本场次您已立字存据，不可重复提交或修改' };
+        // 同人同场次支持安全覆盖更新自己的狂言
+        await db.collection('boasts').doc(dup._id).update({
+          data: {
+            text: doc.text,
+            camp: doc.camp,
+            md: doc.md,
+            names: doc.names,
+            nick: doc.nick,
+            updatedTs: now,
+            sealTs: now
+          }
+        });
+        return { ok: true, id: dup._id, updated: true, sealTs: now };
       }
       const added = await db.collection('boasts').add({ data: doc });
       return { ok: true, id: added._id, sealTs: now };
@@ -132,7 +148,9 @@ exports.main = async (event) => {
     if (action === 'boast_reaction') {
       const boastId = event.id;
       const type = event.type; // 'like' | 'flag' | 'milk'
-      const delta = Number(event.delta) || 1;
+      // 幅度封顶 1~3：delta 完全信任客户端会被传 9999 刷榜（四轮 P2-8）
+      const rawDelta = Number(event.delta) || 1;
+      const delta = Math.min(3, Math.max(1, rawDelta));
       if (!boastId || !['like', 'flag', 'milk'].includes(type)) return { ok: false, error: 'bad payload' };
       const field = type === 'like' ? 'likes' : (type === 'flag' ? 'flags' : 'milks');
       try {
@@ -159,22 +177,54 @@ exports.main = async (event) => {
       }
     }
 
-    // ── 用户偏好同步（settings 变更时 upsert users） ──
+    // ── 用户全景档案同步（首登初始化 / 偏好与战绩变动时 upsert users） ──
     if (action === 'user') {
-      const patch = { uid, nick: event.nick || '夜猫', updatedTs: now };
-      if (event.budget != null) patch.budget = Number(event.budget);
-      if (Array.isArray(event.followed)) patch.followed = event.followed;
-      if (Array.isArray(event.followedLeagues)) patch.followedLeagues = event.followedLeagues;
       const exist = await db.collection('users').where({ uid }).limit(1).get();
       if (exist.data.length) {
-        await db.collection('users').doc(exist.data[0]._id).update({ data: patch });
+        const u = exist.data[0];
+        const patch = { updatedTs: now };
+        if (event.nick) patch.nick = event.nick;
+        if (event.budget != null) patch.budget = Number(event.budget);
+        if (Array.isArray(event.followed)) patch.followed = event.followed;
+        if (Array.isArray(event.followedLeagues)) patch.followedLeagues = event.followedLeagues;
+        if (event.level != null) patch.level = Number(event.level);
+        else if (u.level == null) patch.level = 1;
+        if (event.levelTitle) patch.levelTitle = String(event.levelTitle);
+        else if (!u.levelTitle) patch.levelTitle = '新晋球客';
+        if (event.seasonPts != null) patch.seasonPts = Number(event.seasonPts);
+        else if (u.seasonPts == null) patch.seasonPts = 0;
+        if (event.hours != null) patch.hours = String(event.hours);
+        else if (u.hours == null) patch.hours = '0h';
+        if (event.totalPreds != null) patch.totalPreds = Number(event.totalPreds);
+        else if (u.totalPreds == null) patch.totalPreds = 0;
+        if (event.hitCount != null) patch.hitCount = Number(event.hitCount);
+        else if (u.hitCount == null) patch.hitCount = 0;
+
+        await db.collection('users').doc(u._id).update({ data: patch });
         return { ok: true, updated: true };
       }
-      await db.collection('users').add({ data: patch });
+
+      // 新用户建档：赋予全量完整规范字段
+      const fullDoc = {
+        uid,
+        nick: event.nick || '夜猫',
+        level: event.level != null ? Number(event.level) : 1,
+        levelTitle: event.levelTitle || '新晋球客',
+        seasonPts: event.seasonPts != null ? Number(event.seasonPts) : 0,
+        hours: event.hours || '0h',
+        totalPreds: event.totalPreds != null ? Number(event.totalPreds) : 0,
+        hitCount: event.hitCount != null ? Number(event.hitCount) : 0,
+        budget: event.budget != null ? Number(event.budget) : 4.0,
+        followed: Array.isArray(event.followed) ? event.followed : ['ARS'],
+        followedLeagues: Array.isArray(event.followedLeagues) ? event.followedLeagues : ['PL'],
+        createdTs: now,
+        updatedTs: now
+      };
+      await db.collection('users').add({ data: fullDoc });
       return { ok: true, created: true };
     }
 
-    return { ok: false, error: 'action 必须是 prediction | checkin | boast | user' };
+    return { ok: false, error: 'action 必须是 prediction | checkin | boast | boast_reaction | judge | user' };
   } catch (err) {
     return { ok: false, error: err.message };
   }

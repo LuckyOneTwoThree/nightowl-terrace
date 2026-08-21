@@ -1,6 +1,8 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var crypt = require('../../utils/crypt.js');
+var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 function lgZh(l) {
   var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];
@@ -31,11 +33,29 @@ Page({
   onLoad: function () {
     getApp().applyTheme(this);
     this.refresh();
+
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.refresh();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
   },
 
   onShow: function () {
     getApp().applyTheme(this);
     this.refresh();
+  },
+
+  onPullDownRefresh: function () {
+    var that = this;
+    data.pullRefresh(function () { that.refresh(); });
+  },
+
+  onUnload: function () {
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
+    }
   },
 
   refresh: function () {
@@ -155,12 +175,17 @@ Page({
     var hoursNum = parseFloat(hours) || 0;
     
     var LEVELS = [
-      { lv: 1, title: '新晋球客', icon: '🌱', reqHours: 0, reqPts: 0, perk: '基础赛事赛程与焦点推荐' },
-      { lv: 2, title: '看台夜行者', icon: '🌙', reqHours: 2, reqPts: 10, perk: '解锁 1X2 盲评预测与哈希封存' },
-      { lv: 3, title: '硬核夜猫子', icon: '⚡', reqHours: 5, reqPts: 25, perk: '解锁主队专属赛程一键导入系统日历' },
-      { lv: 4, title: '资深预言家', icon: '🔮', reqHours: 10, reqPts: 50, perk: '解锁德比法庭辩护与狂言认证徽章' },
-      { lv: 5, title: '殿堂级宗师', icon: '👑', reqHours: 20, reqPts: 100, perk: '全服天梯风云榜尊享黑金专属光环' }
+      { lv: 1, title: '新晋球客', icon: '🌱', reqHours: 0, reqPts: 0, perk: '观赛通票初始建档与焦点推荐' },
+      { lv: 2, title: '熬夜死忠', icon: '🌙', reqHours: 2, reqPts: 10, perk: '解锁 1X2 盲评预测与哈希封存' },
+      { lv: 3, title: '看台老炮', icon: '⚡', reqHours: 5, reqPts: 30, perk: '解锁主队专属赛程一键导入系统日历' },
+      { lv: 4, title: '预言大师', icon: '🔮', reqHours: 10, reqPts: 60, perk: '解锁德比法庭辩护与狂言认证徽章' },
+      { lv: 5, title: '战术宗师', icon: '👑', reqHours: 20, reqPts: 100, perk: '解锁冷门预警专属加成与深度战报' },
+      { lv: 6, title: '铁血名宿', icon: '🐐', reqHours: 35, reqPts: 150, perk: '全服赛季天梯总榜尊享黑金专属光环' }
     ];
+
+    var that = this;
+    var cachedCloudPts = wx.getStorageSync('cached_cloud_pts') || 0;
+    seasonPts = Math.max(seasonPts, cachedCloudPts);
 
     var curLevel = LEVELS[0];
     var nextLevel = LEVELS[1];
@@ -174,8 +199,12 @@ Page({
 
     var progressPct = 100;
     if (nextLevel) {
-      var hourPct = (hoursNum / nextLevel.reqHours) * 100;
-      var ptsPct = nextLevel.reqPts > 0 ? (seasonPts / nextLevel.reqPts) * 100 : 0;
+      var prevPts = curLevel.reqPts || 0;
+      var spanPts = nextLevel.reqPts - prevPts;
+      var ptsPct = spanPts > 0 ? ((seasonPts - prevPts) / spanPts) * 100 : 0;
+      var prevHours = curLevel.reqHours || 0;
+      var spanHours = nextLevel.reqHours - prevHours;
+      var hourPct = spanHours > 0 ? ((hoursNum - prevHours) / spanHours) * 100 : 0;
       progressPct = Math.min(99, Math.max(5, Math.round(Math.max(hourPct, ptsPct))));
     }
 
@@ -201,6 +230,29 @@ Page({
       myWeek: myWeek,
       stats: { hours: hours, preds: Object.keys(preds).length, hit: total ? Math.round(hit * 100 / total) + '%' : '—', seasonPts: seasonPts }
     });
+
+    // 异步拉取云端结算口径的赛季积分（readBoard profile 按 OPENID 精确读本人 users 文档，
+    // 四轮 P1-3：不再 where({}) 碰运气读到别人的积分），并回推偏好画像（不含积分/等级，四轮 P2-5）
+    cloud.readBoard('profile').then(function (res) {
+      var prof = (res && res.profile) || null;
+      if (prof && prof.seasonPts != null && prof.seasonPts !== cachedCloudPts) {
+        wx.setStorageSync('cached_cloud_pts', prof.seasonPts);
+        that.refresh();
+        return;
+      }
+      // 同步最新全景画像回云端 users 集合（段位、积分、时长、主队一次性全量落库）
+      cloud.syncUser({
+        nick: nickname,
+        level: curLevel.lv,
+        levelTitle: curLevel.title,
+        seasonPts: seasonPts,
+        hours: hours,
+        totalPreds: Object.keys(preds).length,
+        hitCount: total ? hit : 0,
+        followed: followed,
+        followedLeagues: rawLeagues
+      });
+    }).catch(function () {});
   },
 
   onShowLevelModal: function () {
@@ -218,15 +270,15 @@ Page({
 
   goManagePreferences: function (e) {
     var tab = (e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.tab) || 'leagues';
-    wx.navigateTo({ url: '/pages/teams/teams?tab=' + tab });
+    router.navTo('/pages/teams/teams?tab=' + tab);
   },
 
   goManageLeagues: function () {
-    wx.navigateTo({ url: '/pages/teams/teams?tab=leagues' });
+    router.navTo('/pages/teams/teams?tab=leagues');
   },
 
   goManageTeams: function () {
-    wx.navigateTo({ url: '/pages/teams/teams?tab=teams' });
+    router.navTo('/pages/teams/teams?tab=teams');
   },
 
   goAllSchedule: function () {
@@ -239,7 +291,6 @@ Page({
       wx.showToast({ title: '本周暂无可导出的未赛赛程', icon: 'none' });
       return;
     }
-    var ics = require('../../utils/ics.js');
     var events = raws.map(function (m) {
       var rawMatch = data.getMatch(m.id);
       var timeStr = rawMatch ? rawMatch.t : (engine.bjDateStr(Date.now()) + 'T' + m.hm);
@@ -268,7 +319,7 @@ Page({
   },
 
   onEditNick: function () {
-    wx.navigateTo({ url: '/pages/settings/settings' });
+    router.navTo('/pages/settings/settings');
   },
 
   onMenu: function (e) {
@@ -280,11 +331,11 @@ Page({
       subs: '/pages/settings/settings',
       settings: '/pages/settings/settings'
     };
-    if (urls[id]) wx.navigateTo({ url: urls[id] });
+    if (urls[id]) router.navTo(urls[id]);
   },
 
   goMatch: function (e) {
-    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
+    router.navTo('/pages/detail/detail?id=' + e.currentTarget.dataset.id);
   }
 });
 

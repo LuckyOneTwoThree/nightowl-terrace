@@ -2,6 +2,7 @@ var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 var QUICK_TAGS = ['🔥 零封拿下', '💥 狂轰三球', '🛡️ 死守到底', '🎯 绝杀登顶', '🐐 封神之战', '🤡 坐等翻车'];
 
@@ -132,6 +133,12 @@ Page({
     var initTab = (q && q.tab === 'dossier') ? 'dossier' : 'court';
     this.setData({ mainTab: initTab });
     this.refresh();
+
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.refresh();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
   },
 
   onShow: function () {
@@ -141,6 +148,13 @@ Page({
     if (this._lastFp !== fp) {
       this._lastFp = fp;
       this.refresh();
+    }
+  },
+
+  onUnload: function () {
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
     }
   },
 
@@ -235,6 +249,36 @@ Page({
     this.applyPickerFilter();
     this.loadDebatesForMatch(pick);
     this.applyArchiveFilter();
+
+    // 异步拉取云端属于当前用户的狂言，双向同步到本地卷宗
+    if (wx.cloud && wx.cloud.database) {
+      try {
+        var db = wx.cloud.database();
+        db.collection('boasts').where({}).limit(50).get().then(function (res) {
+          if (res.data && res.data.length) {
+            var bLocal = wx.getStorageSync('boasts') || {};
+            var hasNew = false;
+            res.data.forEach(function (doc) {
+              if (doc.m && (!bLocal[doc.m] || bLocal[doc.m].text !== doc.text || bLocal[doc.m].result !== doc.result)) {
+                bLocal[doc.m] = {
+                  text: doc.text,
+                  camp: doc.camp || 'home',
+                  ts: doc.ts || doc.sealTs || Date.now(),
+                  md: doc.md || '',
+                  names: doc.names || '',
+                  result: doc.result || null
+                };
+                hasNew = true;
+              }
+            });
+            if (hasNew) {
+              wx.setStorageSync('boasts', bLocal);
+              that.refresh();
+            }
+          }
+        }).catch(function () {});
+      } catch (e) {}
+    }
   },
 
   loadDebatesForMatch: function (m) {
@@ -560,10 +604,8 @@ Page({
       names: m.home.zh + ' vs ' + m.away.zh
     }).then(function (sealed) {
       if (sealed === 'rejected') {
-        var boasts2 = wx.getStorageSync('boasts') || {};
-        delete boasts2[m.id];
-        wx.setStorageSync('boasts', boasts2);
-        wx.showToast({ title: '开庭已截止或不可重复立据', icon: 'none' });
+        wx.showToast({ title: '开庭已结案，无法修改', icon: 'none' });
+      } else {
         that.refresh();
       }
     });
@@ -609,12 +651,12 @@ Page({
   },
 
   goDetail: function () {
-    if (this.data.open) wx.navigateTo({ url: '/pages/detail/detail?id=' + this.data.open.id });
+    if (this.data.open) router.navTo('/pages/detail/detail?id=' + this.data.open.id);
   },
 
   onTapArchive: function (e) {
     var id = e.currentTarget.dataset.id;
-    if (id) wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    if (id) router.navTo('/pages/detail/detail?id=' + id);
   },
 
   onShareAppMessage: function () {

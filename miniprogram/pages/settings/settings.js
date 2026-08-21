@@ -70,7 +70,12 @@ Page({
     });
     getApp().applyTheme(this);
     // 偏好同步 users 集合（best-effort：周报透支预算段 / 开球推送依赖；seal 不可用时静默跳过）
-    cloud.syncUser({ nick: s.nick, budget: s.budget, followed: getApp().getFollowed() });
+    cloud.syncUser({
+      nick: s.nick,
+      budget: s.budget,
+      followed: getApp().getFollowed(),
+      followedLeagues: getApp().getFollowedLeagues()
+    });
   },
 
   selectTheme: function (e) {

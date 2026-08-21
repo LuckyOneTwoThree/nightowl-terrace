@@ -1,5 +1,7 @@
 var data = require('../../utils/data.js');
 
+var GIANTS = ['ARS', 'MCI', 'LIV', 'CHE', 'MUN', 'TOT', 'RMA', 'BAR', 'ATM', 'MIL', 'INT', 'JUV', 'FCB', 'BVB', 'PSG'];
+
 Page({
   onShow: function () { getApp().applyTheme(this); },
   data: {
@@ -65,17 +67,19 @@ Page({
           bd: data.tint(t.color, .35)
         };
       });
+      var selectedCount = teams.filter(function (t) { return t.on; }).length;
       return {
         id: lid,
         zh: info.zh || lid,
         en: info.en || '',
         solid: meta.solid || '#7C3AED',
-        teams: teams
+        teams: teams,
+        selectedCount: selectedCount
       };
     }).filter(function (g) { return g.teams.length; });
 
     var pickedTeamsCount = groups.reduce(function (n, g) {
-      return n + g.teams.filter(function (t) { return t.on; }).length;
+      return n + g.selectedCount;
     }, 0);
 
     this.setData({
@@ -100,19 +104,34 @@ Page({
     if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
   },
 
-  // 一键全选/反选联赛
-  toggleAllLeagues: function () {
-    var targetState = !this.data.allSelectedLeagues;
+  // 全选五大联赛
+  selectAllLeagues: function () {
     var list = this.data.leagueList.map(function (l) {
-      l.on = targetState;
+      l.on = true;
       return l;
     });
-    var picked = list.filter(function (l) { return l.on; }).length;
     this.setData({
       leagueList: list,
-      pickedLeaguesCount: picked,
-      allSelectedLeagues: targetState
+      pickedLeaguesCount: list.length,
+      allSelectedLeagues: true
     });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: '已全选五大联赛', icon: 'none' });
+  },
+
+  // 清空联赛选择
+  clearAllLeagues: function () {
+    var list = this.data.leagueList.map(function (l) {
+      l.on = false;
+      return l;
+    });
+    this.setData({
+      leagueList: list,
+      pickedLeaguesCount: 0,
+      allSelectedLeagues: false
+    });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: '已清空联赛选择', icon: 'none' });
   },
 
   // 进入 Step 2 选主队
@@ -137,11 +156,57 @@ Page({
   // 切换主队选中
   toggleTeam: function (e) {
     var gi = e.currentTarget.dataset.g, ti = e.currentTarget.dataset.t;
-    var groups = this.data.groups, picked = 0;
-    groups[gi].teams[ti].on = !groups[gi].teams[ti].on;
-    groups.forEach(function (g) { g.teams.forEach(function (t) { if (t.on) picked++; }); });
+    var groups = this.data.groups;
+    var t = groups[gi].teams[ti];
+    t.on = !t.on;
+    groups[gi].selectedCount = groups[gi].teams.filter(function (x) { return x.on; }).length;
+    var picked = groups.reduce(function (n, g) { return n + g.selectedCount; }, 0);
     this.setData({ groups: groups, pickedTeamsCount: picked });
     if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+  },
+
+  // 快捷全选传统豪门
+  selectGiantTeams: function () {
+    var groups = this.data.groups;
+    var picked = 0;
+    groups.forEach(function (g) {
+      g.teams.forEach(function (t) {
+        if (GIANTS.indexOf(t.id) >= 0) t.on = true;
+        if (t.on) picked++;
+      });
+      g.selectedCount = g.teams.filter(function (t) { return t.on; }).length;
+    });
+    this.setData({ groups: groups, pickedTeamsCount: picked });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'medium' });
+    wx.showToast({ title: '已选中欧洲传统豪门', icon: 'none' });
+  },
+
+  // 一键清空所有主队
+  clearAllTeams: function () {
+    var groups = this.data.groups;
+    groups.forEach(function (g) {
+      g.teams.forEach(function (t) { t.on = false; });
+      g.selectedCount = 0;
+    });
+    this.setData({ groups: groups, pickedTeamsCount: 0 });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: '已清空主队选择', icon: 'none' });
+  },
+
+  // 快捷切换单个联赛全选/清空
+  toggleGroupAllTeams: function (e) {
+    var gi = e.currentTarget.dataset.g;
+    var groups = this.data.groups;
+    var group = groups[gi];
+    if (!group) return;
+    var allSelected = group.teams.every(function (t) { return t.on; });
+    var targetState = !allSelected;
+    group.teams.forEach(function (t) { t.on = targetState; });
+    group.selectedCount = targetState ? group.teams.length : 0;
+    var picked = groups.reduce(function (n, g) { return n + g.selectedCount; }, 0);
+    this.setData({ groups: groups, pickedTeamsCount: picked });
+    if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
+    wx.showToast({ title: targetState ? '已全选该联赛' : '已清空该联赛', icon: 'none' });
   },
 
   // 完成所有配置

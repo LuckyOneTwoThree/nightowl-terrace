@@ -32,6 +32,21 @@
   box-shadow: 0 4rpx 16rpx rgba(255,178,36,.3);
 }
 
+/* 动态规则透视条 */
+.board-rule-strip {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 12rpx;
+  padding: 14rpx 20rpx; margin-bottom: 20rpx;
+  border-radius: var(--r-md, 16rpx);
+  border: 1rpx solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.02);
+}
+.theme-light .board-rule-strip {
+  background: #FFFFFF; border-color: rgba(0,0,0,.06);
+}
+.rule-strip-ic { width: 26rpx; height: 26rpx; flex-shrink: 0; }
+.rule-strip-txt { font-size: 20rpx; letter-spacing: 0.5rpx; line-height: 28rpx; }
+
 .stat {
   position: relative; z-index: 1;
   border-radius: var(--r-xl, 28rpx); padding: 24rpx 28rpx;

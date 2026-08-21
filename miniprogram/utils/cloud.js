@@ -184,7 +184,13 @@ function syncUser(settings) {
     nick: settings.nick || myNick(),
     budget: settings.budget,
     followed: settings.followed || undefined,
-    followedLeagues: settings.followedLeagues || undefined
+    followedLeagues: settings.followedLeagues || undefined,
+    level: settings.level != null ? settings.level : undefined,
+    levelTitle: settings.levelTitle || undefined,
+    seasonPts: settings.seasonPts != null ? settings.seasonPts : undefined,
+    hours: settings.hours || undefined,
+    totalPreds: settings.totalPreds != null ? settings.totalPreds : undefined,
+    hitCount: settings.hitCount != null ? settings.hitCount : undefined
   });
 }
 

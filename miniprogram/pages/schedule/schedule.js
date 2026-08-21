@@ -1,6 +1,7 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 var decorate = require('../../utils/decorate.js');
+var router = require('../../utils/router.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -46,7 +47,24 @@ Page({
 
   onLoad: function () {
     getApp().applyTheme(this);
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.init();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
     this.init();
+  },
+
+  onPullDownRefresh: function () {
+    var that = this;
+    data.pullRefresh(function () { that.init(); });
+  },
+
+  onUnload: function () {
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
+    }
   },
 
   init: function () {
@@ -258,7 +276,7 @@ Page({
     });
   },
   goDetail: function (e) {
-    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
+    router.navTo('/pages/detail/detail?id=' + e.currentTarget.dataset.id);
   },
   onGoToday: function () {
     var todayStr = this.data.todayStr;

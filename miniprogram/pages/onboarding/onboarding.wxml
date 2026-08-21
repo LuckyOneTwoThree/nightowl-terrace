@@ -16,9 +16,10 @@
 
     <!-- 快捷操作与提示 -->
     <view class="quick-row">
-      <text class="mono muted quick-hint">欧洲顶级五大联赛（多选）</text>
-      <view class="chip chip-ghost mono quick-toggle-btn" bindtap="toggleAllLeagues">
-        <text>{{allSelectedLeagues ? '清空' : '全选五大联赛'}}</text>
+      <text class="mono muted quick-hint">欧洲顶级联赛 · 已选 {{pickedLeaguesCount}}/5</text>
+      <view class="quick-btns">
+        <view class="chip chip-amber mono quick-chip" bindtap="selectAllLeagues" wx:if="{{pickedLeaguesCount < 5}}">全选五大联赛</view>
+        <view class="chip chip-ghost mono quick-chip" bindtap="clearAllLeagues" wx:if="{{pickedLeaguesCount > 0}}">清空选择</view>
       </view>
     </view>
 
@@ -67,13 +68,28 @@
       <text class="mono muted head-sub">已呈现已选联赛的全部球队，主队比赛优先排入每周熬夜计划</text>
     </view>
 
+    <!-- 快捷操作与提示 -->
+    <view class="quick-row">
+      <text class="mono muted quick-hint">已选 {{pickedTeamsCount}} 支信仰主队</text>
+      <view class="quick-btns">
+        <view class="chip chip-amber mono quick-chip" bindtap="selectGiantTeams">⭐ 选传统豪门</view>
+        <view class="chip chip-ghost mono quick-chip" bindtap="clearAllTeams" wx:if="{{pickedTeamsCount > 0}}">清空选择</view>
+      </view>
+    </view>
+
     <!-- 联赛球队分组 -->
     <view class="groups">
       <view class="group" wx:for="{{groups}}" wx:key="id" wx:for-item="g" wx:for-index="gi">
         <view class="g-head">
-          <view class="lg-tag-solid" style="background: {{g.solid}};">{{g.id}}</view>
-          <text class="hl hl-md">{{g.zh}}</text>
-          <text class="mono muted g-count">{{g.teams.length}} 队</text>
+          <view class="gh-left">
+            <view class="lg-tag-solid" style="background: {{g.solid}};">{{g.id}}</view>
+            <text class="hl hl-md">{{g.zh}}</text>
+            <text class="mono muted g-count">{{g.teams.length}} 队</text>
+            <view class="chip chip-amber mono g-picked-badge" wx:if="{{g.selectedCount > 0}}">已选 {{g.selectedCount}} 队</view>
+          </view>
+          <view class="chip chip-ghost mono g-quick-btn" data-g="{{gi}}" bindtap="toggleGroupAllTeams">
+            {{g.selectedCount === g.teams.length ? '清空本联赛' : '全选本联赛'}}
+          </view>
         </view>
         <view class="chips">
           <view class="tchip card-low {{t.on ? 'on floodlight-glow' : ''}}"

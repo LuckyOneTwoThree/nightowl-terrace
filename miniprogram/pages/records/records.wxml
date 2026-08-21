@@ -6,23 +6,26 @@
   <view class="compass-hero card-highest floodlight-glow">
     <view class="ch-head">
       <view class="v-icon v-trophy text-amber ch-ic"></view>
-      <text class="hl ch-title">我的深夜战绩档案</text>
+      <text class="hl ch-title">我的全景战绩档案</text>
     </view>
     <view class="ch-grid">
       <view class="ch-item">
-        <text class="mono muted ch-lbl">累计预言</text>
+        <text class="mono muted ch-lbl">已结场次</text>
         <text class="hl ch-val">{{stats.total}}<text class="ch-unit">场</text></text>
       </view>
       <view class="ch-div"></view>
       <view class="ch-item">
-        <text class="mono muted ch-lbl">历史命中率</text>
+        <text class="mono muted ch-lbl">赛季命中率</text>
         <text class="hl ch-val text-teal">{{stats.rate}}</text>
       </view>
       <view class="ch-div"></view>
       <view class="ch-item">
-        <text class="mono muted ch-lbl">斩获积分</text>
+        <text class="mono muted ch-lbl">赛季总积分</text>
         <text class="hl ch-val text-amber">+{{stats.pts}}<text class="ch-unit">分</text></text>
       </view>
+    </view>
+    <view class="ch-footer-tip mono muted">
+      <text>✦ 盲评大厅与单场预测积分全量通算 · 自动计入当周周榜与赛季总榜</text>
     </view>
   </view>
 

@@ -102,9 +102,12 @@ exports.main = async (event) => {
         });
       }
 
-      // uid -> 本场积分增量（跨群按 gid 分账）
-      // 客户端直写时不带 uid，云库自动补 _openid，此处统一回退（与 readBoard 口径一致）
+      // uid -> 本场积分增量（跨群按 gid 分账）；
+      // uidStats 同步累加命中/场次——注意结算前拉取的 preds 文档上没有 hit 字段
+      // （hit 只随 update 落库），必须用本场结算算出的 update.hit 累加，
+      // 否则 standings/users 的 hitCount 恒为 0（四轮 P1-2）
       const perGid = {};
+      const uidStats = {};
       for (const p of preds) {
         // 幂等：带条件更新，仅当该预测尚未结算时才写入并计分——
         // 超时重跑/并发触发时已结算的预测不会再次累加进 standings
@@ -138,26 +141,83 @@ exports.main = async (event) => {
         const g = p.gid || 'default';
         perGid[g] = perGid[g] || {};
         perGid[g][uid] = (perGid[g][uid] || 0) + (update.pts || 0);
+        uidStats[uid] = uidStats[uid] || { pts: 0, count: 0, hit: 0, nick: p.nick || '' };
+        uidStats[uid].pts += (update.pts || 0);
+        uidStats[uid].count++;
+        if (update.hit) uidStats[uid].hit++;
       }
 
-      // 3. 写回 standings 总榜（uid 维度 upsert，nick 随最新封存同步）
+      // 3. 写回 standings 总榜（按 gid 分群，uid 维度 upsert，nick 随最新封存同步）
       for (const gid of Object.keys(perGid)) {
         for (const uid of Object.keys(perGid[gid])) {
           const delta = perGid[gid][uid];
           if (!delta) continue;
-          const nickSrc = (preds.find(x => (x.uid || x._openid) === uid) || {}).nick;
+          const st = uidStats[uid] || { hit: 0, nick: '' };
           const exist = await db.collection('standings')
             .where({ gid, uid }).limit(1).get();
           if (exist.data.length) {
-            const patch = { pts: _.inc(delta), updatedTs: Date.now() };
-            if (nickSrc) patch.nick = nickSrc; // 改昵称后总榜同步展示
+            const patch = {
+              pts: _.inc(delta),
+              totalCount: _.inc(1),
+              hitCount: _.inc(st.hit),
+              updatedTs: Date.now()
+            };
+            if (st.nick) patch.nick = st.nick; // 改昵称后总榜同步展示
             await db.collection('standings').doc(exist.data[0]._id).update({ data: patch });
           } else {
             await db.collection('standings').add({
-              data: { gid, uid, nick: nickSrc || uid, pts: delta, updatedTs: Date.now() }
+              data: {
+                gid, uid,
+                nick: st.nick || uid,
+                pts: delta,
+                totalCount: 1,
+                hitCount: st.hit,
+                updatedTs: Date.now()
+              }
             });
             summary.standings++;
           }
+        }
+      }
+
+      // 3.5 users 主表同步：按 uid 汇总本场跨 gid 全部增量后只写一次（四轮 P2-9），
+      // seasonPts/等级以服务端结算为唯一权威来源（客户端不再回推，四轮 P2-5）
+      for (const uid of Object.keys(uidStats)) {
+        const st = uidStats[uid];
+        if (!st.count) continue;
+        try {
+          const uExist = await db.collection('users').where({ uid }).limit(1).get();
+          const basePts = uExist.data.length ? (uExist.data[0].seasonPts || 0) : 0;
+          const finalPts = basePts + st.pts;
+          const lvInfo = finalPts >= 150 ? { level: 6, levelTitle: '铁血名宿' }
+            : finalPts >= 100 ? { level: 5, levelTitle: '战术宗师' }
+            : finalPts >= 60 ? { level: 4, levelTitle: '预言大师' }
+            : finalPts >= 30 ? { level: 3, levelTitle: '看台老炮' }
+            : finalPts >= 10 ? { level: 2, levelTitle: '熬夜死忠' }
+            : { level: 1, levelTitle: '新晋球客' };
+          const uPatch = {
+            seasonPts: _.inc(st.pts),
+            ...lvInfo,
+            totalPreds: _.inc(st.count),
+            hitCount: _.inc(st.hit),
+            updatedTs: Date.now()
+          };
+          if (st.nick) uPatch.nick = st.nick;
+          if (uExist.data.length) {
+            await db.collection('users').doc(uExist.data[0]._id).update({ data: uPatch });
+          } else {
+            // add 不支持 _.inc，首条文档直接落数值
+            await db.collection('users').add({
+              data: {
+                uid, nick: st.nick || uid, seasonPts: finalPts,
+                level: lvInfo.level, levelTitle: lvInfo.levelTitle,
+                totalPreds: st.count, hitCount: st.hit,
+                createdTs: Date.now(), updatedTs: Date.now()
+              }
+            });
+          }
+        } catch (uErr) {
+          console.warn('[settleMatches] sync users table warning:', uErr.message);
         }
       }
 

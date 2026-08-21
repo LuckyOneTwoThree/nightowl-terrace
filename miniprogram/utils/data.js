@@ -109,33 +109,84 @@ function matchesAll() {
   return _dynamicFixtures;
 }
 
-function syncScores() {
-  if (typeof wx === 'undefined' || !wx.cloud || !wx.cloud.database) return Promise.resolve(false);
-  var db = wx.cloud.database();
-  var _ = db.command;
-  // 拉近 10 天完赛场次：不带时间窗的 st=done 查询赛季中后期会超 100 条上限，
-  // 云库返回任意子集导致新比分可能丢失；10 天窗口内 done 场次必在 100 内
-  var since = engine.bjDateStr(Date.now() - 10 * 86400000) + 'T00:00';
-  return db.collection('fixtures').where({ st: 'done', t: _.gte(since) }).limit(100).get().then(function (res) {
-    var docs = (res && res.data) || [];
-    initFixtures();
+// 事件发布订阅总线（比分同步后通知页面刷新）
+var _scoreListeners = [];
+function onScoresUpdated(fn) {
+  if (typeof fn === 'function' && _scoreListeners.indexOf(fn) < 0) {
+    _scoreListeners.push(fn);
+  }
+}
+function offScoresUpdated(fn) {
+  var idx = _scoreListeners.indexOf(fn);
+  if (idx >= 0) _scoreListeners.splice(idx, 1);
+}
+function emitScoresUpdated(info) {
+  _scoreListeners.slice().forEach(function (fn) {
+    try { fn(info); } catch (e) { console.warn('[nightowl] onScoresUpdated listener error:', e); }
+  });
+}
+
+function syncScores(options) {
+  if (typeof wx === 'undefined' || !wx.cloud) return Promise.resolve(false);
+  initFixtures();
+  
+  options = options || {};
+  // 窗口保持 10 天（四轮 P1-4）：小程序端单次 get 上限 100 条且无 orderBy，
+  // 窗口拉长到 30 天后赛季中期完赛场次会超上限，云库返回任意子集导致新比分丢失
+  var daysBack = typeof options.days === 'number' ? options.days : 10;
+  var since = engine.bjDateStr(Date.now() - daysBack * 86400000) + 'T00:00';
+
+  function applyDocs(docs) {
     var cache = {};
     try { cache = wx.getStorageSync('cached_scores') || {}; } catch (e) {}
     var changed = false;
+    var updatedIds = [];
+
     docs.forEach(function (doc) {
-      if (doc.id && doc.sc) {
-        cache[doc.id] = { st: doc.st, sc: doc.sc };
-        var m = _matchMap[doc.id];
+      var matchId = doc.id || doc._id;
+      if (matchId && doc.sc) {
+        cache[matchId] = { st: doc.st, sc: doc.sc };
+        var m = _matchMap[matchId];
         if (m && (m.st !== doc.st || m.sc !== doc.sc)) {
           m.st = doc.st;
           m.sc = doc.sc;
           changed = true;
+          updatedIds.push(matchId);
         }
       }
     });
+
     try { wx.setStorageSync('cached_scores', cache); } catch (e2) {}
+
+    if (changed || options.forceEmit) {
+      emitScoresUpdated({ changed: changed, count: docs.length, updatedIds: updatedIds });
+    }
     return changed;
-  }).catch(function () { return false; });
+  }
+
+  // 优先直接读取云数据库集合
+  if (wx.cloud.database) {
+    var db = wx.cloud.database();
+    var _ = db.command;
+    return db.collection('fixtures').where({ st: 'done', t: _.gte(since) }).limit(100).get().then(function (res) {
+      var docs = (res && res.data) || [];
+      return applyDocs(docs);
+    }).catch(function (err) {
+      console.warn('[nightowl] 直读 fixtures 集合失败，本次跳过云端比分:', err && err.message);
+      return false;
+    });
+  }
+
+  return Promise.resolve(false);
+}
+
+// 下拉刷新统一入口（四轮 P3）：各页 onPullDownRefresh 收拢到此处，
+// 不强制 emit；有变更时 emit 已通知全部监听页（含当前页）刷新，after 仅作无变更兜底
+function pullRefresh(after) {
+  return syncScores().catch(function () { return false; }).then(function (changed) {
+    if (!changed && typeof after === 'function') after();
+    if (typeof wx !== 'undefined' && wx.stopPullDownRefresh) wx.stopPullDownRefresh();
+  });
 }
 
 module.exports = {
@@ -166,6 +217,10 @@ module.exports = {
   },
   matchesAll: matchesAll,
   syncScores: syncScores,
+  pullRefresh: pullRefresh,
+  onScoresUpdated: onScoresUpdated,
+  offScoresUpdated: offScoresUpdated,
+  emitScoresUpdated: emitScoresUpdated,
   fixturesByDate: function (dateStr) {
     return matchesAll().filter(function (m) { return m.t.split('T')[0] === dateStr; });
   },

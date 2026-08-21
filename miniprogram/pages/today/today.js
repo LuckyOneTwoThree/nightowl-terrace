@@ -1,6 +1,7 @@
 var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 var decorateUtil = require('../../utils/decorate.js');
+var router = require('../../utils/router.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -78,6 +79,13 @@ Page({
     this._lastFollowed = JSON.stringify(getApp().getFollowed());
     this._lastFollowedLeagues = JSON.stringify(getApp().getFollowedLeagues());
     this._lastTodayStr = engine.nightOf(new Date());
+
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.refresh();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
+
     this.refresh();
   },
 
@@ -91,6 +99,11 @@ Page({
     this.refresh();
   },
 
+  onPullDownRefresh: function () {
+    var that = this;
+    data.pullRefresh(function () { that.refresh(); });
+  },
+
   onHide: function () {
     if (this._timer) {
       clearInterval(this._timer);
@@ -102,6 +115,10 @@ Page({
     if (this._timer) {
       clearInterval(this._timer);
       this._timer = null;
+    }
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
     }
   },
 
@@ -209,26 +226,28 @@ Page({
       } else {
         text = '距开球 ' + c.m + '分' + c.s + '秒';
       }
-      that.setData({ countdownText: text });
+      if (that.data.countdownText !== text) {
+        that.setData({ countdownText: text });
+      }
     };
     tick();
     this._timer = setInterval(tick, 1000);
   },
 
   onPoster: function () {
-    if (this.data.hero) wx.navigateTo({ url: '/pages/poster/poster?id=' + this.data.hero.id });
+    if (this.data.hero) router.navTo('/pages/poster/poster?id=' + this.data.hero.id);
   },
   onStoryTap: function (e) {
-    wx.navigateTo({ url: '/pages/story/story?id=' + e.currentTarget.dataset.id });
+    router.navTo('/pages/story/story?id=' + e.currentTarget.dataset.id);
   },
   goAllStories: function () {
     var first = this.data.stories && this.data.stories[0];
     if (first) {
-      wx.navigateTo({ url: '/pages/story/story?id=' + first.id });
+      router.navTo('/pages/story/story?id=' + first.id);
     }
   },
   goDetail: function (e) {
-    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.currentTarget.dataset.id });
+    router.navTo('/pages/detail/detail?id=' + e.currentTarget.dataset.id);
   },
   onCal: function () {
     wx.switchTab({ url: '/pages/schedule/schedule' });

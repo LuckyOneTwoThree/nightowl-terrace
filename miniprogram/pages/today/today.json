@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "夜猫追球"
+  "navigationBarTitleText": "夜猫追球",
+  "enablePullDownRefresh": true
 }

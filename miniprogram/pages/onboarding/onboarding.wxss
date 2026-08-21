@@ -21,7 +21,8 @@
   margin-top: 32rpx; margin-bottom: 20rpx;
 }
 .quick-hint { font-size: 22rpx; color: var(--outline); }
-.quick-toggle-btn { font-size: 20rpx; padding: 6rpx 18rpx; }
+.quick-btns { display: flex; align-items: center; gap: 12rpx; }
+.quick-chip { font-size: 20rpx; padding: 6rpx 18rpx; border-radius: var(--r-full); }
 
 /* 联赛卡片网格（Step 1） */
 .league-grid {
@@ -82,12 +83,15 @@
 
 /* 球队分组（Step 2） */
 .groups { position: relative; z-index: 1; margin-top: 36rpx; display: flex; flex-direction: column; gap: 36rpx; }
-.g-head { display: flex; align-items: center; gap: 14rpx; margin-bottom: 16rpx; }
+.g-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16rpx; }
+.gh-left { display: flex; align-items: center; gap: 14rpx; }
 .lg-tag-solid {
   font-size: 20rpx; font-weight: 700; color: #fff;
   padding: 4rpx 14rpx; border-radius: 8rpx;
 }
 .g-count { font-size: 22rpx; margin-left: 4rpx; }
+.g-picked-badge { font-size: 18rpx; padding: 2rpx 12rpx; border-radius: var(--r-full); }
+.g-quick-btn { font-size: 18rpx; padding: 4rpx 16rpx; border-radius: var(--r-full); }
 .chips { display: flex; flex-wrap: wrap; gap: 16rpx; }
 
 .tchip {

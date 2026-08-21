@@ -2,6 +2,7 @@ var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
+var router = require('../../utils/router.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 var OPTIONS = [
@@ -183,15 +184,15 @@ Page({
       court: '/pages/court/court',
       box: '/pages/box/box'
     };
-    if (urls[id]) wx.navigateTo({ url: urls[id] });
+    if (urls[id]) router.navTo(urls[id]);
   },
 
   goSeasonRank: function () {
-    wx.navigateTo({ url: '/pages/board/board?tab=season' });
+    router.navTo('/pages/board/board?tab=season');
   },
 
   goRecords: function () {
-    wx.navigateTo({ url: '/pages/records/records' });
+    router.navTo('/pages/records/records');
   },
 
   onShareAppMessage: function () {
@@ -203,7 +204,7 @@ Page({
 
   goDetail: function (e) {
     var id = e.currentTarget.dataset.id || (this.data.boxMatch && this.data.boxMatch.id);
-    if (id) wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    if (id) router.navTo('/pages/detail/detail?id=' + id);
   },
 
   onPick: function (e) {

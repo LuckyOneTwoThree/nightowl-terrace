@@ -14,8 +14,14 @@ App({
       console.log('[nightowl] 云开发已初始化');
       try {
         var dataUtil = require('./utils/data.js');
-        dataUtil.syncScores();
-      } catch (e) {}
+        dataUtil.syncScores().then(function (changed) {
+          console.log('[nightowl] 完赛比分同步完成, 数据是否有更新:', changed);
+        }).catch(function (err) {
+          console.warn('[nightowl] 比分同步异常:', err);
+        });
+      } catch (e) {
+        console.warn('[nightowl] 初始化比分同步调用失败:', e);
+      }
     }
 
     // 监听系统深浅色切换
@@ -30,7 +36,8 @@ App({
 
     // 等宽字体已内联 app.wxss @font-face（woff2 base64），无需运行时加载
 
-    // 启动即刻同步原生导航栏、背景与 TabBar 样式
+    // 启动即刻初始化 TabBar 默认暗黑主题标记（app.json 默认已是 dark，避免热重载冲刷图标）
+    this._appliedTabBarTheme = 'dark';
     this.applyTheme();
   },
   globalData: {

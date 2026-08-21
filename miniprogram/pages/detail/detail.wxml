@@ -144,7 +144,7 @@
           <view class="v-icon v-fire text-amber"></view>
           <text class="hl">单场预言 · 押上尊严</text>
         </view>
-        <text class="mono muted pb-sub">猜中 +3分 · 精确比分 +2分</text>
+        <text class="mono muted pb-sub">猜中 +3分 · 精准比分 +2分 · 冷门翻倍 (计入周榜与赛季总榜)</text>
       </view>
 
       <view class="pb-opts">

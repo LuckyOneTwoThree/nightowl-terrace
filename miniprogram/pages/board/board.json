@@ -2,5 +2,6 @@
   "navigationBarTitleText": "夜猫榜",
   "navigationBarBackgroundColor": "#000000",
   "navigationBarTextStyle": "white",
-  "backgroundColor": "#000000"
+  "backgroundColor": "#000000",
+  "enablePullDownRefresh": true
 }

@@ -2,6 +2,7 @@ var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
 var crypt = require('../../utils/crypt.js');
+var router = require('../../utils/router.js');
 
 var WEEK = decorate.WEEK;
 
@@ -33,11 +34,28 @@ Page({
 
   onLoad: function () {
     getApp().applyTheme(this);
+    var that = this;
+    this._onScoresUpdated = function () {
+      that.refresh();
+    };
+    data.onScoresUpdated(this._onScoresUpdated);
   },
 
   onShow: function () {
     getApp().applyTheme(this);
     this.refresh();
+  },
+
+  onPullDownRefresh: function () {
+    var that = this;
+    data.pullRefresh(function () { that.refresh(); });
+  },
+
+  onUnload: function () {
+    if (this._onScoresUpdated) {
+      data.offScoresUpdated(this._onScoresUpdated);
+      this._onScoresUpdated = null;
+    }
   },
 
   onFilterTab: function (e) {
@@ -152,6 +170,6 @@ Page({
 
   goDetail: function (e) {
     var id = e.currentTarget.dataset.id;
-    if (id) wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    if (id) router.navTo('/pages/detail/detail?id=' + id);
   }
 });

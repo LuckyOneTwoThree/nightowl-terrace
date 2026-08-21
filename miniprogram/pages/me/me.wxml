@@ -308,7 +308,7 @@
       </view>
 
       <!-- 全量段位天梯体系列表 -->
-      <view class="ls-ladder-title mono muted">全量 5 大荣誉段位体系</view>
+      <view class="ls-ladder-title mono muted">全量 6 大荣誉段位天梯体系</view>
       <view class="ls-ladder">
         <view class="ls-tier card-low {{curLevel.lv === item.lv ? 'ls-tier-active' : ''}} {{curLevel.lv > item.lv ? 'ls-tier-unlocked' : ''}}"
               wx:for="{{levelsList}}" wx:key="lv">

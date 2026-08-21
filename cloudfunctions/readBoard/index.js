@@ -80,7 +80,7 @@ async function fetchAll(db, coll, where, limit) {
 
 exports.main = async (event) => {
   const db = cloud.database();
-  const board = event.board;       // 'guess' | 'owl' | 'court' | 'season'
+  const board = event.board;       // 'guess' | 'owl' | 'court' | 'season' | 'profile'
   const gid = event.gid || 'default';
   const week = event.week;         // 可选 'YYYY-MM-DD'（周内任意一天）
   // 当前调用者 openid：榜单行打 isMe 标（二轮 P2-4，前端摆脱昵称匹配的重名串位）
@@ -192,9 +192,27 @@ exports.main = async (event) => {
       const list = rows.sort((x, y) => y.pts - x.pts)
         .map((r, i) => ({ rank: i + 1, nick: r.nick || r.uid, pts: r.pts, isMe: !!myUid && r.uid === myUid }));
       return { ok: true, board, gid, list };
+
+    } else if (board === 'profile') {
+      // ── 个人云端档案：按调用者 OPENID 精确读 users（四轮 P1-3） ──
+      // 客户端拿不到自己的 openid，直读 users 只能 where({}) 碰运气（会读到别人的积分）；
+      // 由本函数服务端取 OPENID 后按 uid 精确命中，只返回本人需要的最小字段
+      if (!myUid) return { ok: false, error: 'no openid' };
+      const res = await db.collection('users').where({ uid: myUid }).limit(1).get();
+      const u = res.data[0] || null;
+      return {
+        ok: true, board,
+        profile: u ? {
+          seasonPts: Number(u.seasonPts) || 0,
+          level: u.level != null ? Number(u.level) : null,
+          levelTitle: u.levelTitle || null,
+          totalPreds: Number(u.totalPreds) || 0,
+          hitCount: Number(u.hitCount) || 0
+        } : null
+      };
     }
 
-    return { ok: false, error: 'board 必须是 guess | owl | court | season' };
+    return { ok: false, error: 'board 必须是 guess | owl | court | season | profile' };
   } catch (err) {
     return { ok: false, error: err.message };
   }

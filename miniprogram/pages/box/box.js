@@ -1,6 +1,7 @@
 var data = require('../../utils/data.js');
 var engine = require('../../utils/engine.js');
 var decorate = require('../../utils/decorate.js');
+var router = require('../../utils/router.js');
 
 // 豪门集合：英超六强 + 各国传统豪门（PM 9.6 星级下限/豪门出战筛选）
 var GIANTS = ['ARS', 'MCI', 'LIV', 'CHE', 'MUN', 'TOT', 'RMA', 'BAR', 'ATM', 'MIL', 'INT', 'JUV', 'FCB', 'BVB', 'PSG'];
@@ -199,7 +200,7 @@ Page({
 
   watchIt: function () {
     if (this.data.back && this.data.back.id) {
-      wx.navigateTo({ url: '/pages/detail/detail?id=' + this.data.back.id });
+      router.navTo('/pages/detail/detail?id=' + this.data.back.id);
     }
   },
 
