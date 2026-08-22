@@ -6,6 +6,16 @@ var router = require('../../utils/router.js');
 
 var QUICK_TAGS = ['🔥 零封拿下', '💥 狂轰三球', '🛡️ 死守到底', '🎯 绝杀登顶', '🐐 封神之战', '🤡 坐等翻车'];
 
+function formatCourtTime(ts) {
+  if (!ts) return '不久前';
+  var diff = Date.now() - ts;
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+  var d = new Date(ts);
+  return (d.getMonth() + 1) + '月' + d.getDate() + '日';
+}
+
 // 德比对决拟真发言库（按主客中立生成生动辩论流，保障离线与冷启动氛围）
 function genMockDebates(m) {
   if (!m) return [];
@@ -331,7 +341,7 @@ Page({
           camp: cb.camp || 'neutral',
           text: cb.text,
           ts: cb.ts,
-          timeStr: cb.ts ? that_formatTime(cb.ts) : '不久前',
+          timeStr: cb.ts ? formatCourtTime(cb.ts) : '不久前',
           likes: cb.likes || 0,
           flags: cb.flags || 0,
           milks: cb.milks || 0,
@@ -668,12 +678,3 @@ Page({
     return { title: title, path: path };
   }
 });
-
-function that_formatTime(ts) {
-  var diff = Date.now() - ts;
-  if (diff < 60000) return '刚刚';
-  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
-  if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
-  var d = new Date(ts);
-  return (d.getMonth() + 1) + '月' + d.getDate() + '日';
-}

@@ -168,15 +168,20 @@ Page({
           var list = (res && res.list) || [];
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
+          var myCloudPts = null;
           var rows = list.map(function (r, i) {
-            if (myIdx < 0 && (r.isMe || r.nick === myNick)) myIdx = i;
+            if (myIdx < 0 && (r.isMe || r.nick === myNick)) {
+              myIdx = i;
+              myCloudPts = r.pts;
+            }
             return { rank: i + 1, name: r.nick, val: (r.pts || 0) + ' 分', sub: '赛季总积分' };
           });
+          var finalMyPts = myCloudPts != null ? myCloudPts : uStats.seasonPts;
           that.setData({
             ranks: rows,
             rankDemo: false,
             myRankNo: myIdx >= 0 ? String(myIdx + 1) : '-',
-            myVal: uStats.seasonPts + ' 分',
+            myVal: finalMyPts + ' 分',
             mySub: mySubText,
             mySeasonRateText: uStats.seasonRate + '%',
             mySeasonHitText: uStats.seasonHit + ' 场'
@@ -209,16 +214,21 @@ Page({
           var list = (res && res.list) || [];
           if (!list.length) throw new Error('empty');
           var myIdx = -1;
+          var myWeekCloudPts = null;
           var rows = list.map(function (r, i) {
-            if (myIdx < 0 && (r.isMe || r.nick === myNick)) myIdx = i;
+            if (myIdx < 0 && (r.isMe || r.nick === myNick)) {
+              myIdx = i;
+              myWeekCloudPts = r.pts;
+            }
             var rate = r.hit != null && r.count ? Math.round(r.hit / r.count * 100) + '% 命中' : '';
             return { rank: i + 1, name: r.nick, val: (r.pts || 0) + ' 分', sub: rate || '本周盲评' };
           });
+          var finalWeekPts = myWeekCloudPts != null ? myWeekCloudPts : uStats.weekPts;
           that.setData({
             ranks: rows,
             rankDemo: false,
             myRankNo: myIdx >= 0 ? String(myIdx + 1) : '-',
-            myVal: uStats.weekPts + ' 分',
+            myVal: finalWeekPts + ' 分',
             mySub: mySubGuess,
             myWeekRateText: uStats.weekRate + '%',
             myWeekHitText: uStats.weekHit + ' 场'

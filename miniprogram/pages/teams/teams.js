@@ -1,4 +1,5 @@
 var data = require('../../utils/data.js');
+var router = require('../../utils/router.js');
 
 var GIANTS = ['ARS', 'MCI', 'LIV', 'CHE', 'MUN', 'TOT', 'RMA', 'BAR', 'ATM', 'MIL', 'INT', 'JUV', 'FCB', 'BVB', 'PSG'];
 
@@ -251,7 +252,7 @@ Page({
     this._persist();
     wx.showToast({ title: '关注偏好已保存', icon: 'success' });
     setTimeout(function () {
-      wx.navigateBack();
+      router.safeBack('/pages/me/me');
     }, 300);
   }
 });

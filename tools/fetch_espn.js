@@ -13,7 +13,7 @@ const { execFile } = require('child_process');
 const RAW_DIR = path.join(__dirname, 'raw');
 if (!fs.existsSync(RAW_DIR)) fs.mkdirSync(RAW_DIR, { recursive: true });
 
-const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer';
+const ESPN_BASE = 'https://site.web.api.espn.com/apis/site/v2/sports/soccer';
 const LEAGUES = [
   { lg: 'PL', espn: 'eng.1' },
   { lg: 'PD', espn: 'esp.1' },

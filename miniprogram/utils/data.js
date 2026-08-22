@@ -164,16 +164,22 @@ function syncScores(options) {
     return changed;
   }
 
-  // 优先直接读取云数据库集合
+  // 优先直接读取云数据库集合（按开球时间倒序取最近完赛场次，确保最新比分绝对不遗漏）
   if (wx.cloud.database) {
     var db = wx.cloud.database();
     var _ = db.command;
-    return db.collection('fixtures').where({ st: 'done', t: _.gte(since) }).limit(100).get().then(function (res) {
+    return db.collection('fixtures').where({ st: 'done', t: _.gte(since) }).orderBy('t', 'desc').limit(100).get().then(function (res) {
       var docs = (res && res.data) || [];
       return applyDocs(docs);
     }).catch(function (err) {
-      console.warn('[nightowl] 直读 fixtures 集合失败，本次跳过云端比分:', err && err.message);
-      return false;
+      // 降级：若无复合索引则无 orderBy 查询
+      return db.collection('fixtures').where({ st: 'done', t: _.gte(since) }).limit(100).get().then(function (res) {
+        var docs = (res && res.data) || [];
+        return applyDocs(docs);
+      }).catch(function (err2) {
+        console.warn('[nightowl] 直读 fixtures 集合失败，本次跳过云端比分:', err2 && err2.message);
+        return false;
+      });
     });
   }
 

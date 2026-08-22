@@ -2,7 +2,7 @@
  * 云函数：syncScores 完赛比分自动同步与结算联动
  * 触发：定时（每 15 分钟）或手动管理调用
  * 职责：
- *   1. 扫描 ESPN 接口获取近期完赛场次（state='post'）及其比分；
+ *   1. 扫描 ESPN 开放接口获取近期完赛场次（state='post'）及其比分；
  *   2. 匹配并更新 fixtures 集合中对应场次的 st='done' 与 sc='X-Y'，标记 settled=false；
  *   3. 支持手动参数录入（event.manual: { id, score }）；
  *   4. 触发 settleMatches 结算链路，使预测积分与 standings 排行榜即时生效。
@@ -12,7 +12,12 @@ const https = require('https');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
-const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer';
+// 主地址采用开放的 site.web.api 接口（规避 site.api 的 WAF 403 拦截）
+const ESPN_BASES = [
+  'https://site.web.api.espn.com/apis/site/v2/sports/soccer',
+  'https://site.api.espn.com/apis/site/v2/sports/soccer'
+];
+
 const LEAGUES = [
   { lg: 'PL', espn: 'eng.1' },
   { lg: 'PD', espn: 'esp.1' },
@@ -22,8 +27,6 @@ const LEAGUES = [
 ];
 
 // ESPN displayName（norm 归一化后）→ 项目三字码 全量映射
-// 底表：teams.js 全部 96 支（norm(en) → id）+ ESPN 常见变体全名；
-// 不再使用 slice(0,3) 兜底——错配（如 realmadrid→REA）会把比分写进错误场次，宁缺勿错
 const ALIAS = {
   // ── 英超（PL）──
   arsenal: 'ARS', astonvilla: 'AVL', bournemouth: 'BOU', brentford: 'BRE', brighton: 'BHA',
@@ -85,8 +88,11 @@ function norm(s) {
   return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-function getJSON(url, retries = 1) {
+function getJSON(url, timeoutMs = 8000) {
   return new Promise((resolve, reject) => {
+    let timer = null;
+    let finished = false;
+
     const parsed = new URL(url);
     const options = {
       hostname: parsed.hostname,
@@ -98,16 +104,25 @@ function getJSON(url, retries = 1) {
         'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8',
         'Cache-Control': 'no-cache'
       },
-      timeout: 15000
+      timeout: timeoutMs
     };
 
     const req = https.request(options, (res) => {
       if (res.statusCode < 200 || res.statusCode >= 300) {
-        return reject(new Error(`HTTP error ${res.statusCode}`));
+        res.resume(); // 释放 socket 资源，防止连接挂起
+        if (!finished) {
+          finished = true;
+          clearTimeout(timer);
+          reject(new Error(`HTTP error ${res.statusCode}`));
+        }
+        return;
       }
       let data = '';
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
         try { resolve(JSON.parse(data)); }
         catch (e) { reject(new Error('JSON parse fail')); }
       });
@@ -115,21 +130,48 @@ function getJSON(url, retries = 1) {
 
     req.on('timeout', () => {
       req.destroy();
-      reject(new Error('Request timeout'));
+      if (!finished) {
+        finished = true;
+        clearTimeout(timer);
+        reject(new Error('Request timeout'));
+      }
     });
 
     req.on('error', (err) => {
-      if (retries > 0) {
-        setTimeout(() => {
-          getJSON(url, retries - 1).then(resolve).catch(reject);
-        }, 1000);
-      } else {
+      if (!finished) {
+        finished = true;
+        clearTimeout(timer);
         reject(err);
       }
     });
 
+    timer = setTimeout(() => {
+      req.destroy();
+      if (!finished) {
+        finished = true;
+        reject(new Error('Request hard timeout'));
+      }
+    }, timeoutMs + 1000);
+
     req.end();
   });
+}
+
+// 尝试多个可用节点，防止单点故障
+async function fetchScoreboard(espnLeague, dateRange) {
+  let lastErr = null;
+  for (const base of ESPN_BASES) {
+    try {
+      const url = `${base}/${espnLeague}/scoreboard?dates=${dateRange}&limit=100`;
+      const res = await getJSON(url, 8000);
+      if (res && Array.isArray(res.events)) {
+        return res;
+      }
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw (lastErr || new Error('Fetch scoreboard failed'));
 }
 
 function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -151,8 +193,8 @@ async function fetchAll(db, coll, where, limit) {
   return out;
 }
 
-// 当前北京时间近期窗口 YYYYMMDD-YYYYMMDD（默认过去 14 天 ～ 明天，杜绝历史漏抓）
-function getRecentDateRange(daysBack = 14, daysAhead = 1) {
+// 当前北京时间近期窗口 YYYYMMDD-YYYYMMDD（默认过去 30 天 ～ 明天，杜绝历史漏抓）
+function getRecentDateRange(daysBack = 30, daysAhead = 2) {
   const now = Date.now() + 8 * 3600000;
   const start = new Date(now - daysBack * 86400000);
   const end = new Date(now + daysAhead * 86400000);
@@ -161,16 +203,13 @@ function getRecentDateRange(daysBack = 14, daysAhead = 1) {
   return `${sStr}-${eStr}`;
 }
 
-// manual 补录分支的管理员白名单：填入开发者 openid 后开放（获取方式：开发者工具
-// 「云开发 → 用户管理」，或先放行一次 seal 的 console 日志 wxCtx.OPENID）。
-// 安全默认态：空数组 = 拒绝所有人——微信云函数无法配置自定义环境变量，
-// 不能走 process.env 下发（恒为空会导致白名单形同虚设、全员可改比分，四轮 P0-1）
+// manual 补录分支的管理员白名单：填入开发者 openid 后开放
 const ADMIN_OPENIDS = [];
 
 exports.main = async (event) => {
   const db = cloud.database();
   const _ = db.command;
-  const summary = { synced: 0, updated: [], settled: null };
+  const summary = { synced: 0, updated: [], leaguesProcessed: 0, settled: null };
 
   try {
     // 1. 手动单场/批量补录处理分支（仅管理员：可录入任意比分并联动结算）
@@ -184,9 +223,7 @@ exports.main = async (event) => {
       const items = Array.isArray(event.manual) ? event.manual : [event.manual];
       for (const item of items) {
         if (item.id && /^\d+-\d+$/.test(item.score)) {
-          // 比分修正联动（四轮 P2-7）：若该场已按旧比分结算过，先回滚受影响用户的
-          // standings/users 旧积分并清除预测结算标记，随后 settleMatches 按新比分重结；
-          // 否则补录只改 fixtures、已结算预测永久锁定旧结果
+          // 比分修正联动：若该场已按旧比分结算过，先回滚受影响用户的 standings/users 旧积分并清除预测结算标记
           try {
             const settledOld = await fetchAll(db, 'predictions', { m: item.id, settledAt: _.exists(true) }, 500);
             if (settledOld.length) {
@@ -217,7 +254,7 @@ exports.main = async (event) => {
                   }
                 }
               }
-              // 清除结算标记允许重结（tampered 一并复位：旧比分判定的篡改/迟封随修正重算）
+              // 清除结算标记允许重结
               for (const p of settledOld) {
                 await db.collection('predictions').doc(p._id).update({
                   data: { settledAt: null, revealed: false, tampered: false, voidReason: null }
@@ -238,13 +275,13 @@ exports.main = async (event) => {
       }
     } else {
       // 2. 自动从 ESPN 抓取完赛场次（支持外部传入 range 或 days 自定义回溯范围）
-      const daysBack = (event && Number(event.days)) || 14;
-      const range = (event && event.range) || getRecentDateRange(daysBack, 1);
-      
-      for (const lg of LEAGUES) {
+      const daysBack = (event && Number(event.days)) || 30;
+      const range = (event && event.range) || getRecentDateRange(daysBack, 2);
+
+      // 并行拉取五大联赛，避免串行执行导致超时与假死
+      const leagueTasks = LEAGUES.map(async (lg) => {
         try {
-          const url = `${ESPN_BASE}/${lg.espn}/scoreboard?dates=${range}&limit=100`;
-          const j = await getJSON(url);
+          const j = await fetchScoreboard(lg.espn, range);
           const events = (j && j.events) || [];
 
           for (const e of events) {
@@ -268,28 +305,25 @@ exports.main = async (event) => {
             }
             const scoreStr = `${home.score}-${away.score}`;
 
-            // 场次匹配加日期邻近约束（四轮 P2-6）：先按 ESPN 比赛日的北京日期精确命中，
-            // 避免同季重复对阵（杯赛/tbd 占位）时把比分写到错误场次
-            const mD = String(e.date || '').slice(0, 10);
-            const matchDay = mD ? toStrOf(Date.parse(mD + 'T00:00:00Z') + 8 * 3600000) : null;
-            let cand = { data: [] };
-            if (matchDay) {
-              cand = await db.collection('fixtures').where({
-                l: lg.lg, h: hCode, a: aCode,
-                t: _.gte(matchDay + 'T00:00').and(_.lt(matchDay + 'T23:60'))
-              }).limit(5).get().catch(() => ({ data: [] }));
-            }
-            if (!cand.data.length) {
-              // 回退：无日期匹配（无索引异常/ESPN 缺 date 字段）时退回全量组合查找
-              cand = await db.collection('fixtures').where({
-                l: lg.lg, h: hCode, a: aCode
-              }).limit(5).get();
-            }
+            // 比赛日的北京日期精确换算（修正 UTC 时间戳直接截断导致跨午夜比赛日期偏移的 Bug）
+            const matchDay = e.date ? toStrOf(Date.parse(e.date)) : null;
+
+            // 查出该对阵的候选场次
+            const cand = await db.collection('fixtures').where({
+              l: lg.lg, h: hCode, a: aCode
+            }).limit(5).get().catch(() => ({ data: [] }));
 
             if (cand.data && cand.data.length > 0) {
-              // 优先查找未完赛或比分不一致的场次进行更新
-              const target = cand.data.find(x => x.st !== 'done' || x.sc !== scoreStr) || cand.data[0];
-              if (target.st !== 'done' || target.sc !== scoreStr) {
+              // 优先按北京日期匹配对应场次，找不到则取第一场
+              let target = null;
+              if (matchDay) {
+                target = cand.data.find(x => x.t && x.t.startsWith(matchDay));
+              }
+              if (!target) {
+                target = cand.data.find(x => x.st !== 'done' || x.sc !== scoreStr) || cand.data[0];
+              }
+
+              if (target && (target.st !== 'done' || target.sc !== scoreStr)) {
                 await db.collection('fixtures').doc(target._id).update({
                   data: { st: 'done', sc: scoreStr, settled: false }
                 });
@@ -298,11 +332,14 @@ exports.main = async (event) => {
               }
             }
           }
+          summary.leaguesProcessed++;
         } catch (lgErr) {
           console.warn(`同步 ${lg.lg} 比分失败:`, lgErr.message);
           (summary.errors = summary.errors || []).push({ lg: lg.lg, error: lgErr.message });
         }
-      }
+      });
+
+      await Promise.allSettled(leagueTasks);
     }
 
     // 3. 联动触发 settleMatches 结算预测与总榜
