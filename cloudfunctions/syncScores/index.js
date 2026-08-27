@@ -23,7 +23,12 @@ const LEAGUES = [
   { lg: 'PD', espn: 'esp.1' },
   { lg: 'SA', espn: 'ita.1' },
   { lg: 'BL', espn: 'ger.1' },
-  { lg: 'FL', espn: 'fra.1' }
+  { lg: 'FL', espn: 'fra.1' },
+  { lg: 'SCG', espn: 'ger.super_cup' },
+  { lg: 'SCG', espn: 'esp.super_cup' },
+  { lg: 'SCG', espn: 'ita.super_cup' },
+  { lg: 'SCG', espn: 'fra.super_cup' },
+  { lg: 'SCG', espn: 'uefa.super_cup' }
 ];
 
 // ESPN displayName（norm 归一化后）→ 项目三字码 全量映射
@@ -308,27 +313,39 @@ exports.main = async (event) => {
             // 比赛日的北京日期精确换算（修正 UTC 时间戳直接截断导致跨午夜比赛日期偏移的 Bug）
             const matchDay = e.date ? toStrOf(Date.parse(e.date)) : null;
 
-            // 查出该对阵的候选场次
-            const cand = await db.collection('fixtures').where({
+            // 查出该对阵的候选场次（支持常规主客对阵及赛程调整可能出现的主客倒置）
+            const cand1 = await db.collection('fixtures').where({
               l: lg.lg, h: hCode, a: aCode
             }).limit(5).get().catch(() => ({ data: [] }));
 
-            if (cand.data && cand.data.length > 0) {
-              // 优先按北京日期匹配对应场次，找不到则取第一场
+            let candDocs = cand1.data || [];
+            if (candDocs.length === 0) {
+              const cand2 = await db.collection('fixtures').where({
+                l: lg.lg, h: aCode, a: hCode
+              }).limit(5).get().catch(() => ({ data: [] }));
+              candDocs = cand2.data || [];
+            }
+
+            if (candDocs.length > 0) {
               let target = null;
               if (matchDay) {
-                target = cand.data.find(x => x.t && x.t.startsWith(matchDay));
+                target = candDocs.find(x => x.t && x.t.startsWith(matchDay));
               }
               if (!target) {
-                target = cand.data.find(x => x.st !== 'done' || x.sc !== scoreStr) || cand.data[0];
+                target = candDocs.find(x => x.st !== 'done') || candDocs[0];
               }
 
-              if (target && (target.st !== 'done' || target.sc !== scoreStr)) {
-                await db.collection('fixtures').doc(target._id).update({
-                  data: { st: 'done', sc: scoreStr, settled: false }
-                });
-                summary.synced++;
-                summary.updated.push({ id: target.id, sc: scoreStr, h: hCode, a: aCode, prevSt: target.st, prevSc: target.sc });
+              if (target) {
+                const isReversed = target.h === aCode && target.a === hCode;
+                const finalScore = isReversed ? `${away.score}-${home.score}` : scoreStr;
+
+                if (target.st !== 'done' || target.sc !== finalScore) {
+                  await db.collection('fixtures').doc(target._id).update({
+                    data: { st: 'done', sc: finalScore, settled: false }
+                  });
+                  summary.synced++;
+                  summary.updated.push({ id: target.id, sc: finalScore, h: target.h, a: target.a, prevSt: target.st, prevSc: target.sc });
+                }
               }
             }
           }
