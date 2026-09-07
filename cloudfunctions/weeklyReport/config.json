@@ -1,4 +1,5 @@
 {
+  "timeout": 60,
   "triggers": [
     {
       "name": "weekly-mon-10am",

@@ -138,27 +138,34 @@ exports.main = async (event) => {
 
         const uid = p.uid || p._openid || '';
         if (!uid) continue; // 无 uid 无法归属（理论上不会发生）
+        if (update.tampered) continue; // 作废/篡改封存不计入有效榜单统计
+
         const g = p.gid || 'default';
         perGid[g] = perGid[g] || {};
-        perGid[g][uid] = (perGid[g][uid] || 0) + (update.pts || 0);
+        perGid[g][uid] = perGid[g][uid] || { pts: 0, count: 0, hit: 0, nick: p.nick || '' };
+        perGid[g][uid].pts += (update.pts || 0);
+        perGid[g][uid].count++;
+        if (update.hit) perGid[g][uid].hit++;
+        if (p.nick) perGid[g][uid].nick = p.nick;
+
         uidStats[uid] = uidStats[uid] || { pts: 0, count: 0, hit: 0, nick: p.nick || '' };
         uidStats[uid].pts += (update.pts || 0);
         uidStats[uid].count++;
         if (update.hit) uidStats[uid].hit++;
+        if (p.nick) uidStats[uid].nick = p.nick;
       }
 
       // 3. 写回 standings 总榜（按 gid 分群，uid 维度 upsert，nick 随最新封存同步）
       for (const gid of Object.keys(perGid)) {
         for (const uid of Object.keys(perGid[gid])) {
-          const delta = perGid[gid][uid];
-          if (!delta) continue;
-          const st = uidStats[uid] || { hit: 0, nick: '' };
+          const st = perGid[gid][uid];
+          if (!st.count) continue;
           const exist = await db.collection('standings')
             .where({ gid, uid }).limit(1).get();
           if (exist.data.length) {
             const patch = {
-              pts: _.inc(delta),
-              totalCount: _.inc(1),
+              pts: _.inc(st.pts),
+              totalCount: _.inc(st.count),
               hitCount: _.inc(st.hit),
               updatedTs: Date.now()
             };
@@ -169,8 +176,8 @@ exports.main = async (event) => {
               data: {
                 gid, uid,
                 nick: st.nick || uid,
-                pts: delta,
-                totalCount: 1,
+                pts: st.pts,
+                totalCount: st.count,
                 hitCount: st.hit,
                 updatedTs: Date.now()
               }

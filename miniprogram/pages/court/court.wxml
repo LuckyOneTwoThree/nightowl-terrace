@@ -264,7 +264,7 @@
 
   <!-- ==================== 模态弹窗 1: 开庭场次选择盘 (Picker Sheet) ==================== -->
   <view class="modal-mask" wx:if="{{showPickerModal}}" bindtap="togglePickerModal">
-    <view class="picker-sheet card-highest floodlight-glow" catchtap="true">
+    <view class="picker-sheet card-highest floodlight-glow" catchtap="preventD">
       <view class="ps-head">
         <view class="ps-head-title">
           <text class="hl ps-title text-amber">选择开庭焦点对决</text>
@@ -306,7 +306,7 @@
 
   <!-- ==================== 模态弹窗 2: 呈堂发声抽屉 (Drawer) ==================== -->
   <view class="modal-mask" wx:if="{{showDrawer}}" bindtap="toggleDrawer">
-    <view class="drawer-sheet card-highest floodlight-glow" catchtap="true">
+    <view class="drawer-sheet card-highest floodlight-glow" catchtap="preventD">
       <view class="ds-head">
         <view class="ds-title-row">
           <view class="v-icon v-gavel ds-ic {{hasBoasted ? 'text-teal' : 'text-amber'}}"></view>
@@ -370,7 +370,7 @@
 
   <!-- ==================== 模态弹窗 3: 荣誉规则说明弹窗 (Rule Modal) ==================== -->
   <view class="modal-mask" wx:if="{{showRuleModal}}" bindtap="toggleRuleModal">
-    <view class="rule-modal card-highest floodlight-glow" catchtap="true">
+    <view class="rule-modal card-highest floodlight-glow" catchtap="preventD">
       <view class="rm-head">
         <text class="hl rm-title text-amber">德比法庭 · 称号判定与计分规则</text>
         <view class="rm-close mono muted" bindtap="toggleRuleModal">✕</view>

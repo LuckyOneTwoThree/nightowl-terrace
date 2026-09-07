@@ -60,7 +60,7 @@ function saveFixtures(fixtures) {
         doc.st = m.st;
         doc.sc = m.sc;
         if (m.st === 'done') {
-          doc.settled = doc.settled || false; // 重置或保持布尔
+          doc.settled = false; // 人工修改/录入比分后，强制标记为待结算
         }
       }
     });

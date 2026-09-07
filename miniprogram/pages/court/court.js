@@ -312,10 +312,42 @@ Page({
     var s = wx.getStorageSync('settings') || {};
     var myNick = s.nick || wx.getStorageSync('nickname') || '我';
 
-    // 1. 如果自己有发言，放在首位
-    if (myBoast) {
+    // 优先寻找云端返回的本人真实发言记录
+    var cloudMyBoast = null;
+    if (cloudList && cloudList.length) {
+      cloudMyBoast = cloudList.find(function (cb) { return cb.isMe; });
+    }
+
+    // 1. 如果自己有发言（优先采用云端真实记录，带真实 _id 与点赞数据）
+    if (cloudMyBoast) {
       rawList.push({
-        _id: 'my_' + m.id,
+        _id: cloudMyBoast._id,
+        m: m.id,
+        nick: myNick,
+        camp: cloudMyBoast.camp || (myBoast && myBoast.camp) || 'home',
+        text: cloudMyBoast.text || (myBoast && myBoast.text) || '',
+        ts: cloudMyBoast.ts || (myBoast && myBoast.ts) || Date.now(),
+        timeStr: cloudMyBoast.ts ? formatCourtTime(cloudMyBoast.ts) : '刚刚',
+        likes: cloudMyBoast.likes || 0,
+        flags: cloudMyBoast.flags || 0,
+        milks: cloudMyBoast.milks || 0,
+        result: cloudMyBoast.result || (myBoast && myBoast.result) || null,
+        isMe: true
+      });
+      // 同步真实 _id 与互动数据回本地缓存
+      if (myBoast) {
+        myBoast._id = cloudMyBoast._id;
+        myBoast.likes = cloudMyBoast.likes;
+        myBoast.flags = cloudMyBoast.flags;
+        myBoast.milks = cloudMyBoast.milks;
+        myBoast.result = cloudMyBoast.result;
+        var boasts = wx.getStorageSync('boasts') || {};
+        boasts[m.id] = myBoast;
+        wx.setStorageSync('boasts', boasts);
+      }
+    } else if (myBoast) {
+      rawList.push({
+        _id: myBoast._id || ('my_' + m.id),
         m: m.id,
         nick: myNick,
         camp: myBoast.camp || 'home',
@@ -330,10 +362,10 @@ Page({
       });
     }
 
-    // 2. 合并云端真实发言（去重）
+    // 2. 合并云端其他人的真实发言（去重）
     if (cloudList && cloudList.length) {
       cloudList.forEach(function (cb) {
-        if (myBoast && cb.isMe) return; // 避免与 myBoast 重复
+        if (cb.isMe) return; // 避免与本人重复
         rawList.push({
           _id: cb._id || ('cloud_' + cb.ts),
           m: cb.m,
@@ -346,7 +378,7 @@ Page({
           flags: cb.flags || 0,
           milks: cb.milks || 0,
           result: cb.result || null,
-          isMe: !!cb.isMe
+          isMe: false
         });
       });
     }
@@ -533,8 +565,10 @@ Page({
     wx.setStorageSync('court_reactions', reactions);
     if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
 
-    // 上报云端
-    cloud.reactBoast({ id: id, type: type, delta: delta });
+    // 上报云端（过滤未上云的本地临时 my_ 串，防 doc 报错）
+    if (id && !id.startsWith('my_')) {
+      cloud.reactBoast({ id: id, type: type, delta: delta });
+    }
 
     // 更新声量天平
     var homeCount = 0, awayCount = 0;
@@ -669,6 +703,7 @@ Page({
     if (id) router.navTo('/pages/detail/detail?id=' + id);
   },
 
+  preventD: function () {},
   onShareAppMessage: function () {
     var open = this.data.open;
     var title = open

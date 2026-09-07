@@ -148,10 +148,12 @@ exports.main = async (event) => {
     if (action === 'boast_reaction') {
       const boastId = event.id;
       const type = event.type; // 'like' | 'flag' | 'milk'
-      // 幅度封顶 1~3：delta 完全信任客户端会被传 9999 刷榜（四轮 P2-8）
+      // 幅度限制：正向点赞封顶 1~3（防 9999 刷榜），反向取消反应为 -1
       const rawDelta = Number(event.delta) || 1;
-      const delta = Math.min(3, Math.max(1, rawDelta));
-      if (!boastId || !['like', 'flag', 'milk'].includes(type)) return { ok: false, error: 'bad payload' };
+      const delta = rawDelta < 0 ? -1 : Math.min(3, Math.max(1, rawDelta));
+      if (!boastId || typeof boastId !== 'string' || boastId.startsWith('my_') || !['like', 'flag', 'milk'].includes(type)) {
+        return { ok: false, error: 'bad payload' };
+      }
       const field = type === 'like' ? 'likes' : (type === 'flag' ? 'flags' : 'milks');
       try {
         const _ = db.command;
@@ -168,7 +170,7 @@ exports.main = async (event) => {
     if (action === 'judge') {
       const boastId = event.id;
       const result = event.result; // 'hit' | 'miss' | null
-      if (!boastId) return { ok: false, error: 'bad payload' };
+      if (!boastId || typeof boastId !== 'string' || boastId.startsWith('my_')) return { ok: false, error: 'bad payload' };
       try {
         await db.collection('boasts').doc(boastId).update({ data: { result: result } });
         return { ok: true };

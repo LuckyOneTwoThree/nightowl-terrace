@@ -73,23 +73,25 @@ App({
         if (Array.isArray(stored) && stored.length > 0) {
           this.globalData.followedLeagues = stored;
         } else {
-          // 向后兼容：若已有关注主队，基于关注主队反推其联赛集合；否则默认全选五大联赛
+          var dataUtil = require('./utils/data.js');
+          var defaultLeagues = (dataUtil.TOP_LEAGUE_IDS || ['PL', 'PD', 'SA', 'BL', 'FL', 'UCL']).slice();
+          // 向后兼容：若已有关注主队，基于关注主队反推其联赛集合；否则默认全选所有顶级联赛
           var followedTeams = this.getFollowed();
           if (Array.isArray(followedTeams) && followedTeams.length > 0) {
-            var dataUtil = require('./utils/data.js');
             var set = {};
             followedTeams.forEach(function (id) {
               var t = dataUtil.getTeam(id);
               if (t && t.league) set[t.league] = true;
             });
             var derived = Object.keys(set);
-            this.globalData.followedLeagues = derived.length > 0 ? derived : ['PL', 'PD', 'SA', 'BL', 'FL'];
+            this.globalData.followedLeagues = derived.length > 0 ? derived : defaultLeagues;
           } else {
-            this.globalData.followedLeagues = ['PL', 'PD', 'SA', 'BL', 'FL'];
+            this.globalData.followedLeagues = defaultLeagues;
           }
         }
       } catch (e) {
-        this.globalData.followedLeagues = ['PL', 'PD', 'SA', 'BL', 'FL'];
+        var dataUtilFallback = require('./utils/data.js');
+        this.globalData.followedLeagues = (dataUtilFallback.TOP_LEAGUE_IDS || ['PL', 'PD', 'SA', 'BL', 'FL', 'UCL']).slice();
       }
     }
     return this.globalData.followedLeagues;

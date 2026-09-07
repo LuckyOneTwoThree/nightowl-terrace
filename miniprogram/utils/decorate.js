@@ -24,10 +24,15 @@ function isEuDst(ts) {
   return ts >= lastSundayUTC(y, 2) && ts < lastSundayUTC(y, 9); // 3月 / 10月
 }
 
-// 当地开球时间（PM 第三节时差表：夏令时英超 -7 / 欧陆 -6，冬令时 -8 / -7）
+// 当地开球时间（PM 第三节时差表：夏令时英超 -7 / 欧陆 -6，冬令时 -8 / -7；欧冠按主队所在地区判断）
 function localTime(m) {
   var dst = isEuDst(engine.ts(m.t)); // 按开球时刻精确判断，替换 4–10 月近似
-  var offset = m.l === 'PL' ? (dst ? 7 : 8) : (dst ? 6 : 7);
+  var isUK = m.l === 'PL';
+  if (m.l === 'UCL') {
+    var hTeam = data.getTeam(m.h);
+    if (hTeam && hTeam.league === 'PL') isUK = true;
+  }
+  var offset = isUK ? (dst ? 7 : 8) : (dst ? 6 : 7);
   var hm = m.t.split('T')[1].split(':');
   var local = Number(hm[0]) * 60 + Number(hm[1]) - offset * 60;
   if (local < 0) local += 1440;
@@ -89,7 +94,7 @@ function dpart(t) {
  */
 function dec(m, ev, opts) {
   var followed = (opts && opts.followed) || (typeof getApp === 'function' && getApp() && getApp().getFollowed ? getApp().getFollowed() : []);
-  var followedLeagues = (opts && opts.followedLeagues) || (typeof getApp === 'function' && getApp() && getApp().getFollowedLeagues ? getApp().getFollowedLeagues() : ['PL', 'PD', 'SA', 'BL', 'FL']);
+  var followedLeagues = (opts && opts.followedLeagues) || (typeof getApp === 'function' && getApp() && getApp().getFollowedLeagues ? getApp().getFollowedLeagues() : ['PL', 'PD', 'SA', 'BL', 'FL', 'UCL']);
   ev = ev || engine.evaluate(m, data.getRecMap(), data.getRivalries(), data.getStorylines(), followed, followedLeagues);
   var h = data.getTeam(m.h);
   var a = data.getTeam(m.a);
@@ -97,9 +102,10 @@ function dec(m, ev, opts) {
   var f = dpart(m.t);
   var tier = engine.tierOf(m);
   var sc = m.sc ? m.sc.split('-') : null;
+  var info = data.LEAGUE_INFO[m.l] || {};
   return {
     id: m.id,
-    lg: m.l, lgZh: lgZh(m.l), lgEn: m.l === 'PL' ? 'Premier League' : m.l === 'PD' ? 'La Liga' : m.l === 'SA' ? 'Serie A' : m.l === 'BL' ? 'Bundesliga' : m.l === 'FL' ? 'Ligue 1' : m.l,
+    lg: m.l, lgZh: lgZh(m.l), lgEn: info.en || m.l,
     lgSolid: meta.solid || '#334155', lgAccent: meta.accent || '#1E293B',
     home: { id: h.id, zh: h.zh, logo: h.logo, bg: data.tint(h.color, .2), bd: data.tint(h.color, .35) },
     away: { id: a.id, zh: a.zh, logo: a.logo, bg: data.tint(a.color, .2), bd: data.tint(a.color, .35) },

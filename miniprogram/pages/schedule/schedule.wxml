@@ -11,9 +11,15 @@
           <text>轮次</text>
         </view>
       </view>
-      <view class="star-filter-chip {{selStar ? 'on floodlight-glow' : ''}}" bindtap="onStarFilter">
-        <view class="v-icon v-star {{selStar ? 'text-amber' : ''}}"></view>
-        <text class="mono">{{starLabel}}</text>
+      <view class="top-actions">
+        <view class="star-filter-chip exp-chip" bindtap="onExportSchedule">
+          <view class="v-icon v-cal text-teal"></view>
+          <text class="mono">导出赛历</text>
+        </view>
+        <view class="star-filter-chip {{selStar ? 'on floodlight-glow' : ''}}" bindtap="onStarFilter">
+          <view class="v-icon v-star {{selStar ? 'text-amber' : ''}}"></view>
+          <text class="mono">{{starLabel}}</text>
+        </view>
       </view>
     </view>
 

@@ -185,7 +185,7 @@ function isKeyNode(match, storylines) {
  */
 function evaluate(match, recMap, rivalries, storylines, followed, followedLeagues) {
   followed = followed || [];
-  followedLeagues = Array.isArray(followedLeagues) ? followedLeagues : (typeof getApp === 'function' && getApp() && getApp().getFollowedLeagues ? getApp().getFollowedLeagues() : ['PL', 'PD', 'SA', 'BL', 'FL']);
+  followedLeagues = Array.isArray(followedLeagues) ? followedLeagues : (typeof getApp === 'function' && getApp() && getApp().getFollowedLeagues ? getApp().getFollowedLeagues() : ['PL', 'PD', 'SA', 'BL', 'FL', 'UCL']);
   var rec = recMap && recMap[match.id];
   var stories = storylinesOf(match, storylines);
   var keyNode = isKeyNode(match, storylines);
@@ -209,7 +209,7 @@ function evaluate(match, recMap, rivalries, storylines, followed, followedLeague
   }
 
   var isLeagueFollowed = (followedLeagues.indexOf(match.l) >= 0);
-  if (isLeagueFollowed && followedLeagues.length < 5 && !isFollowed) {
+  if (isLeagueFollowed && followedLeagues.length < 6 && !isFollowed) {
     bonuses.push('关注联赛');
   }
 
@@ -242,8 +242,8 @@ function followedBonus(ev) {
 }
 
 function leagueBonus(ev) {
-  // 当用户圈定了特定关注联赛（非全选 5 个）时，属于关注联赛的场次获得看点加分
-  return (ev.isLeagueFollowed && ev.followedLeaguesCount < 5) ? 8 : 0;
+  // 当用户圈定了特定关注联赛（非全选 6 个）时，属于关注联赛的场次获得看点加分
+  return (ev.isLeagueFollowed && ev.followedLeaguesCount < 6) ? 8 : 0;
 }
 
 function owlIndex(ev, match) {

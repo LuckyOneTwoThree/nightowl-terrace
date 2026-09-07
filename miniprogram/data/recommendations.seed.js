@@ -425,5 +425,47 @@ module.exports = [
     "replay": false,
     "avoid": false,
     "upset": false
+  },
+  {
+    "m": "UCL-1-RMA-INT",
+    "star": 3,
+    "story": [],
+    "points": [
+      "欧冠联赛阶段焦点战",
+      "皇马主场迎战国米",
+      "欧冠冠军底蕴对决"
+    ],
+    "trivia": "两队在欧冠历史上交手多次，伯纳乌之战向来充满战术博弈",
+    "replay": true,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "UCL-1-LIV-ATM",
+    "star": 3,
+    "story": [],
+    "points": [
+      "安菲尔德欧冠之夜",
+      "红军硬碰床单军团",
+      "强强直接对话"
+    ],
+    "trivia": "马竞曾在安菲尔德踢出欧冠淘汰赛经典战役",
+    "replay": true,
+    "avoid": false,
+    "upset": false
+  },
+  {
+    "m": "UCL-1-NAP-ARS",
+    "star": 3,
+    "story": [],
+    "points": [
+      "意甲英超强强碰撞",
+      "马拉多纳球场夜场",
+      "争八直接卡位战"
+    ],
+    "trivia": null,
+    "replay": false,
+    "avoid": false,
+    "upset": false
   }
 ];

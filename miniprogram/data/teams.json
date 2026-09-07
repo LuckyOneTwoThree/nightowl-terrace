@@ -98,5 +98,21 @@
   { "id": "LOR", "zh": "洛里昂", "en": "Lorient", "league": "FL", "color": "#F58220" },
   { "id": "PAC", "zh": "巴黎FC", "en": "Paris FC", "league": "FL", "color": "#003C71" },
   { "id": "TRO", "zh": "特鲁瓦", "en": "Troyes", "league": "FL", "color": "#005CA9", "tag": "升班马" },
-  { "id": "LEM", "zh": "勒芒", "en": "Le Mans", "league": "FL", "color": "#D50032", "tag": "升班马" }
+  { "id": "LEM", "zh": "勒芒", "en": "Le Mans", "league": "FL", "color": "#D50032", "tag": "升班马" },
+
+  { "id": "AEK", "zh": "雅典AEK", "en": "AEK Athens", "league": "UCL", "color": "#FDB913" },
+  { "id": "BOD", "zh": "博多格林特", "en": "Bodo/Glimt", "league": "UCL", "color": "#FCEE33" },
+  { "id": "BRU", "zh": "布鲁日", "en": "Club Brugge", "league": "UCL", "color": "#0081FF" },
+  { "id": "POR", "zh": "波尔图", "en": "FC Porto", "league": "UCL", "color": "#0038A8" },
+  { "id": "FEN", "zh": "费内巴切", "en": "Fenerbahce", "league": "UCL", "color": "#002D72" },
+  { "id": "FEY", "zh": "费耶诺德", "en": "Feyenoord Rotterdam", "league": "UCL", "color": "#EF2F24" },
+  { "id": "GAL", "zh": "加拉塔萨雷", "en": "Galatasaray", "league": "UCL", "color": "#A90432" },
+  { "id": "LAS", "zh": "林茨", "en": "LASK Linz", "league": "UCL", "color": "#1A1A1A" },
+  { "id": "PSV", "zh": "埃因霍温", "en": "PSV Eindhoven", "league": "UCL", "color": "#EE1C25" },
+  { "id": "SAB", "zh": "萨巴赫", "en": "Sabah FK", "league": "UCL", "color": "#E6007E" },
+  { "id": "SHK", "zh": "顿涅茨克矿工", "en": "Shakhtar Donetsk", "league": "UCL", "color": "#F15A24" },
+  { "id": "SLA", "zh": "布拉格斯拉维亚", "en": "Slavia Prague", "league": "UCL", "color": "#DC1F26" },
+  { "id": "SLO", "zh": "布拉迪斯拉发", "en": "Slovan Bratislava", "league": "UCL", "color": "#81C0FF" },
+  { "id": "SPO", "zh": "葡萄牙体育", "en": "Sporting CP", "league": "UCL", "color": "#008057" },
+  { "id": "VIK", "zh": "维京", "en": "Viking FK", "league": "UCL", "color": "#002B49" }
 ]

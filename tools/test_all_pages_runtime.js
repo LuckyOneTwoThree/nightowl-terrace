@@ -29,7 +29,7 @@ const appInstance = {
   globalData: { theme: 'dark', followedTeams: ['ARS', 'RMA', 'LIV'], followedLeagues: ['PL', 'PD'] },
   getFollowed: () => storage.followed || [],
   setFollowed: (list) => { storage.followed = list; },
-  getFollowedLeagues: () => storage.followedLeagues || ['PL', 'PD', 'SA', 'BL', 'FL'],
+  getFollowedLeagues: () => storage.followedLeagues || ['PL', 'PD', 'SA', 'BL', 'FL', 'UCL'],
   setFollowedLeagues: (list) => { storage.followedLeagues = list; },
   applyTheme: () => {}
 };

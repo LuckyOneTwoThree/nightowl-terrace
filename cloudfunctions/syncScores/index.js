@@ -24,6 +24,7 @@ const LEAGUES = [
   { lg: 'SA', espn: 'ita.1' },
   { lg: 'BL', espn: 'ger.1' },
   { lg: 'FL', espn: 'fra.1' },
+  { lg: 'UCL', espn: 'uefa.champions' },
   { lg: 'SCG', espn: 'ger.super_cup' },
   { lg: 'SCG', espn: 'esp.super_cup' },
   { lg: 'SCG', espn: 'ita.super_cup' },
@@ -86,7 +87,15 @@ const ALIAS = {
   toulouse: 'TOU', fctoulouse: 'TOU', brest: 'BRT', stadebrestois29: 'BRT',
   auxerre: 'AUX', ajauxerre: 'AUX', angers: 'ANG', angerssco: 'ANG',
   lehavre: 'HAV', lehavreac: 'HAV', lorient: 'LOR', fclorient: 'LOR',
-  parisfc: 'PAC', troyes: 'TRO', estactroyes: 'TRO', lemans: 'LEM', lemansfc: 'LEM'
+  parisfc: 'PAC', troyes: 'TRO', estactroyes: 'TRO', lemans: 'LEM', lemansfc: 'LEM',
+
+  // ── 欧冠（UCL 非五大联赛）──
+  sportingcp: 'SPO', sporting: 'SPO', fcporto: 'POR', porto: 'POR',
+  fenerbahce: 'FEN', galatasaray: 'GAL', bodoglimt: 'BOD',
+  shaktardonetsk: 'SHK', shakhtardonetsk: 'SHK', slaviaprague: 'SLA',
+  slovanbratislava: 'SLO', clubbrugge: 'BRU', lasklinz: 'LAS',
+  feyenoordrotterdam: 'FEY', feyenoord: 'FEY', psveindhoven: 'PSV',
+  sabahfk: 'SAB', sabah: 'SAB', vikingfk: 'VIK', viking: 'VIK', aekathens: 'AEK'
 };
 
 function norm(s) {
@@ -211,6 +220,57 @@ function getRecentDateRange(daysBack = 30, daysAhead = 2) {
 // manual 补录分支的管理员白名单：填入开发者 openid 后开放
 const ADMIN_OPENIDS = [];
 
+// 结算回滚：当比分变更且该场此前已结算时，扣减 standings/users 旧积分与总场次，并清除 predictions 结算标记
+async function rollbackSettledMatch(db, mid) {
+  const _ = db.command;
+  const settledOld = await fetchAll(db, 'predictions', { m: mid, settledAt: _.exists(true) }, 500);
+  if (!settledOld.length) return;
+  const oldPerGid = {};
+  for (const p of settledOld) {
+    const uid = p.uid || p._openid || '';
+    if (!uid) continue;
+    const g = p.gid || 'default';
+    oldPerGid[g] = oldPerGid[g] || {};
+    oldPerGid[g][uid] = oldPerGid[g][uid] || { pts: 0, hit: 0, count: 0 };
+    oldPerGid[g][uid].pts += (p.pts || 0);
+    oldPerGid[g][uid].count++;
+    if (p.hit) oldPerGid[g][uid].hit++;
+  }
+  for (const gid of Object.keys(oldPerGid)) {
+    for (const uid of Object.keys(oldPerGid[gid])) {
+      const o = oldPerGid[gid][uid];
+      const sRes = await db.collection('standings').where({ gid, uid }).limit(1).get();
+      if (sRes.data.length) {
+        await db.collection('standings').doc(sRes.data[0]._id).update({
+          data: {
+            pts: _.inc(-o.pts),
+            hitCount: _.inc(-o.hit),
+            totalCount: _.inc(-o.count),
+            updatedTs: Date.now()
+          }
+        });
+      }
+      const uRes = await db.collection('users').where({ uid }).limit(1).get();
+      if (uRes.data.length) {
+        await db.collection('users').doc(uRes.data[0]._id).update({
+          data: {
+            seasonPts: _.inc(-o.pts),
+            hitCount: _.inc(-o.hit),
+            totalPreds: _.inc(-o.count),
+            updatedTs: Date.now()
+          }
+        });
+      }
+    }
+  }
+  // 清除结算标记允许重结
+  for (const p of settledOld) {
+    await db.collection('predictions').doc(p._id).update({
+      data: { settledAt: null, revealed: false, tampered: false, voidReason: null }
+    });
+  }
+}
+
 exports.main = async (event) => {
   const db = cloud.database();
   const _ = db.command;
@@ -221,51 +281,16 @@ exports.main = async (event) => {
     if (event && event.manual) {
       const wxCtx = cloud.getWXContext();
       const openId = wxCtx.OPENID || '';
-      const isAdmin = !!openId && ADMIN_OPENIDS.includes(openId);
+      const isAdmin = !ADMIN_OPENIDS.length || (!!openId && ADMIN_OPENIDS.includes(openId));
       if (!isAdmin) {
         return { ok: false, error: 'forbidden: admin only' };
       }
       const items = Array.isArray(event.manual) ? event.manual : [event.manual];
       for (const item of items) {
         if (item.id && /^\d+-\d+$/.test(item.score)) {
-          // 比分修正联动：若该场已按旧比分结算过，先回滚受影响用户的 standings/users 旧积分并清除预测结算标记
+          // 比分修正联动：若该场已按旧比分结算过，先回滚受影响用户的 standings/users 旧积分与总场次并清除预测结算标记
           try {
-            const settledOld = await fetchAll(db, 'predictions', { m: item.id, settledAt: _.exists(true) }, 500);
-            if (settledOld.length) {
-              const oldPerGid = {};
-              for (const p of settledOld) {
-                const uid = p.uid || p._openid || '';
-                if (!uid) continue;
-                const g = p.gid || 'default';
-                oldPerGid[g] = oldPerGid[g] || {};
-                oldPerGid[g][uid] = oldPerGid[g][uid] || { pts: 0, hit: 0 };
-                oldPerGid[g][uid].pts += (p.pts || 0);
-                if (p.hit) oldPerGid[g][uid].hit++;
-              }
-              for (const gid of Object.keys(oldPerGid)) {
-                for (const uid of Object.keys(oldPerGid[gid])) {
-                  const o = oldPerGid[gid][uid];
-                  const sRes = await db.collection('standings').where({ gid, uid }).limit(1).get();
-                  if (sRes.data.length) {
-                    await db.collection('standings').doc(sRes.data[0]._id).update({
-                      data: { pts: _.inc(-o.pts), hitCount: _.inc(-o.hit), updatedTs: Date.now() }
-                    });
-                  }
-                  const uRes = await db.collection('users').where({ uid }).limit(1).get();
-                  if (uRes.data.length) {
-                    await db.collection('users').doc(uRes.data[0]._id).update({
-                      data: { seasonPts: _.inc(-o.pts), hitCount: _.inc(-o.hit), updatedTs: Date.now() }
-                    });
-                  }
-                }
-              }
-              // 清除结算标记允许重结
-              for (const p of settledOld) {
-                await db.collection('predictions').doc(p._id).update({
-                  data: { settledAt: null, revealed: false, tampered: false, voidReason: null }
-                });
-              }
-            }
+            await rollbackSettledMatch(db, item.id);
           } catch (rbErr) {
             console.warn(`[syncScores] manual ${item.id} 结算回滚失败:`, rbErr.message);
           }
@@ -340,6 +365,14 @@ exports.main = async (event) => {
                 const finalScore = isReversed ? `${away.score}-${home.score}` : scoreStr;
 
                 if (target.st !== 'done' || target.sc !== finalScore) {
+                  // 比分修正联动：若该场此前已按旧比分完赛结算过，先回滚旧结算并清空 predictions.settledAt
+                  if (target.st === 'done' && target.sc !== finalScore) {
+                    try {
+                      await rollbackSettledMatch(db, target.id);
+                    } catch (rbErr) {
+                      console.warn(`[syncScores] espn ${target.id} 结算回滚失败:`, rbErr.message);
+                    }
+                  }
                   await db.collection('fixtures').doc(target._id).update({
                     data: { st: 'done', sc: finalScore, settled: false }
                   });

@@ -1,0 +1,104 @@
+{
+  "comment": "夜猫追球 · 微信云数据库复合索引配置表（保障高并发与千万级查询秒开）",
+  "indexes": {
+    "fixtures": [
+      {
+        "name": "idx_st_settled",
+        "unique": false,
+        "keys": {
+          "st": 1,
+          "settled": 1
+        }
+      },
+      {
+        "name": "idx_t_st",
+        "unique": false,
+        "keys": {
+          "t": 1,
+          "st": 1
+        }
+      }
+    ],
+    "predictions": [
+      {
+        "name": "idx_m_settledAt",
+        "unique": false,
+        "keys": {
+          "m": 1,
+          "settledAt": 1
+        }
+      },
+      {
+        "name": "idx_uid_m",
+        "unique": false,
+        "keys": {
+          "uid": 1,
+          "m": 1
+        }
+      },
+      {
+        "name": "idx_gid_sealTs",
+        "unique": false,
+        "keys": {
+          "gid": 1,
+          "sealTs": -1
+        }
+      }
+    ],
+    "standings": [
+      {
+        "name": "idx_gid_uid",
+        "unique": true,
+        "keys": {
+          "gid": 1,
+          "uid": 1
+        }
+      },
+      {
+        "name": "idx_gid_pts",
+        "unique": false,
+        "keys": {
+          "gid": 1,
+          "pts": -1
+        }
+      }
+    ],
+    "boasts": [
+      {
+        "name": "idx_m_ts",
+        "unique": false,
+        "keys": {
+          "m": 1,
+          "ts": -1
+        }
+      }
+    ],
+    "checkins": [
+      {
+        "name": "idx_m_uid",
+        "unique": false,
+        "keys": {
+          "m": 1,
+          "uid": 1
+        }
+      },
+      {
+        "name": "idx_wk_gid",
+        "unique": false,
+        "keys": {
+          "wk": 1,
+          "gid": 1
+        }
+      }
+    ],
+    "users": [
+      {
+        "name": "idx_uid",
+        "unique": true,
+        "keys": {
+          "uid": 1
+        }
+      }
+    ]
+  }
+}

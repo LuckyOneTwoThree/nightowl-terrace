@@ -21,8 +21,9 @@
 // 云存储 fileID 前缀（cloud://<envId>.<bucket>）：上传后在云存储面板任一文件详情里复制
 var ENV = 'cloudbase-d3gvu54t8fbbb6b3f';
 var BUCKET = ''; // 空 = 本地包模式；填 bucket（636c-cloudbase-d3gvu54t8fbbb6b3f-1470591947）即切云存储
+var CDN_BASE = ''; // 空 = 默认模式；配置 HTTPS 基础路径（如 'https://cdn.example.com/crests'）即切 CDN 极速分发
 
-// 已收录队徽的三字码（与云存储 crests/ 目录文件一一对应，共 96 支）
+// 已收录队徽的三字码（共 111 支：五大联赛 96 支 + 欧冠非五大联赛 15 支）
 var BUNDLED = {
   // ── 英超 ──
   ARS: 1, AVL: 1, BOU: 1, BRE: 1, BHA: 1, CHE: 1, COV: 1, CRY: 1, EVE: 1, FUL: 1,
@@ -38,14 +39,23 @@ var BUNDLED = {
   MAI: 1, BMG: 1, FCA: 1, KOE: 1, HSV: 1, S04: 1, SCP: 1, ELV: 1,
   // ── 法甲 ──
   PSG: 1, OM: 1, MCO: 1, LIL: 1, OL: 1, NIC: 1, LEN: 1, STR: 1, REN: 1, TOU: 1,
-  BRT: 1, AUX: 1, ANG: 1, HAV: 1, LOR: 1, PAC: 1, TRO: 1, LEM: 1
+  BRT: 1, AUX: 1, ANG: 1, HAV: 1, LOR: 1, PAC: 1, TRO: 1, LEM: 1,
+  // ── 欧冠（非五大联赛）──
+  AEK: 1, BOD: 1, BRU: 1, POR: 1, FEN: 1, FEY: 1, GAL: 1, LAS: 1,
+  PSV: 1, SAB: 1, SHK: 1, SLA: 1, SLO: 1, SPO: 1, VIK: 1
 };
 
 function getUrl(code) {
   if (!code || !BUNDLED[code]) return null;
+  if (CDN_BASE) return CDN_BASE.replace(/\/$/, '') + '/' + code + '.png';
   // 云端模式：image 组件原生支持 cloud:// fileID；未配置 BUCKET 时本地包兜底（过渡期）
   if (BUCKET) return 'cloud://' + ENV + '.' + BUCKET + '/crests/' + code + '.png';
   return '/images/crests/' + code + '.png';
 }
 
-module.exports = { getUrl: getUrl, ENV: ENV, setBucket: function (b) { BUCKET = b; } };
+module.exports = {
+  getUrl: getUrl,
+  ENV: ENV,
+  setBucket: function (b) { BUCKET = b; },
+  setCdnBase: function (c) { CDN_BASE = c; }
+};

@@ -24,7 +24,8 @@ const LGS = [
   { lg: 'PD', file: 'espn_PD.json', n: 20, rounds: 38 },
   { lg: 'SA', file: 'espn_SA.json', n: 20, rounds: 38 },
   { lg: 'BL', file: 'espn_BL.json', n: 18, rounds: 34 },
-  { lg: 'FL', file: 'espn_FL.json', n: 18, rounds: 34 }
+  { lg: 'FL', file: 'espn_FL.json', n: 18, rounds: 34 },
+  { lg: 'UCL', file: 'espn_UCL.json', n: 36, rounds: 8 }
 ];
 
 // ESPN 命名 → 三字码 显式别名（norm 后精确匹配之外的特殊情况）
@@ -37,15 +38,37 @@ const ALIAS = {
     'scpaderborn07': 'SCP', 'borussamonchengladbach': 'BMG', 'svelversberg': 'ELV',
     'hamburgsv': 'HSV', 'scfreiburg': 'SCF', 'fcaugsburg': 'FCA'
   },
-  FL: { 'asmonaco': 'MCO', 'staderennais': 'REN', 'ajauxerre': 'AUX', 'lehavreac': 'HAV' }
+  FL: { 'asmonaco': 'MCO', 'staderennais': 'REN', 'ajauxerre': 'AUX', 'lehavreac': 'HAV' },
+  UCL: {
+    'barcelona': 'BAR', 'atleticomadrid': 'ATM', 'internazionale': 'INT',
+    'sportingcp': 'SPO', 'sporting': 'SPO',
+    'fenerbahce': 'FEN', 'galatasaray': 'GAL', 'bodoglimt': 'BOD',
+    'shaktardonetsk': 'SHK', 'shakhtardonetsk': 'SHK', 'slaviaprague': 'SLA',
+    'slovanbratislava': 'SLO', 'clubbrugge': 'BRU', 'lasklinz': 'LAS',
+    'feyenoordrotterdam': 'FEY', 'feyenoord': 'FEY', 'psveindhoven': 'PSV',
+    'fcporto': 'POR', 'porto': 'POR', 'sabahfk': 'SAB', 'sabah': 'SAB',
+    'vikingfk': 'VIK', 'viking': 'VIK', 'aekathens': 'AEK'
+  }
 };
+
+// 欧冠联赛阶段官方 Matchdays 日期窗口（8 轮各 18 场，36 队各出战一次）
+const UCL_ROUNDS = [
+  { r: 1, start: '2026-09-08', end: '2026-09-10' },
+  { r: 2, start: '2026-10-13', end: '2026-10-14' },
+  { r: 3, start: '2026-10-20', end: '2026-10-21' },
+  { r: 4, start: '2026-11-03', end: '2026-11-04' },
+  { r: 5, start: '2026-11-24', end: '2026-11-25' },
+  { r: 6, start: '2026-12-08', end: '2026-12-09' },
+  { r: 7, start: '2027-01-19', end: '2027-01-20' },
+  { r: 8, start: '2027-01-27', end: '2027-01-27' },
+];
 
 function norm(s) {
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 function buildTeamMap(lg) {
-  const dict = teams.filter(t => t.league === lg);
+  const dict = lg === 'UCL' ? teams : teams.filter(t => t.league === lg);
   const byNorm = {};
   dict.forEach(t => { byNorm[norm(t.en)] = t.id; });
   const alias = ALIAS[lg] || {};
@@ -66,8 +89,12 @@ function buildTeamMap(lg) {
   Object.values(map).forEach(c => { hit[c] = (hit[c] || 0) + 1; });
   const dup = Object.entries(hit).filter(([, k]) => k !== 1);
   if (dup.length) throw new Error(`${lg} 映射多义: ${JSON.stringify(dup)}`);
-  const missing = dict.filter(t => !hit[t.id]);
-  if (missing.length) throw new Error(`${lg} 字典未被覆盖: ${missing.map(t => t.id).join(',')}`);
+  if (lg !== 'UCL') {
+    const missing = dict.filter(t => !hit[t.id]);
+    if (missing.length) throw new Error(`${lg} 字典未被覆盖: ${missing.map(t => t.id).join(',')}`);
+  } else {
+    if (Object.keys(map).length !== 36) throw new Error(`UCL 球队数非 36: ${Object.keys(map).length}`);
+  }
   return map;
 }
 
@@ -193,7 +220,12 @@ for (const cfg of LGS) {
     ...m, h: map[m.home], a: map[m.away]
   })).sort((x, y) => x.dateUTC.localeCompare(y.dateUTC));
 
-  const rounds = assignRounds(items, cfg.n);
+  const rounds = (cfg.lg === 'UCL')
+    ? UCL_ROUNDS.map(rg => items.filter(m => {
+        const d = m.dateUTC.slice(0, 10);
+        return d >= rg.start && d <= rg.end;
+      }))
+    : assignRounds(items, cfg.n);
   // 轮次校验
   const sizeOK = rounds.every(r => r.length === cfg.n / 2);
   const teamOnce = rounds.every(r => {

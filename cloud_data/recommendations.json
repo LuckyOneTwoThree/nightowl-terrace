@@ -26,3 +26,6 @@
 {"m":"PD-2-RAY-ALA","star":2,"story":["PROMOTED_SURVIVAL"],"points":["桑坦德竞技回归西甲主场首战","两支保级圈球队六分战预演","海港城市的足球之夜"],"trivia":null,"replay":false,"avoid":false,"upset":false,"_id":"PD-2-RAY-ALA"}
 {"m":"FL-1-OM-STR","star":2,"story":["PROMOTED_SURVIVAL"],"points":["马赛主场新赛季首战","升班马特鲁瓦回归法甲","韦洛德罗姆球场之夜"],"trivia":"特鲁瓦与勒芒同为本季法甲升班马","replay":false,"avoid":false,"upset":false,"_id":"FL-1-OM-STR"}
 {"m":"PD-2-BET-RSO","star":3,"story":[],"points":["西甲首轮强强对话","欧战席位竞争者直接对话","贝蒂斯洛佩拉球场之夜"],"trivia":null,"replay":false,"avoid":false,"upset":false,"_id":"PD-2-BET-RSO"}
+{"m":"UCL-1-RMA-INT","star":3,"story":[],"points":["欧冠联赛阶段焦点战","皇马主场迎战国米","欧冠冠军底蕴对决"],"trivia":"两队在欧冠历史上交手多次，伯纳乌之战向来充满战术博弈","replay":true,"avoid":false,"upset":false,"_id":"UCL-1-RMA-INT"}
+{"m":"UCL-1-LIV-ATM","star":3,"story":[],"points":["安菲尔德欧冠之夜","红军硬碰床单军团","强强直接对话"],"trivia":"马竞曾在安菲尔德踢出欧冠淘汰赛经典战役","replay":true,"avoid":false,"upset":false,"_id":"UCL-1-LIV-ATM"}
+{"m":"UCL-1-NAP-ARS","star":3,"story":[],"points":["意甲英超强强碰撞","马拉多纳球场夜场","争八直接卡位战"],"trivia":null,"replay":false,"avoid":false,"upset":false,"_id":"UCL-1-NAP-ARS"}

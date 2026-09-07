@@ -49,6 +49,7 @@ Page({
       activeTab: targetTab,
       leagueList: leagueList,
       pickedLeaguesCount: pickedLeaguesCount,
+      totalLeaguesCount: leagueList.length,
       draftFollowed: followed.slice(),
       pickedCount: followed.length
     });
@@ -94,7 +95,7 @@ Page({
     this.buildGroups(this.data.draftFollowed);
     this._persist();
     if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
-    wx.showToast({ title: '已全选五大联赛', icon: 'none' });
+    wx.showToast({ title: '已全选全部联赛', icon: 'none' });
   },
 
   clearAllLeagues: function () {

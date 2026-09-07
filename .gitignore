@@ -9,3 +9,4 @@ tools/package.json
 tools/package-lock.json
 tools/crests_src/
 tools/crests_webp_test/
+.workbuddy/

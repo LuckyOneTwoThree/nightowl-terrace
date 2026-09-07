@@ -19,10 +19,11 @@ var LEAGUES = [
   { id: 'SA', zh: '意甲' },
   { id: 'BL', zh: '德甲' },
   { id: 'FL', zh: '法甲' },
+  { id: 'UCL', zh: '欧冠' },
   { id: 'SCG', zh: '超级杯' }
 ];
 
-var TOP_LEAGUE_IDS = ['PL', 'PD', 'SA', 'BL', 'FL'];
+var TOP_LEAGUE_IDS = ['PL', 'PD', 'SA', 'BL', 'FL', 'UCL'];
 
 var LEAGUE_INFO = {
   PL:  { id: 'PL', zh: '英超', en: 'Premier League', solid: '#7C3AED', accent: '#38003C', tagline: '世界第一联赛 · 对抗激烈', desc: '争冠争四白热化，顶级名帅豪门齐聚' },
@@ -30,6 +31,7 @@ var LEAGUE_INFO = {
   SA:  { id: 'SA', zh: '意甲', en: 'Serie A',         solid: '#1E88C7', accent: '#155E9C', tagline: '战术博弈 · 群雄并起', desc: '链式防守与战术美学，格局扑朔迷离' },
   BL:  { id: 'BL', zh: '德甲', en: 'Bundesliga',      solid: '#E5322D', accent: '#C8102E', tagline: '进球狂潮 · 激情狂热', desc: '大开大合进攻风暴，球场氛围极度震撼' },
   FL:  { id: 'FL', zh: '法甲', en: 'Ligue 1',         solid: '#10B981', accent: '#0B7A55', tagline: '青春风暴 · 天赋对决', desc: '速度灵动与新星摇篮，豪强争霸' },
+  UCL: { id: 'UCL', zh: '欧冠', en: 'Champions League', solid: '#1E3A8A', accent: '#0B1E48', tagline: '欧洲之巅 · 诸神之战', desc: '欧洲最高水平俱乐部赛事，豪门齐聚巅峰对决' },
   SCG: { id: 'SCG', zh: '超级杯', en: 'Super Cup',    solid: '#F5C518', accent: '#B8860B', tagline: '赛季揭幕 · 王者决战', desc: '各大联赛超级杯前哨战' }
 };
 
@@ -40,6 +42,7 @@ var LEAGUE_META = {
   SA:  { solid: '#1E88C7', accent: '#155E9C' },
   BL:  { solid: '#E5322D', accent: '#C8102E' },
   FL:  { solid: '#10B981', accent: '#0B7A55' },
+  UCL: { solid: '#1E3A8A', accent: '#0B1E48' },
   SCG: { solid: '#F5C518', accent: '#B8860B' }
 };
 

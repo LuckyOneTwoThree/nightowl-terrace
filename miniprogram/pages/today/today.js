@@ -199,6 +199,9 @@ Page({
       this._heroTime = pick.hero.m.t;
       this._heroRaw = pick.hero.m;
       this.startCountdown(pick.hero.m.t);
+    } else if (this._timer) {
+      clearInterval(this._timer);
+      this._timer = null;
     }
   },
 

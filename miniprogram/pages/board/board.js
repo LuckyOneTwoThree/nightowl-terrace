@@ -220,7 +220,8 @@ Page({
               myIdx = i;
               myWeekCloudPts = r.pts;
             }
-            var rate = r.hit != null && r.count ? Math.round(r.hit / r.count * 100) + '% 命中' : '';
+            var denom = (r.settledCount != null) ? r.settledCount : r.count;
+            var rate = (r.hit != null && denom > 0) ? (Math.round(r.hit / denom * 100) + '% 命中') : (denom === 0 && r.count ? (r.count + ' 场待战') : '');
             return { rank: i + 1, name: r.nick, val: (r.pts || 0) + ' 分', sub: rate || '本周盲评' };
           });
           var finalWeekPts = myWeekCloudPts != null ? myWeekCloudPts : uStats.weekPts;
@@ -372,7 +373,7 @@ Page({
     } else if (tab === 'guess') {
       title = uStats.weekTotal > 0
         ? ('【盲评周榜】本周我盲评 ' + uStats.weekTotal + ' 场（命中率 ' + uStats.weekRate + '%），快来看看我的神级预测！')
-        : '【盲评周榜】本周五大联赛焦点战盲评大战打响，快来一起猜比分！';
+        : '【盲评周榜】本周五大联赛与欧冠焦点战盲评大战打响，快来一起猜比分！';
     } else {
       title = Number(s.hours) > 0
         ? ('【夜猫修仙榜】本周我已修仙 ' + s.hours + ' 小时，连熬 ' + s.streak + ' 周！今晚谁陪我看球？')
@@ -397,7 +398,7 @@ Page({
         var rankInfo = (this.data.myRankNo && this.data.myRankNo !== '-') ? ('，全网排位第 ' + this.data.myRankNo + ' 名') : '';
         text = '【夜猫追球 · 赛季风云榜】本赛季我累计预言 ' + uStats.seasonTotal + ' 场，命中 ' + uStats.seasonHit + ' 场（命中率 ' + uStats.seasonRate + '%），斩获 ' + uStats.seasonPts + ' 积分' + rankInfo + '！谁能在群里超越我？';
       } else {
-        text = '【夜猫追球 · 赛季风云榜】2026/27 赛季五大联赛神预测已全面打响！群友谁是第一预言家？快来微信群一较高下！';
+        text = '【夜猫追球 · 赛季风云榜】2026/27 赛季五大联赛与欧冠神预测已全面打响！群友谁是第一预言家？快来微信群一较高下！';
       }
     } else if (tab === 'guess') {
       // 2. 🔮 盲评周榜专属战报
@@ -405,7 +406,7 @@ Page({
         var rankInfo = (this.data.myRankNo && this.data.myRankNo !== '-') ? ('，当前周榜第 ' + this.data.myRankNo + ' 名') : '';
         text = '【夜猫追球 · 盲评周榜】本周焦点大战我已盲评 ' + uStats.weekTotal + ' 场，命中 ' + uStats.weekHit + ' 场（命中率 ' + uStats.weekRate + '%），斩获 ' + uStats.weekPts + ' 周积分' + rankInfo + '！谁来破我的预言？';
       } else {
-        text = '【夜猫追球 · 盲评周榜】本周五大联赛焦点大战开启盲评！3秒选比分、比拼命中率，快来看看谁是本周预言帝！';
+        text = '【夜猫追球 · 盲评周榜】本周五大联赛与欧冠焦点大战开启盲评！3秒选比分、比拼命中率，快来看看谁是本周预言帝！';
       }
     } else {
       // 3. 🌙 夜猫修仙榜专属战报

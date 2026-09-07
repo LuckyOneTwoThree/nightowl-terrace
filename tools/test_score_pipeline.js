@@ -52,7 +52,10 @@ assert(updatedMatch.sc === '2-1', '保存后重新读取 sc 应为 "2-1"');
 
 console.log('\n=== 2. 测试 data.js 动态数据读取与 decorate.dec 呈现 ===');
 
-const mDec = decorate.dec(data.getMatch(testMid), null, { followed: [] });
+delete require.cache[require.resolve(path.join(ROOT, 'miniprogram', 'data', 'fixtures.full.js'))];
+delete require.cache[require.resolve(path.join(ROOT, 'miniprogram', 'utils', 'data.js'))];
+const freshData = require(path.join(ROOT, 'miniprogram', 'utils', 'data.js'));
+const mDec = decorate.dec(freshData.getMatch(testMid), null, { followed: [] });
 assert(mDec.finished === true, '已完赛场次 finished 应该为 true');
 assert(mDec.scH === '2', '主队得分应为 2');
 assert(mDec.scA === '1', '客队得分应为 1');

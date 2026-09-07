@@ -19,7 +19,8 @@ Page({
       { id: 'PD', zh: '西甲' },
       { id: 'SA', zh: '意甲' },
       { id: 'BL', zh: '德甲' },
-      { id: 'FL', zh: '法甲' }
+      { id: 'FL', zh: '法甲' },
+      { id: 'UCL', zh: '欧冠' }
     ],
     cards: [],
     pickedCount: 0,

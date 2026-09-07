@@ -2,6 +2,7 @@ var engine = require('../../utils/engine.js');
 var data = require('../../utils/data.js');
 var decorate = require('../../utils/decorate.js');
 var router = require('../../utils/router.js');
+var ics = require('../../utils/ics.js');
 
 var WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -301,34 +302,64 @@ Page({
     }
     var h = data.getTeam(match.h) || { zh: match.h };
     var a = data.getTeam(match.a) || { zh: match.a };
-    var startTs = Math.floor(engine.ts(match.t) / 1000);
     
-    if (wx.addPhoneCalendar) {
-      wx.addPhoneCalendar({
-        title: '⚽️ ' + h.zh + ' vs ' + a.zh + ' (' + lgZh(match.l) + ')',
-        startTime: startTs,
-        endTime: startTs + 7200,
-        alarmOffset: 1800,
-        notes: '夜猫追球 · 开球时间 ' + match.t.split('T')[1],
-        success: function () {
-          wx.showToast({ title: '已添加到日历', icon: 'success' });
-        },
-        fail: function (err) {
-          if (err && err.errMsg && err.errMsg.indexOf('cancel') >= 0) return;
-          wx.showToast({ title: '添加日历失败', icon: 'none' });
-        }
-      });
-    } else {
-      wx.showToast({ title: '微信版本暂不支持', icon: 'none' });
-    }
+    ics.addCalendar({
+      t: match.t,
+      title: '⚽️ ' + h.zh + ' vs ' + a.zh + ' (' + lgZh(match.l) + ')',
+      desc: '夜猫追球 · 开球时间 ' + (match.t.indexOf('T') >= 0 ? match.t.split('T')[1] : ''),
+      alarmMin: 30
+    }, h.zh + '_vs_' + a.zh, function (ok, msg) {
+      wx.showToast({ title: msg || (ok ? '已加入日历' : '添加失败'), icon: ok ? 'success' : 'none' });
+    });
   },
   onStar: function (e) {
     this.onCalendarAdd(e);
   },
 
+  // 批量导出关注主队赛程至日历（高价值优化项）
+  onExportSchedule: function () {
+    var followed = getApp().getFollowed() || [];
+    var all = data.matchesAll();
+    var nowTs = Date.now();
+    var upcoming = all.filter(function (m) {
+      if (m.tbd || !m.t || m.st === 'done') return false;
+      var ts = engine.ts(m.t);
+      if (ts < nowTs) return false;
+      if (followed.length > 0) {
+        return followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0;
+      }
+      return true;
+    }).slice(0, 30); // 导出最多未来 30 场关注/精选赛事
+
+    if (!upcoming.length) {
+      wx.showToast({ title: '暂无待开球的关注赛事', icon: 'none' });
+      return;
+    }
+
+    var events = upcoming.map(function (m) {
+      var h = data.getTeam(m.h) || { zh: m.h };
+      var a = data.getTeam(m.a) || { zh: m.a };
+      var isFollowed = (followed.indexOf(m.h) >= 0 || followed.indexOf(m.a) >= 0);
+      return {
+        t: m.t,
+        title: (isFollowed ? '⚽ [信仰主队] ' : '⚽ ') + h.zh + ' vs ' + a.zh + ' (' + lgZh(m.l) + ')',
+        desc: '熬夜 ' + engine.tierOf(m).cost + 'h · 夜猫追球',
+        alarmMin: 30
+      };
+    });
+
+    var fileName = followed.length ? '夜猫追球-主队赛程计划' : '夜猫追球-精选赛程计划';
+    ics.share(events, fileName, function (ok, msg) {
+      wx.showToast({
+        title: ok ? ('已导出 ' + events.length + ' 场计划至日历') : (msg || '导出已取消'),
+        icon: ok ? 'success' : 'none'
+      });
+    });
+  },
+
   onShareAppMessage: function () {
     return {
-      title: '夜猫追球 · 五大联赛全季赛程与熬夜看点',
+      title: '夜猫追球 · 五大联赛与欧冠全季赛程与熬夜看点',
       path: '/pages/schedule/schedule'
     };
   }

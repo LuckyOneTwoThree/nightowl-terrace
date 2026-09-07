@@ -3,6 +3,7 @@ var engine = require('../../utils/engine.js');
 var crypt = require('../../utils/crypt.js');
 var cloud = require('../../utils/cloud.js');
 var router = require('../../utils/router.js');
+var ics = require('../../utils/ics.js');
 
 function lgZh(l) {
   var hit = data.LEAGUES.filter(function (x) { return x.id === l; })[0];

@@ -31,6 +31,7 @@
   color: var(--primary-container); font-weight: 700;
 }
 
+.top-actions { display: flex; align-items: center; gap: 12rpx; }
 .star-filter-chip {
   display: inline-flex; align-items: center; gap: 8rpx;
   padding: 8rpx 22rpx; border-radius: var(--r-full);
@@ -43,6 +44,7 @@
   background: rgba(255,178,36,.14); border-color: rgba(255,178,36,.45);
   color: var(--primary-container); font-weight: 700;
 }
+.exp-chip:active { background: rgba(0, 240, 255, 0.12); border-color: rgba(0, 240, 255, 0.4); }
 
 /* 日期条 */
 .dstrip { white-space: nowrap; padding: 10rpx 32rpx 8rpx; width: 100%; box-sizing: border-box; }

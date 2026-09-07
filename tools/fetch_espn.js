@@ -19,7 +19,8 @@ const LEAGUES = [
   { lg: 'PD', espn: 'esp.1' },
   { lg: 'SA', espn: 'ita.1' },
   { lg: 'BL', espn: 'ger.1' },
-  { lg: 'FL', espn: 'fra.1' }
+  { lg: 'FL', espn: 'fra.1' },
+  { lg: 'UCL', espn: 'uefa.champions' }
 ];
 // 2026-27 赛季跨度（北京时间 2026-08 ～ 2027-05）
 const MONTHS = (function () {
@@ -114,8 +115,8 @@ async function fetchOpenLiga() {
   await fetchOpenLiga();
   const total = Object.values(results).reduce((s, a) => s + a.length, 0);
   console.log(`合计 ${total} 场，耗时 ${((Date.now() - t0) / 1000).toFixed(1)}s`);
-  // 期望：PL/PD/SA=380，BL/FL=306
-  const expect = { PL: 380, PD: 380, SA: 380, BL: 306, FL: 306 };
+  // 期望：PL/PD/SA=380，BL/FL=306，UCL=144
+  const expect = { PL: 380, PD: 380, SA: 380, BL: 306, FL: 306, UCL: 144 };
   Object.entries(expect).forEach(([k, v]) => {
     const got = results[k].length;
     console.log(`${k}: ${got}/${v} ${got === v ? 'OK' : '!! 数量异常'}`);

@@ -114,11 +114,15 @@ exports.main = async (event) => {
         const kt = m.t ? bjTs(m.t) : NaN;
         const sealed = isNaN(kt) || kt > now;
         const uid = p.uid || p._openid || ''; // 客户端直写时 uid 为空，回退 _openid
-        agg[uid] = agg[uid] || { nick: p.nick || uid, pts: 0, count: 0, hit: 0, entries: [] };
+        agg[uid] = agg[uid] || { nick: p.nick || uid, pts: 0, count: 0, hit: 0, settledCount: 0, entries: [] };
         const a = agg[uid];
         if (p.pts) a.pts += p.pts;
         if (p.hit) a.hit++;
         a.count++;
+        // 仅已结算/已完赛场次计入胜率分母（与客户端 records.js / me.js 一致，未赛场次不拉低胜率）
+        if (p.settledAt || (!sealed && m.st === 'done')) {
+          a.settledCount++;
+        }
         // 截止前只给哈希，截止后给明文（PM 权限规则）；比分串仅双方都填才拼（防 '2-'）
         const hasScore = p.scoreH != null && p.scoreH !== '' && p.scoreA != null && p.scoreA !== '';
         a.entries.push({
@@ -135,6 +139,7 @@ exports.main = async (event) => {
         .sort(([, x], [, y]) => y.pts - x.pts || y.count - x.count)
         .map(([uid, a], i) => ({
           rank: i + 1, nick: a.nick, pts: a.pts, count: a.count, hit: a.hit,
+          settledCount: a.settledCount,
           entries: a.entries, isMe: !!myUid && uid === myUid
         }));
       return { ok: true, board, week: week || 'current', gid, sealed: Object.values(agg).some(a => a.entries.some(e => e.pick === null)), list };

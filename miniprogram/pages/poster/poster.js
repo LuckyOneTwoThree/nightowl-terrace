@@ -75,17 +75,27 @@ Page({
     };
     var load = function (team) {
       if (!team || !team.logo) return Promise.resolve(null);
-      if (String(team.logo).indexOf('cloud://') !== 0) {
-        return toImg(team.logo); // 本地包内路径（过渡期兜底）
-      }
-      return new Promise(function (resolve) {
-        if (!wx.cloud || !wx.cloud.downloadFile) return resolve(null);
-        wx.cloud.downloadFile({
-          fileID: team.logo,
-          success: function (r) { toImg(r.tempFilePath || '').then(resolve); },
-          fail: function () { resolve(null); }
+      if (String(team.logo).indexOf('cloud://') === 0) {
+        return new Promise(function (resolve) {
+          if (!wx.cloud || !wx.cloud.downloadFile) return resolve(null);
+          wx.cloud.downloadFile({
+            fileID: team.logo,
+            success: function (r) { toImg(r.tempFilePath || '').then(resolve); },
+            fail: function () { resolve(null); }
+          });
         });
-      });
+      }
+      if (/^https?:\/\//.test(team.logo)) {
+        return new Promise(function (resolve) {
+          if (!wx.downloadFile) return toImg(team.logo).then(resolve);
+          wx.downloadFile({
+            url: team.logo,
+            success: function (r) { toImg(r.tempFilePath || '').then(resolve); },
+            fail: function () { toImg(team.logo).then(resolve); }
+          });
+        });
+      }
+      return toImg(team.logo); // 本地包内路径
     };
     // 10s 超时兜底（三轮 P1-7）：个别机型 createImage onload/onerror 均不触发，
     // 无兜底会让 Promise.all 永久挂起、loading 不消失

@@ -40,6 +40,7 @@ Page({
     this.setData({
       leagueList: leagueList,
       pickedLeaguesCount: pickedLeaguesCount,
+      totalLeaguesCount: leagueList.length,
       allSelectedLeagues: pickedLeaguesCount === leagueList.length
     });
 
@@ -116,7 +117,7 @@ Page({
       allSelectedLeagues: true
     });
     if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
-    wx.showToast({ title: '已全选五大联赛', icon: 'none' });
+    wx.showToast({ title: '已全选全部联赛', icon: 'none' });
   },
 
   // 清空联赛选择

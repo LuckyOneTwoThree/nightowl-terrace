@@ -29,9 +29,9 @@
 
     <!-- 联赛快捷操作栏 -->
     <view class="quick-bar">
-      <text class="mono muted quick-hint">欧洲顶级联赛 · 已选 {{pickedLeaguesCount}}/5</text>
+      <text class="mono muted quick-hint">欧洲顶级联赛 · 已选 {{pickedLeaguesCount}}/{{totalLeaguesCount || 6}}</text>
       <view class="quick-btns">
-        <view class="chip chip-amber mono quick-chip" bindtap="selectAllLeagues" wx:if="{{pickedLeaguesCount < 5}}">全选联赛</view>
+        <view class="chip chip-amber mono quick-chip" bindtap="selectAllLeagues" wx:if="{{pickedLeaguesCount < (totalLeaguesCount || 6)}}">全选联赛</view>
         <view class="chip chip-ghost mono quick-chip" bindtap="clearAllLeagues" wx:if="{{pickedLeaguesCount > 0}}">清空选择</view>
       </view>
     </view>
