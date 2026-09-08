@@ -27,7 +27,7 @@
   <!-- 动态规则透视条 (Rule Strip) -->
   <view class="board-rule-strip card-low">
     <view class="v-icon {{curTab === 'season' ? 'v-trophy text-amber' : curTab === 'guess' ? 'v-bolt text-teal' : 'v-moon text-amber'}} rule-strip-ic"></view>
-    <text class="mono muted rule-strip-txt" wx:if="{{curTab === 'season'}}">全季 1,752 场预测积分滚雪球累计 · 争夺赛季预言之神</text>
+    <text class="mono muted rule-strip-txt" wx:if="{{curTab === 'season'}}">全季 1,897 场预测积分滚雪球累计 · 争夺赛季预言之神</text>
     <text class="mono muted rule-strip-txt" wx:elif="{{curTab === 'guess'}}">统计本周所有场次预测积分 · 每周一 00:00 开启新周冲刺</text>
     <text class="mono muted rule-strip-txt" wx:else>统计本周深夜场次看球成本 · 评选最狠一夜硬核老猫</text>
   </view>

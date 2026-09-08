@@ -47,7 +47,7 @@
       <view class="bar-main">
         <view class="bar-count">
           <text class="mono muted bar-label">已选联赛</text>
-          <text class="bar-num mono hl"><text class="text-amber text-glow n">{{pickedLeaguesCount}}</text> / 5</text>
+          <text class="bar-num mono hl"><text class="text-amber text-glow n">{{pickedLeaguesCount}}</text> / {{totalLeaguesCount || 6}}</text>
         </view>
         <button class="btn-amber done-btn floodlight-glow" bindtap="goStep2">
           <text>下一步：挑选主队</text>

@@ -8,7 +8,8 @@ Page({
     theme: data.getInitTheme(),
     step: 1, // 1 = 选联赛, 2 = 选主队
     leagueList: [],
-    pickedLeaguesCount: 5,
+    pickedLeaguesCount: 6,
+    totalLeaguesCount: 6,
     groups: [],
     pickedTeamsCount: 0,
     allSelectedLeagues: true
@@ -50,7 +51,7 @@ Page({
   buildTeamGroups: function (draftTeams) {
     draftTeams = draftTeams || [];
     var activeLids = this.data.leagueList.filter(function (l) { return l.on; }).map(function (l) { return l.id; });
-    // 若未选任何联赛，兜底展开全部五大联赛
+    // 若未选任何联赛，兜底展开全部顶级联赛
     if (!activeLids.length) activeLids = data.TOP_LEAGUE_IDS.slice();
 
     var allTeams = data.getTeams();
@@ -105,7 +106,7 @@ Page({
     if (wx.vibrateShort) wx.vibrateShort({ type: 'light' });
   },
 
-  // 全选五大联赛
+  // 全选全部联赛
   selectAllLeagues: function () {
     var list = this.data.leagueList.map(function (l) {
       l.on = true;
@@ -231,7 +232,7 @@ Page({
   },
 
   skip: function () {
-    // 跳过：保存当前已点选的联赛和球队（若未点选则赋默认五大联赛）
+    // 跳过：保存当前已点选的联赛和球队（若未点选则赋默认全部顶级联赛）
     this.finish();
   }
 });

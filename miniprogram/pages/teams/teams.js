@@ -14,7 +14,8 @@ Page({
     theme: data.getInitTheme(),
     activeTab: 'leagues', // 'leagues' | 'teams'
     leagueList: [],
-    pickedLeaguesCount: 5,
+    pickedLeaguesCount: 6,
+    totalLeaguesCount: 6,
     groups: [],
     draftFollowed: [],
     pickedCount: 0,
