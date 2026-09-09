@@ -136,6 +136,47 @@ const settingsCode = require("fs").readFileSync(settingsPath, "utf8");
 assert.ok(settingsCode.includes("'court_reactions'"), "settings.js 必须包含 court_reactions 清理");
 console.log("  ✅ settings.js 包含 court_reactions 清理项");
 
+console.log("=== 8. 测试 app.js 向后兼容升级与 checkCrests 111 队徽 ===");
+// 8.1 测试 5 联赛用户自动追加 UCL
+let storeData = { followedLeagues: ['PL', 'PD', 'SA', 'BL', 'FL'] };
+global.wx = {
+  getStorageSync: (k) => storeData[k],
+  setStorageSync: (k, v) => { storeData[k] = v; },
+  showToast: () => {},
+  switchTab: () => {}
+};
+let appDef = null;
+global.App = (d) => { appDef = d; };
+const appPath = require("path").resolve(__dirname, "../miniprogram/app.js");
+delete require.cache[appPath];
+require(appPath);
+
+const fakeApp = Object.assign({}, appDef, {
+  globalData: { followedLeagues: null, followedTeams: null }
+});
+const leagues = fakeApp.getFollowedLeagues();
+assert.strictEqual(leagues.length, 6, "全选旧五大联赛的用户必须平滑自动补全 UCL，总数为 6");
+assert.ok(leagues.includes("UCL"), "补全后必须包含 UCL");
+assert.ok(storeData.followedLeagues.includes("UCL"), "本地 Storage 必须同步落盘");
+
+// 自定义关注用户（如只关注英超）不被强制篡改
+storeData = { followedLeagues: ['PL'] };
+const fakeAppCustom = Object.assign({}, appDef, {
+  globalData: { followedLeagues: null, followedTeams: null }
+});
+const leaguesCustom = fakeAppCustom.getFollowedLeagues();
+assert.strictEqual(leaguesCustom.length, 1, "只关注单一联赛的用户不应被强制追加 UCL");
+assert.strictEqual(leaguesCustom[0], "PL");
+
+// 8.2 测试 checkCrests/index.js 包含全部 111 支球队
+const checkCrestsCode = require("fs").readFileSync(require("path").resolve(__dirname, "../cloudfunctions/checkCrests/index.js"), "utf8");
+const matchCodes = checkCrestsCode.match(/'[A-Z0-9]{2,3}'/g);
+assert.strictEqual(matchCodes.length, 111, `checkCrests CODES 列表应正好包含 111 支球队 (实际: ${matchCodes.length})`);
+console.log("  ✅ 历史用户全选联赛自动平滑升级为 6 联赛测试通过");
+console.log("  ✅ 自定义联赛用户偏好保留测试通过");
+console.log("  ✅ checkCrests 覆盖全部 111 支球队队徽测试通过");
+
 console.log("\n========================================");
 console.log("所有审查修复项与高价值优化专项测试 100% 通过！");
 console.log("========================================");
+

@@ -1,7 +1,7 @@
 /**
  * 云函数：checkCrests 队徽云存储诊断（工具型，可长期保留供赛季更新校验）
  * 触发：手动调用（右键"云端测试"或小程序端 cloud.callFunction）
- * 职责：批量验证 crests/ 目录 96 个队徽 fileID 的存活性（getTempFileURL 不存在的文件返回非 0 status）
+ * 职责：批量验证 crests/ 目录 111 个队徽 fileID 的存活性（getTempFileURL 不存在的文件返回非 0 status）
  * 返回：valid/total + missing 明细（含错误码，便于区分「文件不存在」与「权限拒绝」）
  */
 const cloud = require('wx-server-sdk');
@@ -12,11 +12,18 @@ const ENV = 'cloudbase-d3gvu54t8fbbb6b3f';
 const BUCKET = '636c-cloudbase-d3gvu54t8fbbb6b3f-1470591947';
 
 const CODES = [
+  // 英超 (20)
   'ARS','AVL','BOU','BRE','BHA','CHE','COV','CRY','EVE','FUL','HUL','IPS','LEE','LIV','MCI','MUN','NEW','NFO','SUN','TOT',
+  // 西甲 (20)
   'RMA','BAR','ATM','ATH','BET','CEL','ELC','ESP','DEP','LEV','MAL','OSA','RAY','RAC','RSO','SEV','VAL','VIL','GET','ALA',
+  // 意甲 (20)
   'INT','MIL','JUV','NAP','ROM','LAZ','FIO','ATA','BOL','TOR','UDI','GEN','CAG','PAR','COM','LEC','SAS','FRO','VEN','MZA',
+  // 德甲 (18)
   'FCB','BVB','B04','RBL','SGE','VFB','SCF','TSG','FCU','SVW','MAI','BMG','FCA','KOE','HSV','S04','SCP','ELV',
-  'PSG','OM','MCO','LIL','OL','NIC','LEN','STR','REN','TOU','BRT','AUX','ANG','HAV','LOR','PAC','TRO','LEM'
+  // 法甲 (18)
+  'PSG','OM','MCO','LIL','OL','NIC','LEN','STR','REN','TOU','BRT','AUX','ANG','HAV','LOR','PAC','TRO','LEM',
+  // 欧冠非五大联赛 (15)
+  'SPO','POR','FEN','GAL','BOD','SHK','SLA','SLO','BRU','LAS','FEY','PSV','SAB','VIK','AEK'
 ];
 
 exports.main = async (event) => {

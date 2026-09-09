@@ -71,6 +71,14 @@ App({
       try {
         var stored = wx.getStorageSync('followedLeagues');
         if (Array.isArray(stored) && stored.length > 0) {
+          // 向后兼容平滑升级：历史用户若原先全选了五大联赛（包含全部5个联赛ID且未含 UCL），自动追加 UCL
+          if (stored.length === 5 &&
+              stored.indexOf('PL') >= 0 && stored.indexOf('PD') >= 0 &&
+              stored.indexOf('SA') >= 0 && stored.indexOf('BL') >= 0 &&
+              stored.indexOf('FL') >= 0 && stored.indexOf('UCL') < 0) {
+            stored.push('UCL');
+            try { wx.setStorageSync('followedLeagues', stored); } catch (e) { }
+          }
           this.globalData.followedLeagues = stored;
         } else {
           var dataUtil = require('./utils/data.js');
