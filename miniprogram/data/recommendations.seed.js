@@ -126,7 +126,7 @@ module.exports = [
     "upset": false
   },
   {
-    "m": "FL-1-PSG-REN",
+    "m": "FL-1-REN-PSG",
     "star": 3,
     "story": [
       "PSG_SIX_PEEP"
@@ -134,7 +134,7 @@ module.exports = [
     "points": [
       "巴黎卫冕首战",
       "六连冠征程第一块拼图",
-      "王子公园夜场"
+      "雷恩罗阿宗公园之战"
     ],
     "trivia": "巴黎已五连冠，追平里昂七连冠还差两季",
     "replay": false,

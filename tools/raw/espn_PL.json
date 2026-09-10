@@ -2,294 +2,294 @@
  {
   "id": "401879301",
   "dateUTC": "2026-08-21T19:00Z",
-  "state": "pre",
-  "statusDetail": "Fri, August 21st at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Arsenal",
   "away": "Coventry City",
-  "homeScore": "0",
+  "homeScore": "3",
   "awayScore": "0"
  },
  {
   "id": "401879322",
   "dateUTC": "2026-08-22T11:30Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 22nd at 7:30 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Hull City",
   "away": "Manchester United",
-  "homeScore": "0",
+  "homeScore": "2",
   "awayScore": "0"
  },
  {
   "id": "401879300",
   "dateUTC": "2026-08-22T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 22nd at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Everton",
   "away": "Crystal Palace",
-  "homeScore": "0",
+  "homeScore": "2",
   "awayScore": "0"
  },
  {
   "id": "401879299",
   "dateUTC": "2026-08-22T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 22nd at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Ipswich Town",
   "away": "Sunderland",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "1"
  },
  {
   "id": "401879298",
   "dateUTC": "2026-08-22T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 22nd at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Nottingham Forest",
   "away": "Leeds United",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "1"
  },
  {
   "id": "401879321",
   "dateUTC": "2026-08-22T16:30Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 22nd at 12:30 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Brentford",
   "away": "Tottenham Hotspur",
-  "homeScore": "0",
+  "homeScore": "3",
   "awayScore": "0"
  },
  {
   "id": "401879297",
   "dateUTC": "2026-08-23T13:00Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 23rd at 9:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Brighton & Hove Albion",
   "away": "Aston Villa",
-  "homeScore": "0",
+  "homeScore": "4",
   "awayScore": "0"
  },
  {
   "id": "401879320",
   "dateUTC": "2026-08-23T13:00Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 23rd at 9:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Manchester City",
   "away": "AFC Bournemouth",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "1"
  },
  {
   "id": "401879319",
   "dateUTC": "2026-08-23T15:30Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 23rd at 11:30 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Newcastle United",
   "away": "Liverpool",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "2"
  },
  {
   "id": "401879318",
   "dateUTC": "2026-08-24T19:00Z",
-  "state": "pre",
-  "statusDetail": "Mon, August 24th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Fulham",
   "away": "Chelsea",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "3"
  },
  {
   "id": "401879294",
   "dateUTC": "2026-08-28T19:00Z",
-  "state": "pre",
-  "statusDetail": "Fri, August 28th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Crystal Palace",
   "away": "Manchester City",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "1",
+  "awayScore": "4"
  },
  {
   "id": "401879314",
   "dateUTC": "2026-08-29T11:30Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 29th at 7:30 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Liverpool",
   "away": "Nottingham Forest",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "2"
  },
  {
   "id": "401879296",
   "dateUTC": "2026-08-29T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 29th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "AFC Bournemouth",
   "away": "Everton",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "1",
+  "awayScore": "1"
  },
  {
   "id": "401879316",
   "dateUTC": "2026-08-29T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 29th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Coventry City",
   "away": "Hull City",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "1"
  },
  {
   "id": "401879312",
   "dateUTC": "2026-08-29T16:30Z",
-  "state": "pre",
-  "statusDetail": "Sat, August 29th at 12:30 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Tottenham Hotspur",
   "away": "Newcastle United",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "2"
  },
  {
   "id": "401879317",
   "dateUTC": "2026-08-30T13:00Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 30th at 9:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Chelsea",
   "away": "Brighton & Hove Albion",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "4",
+  "awayScore": "3"
  },
  {
   "id": "401879315",
   "dateUTC": "2026-08-30T13:00Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 30th at 9:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Leeds United",
   "away": "Brentford",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "1",
+  "awayScore": "1"
  },
  {
   "id": "401879313",
   "dateUTC": "2026-08-30T13:00Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 30th at 9:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Sunderland",
   "away": "Fulham",
-  "homeScore": "0",
+  "homeScore": "1",
   "awayScore": "0"
  },
  {
   "id": "401879293",
   "dateUTC": "2026-08-30T15:30Z",
-  "state": "pre",
-  "statusDetail": "Sun, August 30th at 11:30 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Manchester United",
   "away": "Ipswich Town",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "5",
+  "awayScore": "2"
  },
  {
   "id": "401879295",
   "dateUTC": "2026-08-31T19:00Z",
-  "state": "pre",
-  "statusDetail": "Mon, August 31st at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Aston Villa",
   "away": "Arsenal",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "1"
  },
  {
   "id": "401879288",
   "dateUTC": "2026-09-04T19:00Z",
-  "state": "pre",
-  "statusDetail": "Fri, September 4th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Ipswich Town",
   "away": "Liverpool",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "2"
  },
  {
   "id": "401879286",
   "dateUTC": "2026-09-05T11:30Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 7:30 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Newcastle United",
   "away": "AFC Bournemouth",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "2"
  },
  {
   "id": "401879311",
   "dateUTC": "2026-09-05T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Brentford",
   "away": "Sunderland",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "1",
+  "awayScore": "1"
  },
  {
   "id": "401879290",
   "dateUTC": "2026-09-05T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Brighton & Hove Albion",
   "away": "Leeds United",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "1",
+  "awayScore": "1"
  },
  {
   "id": "401879289",
   "dateUTC": "2026-09-05T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Fulham",
   "away": "Crystal Palace",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "3"
  },
  {
   "id": "401879287",
   "dateUTC": "2026-09-05T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Manchester City",
   "away": "Coventry City",
-  "homeScore": "0",
+  "homeScore": "1",
   "awayScore": "0"
  },
  {
   "id": "401878780",
   "dateUTC": "2026-09-05T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 10:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Nottingham Forest",
   "away": "Tottenham Hotspur",
@@ -299,8 +299,8 @@
  {
   "id": "401878781",
   "dateUTC": "2026-09-05T16:30Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 5th at 12:30 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Hull City",
   "away": "Aston Villa",
@@ -310,24 +310,24 @@
  {
   "id": "401879291",
   "dateUTC": "2026-09-06T13:00Z",
-  "state": "pre",
-  "statusDetail": "Sun, September 6th at 9:00 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Everton",
   "away": "Manchester United",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "2"
  },
  {
   "id": "401879292",
   "dateUTC": "2026-09-06T15:30Z",
-  "state": "pre",
-  "statusDetail": "Sun, September 6th at 11:30 AM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Arsenal",
   "away": "Chelsea",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "1"
  },
  {
   "id": "401879285",
@@ -484,28 +484,6 @@
   "awayScore": "0"
  },
  {
-  "id": "401879273",
-  "dateUTC": "2026-09-19T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 19th at 10:00 AM EDT",
-  "timeValid": true,
-  "home": "Leeds United",
-  "away": "Crystal Palace",
-  "homeScore": "0",
-  "awayScore": "0"
- },
- {
-  "id": "401879272",
-  "dateUTC": "2026-09-19T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, September 19th at 10:00 AM EDT",
-  "timeValid": true,
-  "home": "Manchester City",
-  "away": "Sunderland",
-  "homeScore": "0",
-  "awayScore": "0"
- },
- {
   "id": "401879271",
   "dateUTC": "2026-09-19T14:00Z",
   "state": "pre",
@@ -535,6 +513,28 @@
   "timeValid": true,
   "home": "AFC Bournemouth",
   "away": "Liverpool",
+  "homeScore": "0",
+  "awayScore": "0"
+ },
+ {
+  "id": "401879273",
+  "dateUTC": "2026-09-20T13:00Z",
+  "state": "pre",
+  "statusDetail": "Sun, September 20th at 9:00 AM EDT",
+  "timeValid": true,
+  "home": "Leeds United",
+  "away": "Crystal Palace",
+  "homeScore": "0",
+  "awayScore": "0"
+ },
+ {
+  "id": "401879272",
+  "dateUTC": "2026-09-20T13:00Z",
+  "state": "pre",
+  "statusDetail": "Sun, September 20th at 9:00 AM EDT",
+  "timeValid": true,
+  "home": "Manchester City",
+  "away": "Sunderland",
   "homeScore": "0",
   "awayScore": "0"
  },
@@ -814,17 +814,6 @@
   "awayScore": "0"
  },
  {
-  "id": "401878765",
-  "dateUTC": "2026-10-24T14:00Z",
-  "state": "pre",
-  "statusDetail": "Sat, October 24th at 10:00 AM EDT",
-  "timeValid": true,
-  "home": "Liverpool",
-  "away": "Brighton & Hove Albion",
-  "homeScore": "0",
-  "awayScore": "0"
- },
- {
   "id": "401878767",
   "dateUTC": "2026-10-24T16:30Z",
   "state": "pre",
@@ -854,6 +843,17 @@
   "timeValid": true,
   "home": "Hull City",
   "away": "Brentford",
+  "homeScore": "0",
+  "awayScore": "0"
+ },
+ {
+  "id": "401878765",
+  "dateUTC": "2026-10-25T14:00Z",
+  "state": "pre",
+  "statusDetail": "Sun, October 25th at 10:00 AM EDT",
+  "timeValid": true,
+  "home": "Liverpool",
+  "away": "Brighton & Hove Albion",
   "homeScore": "0",
   "awayScore": "0"
  },
@@ -958,9 +958,9 @@
  },
  {
   "id": "401879250",
-  "dateUTC": "2026-11-01T14:00Z",
+  "dateUTC": "2026-10-31T20:00Z",
   "state": "pre",
-  "statusDetail": "Sun, November 1st at 9:00 AM EST",
+  "statusDetail": "Sat, October 31st at 4:00 PM EDT",
   "timeValid": true,
   "home": "Aston Villa",
   "away": "Fulham",

@@ -2,134 +2,134 @@
  {
   "id": "401915452",
   "dateUTC": "2026-09-08T16:45Z",
-  "state": "pre",
-  "statusDetail": "Tue, September 8th at 12:45 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "AEK Athens",
   "away": "LASK Linz",
-  "homeScore": "0",
+  "homeScore": "1",
   "awayScore": "0"
  },
  {
   "id": "401915426",
   "dateUTC": "2026-09-08T16:45Z",
-  "state": "pre",
-  "statusDetail": "Tue, September 8th at 12:45 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Club Brugge",
   "away": "Aston Villa",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "3"
  },
  {
   "id": "401915449",
   "dateUTC": "2026-09-08T19:00Z",
-  "state": "pre",
-  "statusDetail": "Tue, September 8th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Borussia Dortmund",
   "away": "Villarreal",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "3",
+  "awayScore": "2"
  },
  {
   "id": "401915425",
   "dateUTC": "2026-09-08T19:00Z",
-  "state": "pre",
-  "statusDetail": "Tue, September 8th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "FC Porto",
   "away": "Manchester City",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "2"
  },
  {
   "id": "401915450",
   "dateUTC": "2026-09-08T19:00Z",
-  "state": "pre",
-  "statusDetail": "Tue, September 8th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Lille",
   "away": "Real Betis",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "3"
  },
  {
   "id": "401915451",
   "dateUTC": "2026-09-08T19:00Z",
-  "state": "pre",
-  "statusDetail": "Tue, September 8th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Real Madrid",
   "away": "Internazionale",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "1"
  },
  {
   "id": "401915424",
   "dateUTC": "2026-09-09T16:45Z",
-  "state": "pre",
-  "statusDetail": "Wed, September 9th at 12:45 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Barcelona",
   "away": "Feyenoord Rotterdam",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "5",
+  "awayScore": "1"
  },
  {
   "id": "401915448",
   "dateUTC": "2026-09-09T16:45Z",
-  "state": "pre",
-  "statusDetail": "Wed, September 9th at 12:45 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "VfB Stuttgart",
   "away": "Viking FK",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "3",
+  "awayScore": "1"
  },
  {
   "id": "401915446",
   "dateUTC": "2026-09-09T19:00Z",
-  "state": "pre",
-  "statusDetail": "Wed, September 9th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Liverpool",
   "away": "Atlético Madrid",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "2",
+  "awayScore": "1"
  },
  {
   "id": "401915423",
   "dateUTC": "2026-09-09T19:00Z",
-  "state": "pre",
-  "statusDetail": "Wed, September 9th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Napoli",
   "away": "Arsenal",
   "homeScore": "0",
-  "awayScore": "0"
+  "awayScore": "1"
  },
  {
   "id": "401915445",
   "dateUTC": "2026-09-09T19:00Z",
-  "state": "pre",
-  "statusDetail": "Wed, September 9th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Paris Saint-Germain",
   "away": "Slovan Bratislava",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "6",
+  "awayScore": "1"
  },
  {
   "id": "401915447",
   "dateUTC": "2026-09-09T19:00Z",
-  "state": "pre",
-  "statusDetail": "Wed, September 9th at 3:00 PM EDT",
+  "state": "post",
+  "statusDetail": "FT",
   "timeValid": true,
   "home": "Sporting CP",
   "away": "Galatasaray",
-  "homeScore": "0",
-  "awayScore": "0"
+  "homeScore": "3",
+  "awayScore": "1"
  },
  {
   "id": "401915444",

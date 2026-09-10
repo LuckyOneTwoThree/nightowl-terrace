@@ -114,13 +114,14 @@ if (livAtm) {
 console.log('\n--- 3. 决策引擎场景仿真审计 ---');
 const uclDay1Matches = data.matchesOfDay('2026-09-08');
 assert(uclDay1Matches.length > 0, `2026-09-08 应有欧冠比赛 (实际: ${uclDay1Matches.length} 场)`);
+assert(uclDay1Matches.every(m => m.st === 'done' && m.sc), '2026-09-08 欧冠首轮已赛场次应均包含完赛比分与 done 状态');
 
-const pickToday = engine.pickToday(uclDay1Matches, recMap, rivs, sls, ['RMA', 'LIV'], ['UCL']);
-assert(!!pickToday, '欧冠比赛日 pickToday 应能成功挑选今日主推');
-if (pickToday && pickToday.hero) {
-  assert(pickToday.hero.m.l === 'UCL', `今日主推联赛应为 UCL (实际: ${pickToday.hero.m.l})`);
-  console.log(`    今日主推: ${pickToday.hero.m.id} (${pickToday.hero.m.h} vs ${pickToday.hero.m.a}), 星级: ${pickToday.hero.ev.star}★, 熬夜指数: ${pickToday.hero.index}`);
-}
+const uclDay2Matches = data.matchesOfDay('2026-10-13');
+assert(uclDay2Matches.length > 0, `2026-10-13 应有欧冠第2轮未赛比赛 (实际: ${uclDay2Matches.length} 场)`);
+const pickToday = engine.pickToday(uclDay2Matches, recMap, rivs, sls, ['RMA', 'LIV'], ['UCL']);
+assert(!!pickToday && !!pickToday.hero, '欧冠未赛比赛日 pickToday 应能成功挑选今日主推');
+assert(pickToday.hero.m.l === 'UCL', `今日主推联赛应为 UCL (实际: ${pickToday.hero.m.l})`);
+console.log(`    欧冠第2轮主推: ${pickToday.hero.m.id} (${pickToday.hero.m.h} vs ${pickToday.hero.m.a}), 星级: ${pickToday.hero.ev.star}★, 熬夜指数: ${pickToday.hero.index}`);
 
 const weekMatches = allMatches.filter(m => {
   const d = engine.owlDay(m.t);

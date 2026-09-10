@@ -26,7 +26,7 @@ module.exports = [
     "teams": ["PSG"],
     "status": "active",
     "desc": "五连冠在手，向六连冠发起冲击",
-    "nodes": ["FL-1-PSG-REN", "FL-2-LIL-PSG"],
+    "nodes": ["FL-1-REN-PSG", "FL-2-LIL-PSG"],
     "keyNodes": []
   },
   {

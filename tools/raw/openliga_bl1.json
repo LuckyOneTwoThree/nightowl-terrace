@@ -2,7 +2,7 @@
  {
   "matchID": 83156,
   "dateUTC": "2026-08-28T18:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "FC Bayern München",
   "away": "VfB Stuttgart"
@@ -10,7 +10,7 @@
  {
   "matchID": 83158,
   "dateUTC": "2026-08-29T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "RB Leipzig",
   "away": "Borussia Mönchengladbach"
@@ -18,7 +18,7 @@
  {
   "matchID": 83161,
   "dateUTC": "2026-08-29T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "1. FSV Mainz 05",
   "away": "SC Paderborn 07"
@@ -26,7 +26,7 @@
  {
   "matchID": 83162,
   "dateUTC": "2026-08-29T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "1. FC Union Berlin",
   "away": "Eintracht Frankfurt"
@@ -34,7 +34,7 @@
  {
   "matchID": 83163,
   "dateUTC": "2026-08-29T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "1. FC Köln",
   "away": "TSG Hoffenheim"
@@ -42,7 +42,7 @@
  {
   "matchID": 83164,
   "dateUTC": "2026-08-29T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "SV 07 Elversberg",
   "away": "Bayer 04 Leverkusen"
@@ -50,7 +50,7 @@
  {
   "matchID": 83157,
   "dateUTC": "2026-08-29T16:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "Borussia Dortmund",
   "away": "Hamburger SV"
@@ -58,7 +58,7 @@
  {
   "matchID": 83159,
   "dateUTC": "2026-08-30T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "SC Freiburg",
   "away": "SV Werder Bremen"
@@ -66,7 +66,7 @@
  {
   "matchID": 83160,
   "dateUTC": "2026-08-30T15:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 1,
   "home": "FC Augsburg",
   "away": "FC Schalke 04"
@@ -74,7 +74,7 @@
  {
   "matchID": 83165,
   "dateUTC": "2026-09-04T18:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "VfB Stuttgart",
   "away": "1. FC Köln"
@@ -82,7 +82,7 @@
  {
   "matchID": 83166,
   "dateUTC": "2026-09-05T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "TSG Hoffenheim",
   "away": "Borussia Dortmund"
@@ -90,7 +90,7 @@
  {
   "matchID": 83167,
   "dateUTC": "2026-09-05T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "Bayer 04 Leverkusen",
   "away": "1. FC Union Berlin"
@@ -98,7 +98,7 @@
  {
   "matchID": 83169,
   "dateUTC": "2026-09-05T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "Borussia Mönchengladbach",
   "away": "SV 07 Elversberg"
@@ -106,7 +106,7 @@
  {
   "matchID": 83171,
   "dateUTC": "2026-09-05T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "SV Werder Bremen",
   "away": "RB Leipzig"
@@ -114,7 +114,7 @@
  {
   "matchID": 83173,
   "dateUTC": "2026-09-05T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "SC Paderborn 07",
   "away": "SC Freiburg"
@@ -122,7 +122,7 @@
  {
   "matchID": 83172,
   "dateUTC": "2026-09-05T16:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "FC Schalke 04",
   "away": "FC Bayern München"
@@ -130,7 +130,7 @@
  {
   "matchID": 83170,
   "dateUTC": "2026-09-06T13:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "Hamburger SV",
   "away": "1. FSV Mainz 05"
@@ -138,7 +138,7 @@
  {
   "matchID": 83168,
   "dateUTC": "2026-09-06T15:30:00Z",
-  "finished": false,
+  "finished": true,
   "round": 2,
   "home": "Eintracht Frankfurt",
   "away": "FC Augsburg"

@@ -308,7 +308,34 @@ exports.main = async (event) => {
       const daysBack = (event && Number(event.days)) || 30;
       const range = (event && event.range) || getRecentDateRange(daysBack, 2);
 
-      // 并行拉取五大联赛，避免串行执行导致超时与假死
+      // 计算窗口对应的北京时间起止字符串（按 daysBack 回溯 + 4 天前瞻，涵盖跨午夜及可能的微调）
+      const startDayStr = toStrOf(Date.now() - (daysBack + 2) * 86400000);
+      const endDayStr = toStrOf(Date.now() + 4 * 86400000);
+
+      // 一次性拉取窗口期内所有场次至内存，建立 O(1) 查找索引，避免 160+ 场次循环扫库导致连接耗尽与 60s 超时
+      let windowFixtures = [];
+      try {
+        windowFixtures = await fetchAll(db, 'fixtures', {
+          t: _.gte(startDayStr + 'T00:00').and(_.lte(endDayStr + 'T23:59'))
+        }, 1000);
+      } catch (fetchErr) {
+        console.warn('[syncScores] 窗口期按时间查询失败，尝试全量兜底:', fetchErr.message);
+        try {
+          windowFixtures = await fetchAll(db, 'fixtures', {}, 2000);
+        } catch (fErr2) {
+          windowFixtures = [];
+        }
+      }
+
+      // 构建基于对阵与主客倒置的内存索引 Map
+      const fixtureIndex = new Map();
+      windowFixtures.forEach(f => {
+        const k = `${f.l}|${f.h}|${f.a}`;
+        if (!fixtureIndex.has(k)) fixtureIndex.set(k, []);
+        fixtureIndex.get(k).push(f);
+      });
+
+      // 并行拉取五大联赛与欧冠完赛比分
       const leagueTasks = LEAGUES.map(async (lg) => {
         try {
           const j = await fetchScoreboard(lg.espn, range);
@@ -338,17 +365,23 @@ exports.main = async (event) => {
             // 比赛日的北京日期精确换算（修正 UTC 时间戳直接截断导致跨午夜比赛日期偏移的 Bug）
             const matchDay = e.date ? toStrOf(Date.parse(e.date)) : null;
 
-            // 查出该对阵的候选场次（支持常规主客对阵及赛程调整可能出现的主客倒置）
-            const cand1 = await db.collection('fixtures').where({
-              l: lg.lg, h: hCode, a: aCode
-            }).limit(5).get().catch(() => ({ data: [] }));
+            // 内存极速查找（支持常规主客对阵及主客倒置）
+            const cand1 = fixtureIndex.get(`${lg.lg}|${hCode}|${aCode}`) || [];
+            const cand2 = cand1.length === 0 ? (fixtureIndex.get(`${lg.lg}|${aCode}|${hCode}`) || []) : [];
+            let candDocs = cand1.length > 0 ? cand1 : cand2;
 
-            let candDocs = cand1.data || [];
+            // 若窗口期未命中（可能因延期超出窗口），单场兜底查库
             if (candDocs.length === 0) {
-              const cand2 = await db.collection('fixtures').where({
-                l: lg.lg, h: aCode, a: hCode
+              const cRes = await db.collection('fixtures').where({
+                l: lg.lg, h: hCode, a: aCode
               }).limit(5).get().catch(() => ({ data: [] }));
-              candDocs = cand2.data || [];
+              candDocs = cRes.data || [];
+              if (candDocs.length === 0) {
+                const cRes2 = await db.collection('fixtures').where({
+                  l: lg.lg, h: aCode, a: hCode
+                }).limit(5).get().catch(() => ({ data: [] }));
+                candDocs = cRes2.data || [];
+              }
             }
 
             if (candDocs.length > 0) {
@@ -376,6 +409,9 @@ exports.main = async (event) => {
                   await db.collection('fixtures').doc(target._id).update({
                     data: { st: 'done', sc: finalScore, settled: false }
                   });
+                  // 同步更新内存对象状态，防止并发重复更新
+                  target.st = 'done';
+                  target.sc = finalScore;
                   summary.synced++;
                   summary.updated.push({ id: target.id, sc: finalScore, h: target.h, a: target.a, prevSt: target.st, prevSc: target.sc });
                 }

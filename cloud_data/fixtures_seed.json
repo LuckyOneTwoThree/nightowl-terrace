@@ -28,7 +28,7 @@
 {"l":"SA","r":1,"id":"SA-1-FRO-JUV","t":"2026-08-23T02:45","tbd":true,"st":"sched","h":"FRO","a":"JUV","s":3,"sc":null,"tv":null,"_id":"SA-1-FRO-JUV","settled":false}
 {"l":"SA","r":1,"id":"SA-1-VEN-LEC","t":"2026-08-23T02:45","tbd":true,"st":"sched","h":"VEN","a":"LEC","s":3,"sc":null,"tv":null,"_id":"SA-1-VEN-LEC","settled":false}
 {"l":"PL","r":1,"id":"PL-1-BRE-TOT","t":"2026-08-23T00:30","tbd":true,"st":"sched","h":"BRE","a":"TOT","s":1,"sc":null,"tv":null,"_id":"PL-1-BRE-TOT","settled":false}
-{"l":"SCG","r":0,"id":"SCG-BVB-FCB","t":"2026-08-23T02:45","tbd":false,"st":"sched","h":"BVB","a":"FCB","s":3,"sc":null,"tv":null,"_id":"SCG-BVB-FCB","settled":false}
+{"l":"SCG","r":0,"id":"SCG-BVB-FCB","t":"2026-08-23T02:45","tbd":false,"st":"done","h":"BVB","a":"FCB","s":3,"sc":"1-2","tv":null,"_id":"SCG-BVB-FCB","settled":false}
 {"l":"FL","r":1,"id":"FL-1-PSG-REN","t":"2026-08-23T03:00","tbd":true,"st":"sched","h":"PSG","a":"REN","s":3,"sc":null,"tv":null,"_id":"FL-1-PSG-REN","settled":false}
 {"l":"PL","r":1,"id":"PL-1-BHA-AVL","t":"2026-08-23T21:00","tbd":true,"st":"sched","h":"BHA","a":"AVL","s":0,"sc":null,"tv":null,"_id":"PL-1-BHA-AVL","settled":false}
 {"l":"SA","r":1,"id":"SA-1-ATA-SAS","t":"2026-08-23T21:00","tbd":true,"st":"sched","h":"ATA","a":"SAS","s":0,"sc":null,"tv":null,"_id":"SA-1-ATA-SAS","settled":false}

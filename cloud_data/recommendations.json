@@ -6,7 +6,7 @@
 {"m":"SA-1-INT-MZA","star":2,"story":["PROMOTED_SURVIVAL"],"points":["国米新赛季首战","蒙扎一年后即回归","凌晨档意大利夜场"],"trivia":"蒙扎上次升意甲用了 110 年，这次只用了一年","replay":false,"avoid":false,"upset":false,"_id":"SA-1-INT-MZA"}
 {"m":"SA-1-FRO-JUV","star":3,"story":[],"points":["尤文新赛季首战","弗罗西诺内回归","凌晨档意大利夜场"],"trivia":null,"replay":false,"avoid":false,"upset":false,"_id":"SA-1-FRO-JUV"}
 {"m":"SA-1-ROM-FIO","star":2,"story":[],"points":["罗马奥林匹克夜场","欧战区卡位战预演","凌晨档压轴"],"trivia":null,"replay":false,"avoid":false,"upset":false,"_id":"SA-1-ROM-FIO"}
-{"m":"FL-1-PSG-REN","star":3,"story":["PSG_SIX_PEEP"],"points":["巴黎卫冕首战","六连冠征程第一块拼图","王子公园夜场"],"trivia":"巴黎已五连冠，追平里昂七连冠还差两季","replay":false,"avoid":false,"upset":false,"_id":"FL-1-PSG-REN"}
+{"m":"FL-1-REN-PSG","star":3,"story":["PSG_SIX_PEEP"],"points":["巴黎卫冕首战","六连冠征程第一块拼图","雷恩罗阿宗公园之战"],"trivia":"巴黎已五连冠，追平里昂七连冠还差两季","replay":false,"avoid":false,"upset":false,"_id":"FL-1-REN-PSG"}
 {"m":"FL-1-TOU-OL","star":2,"story":[],"points":["法国老牌对话","里昂新季成色首验","周五凌晨档"],"trivia":null,"replay":false,"avoid":false,"upset":false,"_id":"FL-1-TOU-OL"}
 {"m":"PD-1-RMA-RSO","star":3,"story":[],"points":["皇马新赛季首战","巴斯克硬骨头来访","伯纳乌开场白"],"trivia":null,"replay":true,"avoid":false,"upset":false,"_id":"PD-1-RMA-RSO"}
 {"m":"PD-1-BAR-ATH","star":3,"story":[],"points":["巴萨新赛季首战","毕尔巴鄂从来不好惹","技术流对撞"],"trivia":null,"replay":true,"avoid":false,"upset":false,"_id":"PD-1-BAR-ATH"}
