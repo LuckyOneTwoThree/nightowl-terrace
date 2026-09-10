@@ -230,13 +230,19 @@
     <text class="sect-more" bindtap="goAllStories">全季连载 ›</text>
   </view>
   <scroll-view scroll-x class="stories" enhanced show-scrollbar="{{false}}">
-    <view class="story glass-panel" wx:for="{{stories}}" wx:key="id" data-id="{{item.id}}" bindtap="onStoryTap">
+    <view class="story glass-panel {{item.hasUpdateToday ? 'story-today-pulse' : ''}}" wx:for="{{stories}}" wx:key="id" data-id="{{item.id}}" bindtap="onStoryTap">
       <view class="st-top">
-        <text class="mono st-ep">{{item.ep}}</text>
+        <view class="st-ep-wrap">
+          <view class="dot-teal animate-pulse" wx:if="{{item.hasUpdateToday}}"></view>
+          <text class="mono st-ep {{item.hasUpdateToday ? 'text-amber' : ''}}">{{item.ep}}</text>
+        </view>
         <view class="st-pill">{{item.typeZh}}</view>
       </view>
       <text class="st-name">{{item.name}}</text>
       <text class="st-desc">{{item.desc}}</text>
+      <view class="st-foot mono">
+        <text class="st-progress muted">{{item.progressText}}</text>
+      </view>
     </view>
   </scroll-view>
 </view>

@@ -10,6 +10,7 @@
         <view class="hero-mid">
           <view class="lg-chip" style="background: var(--sc-high); color: var(--on-surface);">{{leagueZh || typeZh}}</view>
           <text class="mono muted">{{seasonText}}</text>
+          <text class="mono text-teal" wx:if="{{progressText}}">· {{progressText}}</text>
         </view>
       </view>
       <view class="chip chip-teal st-{{s.status}}">

@@ -74,6 +74,9 @@ Page({
       return shareNode || shareTeam;
     }).map(function (x) { return { id: x.id, name: x.name, desc: x.desc }; });
 
+    var doneCount = nodes.filter(function (n) { return n.finished; }).length;
+    var progressText = '已完赛 ' + doneCount + ' / ' + nodes.length + ' 场';
+
     this.setData({
       s: s,
       typeZh: TYPE_ZH[s.type] || '故事线',
@@ -87,6 +90,7 @@ Page({
       }),
       statusZh: s.status === 'active' ? '进行中' : s.status === 'done' ? '已完结' : '筹备中',
       nodes: nodes,
+      progressText: progressText,
       related: related
     });
   },

@@ -166,13 +166,63 @@ Page({
       };
     });
 
-    var stories = sls.filter(function (s) { return s.nodes.length > 0; }).map(function (s) {
+    var nowTs = Date.now();
+    var stories = sls.filter(function (s) { return s.nodes && s.nodes.length > 0; }).map(function (s) {
+      var nodeMatches = (s.nodes || []).map(function (mid) {
+        return data.getMatch(mid);
+      }).filter(Boolean).sort(function (a, b) {
+        return engine.ts(a.t) - engine.ts(b.t);
+      });
+
+      var total = nodeMatches.length;
+      var doneCount = 0;
+      var nextMatch = null;
+
+      nodeMatches.forEach(function (m) {
+        var isDone = m.sc || m.st === 'done' || m.st === 'ft' || engine.isFinished(m);
+        if (isDone) {
+          doneCount++;
+        } else if (!nextMatch) {
+          nextMatch = m;
+        }
+      });
+
+      var epText = '';
+      var curEp = doneCount + 1;
+      if (curEp > total) curEp = total;
+
+      var hasToday = false;
+      if (!nextMatch && doneCount === total) {
+        epText = '全剧终 · 共' + total + '集';
+      } else if (nextMatch) {
+        var nextDay = engine.owlDay(nextMatch.t);
+        var nextTs = engine.ts(nextMatch.t);
+        if (nextDay === todayStr) {
+          epText = '今日更新 · 第' + curEp + '集';
+          hasToday = true;
+        } else if (nextTs - nowTs <= 7 * 86400000 && nextTs > nowTs) {
+          var dt = new Date(nextTs);
+          var mMonth = dt.getMonth() + 1;
+          var mDate = dt.getDate();
+          var dateLabel = (mMonth < 10 ? '0' + mMonth : mMonth) + '-' + (mDate < 10 ? '0' + mDate : mDate);
+          epText = '第' + curEp + '集 · ' + dateLabel + '开播';
+        } else if (doneCount > 0) {
+          epText = '已更至第' + doneCount + '集 / 共' + total + '集';
+        } else {
+          epText = '即将开播 · 共' + total + '集';
+        }
+      } else {
+        epText = doneCount > 0 ? ('已更至第' + doneCount + '集 / 共' + total + '集') : ('第1集 · 全季连载');
+      }
+
       return {
         id: s.id,
         name: s.name,
         desc: s.desc,
         typeZh: { title: '争冠', league: '格局', relegation: '保级', data: '数据', suspense: '悬念', background: '背景' }[s.type] || s.type,
-        ep: '第1集 · 全季连载'
+        ep: epText,
+        progressText: '已播 ' + doneCount + '/' + total + ' 战役',
+        hasUpdateToday: hasToday
       };
     });
 
